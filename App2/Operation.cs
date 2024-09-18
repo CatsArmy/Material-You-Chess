@@ -15,6 +15,9 @@ public static class OperationExtensions
             case O:
                 type = PointType.O;
                 break;
+            case "":
+                type = PointType.Empty;
+                break;
             default:
                 type = PointType.Empty;
                 break;

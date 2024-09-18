@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:layoutDirection="ltr">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -20,7 +20,7 @@
         android:padding="25dp"
         android:id="@+id/PlayersCardView"
         >
-        <RelativeLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -48,8 +48,8 @@
                 android:textSize="36sp"
                 android:text="X"
 />
-        </RelativeLayout>
-        <RelativeLayout
+        </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="35dp"
@@ -75,8 +75,8 @@
                 android:textSize="36sp"
                 android:text="O"
 />
-        </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
     <TableLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -93,6 +93,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            tools:ignore="MissingDimension"
             android:weightSum="99"
             >
             <Button
@@ -127,6 +128,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            tools:ignore="MissingDimension"
             android:weightSum="99"
             >
             <Button
@@ -161,6 +163,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
+            tools:ignore="MissingDimension"
             android:weightSum="99"
             >
             <Button

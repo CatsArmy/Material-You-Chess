@@ -148,11 +148,11 @@ namespace App2
             {
                 var horizontal = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
 
-                if (horizontal != playerPointType)
-                    return false;
+                if (horizontal == playerPointType)
+                    return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool Vertical()
@@ -161,10 +161,10 @@ namespace App2
             for (var (i, j, k) = (0, 3, 6); k < Numpad.Length; i++)
             {
                 var vertical = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
-                if (vertical != playerPointType)
-                    return false;
+                if (vertical == playerPointType)
+                    return true;
             }
-            return true;
+            return false;
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
