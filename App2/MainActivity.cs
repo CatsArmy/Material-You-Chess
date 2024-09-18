@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Android.App;
 using Android.OS;
 using Android.Runtime;
@@ -13,30 +11,14 @@ namespace App2
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
-        // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        private TextView InputResult;
-        private TextView OutputResult;
+        private TextView Player1Score;
+        private TextView Player2Score;
 
-        private readonly Button[] Numpad = new Button[10];
+        private readonly Button[] Numpad = new Button[9];
+        private readonly PointType[] Board = new PointType[9];
 
-        private Button FlipPolarity;
-        private Button AllClear;
-
-        private Button Modulus;
-        private Button Dot;
-
-        private Button Divide;
-        private Button Multiply;
-        private Button Subtraction;
-        private Button Addition;
-#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-        private Button Equals;
-#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
-
-        private readonly List<Operation> operations = new List<Operation>();
-        private readonly List<double> numbers = new List<double>();
-        private bool hasDot = false;
-        private bool dot = false;
+        private PointType Player = PointType.X;
+        private bool isGameOver = false;
         private static bool isRecreated = false;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -49,225 +31,146 @@ namespace App2
             {
                 isRecreated = true;
                 DynamicColors.ApplyToActivitiesIfAvailable(base.Application);
-                Recreate();
+                base.Recreate();
             }
-            InputResult = base.FindViewById<TextView>(Resource.Id.tvInputResult);
-            OutputResult = base.FindViewById<TextView>(Resource.Id.tvOutputResult);
-            numbers.Clear();
-            operations.Clear();
-            numbers.Add(operations.Count);
-            InputResult.Text = Evaluate();
-            OutputResult.Text = string.Empty;
-
+            Player1Score = base.FindViewById<TextView>(Resource.Id.Player1Score);
+            Player2Score = base.FindViewById<TextView>(Resource.Id.Player2Score);
             for (int i = 0; i < Numpad.Length; i++)
             {
-                //Resource.Id.btn0 is a int and btn1 is the same int + 1 and so on
-                Numpad[i] = base.FindViewById<Button>(Resource.Id.btn0 + i);
-                int number = int.Parse($"{i}");
-                Numpad[i].Click += (sender, e) => OnClick_Numpad(sender, e, number);
+                //Resource.Id.btn8 == Resource.Id.btn9 - 1 ... Resource.Id.btn1 == Resource.Id.btn2 - 1
+                Numpad[i] = base.FindViewById<Button>(Resource.Id.btn1 + i);
+                int index = int.Parse($"{i}");
+                Numpad[i].Click += (sender, e) => TryPlay(sender, e, index);
             }
-
-            FlipPolarity = base.FindViewById<Button>(Resource.Id.btnFlipPolarity);
-            FlipPolarity.Click += OnClick_FlipPolarity;
-            AllClear = base.FindViewById<Button>(Resource.Id.btnAllClear);
-            AllClear.Click += OnClick_AllClear!;
-            Modulus = base.FindViewById<Button>(Resource.Id.btnModulus);
-            Modulus.Click += (sender, e) => OnClick_Operation(sender, e, Operation.Modulus);
-            Divide = base.FindViewById<Button>(Resource.Id.btnDivide);
-            Divide.Click += (sender, e) => OnClick_Operation(sender, e, Operation.Division);
-            Dot = base.FindViewById<Button>(Resource.Id.btnDot)!;
-            Dot.Click += OnClick_Dot;
-            Multiply = base.FindViewById<Button>(Resource.Id.btnMultiply);
-            Multiply.Click += (sender, e) => OnClick_Operation(sender, e, Operation.Multiplication);
-            Subtraction = base.FindViewById<Button>(Resource.Id.btnSubtraction);
-            Subtraction.Click += (sender, e) => OnClick_Operation(sender, e, Operation.Subtraction);
-            Addition = base.FindViewById<Button>(Resource.Id.btnAddition);
-            Addition.Click += (sender, e) => OnClick_Operation(sender, e, Operation.Addition);
-            Equals = base.FindViewById<Button>(Resource.Id.btnEquals);
-            Equals.Click += OnClick_Equals;
+            ResetBoard();
         }
 
+        private void ResetBoard()
+        {
+            for (int i = 0; i < Numpad.Length; i++)
+            {
+                Board[i] = PointType.Empty;
+                Numpad[i].Text = string.Empty;
+            }
+            Player = PointType.X;
+            Toast.MakeText(base.ApplicationContext, "Player(X) 1 its your turn", ToastLength.Short);
+            isGameOver = false;
+        }
+
+        public void TryPlay(object? sender, EventArgs e, int i)
+        {
+            if (isGameOver)
+            {
+                ResetBoard();
+                return;
+            }
+
+            if (Board[i] != PointType.Empty)
+            {
+                return;
+            }
+
+            Board[i] = Player;
+            Numpad[i].Text = $"{Player}";
+            if (Diagonal() || Horizontal() || Vertical())
+            {
+                isGameOver = true;
+                int player = 0;
+                switch (Player)
+                {
+                    case PointType.X:
+                        player = 1;
+                        Player1Score.Text = $"{int.Parse(Player1Score.Text) + 1}";
+                        break;
+                    case PointType.O:
+                        Player2Score.Text = $"{int.Parse(Player2Score.Text) + 1}";
+                        player = 2;
+                        break;
+                }
+
+                string playerWon = $"Player {player} won the game";
+                Toast.MakeText(base.ApplicationContext, playerWon, ToastLength.Long).Show();
+                return;
+            }
+
+            if (IsDraw())
+            {
+                isGameOver = true;
+                Player = PointType.X;
+                Toast.MakeText(base.ApplicationContext, "The game is a draw", ToastLength.Long).Show();
+                return;
+            }
+
+            switch (Player)
+            {
+                case PointType.X:
+                    Player = PointType.O;
+                    break;
+                case PointType.O:
+                    Player = PointType.X;
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
+        public bool IsDraw()
+        {
+            bool isDraw = true;
+            for (int i = 0; i < Board.Length; i++)
+            {
+                if (Board[i] == PointType.Empty)
+                {
+                    isDraw = false;
+                }
+            }
+            return isDraw;
+        }
+
+        public bool Diagonal()
+        {
+            var (i, j, k) = (0, 4, 8);
+            var (i2, k2) = (2, 6);
+            var diagonalLeft = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
+            var diagonalRight = (Numpad[i2].GetValue(), Numpad[j].GetValue(), Numpad[k2].GetValue());
+            var playerPointType = (Player, Player, Player);
+            if (diagonalLeft == playerPointType || diagonalRight == playerPointType)
+                return true;
+            return false;
+        }
+
+        public bool Horizontal()
+        {
+
+            var playerPointType = (Player, Player, Player);
+            for (var (i, j, k) = (0, 1, 2); k < Numpad.Length; (i, j, k) = (i + 3, j + 3, k + 3))
+            {
+                var horizontal = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
+
+                if (horizontal != playerPointType)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool Vertical()
+        {
+            var playerPointType = (Player, Player, Player);
+            for (var (i, j, k) = (0, 3, 6); k < Numpad.Length; i++)
+            {
+                var vertical = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
+                if (vertical != playerPointType)
+                    return false;
+            }
+            return true;
+        }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-        private void OnClick_FlipPolarity(object? sender, EventArgs e)
-        {
-            if (numbers.Count == operations.Count)
-                return;
-            if (numbers[operations.Count] == 0)
-                return;
-
-            const int flipPolarity = -1;
-            numbers[operations.Count] *= flipPolarity;
-            InputResult.Text = Evaluate();
-            OutputResult.Text = string.Empty;
-        }
-
-        private void OnClick_Dot(object? sender, EventArgs e)
-        {
-            if (hasDot)
-            {
-                return;
-            }
-            dot = true;
-            hasDot = true;
-            InputResult.Text = Evaluate();
-            OutputResult.Text = string.Empty;
-        }
-
-        private void OnClick_Operation(object? sender, EventArgs e, Operation operation)
-        {
-            if (numbers.Count == operations.Count)
-            {
-                operations[operations.Count - 1] = operation;
-                InputResult.Text = Evaluate();
-                return;
-            }
-            operations.Add(operation);
-            dot = false;
-            hasDot = false;
-            InputResult.Text = Evaluate();
-            OutputResult.Text = string.Empty;
-        }
-
-        private void OnClick_Equals(object? sender, EventArgs e)
-        {
-            InputResult.Text = Evaluate();
-            OutputResult.Text = Calculate();
-        }
-
-        public string Evaluate()
-        {
-            if (numbers.Count <= 0)
-                return string.Empty;
-
-            string result = string.Empty;
-            for (int i = 0; i < numbers.Count - 1; i++)
-            {
-                result += $"{numbers[i]}";
-                if (i >= operations.Count)
-                {
-                    continue;
-                }
-                result += $" {operations[i].GetValue()} ";
-            }
-            result += $"{numbers[numbers.Count - 1]}";
-            if (numbers.Count == operations.Count)
-            {
-                result += $"{operations[operations.Count - 1].GetValue()}";
-            }
-            return result;
-        }
-
-        public string Calculate(List<double> numbers, List<Operation> operations)
-        {
-            if (numbers.Count - 1 != operations.Count)
-                return string.Empty;
-            for (int i = 0; i < operations.Count; i++)
-            {
-                switch (operations[i])
-                {
-                    case Operation.Multiplication:
-                        numbers[i] *= numbers[i + 1];
-                        numbers.RemoveAt(i + 1);
-                        operations.RemoveAt(i);
-                        i--;
-                        break;
-                    case Operation.Division:
-                        if (numbers[i + 1] == 0)
-                            return "Cannot divide by zero.";
-                        numbers[i] /= numbers[i + 1];
-                        numbers.RemoveAt(i + 1);
-                        operations.RemoveAt(i);
-                        i--;
-                        break;
-                    case Operation.Modulus:
-                        if (numbers[i + 1] == 0)
-                            return "Cannot perform modulus with zero.";
-                        numbers[i] %= numbers[i + 1];
-                        numbers.RemoveAt(i + 1);
-                        operations.RemoveAt(i);
-                        i--;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            double result = numbers[0];
-
-            for (int i = 0, j = 1; i < operations.Count; i++)
-            {
-                switch (operations[i])
-                {
-                    case Operation.Addition:
-                        result += numbers[j];
-                        j++;
-                        break;
-                    case Operation.Subtraction:
-                        result -= numbers[j];
-                        j++;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            return $"{result}";
-        }
-
-        public string Calculate()
-        {
-            List<double> numbers = this.numbers.ToArray().ToList();
-            List<Operation> operations = this.operations.ToArray().ToList();
-            return Calculate(numbers, operations);
-        }
-
-
-        private void OnClick_Numpad(object? sender, EventArgs e, int number)
-        {
-            double value;
-            string input = string.Empty;
-            switch (numbers.Count == operations.Count)
-            {
-                case true:
-                    if (dot)
-                        input += '.';
-                    input += $"{number}";
-                    value = double.Parse(input);
-                    numbers.Add(value);
-                    break;
-
-                case false:
-                    input += $"{numbers[operations.Count]}";
-                    if (dot)
-                        input += '.';
-                    input += $"{number}";
-                    value = double.Parse(input);
-                    numbers[operations.Count] = value;
-                    break;
-            }
-            InputResult.Text = Evaluate();
-            OutputResult.Text = string.Empty;
-        }
-
-        private void OnClick_AllClear(object? sender, EventArgs e)
-        {
-            if (sender != AllClear)
-            {
-                return;
-
-            }
-
-            dot = false;
-            hasDot = false;
-            numbers.Clear();
-            operations.Clear();
-            numbers.Add(operations.Count);
-            InputResult.Text = $"{operations.Count}";
-            OutputResult.Text = string.Empty;
         }
     }
 }
