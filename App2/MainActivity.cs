@@ -6,6 +6,8 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using Google.Android.Material.Color;
 
+//< !--com.google.android.material.card.MaterialCardView-- >
+
 namespace App2
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
@@ -13,6 +15,12 @@ namespace App2
     {
         private TextView Player1Score;
         private TextView Player2Score;
+        private TextView DrawCounter;
+        private TextView RoundCounter;
+        private int Rounds = 1;
+        private int Draws = 0;
+        private int Player1 = 0;
+        private int Player2 = 0;
 
         private readonly Button[] Numpad = new Button[9];
         private readonly PointType[] Board = new PointType[9];
@@ -35,6 +43,8 @@ namespace App2
             }
             Player1Score = base.FindViewById<TextView>(Resource.Id.Player1Score);
             Player2Score = base.FindViewById<TextView>(Resource.Id.Player2Score);
+            RoundCounter = base.FindViewById<TextView>(Resource.Id.RoundCounter);
+            DrawCounter = base.FindViewById<TextView>(Resource.Id.DrawCounter);
             for (int i = 0; i < Numpad.Length; i++)
             {
                 //Resource.Id.btn8 == Resource.Id.btn9 - 1 ... Resource.Id.btn1 == Resource.Id.btn2 - 1
@@ -53,14 +63,30 @@ namespace App2
                 Numpad[i].Text = string.Empty;
             }
             Player = PointType.X;
-            Toast.MakeText(base.ApplicationContext, "Player(X) 1 its your turn", ToastLength.Short);
+            Toast.MakeText(base.ApplicationContext, "Player 1 its your turn", ToastLength.Short);
             isGameOver = false;
+        }
+
+
+
+        private void IncrementRoundCounter()
+        {
+            Rounds++;
+            NumberPostfix postfix = (Rounds % 10) switch
+            {
+                1 => NumberPostfix.st,
+                2 => NumberPostfix.nd,
+                3 => NumberPostfix.rd,
+                _ => NumberPostfix.th,
+            };
+            RoundCounter.Text = $"{Rounds}{postfix}";
         }
 
         public void TryPlay(object? sender, EventArgs e, int i)
         {
             if (isGameOver)
             {
+                IncrementRoundCounter();
                 ResetBoard();
                 return;
             }
@@ -71,7 +97,7 @@ namespace App2
             }
 
             Board[i] = Player;
-            Numpad[i].Text = $"{Player}";
+            Numpad[i].Text = Player.GetValue();
             if (Diagonal() || Horizontal() || Vertical())
             {
                 isGameOver = true;
@@ -80,11 +106,13 @@ namespace App2
                 {
                     case PointType.X:
                         player = 1;
-                        Player1Score.Text = $"{int.Parse(Player1Score.Text) + 1}";
+                        Player1++;
+                        Player1Score.Text = $"Wins: {Player1}";
                         break;
                     case PointType.O:
-                        Player2Score.Text = $"{int.Parse(Player2Score.Text) + 1}";
                         player = 2;
+                        Player2++;
+                        Player2Score.Text = $"Wins: {Player2}";
                         break;
                 }
 
@@ -96,7 +124,8 @@ namespace App2
             if (IsDraw())
             {
                 isGameOver = true;
-                Player = PointType.X;
+                Draws++;
+                DrawCounter.Text = $"Draws: {Draws}";
                 Toast.MakeText(base.ApplicationContext, "The game is a draw", ToastLength.Long).Show();
                 return;
             }
@@ -117,26 +146,21 @@ namespace App2
 
         public bool IsDraw()
         {
-            bool isDraw = true;
             for (int i = 0; i < Board.Length; i++)
-            {
                 if (Board[i] == PointType.Empty)
-                {
-                    isDraw = false;
-                }
-            }
-            return isDraw;
+                    return false;
+            return true;
         }
 
         public bool Diagonal()
         {
-            var (i, j, k) = (0, 4, 8);
-            var (i2, k2) = (2, 6);
-            var diagonalLeft = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
-            var diagonalRight = (Numpad[i2].GetValue(), Numpad[j].GetValue(), Numpad[k2].GetValue());
             var playerPointType = (Player, Player, Player);
-            if (diagonalLeft == playerPointType || diagonalRight == playerPointType)
-                return true;
+            for (var (i, j, k) = (0, 4, 8); i < j; i += 2, k -= 2)
+            {
+                var diagonal = (Board[i], Board[j], Board[k]);
+                if (diagonal == playerPointType)
+                    return true;
+            }
             return false;
         }
 
@@ -146,7 +170,7 @@ namespace App2
             var playerPointType = (Player, Player, Player);
             for (var (i, j, k) = (0, 1, 2); k < Numpad.Length; (i, j, k) = (i + 3, j + 3, k + 3))
             {
-                var horizontal = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
+                var horizontal = (Board[i], Board[j], Board[k]);
 
                 if (horizontal == playerPointType)
                     return true;
@@ -158,14 +182,15 @@ namespace App2
         public bool Vertical()
         {
             var playerPointType = (Player, Player, Player);
-            for (var (i, j, k) = (0, 3, 6); k < Numpad.Length; i++)
+            for (var (i, j, k) = (0, 3, 6); k < Numpad.Length; i++, j++, k++)
             {
-                var vertical = (Numpad[i].GetValue(), Numpad[j].GetValue(), Numpad[k].GetValue());
+                var vertical = (Board[i], Board[j], Board[k]);
                 if (vertical == playerPointType)
                     return true;
             }
             return false;
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
