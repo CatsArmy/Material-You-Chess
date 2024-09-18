@@ -8,22 +8,75 @@
     android:orientation="vertical"
     android:layoutDirection="ltr">
 
-    <TextView
-        android:id="@+id/tvInputResult"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
-        android:gravity="center_horizontal"
-        android:textSize="36sp"
-        android:text="0"
-        />
-    <TextView
-        android:id="@+id/tvOutputResult"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_gravity="center_horizontal"
-        android:textSize="36sp"
-        />
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="50dp"
+        android:layoutDirection="ltr"
+        android:padding="25dp"
+        android:id="@+id/PlayersCardView"
+        >
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="35dp"
+            android:layout_gravity="left">
+
+
+            <TextView
+                android:id="@+id/Player1Score"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="50dp"
+                android:gravity="left"
+                android:textSize="32sp"
+                android:text="0"
+    />
+            <TextView
+                android:id="@+id/Player1X"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="left"
+                android:gravity="left"
+                android:textSize="36sp"
+                android:text="X"
+/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="35dp"
+            android:orientation="vertical"
+            android:layout_gravity="right">
+            <TextView
+                android:id="@+id/Player2O"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="top"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="50dp"
+                android:gravity="right"
+                android:textSize="36sp"
+                android:text="0"
+    />
+            <TextView
+                android:id="@+id/Player2Score"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:gravity="right"
+                android:textSize="36sp"
+                android:text="O"
+/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
     <TableLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
@@ -40,242 +93,99 @@
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:weightSum="100"
+            android:weightSum="99"
             >
             <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnAllClear"
-                android:layout_column="0"
-                android:layout_weight="25"
-                android:text="AC"
-                android:textSize="25dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnFlipPolarity"
-                android:layout_column="1"
-                android:layout_weight="25"
-                android:text="+/-"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnModulus"
-                android:layout_column="2"
-                android:layout_weight="25"
-                android:text="%"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnDivide"
-                android:layout_column="3"
-                android:layout_weight="25"
-                android:text="/"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-   
-                />
-        </TableRow>
-        <TableRow
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:weightSum="100"
-            >
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn7"
-                android:layout_column="0"
-                android:layout_weight="25"
-                android:text="7"
-                android:textSize="25dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn8"
-                android:layout_column="1"
-                android:layout_weight="25"
-                android:text="8"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn9"
-                android:layout_column="2"
-                android:layout_weight="25"
-                android:text="9"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-                
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnMultiply"
-                android:layout_column="3"
-                android:layout_weight="25"
-                android:text="X"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-
-                />
-        </TableRow>
-        <TableRow
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:weightSum="100"
-            >
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn4"
-                android:layout_column="0"
-                android:layout_weight="25"
-                android:text="4"
-                android:textSize="25dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn5"
-                android:layout_column="1"
-                android:layout_weight="25"
-                android:text="5"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btn6"
-                android:layout_column="2"
-                android:layout_weight="25"
-                android:text="6"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-
-                />
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
-                android:id="@+id/btnSubtraction"
-                android:layout_column="3"
-                android:layout_weight="25"
-                android:text="-"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-                />
-        </TableRow>
-        <TableRow
-            android:layout_height="match_parent"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:weightSum="100"
-            >
-            <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
                 android:id="@+id/btn1"
+                android:layout_height="80dp"
+                android:layout_width="0dp"
                 android:layout_column="0"
-                android:layout_weight="25"
-                android:text="1"
+                android:layout_weight="33"
                 android:textSize="25dp"
                 />
             <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
                 android:id="@+id/btn2"
+                android:layout_height="80dp"
+                android:layout_width="0dp"
                 android:layout_column="1"
-                android:layout_weight="25"
-                android:text="2"
+                android:layout_weight="33"
                 android:textSize="25dp"
-                android:layout_marginLeft="5dp"
                 />
             <Button
-                android:layout_height="80dp"
-                android:layout_width="0dp"
                 android:id="@+id/btn3"
-                android:layout_column="2"
-                android:layout_weight="25"
-                android:text="3"
-                android:textSize="25dp"
-                android:layout_marginLeft="5dp"
-                />
-            <Button
                 android:layout_height="80dp"
                 android:layout_width="0dp"
-                android:id="@+id/btnAddition"
-                android:layout_column="3"
-                android:layout_weight="25"
-                android:text="+"
+                android:layout_column="2"
+                android:layout_weight="33"
                 android:textSize="25dp"
-                android:layout_marginLeft="5dp"
                 />
         </TableRow>
         <TableRow
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
-            android:weightSum="100"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:weightSum="99"
             >
             <Button
-                android:layout_height="match_parent"
+                android:id="@+id/btn4"
+                android:layout_height="80dp"
                 android:layout_width="0dp"
-                android:id="@+id/btn0"
                 android:layout_column="0"
-                android:layout_weight="50"
-                android:text="0"
+                android:layout_weight="33"
                 android:textSize="25dp"
                 />
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="0px"
-                android:layout_height="0px"
-                />
             <Button
+                android:id="@+id/btn5"
                 android:layout_height="80dp"
                 android:layout_width="0dp"
-                android:id="@+id/btnDot"
+                android:layout_column="1"
+                android:layout_weight="33"
+                android:textSize="25dp"
+                />
+            <Button
+                android:id="@+id/btn6"
+                android:layout_height="80dp"
+                android:layout_width="0dp"
                 android:layout_column="2"
-                android:layout_weight="25"
-                android:text="."
+                android:layout_weight="33"
                 android:textSize="25dp"
-                android:layout_marginLeft="5dp"
                 />
+        </TableRow>
+        <TableRow
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:weightSum="99"
+            >
             <Button
+                android:id="@+id/btn7"
                 android:layout_height="80dp"
                 android:layout_width="0dp"
-                android:id="@+id/btnEquals"
-                android:layout_column="3"
-                android:layout_weight="25"
-                android:text="="
+                android:layout_column="0"
+                android:layout_weight="33"
                 android:textSize="25dp"
-                android:layout_marginLeft="5dp"
+                />
+            <Button
+                android:id="@+id/btn8"
+                android:layout_height="80dp"
+                android:layout_width="0dp"
+                android:layout_column="1"
+                android:layout_weight="33"
+                android:textSize="25dp"
+                />
+            <Button
+                android:id="@+id/btn9"
+                android:layout_height="80dp"
+                android:layout_width="0dp"
+                android:layout_column="2"
+                android:layout_weight="33"
+                android:textSize="25dp"
                 />
         </TableRow>
     </TableLayout>

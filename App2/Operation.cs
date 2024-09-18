@@ -1,29 +1,46 @@
-using System.Collections.Generic;
+using Android.Widget;
 
 public static class OperationExtensions
 {
-    private static Dictionary<Operation, string> operations = new Dictionary<Operation, string>();
-    private static bool init = true;
-    public static string GetValue(this Operation operation)
+    public static PointType GetValue(this Button button)
     {
-        if (init)
+        const string X = "X";
+        const string O = "O";
+        PointType type;
+        switch (button.Text)
         {
-            operations.Add(Operation.Addition, " + ");
-            operations.Add(Operation.Subtraction, " - ");
-            operations.Add(Operation.Multiplication, " * ");
-            operations.Add(Operation.Division, " / ");
-            operations.Add(Operation.Modulus, " % ");
-            init = false;
+            case X:
+                type = PointType.X;
+                break;
+            case O:
+                type = PointType.O;
+                break;
+            default:
+                type = PointType.Empty;
+                break;
         }
-
-        return operations[operation];
+        return type;
+    }
+    public static string GetValue(this PointType type)
+    {
+        string result = string.Empty;
+        switch (type)
+        {
+            case PointType.X:
+                result = "X";
+                break;
+            case PointType.O:
+                result = "O";
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 }
-public enum Operation
+public enum PointType
 {
-    Addition = '+',
-    Subtraction = '-',
-    Multiplication = '*',
-    Division = '/',
-    Modulus = '%',
+    Empty,
+    X,
+    O,
 }
