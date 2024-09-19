@@ -1,6 +1,6 @@
 ﻿using Android.Widget;
 
-public static class OperationExtensions
+public static class EnumExtensions
 {
     public static PointType GetValue(this Button button)
     {
@@ -32,11 +32,11 @@ public static class OperationExtensions
             NumberPostfix.st => "st",
             NumberPostfix.nd => "nd",
             NumberPostfix.rd => "rd",
-            NumberPostfix.th => "th",
             _ => "th"
         };
     }
 }
+
 public enum PointType
 {
     Empty,
