@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layoutDirection="ltr">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="12.5dp"
+        android:layout_marginBottom="12.5dp"
+        android:layout_marginLeft="6.25dp"
+        android:layout_marginRight="6.25dp"
+        android:layoutDirection="ltr"
+        android:paddingVertical="5dp"
+        android:paddingHorizontal="2.5dp"
+        android:paddingTop="12.5dp"
+        android:paddingBottom="12.5dp"
+        android:weightSum="150"
+        tools:ignore="MissingDimension"
+        >
+        <LinearLayout
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="left"
+            android:layoutDirection="ltr"
+            android:layout_margin="5dp"
+            android:layout_weight="30"
+        >
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+            >
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlinedTextField1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:gravity="center_horizontal"
+                    android:textSize="20dp"
+                    android:hint="Player 1">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:orientation="vertical"
+                    android:layout_margin="10dp"
+                    android:padding="20dp"
+                    android:layout_gravity="bottom"
+                    android:gravity="bottom"
+>
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:padding="10dp"
+                        android:layout_margin="5dp"
+                        android:orientation="vertical"
+                        android:textAlignment="gravity"
+>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:textAlignment="center"
+                            android:textSize="25dp"
+                            android:text="❌"
+                            />
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="left"
+            android:layoutDirection="ltr"
+            android:layout_weight="30"
+            android:layout_margin="5dp"
+            android:padding="10dp"/>
+        <LinearLayout
+            android:layout_width="125dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="left"
+            android:layoutDirection="ltr"
+            android:layout_weight="30"
+            android:layout_margin="5dp"
+            android:padding="10dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlinedTextField"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="top"
+                    android:gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:textSize="20dp"
+                    android:hint="Player 2">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+    />
+
+                </com.google.android.material.textfield.TextInputLayout>
+                <!--com.google.android.material.card.MaterialCardView-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom"
+                    android:gravity="center"
+                    android:layout_marginTop="25dp">
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical"
+                        android:textAlignment="gravity"
+                        android:layout_margin="15dp"
+>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:textAlignment="center"
+                            android:textSize="25dp"
+                            android:text="⭕"/>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

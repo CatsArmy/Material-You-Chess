@@ -21,6 +21,8 @@ namespace App2
         private int Draws = 0;
         private int Player1 = 0;
         private int Player2 = 0;
+        string Player1Name = "Player 1";
+        string Player2Name = "Player 2";
 
         private readonly Button[] Numpad = new Button[9];
         private readonly PointType[] Board = new PointType[9];
@@ -33,7 +35,8 @@ namespace App2
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
-            base.SetContentView(Resource.Layout.activity_main);
+            base.SetContentView(Resource.Layout.dashboard);
+
             //Apply Material You
             if (!isRecreated)
             {
@@ -41,6 +44,7 @@ namespace App2
                 DynamicColors.ApplyToActivitiesIfAvailable(base.Application);
                 base.Recreate();
             }
+            return;
             Player1Score = base.FindViewById<TextView>(Resource.Id.Player1Score);
             Player2Score = base.FindViewById<TextView>(Resource.Id.Player2Score);
             RoundCounter = base.FindViewById<TextView>(Resource.Id.RoundCounter);
