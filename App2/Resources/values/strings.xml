@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">App2</string>
+    <string name="app_name">Tic Tac Toe</string>
     <string name="action_settings">Settings</string>
 </resources>
