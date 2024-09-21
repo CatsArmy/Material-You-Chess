@@ -68,7 +68,8 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enum.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="EnumExtensions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainGameActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -84,7 +85,6 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\values\ic_launcher_background.xml" />
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\values\styles.xml" />
     <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />

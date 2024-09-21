@@ -5,51 +5,49 @@ using Android.OS;
 using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Google.Android.Material.Color;
 using Google.Android.Material.TextField;
 
 namespace TicTacToe
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         private TextInputEditText Player1NameInput;
         private TextInputEditText Player2NameInput;
         private Button StartGame;
-        private static bool isRecreated = false;
-        private const string Empty = "";
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
             base.SetContentView(Resource.Layout.activity_main);
-            //Apply Material You
-            if (!isRecreated)
-            {
-                isRecreated = true;
-                DynamicColors.ApplyToActivitiesIfAvailable(base.Application);
-                base.Recreate();
-            }
+
 
             Player1NameInput = base.FindViewById<TextInputEditText>(Resource.Id.TextInputEditText1);
             Player2NameInput = base.FindViewById<TextInputEditText>(Resource.Id.TextInputEditText2);
             StartGame = base.FindViewById<Button>(Resource.Id.StartGame);
             StartGame.Click += StartGame_Click;
+
         }
 
+
+        private const string Empty = "";
         private void StartGame_Click(object sender, EventArgs e)
         {
+            const string Player1 = "Player 1";
             string player1 = Player1NameInput.Text switch
             {
-                null => "Player 1",
-                Empty => "Player 1",
+                null => Player1,
+                Empty => Player1,
                 _ => Player1NameInput.Text,
             };
-            string player2 = Player1NameInput.Text switch
+            const string Player2 = "Player 2";
+            string player2 = Player2NameInput.Text switch
             {
-                null => "Player 2",
-                Empty => "Player 2",
+                null => Player2,
+                Empty => Player2,
                 _ => Player2NameInput.Text,
             };
 

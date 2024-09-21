@@ -281,61 +281,71 @@
             <Button
                 android:id="@+id/btn1"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="0"
                 android:layout_weight="33"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
             <Button
                 android:id="@+id/btn2"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="1"
                 android:layout_weight="33"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
             <Button
                 android:id="@+id/btn3"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_column="2"
+                android:padding="10dp"
                 android:layout_weight="33"
                 android:textSize="25dp"
                 />
         </TableRow>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:padding="5dp" />
         <TableRow
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
             android:layout_margin="10dp"
             android:padding="10dp"
             android:weightSum="99"
-            tools:ignore="MissingDimension"
-            >
+            tools:ignore="MissingDimension" >
             <Button
                 android:id="@+id/btn4"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="0"
                 android:layout_weight="33"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
             <Button
                 android:id="@+id/btn5"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="1"
                 android:layout_weight="33"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
             <Button
                 android:id="@+id/btn6"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="2"
                 android:layout_weight="33"
-                android:textSize="25dp"
-                />
+                android:textSize="25dp" />
         </TableRow>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:padding="5dp" />
         <TableRow
             android:layout_height="match_parent"
             android:layout_width="wrap_content"
@@ -347,7 +357,8 @@
             <Button
                 android:id="@+id/btn7"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="0"
                 android:layout_weight="33"
                 android:textSize="25dp"
@@ -355,7 +366,8 @@
             <Button
                 android:id="@+id/btn8"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="1"
                 android:layout_weight="33"
                 android:textSize="25dp"
@@ -363,7 +375,8 @@
             <Button
                 android:id="@+id/btn9"
                 android:layout_height="80dp"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
+                android:padding="10dp"
                 android:layout_column="2"
                 android:layout_weight="33"
                 android:textSize="25dp"

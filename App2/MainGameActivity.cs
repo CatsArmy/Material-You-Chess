@@ -4,11 +4,10 @@ using Android.OS;
 using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Google.Android.Material.Color;
 
 namespace TicTacToe
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme")]
+    [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
     public class MainGameActivity : AppCompatActivity
     {
         internal TextView Player1Name;
@@ -27,20 +26,11 @@ namespace TicTacToe
 
         private PointType Player = PointType.X;
         private bool isGameOver = false;
-        private static bool isRecreated = false;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            // Set our view from the "main" layout resource
             base.SetContentView(Resource.Layout.activity_main_game);
-            //Apply Material You
-            if (!isRecreated)
-            {
-                isRecreated = true;
-                DynamicColors.ApplyToActivitiesIfAvailable(base.Application);
-                base.Recreate();
-            }
 
             RoundCounter = base.FindViewById<TextView>(Resource.Id.RoundCounter);
             DrawCounter = base.FindViewById<TextView>(Resource.Id.DrawCounter);
