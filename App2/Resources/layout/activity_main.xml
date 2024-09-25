@@ -227,7 +227,7 @@
                         android:text="Start Game"
                         android:textSize="20dp"
             />
-                    <Button
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/AccountDashboard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -236,8 +236,7 @@
                         android:textAlignment="gravity"
                         android:padding="35dp"
                         android:text="Account Dashboard"
-                        android:textSize="20dp"
-            />
+                        android:textSize="20dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
