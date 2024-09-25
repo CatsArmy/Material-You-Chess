@@ -228,17 +228,16 @@
                         android:textSize="20dp"
             />
                     <Button
-                        android:id="@+id/btUserLogin"
+                        android:id="@+id/AccountDashboard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:textAlignment="gravity"
                         android:padding="35dp"
-                        android:text="Login or Signup"
+                        android:text="Account Dashboard"
                         android:textSize="20dp"
             />
-
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
