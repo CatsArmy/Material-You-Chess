@@ -2,7 +2,6 @@
 using Android.App;
 using Android.Content.Res;
 using Android.Graphics;
-using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Runtime;
 using Android.Text;
@@ -27,8 +26,6 @@ namespace TicTacToe
 
         private Color ActivePlayerCard;
         private Color InactivePlayerCard;
-        private ColorStateListDrawable mActivePlayerCard;
-        private ColorStateListDrawable mInactivePlayerCard;
 
         private int Rounds = 1;
         private int Draws = 0;
@@ -62,9 +59,6 @@ namespace TicTacToe
 
             ActivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_light_on_surface));
             InactivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_dark_on_surface));
-
-            mActivePlayerCard = new ColorStateListDrawable(ColorStateList.ValueOf(ActivePlayerCard));
-            mInactivePlayerCard = new ColorStateListDrawable(ColorStateList.ValueOf(InactivePlayerCard));
 
             for (int i = 0; i < Numpad.Length; i++)
             {
@@ -226,6 +220,9 @@ namespace TicTacToe
             }
         }
 
+        /// <param name="direction">
+        /// the <paramref name="direction"/> of the diagonal: <see langword="false"/> <see langword="is"/> left, <see langword="true"/> <see langword="is"/> right
+        /// </param>
         public (int, int, int) Diagonal(bool direction)
         {
             var (i, j, k) = (0, 4, 8);

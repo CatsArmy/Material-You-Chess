@@ -5,7 +5,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Google.Android.Material.Card;
 using Google.Android.Material.TextField;
 
 namespace TicTacToe
@@ -16,7 +15,7 @@ namespace TicTacToe
         private TextInputEditText Player1NameInput;
         private TextInputEditText Player2NameInput;
         private Button StartGame;
-        private MaterialCardView UserLogin;
+        private Button UserLogin;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -25,41 +24,40 @@ namespace TicTacToe
             // Set our view from the "main" layout resource
             base.SetContentView(Resource.Layout.activity_main);
 
-            Player1NameInput = base.FindViewById<TextInputEditText>(Resource.Id.TextInputEditText1);
-            Player2NameInput = base.FindViewById<TextInputEditText>(Resource.Id.TextInputEditText2);
+            Player1NameInput = base.FindViewById<TextInputEditText>(Resource.Id.Player1NameInput);
+            Player2NameInput = base.FindViewById<TextInputEditText>(Resource.Id.Player2NameInput);
             StartGame = base.FindViewById<Button>(Resource.Id.StartGame);
             StartGame.Click += StartGame_Click;
 
-            UserLogin = base.FindViewById<MaterialCardView>(Resource.Id.AccountDashboard);
+            UserLogin = base.FindViewById<Button>(Resource.Id.HelpButton);
 
             base.RegisterForContextMenu(UserLogin);
-
         }
 
-        //#region Context Menu
-        //public override void OnCreateContextMenu(Android.Views.IContextMenu menu, Android.Views.View view,
-        //    Android.Views.IContextMenuContextMenuInfo menuInfo)
-        //{
-        //    base.OnCreateContextMenu(menu, view, menuInfo);
+        #region Context Menu
+        public override void OnCreateContextMenu(Android.Views.IContextMenu menu, Android.Views.View view,
+            Android.Views.IContextMenuContextMenuInfo menuInfo)
+        {
+            base.OnCreateContextMenu(menu, view, menuInfo);
 
-        //    MenuInflater.Inflate(Resource.Menu.login_menu, menu);
-        //}
-        //public override bool OnContextItemSelected(Android.Views.IMenuItem item)
-        //{
-        //    switch (item.ItemId)
-        //    {
-        //        case Resource.Id.LoginUser:
-        //            Toast.MakeText(this, "You selected the Login user context item", ToastLength.Long).Show();
-        //            return true;
-        //        case Resource.Id.RegisterUser:
-        //            Toast.MakeText(this, "You selected the Register user context item", ToastLength.Long).Show();
-        //            return true;
-        //        default:
-        //            return base.OnContextItemSelected(item);
-        //    }
-        //}
-        //#endregion
-        //#region OptionsMenu
+            MenuInflater.Inflate(Resource.Menu.menu1, menu);
+        }
+        public override bool OnContextItemSelected(Android.Views.IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Resource.Id.LoginUser:
+                    Toast.MakeText(this, "You selected the Login user context item", ToastLength.Long).Show();
+                    return true;
+                case Resource.Id.RegisterUser:
+                    Toast.MakeText(this, "You selected the Register user context item", ToastLength.Long).Show();
+                    return true;
+                default:
+                    return base.OnContextItemSelected(item);
+            }
+        }
+        #endregion
+        #region OptionsMenu
         //public override bool OnCreateOptionsMenu(Android.Views.IMenu menu)
         //{
         //    base.MenuInflater.Inflate(Resource.Menu.login_menu, menu);
@@ -82,7 +80,7 @@ namespace TicTacToe
         //            return base.OnOptionsItemSelected(item);
         //    }
         //}
-        //#endregion
+        #endregion
 
         private const string Empty = "";
         private void StartGame_Click(object sender, EventArgs e)

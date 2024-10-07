@@ -5,6 +5,6 @@
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
 		
-		<!--<item name="android:statusBarColor">@drawable/m3_tabs_transparent_background</item>-->
+		<item name="android:statusBarColor">#00000000</item>
 	</style>
 </resources>

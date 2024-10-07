@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Enums.cs" />
     <Compile Include="EnumExtensions.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainGameActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -106,10 +107,15 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\drawable\" />
+    <AndroidResource Include="Resources\menu\menu1.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.7" />
+    <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended">
+      <Version>1.6.6</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding">
       <Version>1.6.6</Version>
     </PackageReference>
@@ -127,6 +133,36 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_circle_24.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_close_24.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_help_24.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_more_horiz_24.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_more_vert_24.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\menu\other.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

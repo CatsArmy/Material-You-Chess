@@ -1,245 +1,768 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:layoutDirection="ltr">
+    tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vMainGuideline33p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.33" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vMainGuideline67p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.67" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hMainGuideline95p"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginVertical="25dp"
-        android:layout_marginHorizontal="12.5dp"
-        android:layoutDirection="ltr"
-        android:paddingVertical="5dp"
-        android:paddingHorizontal="5dp"
-        android:weightSum="150"
-        tools:ignore="MissingDimension"
-        >
-        <LinearLayout
-            android:layout_width="125dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="left"
-            android:layoutDirection="ltr"
-            android:layout_marginTop="2.5dp"
-            android:layout_marginBottom="2.5dp"
-            android:layout_marginVertical="5dp"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:paddingVertical="10dp"
-            android:layout_weight="30"
-        >
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:padding="5dp"
-                android:orientation="vertical"
-            >
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7.5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="20dp"
-                    android:hint="Player 1">
+        app:layout_constraintGuide_percent="0.95" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/TextInputEditText1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:layout_margin="5dp"
-                        android:padding="10dp"/>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hMainGuideline45p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
 
-                </com.google.android.material.textfield.TextInputLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="95dp"
-                    android:orientation="vertical"
-                    android:layout_marginTop="40dp"
-                    android:layout_margin="5dp"
-                    android:paddingTop="5dp"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="10dp"
-                        android:layout_margin="5dp"
-                        android:orientation="vertical"
-                        android:textAlignment="gravity"
->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textAlignment="center"
-                            android:textSize="25dp"
-                            android:text="❌"
-                            />
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hMainGuideline20p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hMainGuideline30p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.3" />
 
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/hMainGuideline04p"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.04" />
 
-        <LinearLayout
-            android:layout_width="125dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="left"
-            android:layoutDirection="ltr"
-            android:layout_weight="30"
-            android:layout_margin="5dp"
-            android:padding="10dp"/>
-
-        <LinearLayout
-            android:layout_width="125dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="left"
-            android:layoutDirection="ltr"
-            android:layout_marginTop="2.5dp"
-            android:layout_marginBottom="2.5dp"
-            android:layout_marginVertical="5dp"
-            android:paddingBottom="5dp"
-            android:paddingTop="5dp"
-            android:paddingVertical="10dp"
-            android:layout_weight="30"
-        >
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:padding="5dp"
-                android:orientation="vertical"
-            >
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7.5dp"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="20dp"
-                    android:hint="Player 2">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/TextInputEditText2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="top"
-                        android:layout_margin="5dp"
-                        android:padding="10dp"/>
-
-                </com.google.android.material.textfield.TextInputLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="95dp"
-                    android:orientation="vertical"
-                    android:layout_marginTop="40dp"
-                    android:layout_margin="5dp"
-                    android:paddingTop="5dp"
-                    android:layout_gravity="bottom"
-                    android:gravity="bottom"
->
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="10dp"
-                        android:layout_margin="5dp"
-                        android:orientation="vertical"
-                        android:textAlignment="gravity"
->
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:textAlignment="center"
-                            android:textSize="25dp"
-                            android:text="⭕"
-                            />
-                    </com.google.android.material.card.MaterialCardView>
-                </LinearLayout>
-
-
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-    </LinearLayout>
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/Scorebar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_margin="3dp"
-        android:layout_marginVertical="5dp"
-        android:layout_marginBottom="25dp"
-        android:layout_marginHorizontal="35dp"
-        android:padding="5dp"
-        android:paddingVertical="10dp"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="top"
-            android:gravity="center"
-            android:layout_margin="25dp"
-            android:layout_marginVertical="35dp"
-            android:padding="35dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/hMainGuideline20p"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hMainGuideline04p"
+        app:layout_constraintVertical_bias="0.0">
 
-            <com.google.android.material.card.MaterialCardView
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/hScorebarGuideline00p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.0" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/hScorebarGuideline15p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/hScorebarGuideline65p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.65" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/hScorebarGuideline77p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.77" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vScorebarGuideline33p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.33" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vScorebarGuideline35p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vScorebarGuideline65p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.65" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vScorebarGuideline67p"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.67" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvPlayer1Card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryFixed"
+            app:layout_constraintBottom_toTopOf="@+id/hScorebarGuideline77p"
+            app:layout_constraintEnd_toStartOf="@+id/vScorebarGuideline35p"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline00p"
+            app:strokeWidth="2dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="bottom"
-                android:layout_marginVertical="65dp"
-                android:layout_marginHorizontal="15dp"
-                android:paddingVertical="45dp"
-            >
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:layout_margin="15dp"
-                    android:layout_marginVertical="35dp"
-                    android:padding="25dp"
->
-                    <Button
-                        android:id="@+id/StartGame"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textAlignment="gravity"
-                        android:padding="45dp"
-                        android:text="Start Game"
-                        android:textSize="20dp"
-            />
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/AccountDashboard"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textAlignment="gravity"
-                        android:padding="35dp"
-                        android:text="Account Dashboard"
-                        android:textSize="20dp" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5">
 
-        </LinearLayout>
-    </RelativeLayout>
-</LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:textColorHint="#191C1E"
+                    app:helperTextTextColor="#191C1E"
+                    app:hintTextColor="#191C1E"
+                    app:placeholderTextColor="#191C1E"
+                    app:suffixTextColor="#191C1E"
+                    app:prefixTextColor="#191C1E"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:hint="Player 1"
+                    app:layout_constraintBottom_toTopOf="@+id/hGuideline1P1C"
+                    app:layout_constraintEnd_toStartOf="@+id/vGuideline2P1C"
+                    app:layout_constraintStart_toStartOf="@+id/vGuideline1P1C"
+                    app:layout_constraintTop_toTopOf="@+id/hGuideline3P1C"
+                    tools:ignore="HardcodedText" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/Player1NameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textAlignment="gravity"
+                        android:textColor="#191C1E" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcvPlayer1X"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColor="@color/m3_sys_color_dynamic_light_on_surface"
+                    app:cardCornerRadius="32dp"
+                    app:layout_constraintBottom_toTopOf="@+id/hGuideline2P1C"
+                    app:layout_constraintEnd_toStartOf="@+id/vGuideline2P1C"
+                    app:layout_constraintStart_toStartOf="@+id/vGuideline1P1C"
+                    app:layout_constraintTop_toTopOf="@+id/hGuideline1P1C2"
+                    app:strokeWidth="2dp"
+                    tools:ignore="PrivateResource">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/mtvPlayer1X"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:gravity="center"
+                            android:text="❌"
+                            android:textAlignment="gravity"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline1P1C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline1P1C2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.55" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline2P1C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.85" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline3P1C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.11" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vGuideline1P1C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.10" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vGuideline2P1C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.90" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvPlayer1Wins"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryFixedDim"
+            app:cardCornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/vScorebarGuideline33p"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline77p"
+            app:strokeWidth="2dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Player1Score"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="Wins: 0"
+                    android:textAlignment="gravity"
+                    android:textColor="#191C1E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="HardcodedText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvRounds"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
+            app:cardBackgroundColor="?attr/colorPrimaryFixed"
+            app:cardCornerRadius="360dp"
+            app:layout_constraintBottom_toTopOf="@+id/hScorebarGuideline65p"
+            app:layout_constraintEnd_toStartOf="@+id/vScorebarGuideline65p"
+            app:layout_constraintStart_toStartOf="@+id/vScorebarGuideline35p"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline15p"
+            app:strokeWidth="0dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline41p"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.41" />
+
+                <TextView
+                    android:id="@+id/RoundCounter"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="@string/text_view"
+                    android:textAlignment="gravity"
+                    android:textColor="#191C1E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="VisualLintOverlap" />
+
+                <TextView
+                    android:id="@+id/mtvRound"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:text="Round"
+                    android:textAlignment="gravity"
+                    android:textColor="#191C1E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/hGuideline41p"
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:ignore="HardcodedText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/DrawCounter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="Draws: 0"
+            android:textAlignment="gravity"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/vScorebarGuideline65p"
+            app:layout_constraintStart_toStartOf="@+id/vScorebarGuideline35p"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline65p"
+            tools:ignore="HardcodedText" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvPlayer2Card"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryFixed"
+            app:layout_constraintBottom_toTopOf="@+id/hScorebarGuideline77p"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/vScorebarGuideline65p"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline00p"
+            app:strokeWidth="2dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" >
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:textColorHint="#191C1E"
+                    app:helperTextTextColor="#191C1E"
+                    app:hintTextColor="#191C1E"
+                    app:placeholderTextColor="#191C1E"
+                    app:suffixTextColor="#191C1E"
+                    app:prefixTextColor="#191C1E"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:hint="Player 2"
+                    app:layout_constraintBottom_toTopOf="@+id/hGuideline1P2C"
+                    app:layout_constraintEnd_toStartOf="@+id/vGuideline2P2C"
+                    app:layout_constraintStart_toStartOf="@+id/vGuideline1P2C"
+                    app:layout_constraintTop_toTopOf="@+id/hGuideline3P2C"
+                    tools:ignore="HardcodedText" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/Player2NameInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textColor="#191C1E"
+                        android:gravity="center"
+                        android:textAlignment="gravity"
+                        tools:ignore="HardcodedText" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/mcvPlayer2O"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColor="@color/m3_sys_color_dynamic_dark_on_surface"
+                    app:cardCornerRadius="32dp"
+                    app:layout_constraintBottom_toTopOf="@+id/hGuideline2P2C"
+                    app:layout_constraintEnd_toStartOf="@+id/vGuideline2P2C"
+                    app:layout_constraintStart_toStartOf="@+id/vGuideline1P2C"
+                    app:layout_constraintTop_toTopOf="@+id/hGuideline1P2C2"
+                    app:strokeWidth="2dp"
+                    tools:ignore="PrivateResource">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/mtvPlayer2O"
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:gravity="center"
+                            android:text="⭕"
+                            android:textAlignment="gravity"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:ignore="HardcodedText,TextContrastCheck" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline1P2C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.5" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline1P2C2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.55" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline2P2C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.85" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/hGuideline3P2C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.11" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vGuideline1P2C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.10" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/vGuideline2P2C"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.90" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvPlayer2Wins"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            app:cardBackgroundColor="?attr/colorSecondaryFixedDim"
+            app:cardCornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/vScorebarGuideline67p"
+            app:layout_constraintTop_toTopOf="@+id/hScorebarGuideline77p"
+            app:strokeWidth="2dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Player2Score"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="Wins: 0"
+                    android:textAlignment="gravity"
+                    android:textColor="#191C1E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="HardcodedText" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/mcvGameBoardCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/hMainGuideline95p"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/hMainGuideline45p"
+        app:layout_constraintVertical_bias="0.5">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/HelpButton"
+                style="?attr/materialIconButtonFilledTonalStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                app:icon="@drawable/outline_help_24"
+                app:layout_constraintBottom_toTopOf="@+id/hGuideline15p"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <Button
+                android:id="@+id/StartGame"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Start Game"
+                app:layout_constraintBottom_toTopOf="@+id/mdDividerBottom"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/vGuideline68p"
+                app:layout_constraintStart_toStartOf="@+id/vGuideline32p"
+                app:layout_constraintTop_toTopOf="@+id/mdDividerTop"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/vGuideline68p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.68"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/vGuideline32p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintGuide_percent="0.32911393"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline15p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.15" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline20p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.2" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline45p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.45" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline55p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.55" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline80p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintGuide_percent="0.8"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/hGuideline85p"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.85" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/mdDividerTop"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:dividerThickness="4dp"
+                app:layout_constraintBottom_toTopOf="@+id/hGuideline55p"
+                app:layout_constraintEnd_toEndOf="@id/dividerTop"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/dividerTop"
+                app:layout_constraintTop_toTopOf="@+id/hGuideline15p"
+                app:layout_constraintVertical_bias="0.497"
+                tools:ignore="TooManyViews" />
+
+            <View
+                android:id="@+id/dividerTop"
+                android:layout_width="364dp"
+                android:layout_height="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/hGuideline55p"
+                app:layout_constraintEnd_toStartOf="@+id/vGuideline68p"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/vGuideline32p"
+                app:layout_constraintTop_toTopOf="@+id/hGuideline20p"
+                tools:ignore="TooManyViews"
+                tools:visibility="invisible" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/mdDividerBottom"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:dividerThickness="4dp"
+                app:layout_constraintBottom_toTopOf="@+id/hGuideline85p"
+                app:layout_constraintEnd_toEndOf="@+id/dividerBottom"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/dividerBottom"
+                app:layout_constraintTop_toTopOf="@+id/hGuideline45p" />
+
+            <View
+                android:id="@+id/dividerBottom"
+                android:layout_width="364dp"
+                android:layout_height="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/hGuideline80p"
+                app:layout_constraintEnd_toStartOf="@+id/vGuideline68p"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/vGuideline32p"
+                app:layout_constraintTop_toTopOf="@+id/hGuideline45p"
+                tools:ignore="TooManyViews"
+                tools:visibility="invisible" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/mdDividerLeft"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:rotation="90"
+                app:dividerThickness="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/dividerLeft"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/dividerLeft"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="VisualLintBounds,MissingDimension" />
+
+            <View
+                android:id="@+id/dividerLeft"
+                android:layout_width="364dp"
+                android:layout_height="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/vGuideline68p"
+                app:layout_constraintHorizontal_bias="0.8"
+                app:layout_constraintStart_toEndOf="@+id/vGuideline32p"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="VisualLintBounds,MissingDimension"
+                tools:visibility="invisible" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/mdDividerRight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:rotation="90"
+                app:dividerThickness="4dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/dividerRight"
+                app:layout_constraintStart_toStartOf="@+id/dividerRight"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="VisualLintBounds,MissingDimension" />
+
+            <View
+                android:id="@+id/dividerRight"
+                android:layout_width="364dp"
+                android:layout_height="8dp"
+                android:background="?android:attr/listDivider"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/vGuideline68p"
+                app:layout_constraintHorizontal_bias="0.2"
+                app:layout_constraintStart_toEndOf="@+id/vGuideline32p"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="VisualLintBounds,MissingDimension"
+                tools:visibility="invisible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
