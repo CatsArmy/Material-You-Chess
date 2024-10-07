@@ -2,4 +2,6 @@
     <string name="app_name">TicTacToe</string>
     <string name="package_name">com.catsarmy.App</string>
     <string name="action_settings">Settings</string>
+	<string name="board_buttons"></string>
+	<string name="text_view">1<sup>st</sup></string>
 </resources>

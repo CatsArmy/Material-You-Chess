@@ -35,4 +35,13 @@ public static class EnumExtensions
             _ => "th"
         };
     }
+    public static void SetButtonColor(this Button btn, Button background = null)
+    {
+        if (background is null)
+        {
+            btn.Background = null;
+            return;
+        }
+        btn.Background = background.Background;
+    }
 }
