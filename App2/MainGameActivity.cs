@@ -38,8 +38,17 @@ namespace TicTacToe
         private PointType Player = PointType.X;
         private bool isGameOver = false;
 
+        public bool MaterialYouThemePreference;
+
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            MaterialYouThemePreference = bool.Parse(base.Intent.GetStringExtra(nameof(MaterialYouThemePreference)));
+            if (!MaterialYouThemePreference)
+            {
+                base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
+            }
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             base.SetContentView(Resource.Layout.activity_main_game);
@@ -59,7 +68,6 @@ namespace TicTacToe
 
             ActivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_light_on_surface));
             InactivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_dark_on_surface));
-
             for (int i = 0; i < Numpad.Length; i++)
             {
                 //Resource.Id.button8 == Resource.Id.button9 - 1 ... Resource.Id.button1 == Resource.Id.button2 - 1
