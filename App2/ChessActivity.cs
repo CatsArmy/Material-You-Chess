@@ -13,7 +13,7 @@ using Google.Android.Material.Card;
 namespace TicTacToe
 {
     [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
-    public class MainGameActivity : AppCompatActivity
+    public class ChessActivity : AppCompatActivity
     {
         internal TextView Player1Name;
         internal TextView Player2Name;
@@ -51,31 +51,31 @@ namespace TicTacToe
             }
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
-            base.SetContentView(Resource.Layout.activity_main_game);
+            base.SetContentView(Resource.Layout.main);
 
-            RoundCounter = base.FindViewById<TextView>(Resource.Id.RoundCounter);
-            DrawCounter = base.FindViewById<TextView>(Resource.Id.DrawCounter);
-            Player1Score = base.FindViewById<TextView>(Resource.Id.Player1Score);
-            Player2Score = base.FindViewById<TextView>(Resource.Id.Player2Score);
+            //RoundCounter = base.FindViewById<TextView>(Resource.Id.RoundCounter);
+            //DrawCounter = base.FindViewById<TextView>(Resource.Id.DrawCounter);
+            //Player1Score = base.FindViewById<TextView>(Resource.Id.Player1Score);
+            //Player2Score = base.FindViewById<TextView>(Resource.Id.Player2Score);
 
-            Player1Name = base.FindViewById<TextView>(Resource.Id.Player1Name);
-            Player1Name.Text = base.Intent.GetStringExtra(nameof(Player1Name));
-            Player2Name = base.FindViewById<TextView>(Resource.Id.Player2Name);
-            Player2Name.Text = base.Intent.GetStringExtra(nameof(Player2Name));
+            //Player1Name = base.FindViewById<TextView>(Resource.Id.Player1Name);
+            //Player1Name.Text = base.Intent.GetStringExtra(nameof(Player1Name));
+            //Player2Name = base.FindViewById<TextView>(Resource.Id.Player2Name);
+            //Player2Name.Text = base.Intent.GetStringExtra(nameof(Player2Name));
 
-            Player1X = base.FindViewById<MaterialCardView>(Resource.Id.mcvPlayer1X);
-            Player2O = base.FindViewById<MaterialCardView>(Resource.Id.mcvPlayer2O);
+            //Player1X = base.FindViewById<MaterialCardView>(Resource.Id.mcvPlayer1X);
+            //Player2O = base.FindViewById<MaterialCardView>(Resource.Id.mcvPlayer2O);
 
-            ActivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_light_on_surface));
-            InactivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_dark_on_surface));
-            for (int i = 0; i < Numpad.Length; i++)
-            {
-                //Resource.Id.button8 == Resource.Id.button9 - 1 ... Resource.Id.button1 == Resource.Id.button2 - 1
-                Numpad[i] = base.FindViewById<Button>(Resource.Id.button1 + i);
-                int index = int.Parse($"{i}");
-                Numpad[i].Click += (sender, e) => TryPlay(sender, e, index);
-            }
-            ResetBoard();
+            //ActivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_light_on_surface));
+            //InactivePlayerCard = new Color(base.GetColor(Resource.Color.m3_sys_color_dynamic_dark_on_surface));
+            //for (int i = 0; i < Numpad.Length; i++)
+            //{
+            //    //Resource.Id.button8 == Resource.Id.button9 - 1 ... Resource.Id.button1 == Resource.Id.button2 - 1
+            //    Numpad[i] = base.FindViewById<Button>(Resource.Id.button1 + i);
+            //    int index = int.Parse($"{i}");
+            //    Numpad[i].Click += (sender, e) => TryPlay(sender, e, index);
+            //}
+            //ResetBoard();
         }
 
 #pragma warning disable CS0618 // Type or member is obsolete

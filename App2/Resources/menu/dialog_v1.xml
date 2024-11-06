@@ -6,7 +6,7 @@
     android:layout_gravity="center_vertical"
     android:padding="8dp">
 
-    <TextView
+	<TextView
         android:id="@+id/dialogHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,18 +14,18 @@
         android:text="App Theme"
         android:textSize="20sp" />
 
-    <com.google.android.material.divider.MaterialDivider
+	<com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 
-    <com.google.android.material.materialswitch.MaterialSwitch
+	<com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/MaterialYouSwitch"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:checked="true"
         android:text="Material You" />
 
-    <com.google.android.material.divider.MaterialDivider
+	<com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="1dp" />
 </LinearLayout>

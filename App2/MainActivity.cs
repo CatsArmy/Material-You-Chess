@@ -89,7 +89,7 @@ namespace TicTacToe
             });
             //builder.SetNeutralButton("Dismiss", (a, b) => { });
             builder.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_share_24, builder.Context.Theme));
-            builder.SetView(Resource.Layout.dialog_v1);
+            builder.SetView(Resource.Menu.dialog_v1);
             dialog = builder.Create();
         }
         void Boo(object sender, EventArgs e)
@@ -209,10 +209,10 @@ namespace TicTacToe
                 _ => Player2NameInput.Text,
             };
 
-            Intent intent = new Intent(this, typeof(MainGameActivity))
-                .PutExtra(nameof(MainGameActivity.MaterialYouThemePreference), MaterialYouThemePreference.ToString())
-                .PutExtra(nameof(MainGameActivity.Player1Name), player1)
-                .PutExtra(nameof(MainGameActivity.Player2Name), player2);
+            Intent intent = new Intent(this, typeof(ChessActivity))
+                .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), MaterialYouThemePreference.ToString())
+                .PutExtra(nameof(ChessActivity.Player1Name), player1)
+                .PutExtra(nameof(ChessActivity.Player2Name), player2);
             base.StartActivity(intent);
         }
 

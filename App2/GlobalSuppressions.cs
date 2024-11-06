@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:TicTacToe.MainGameActivity.TryPlay(System.Object,System.EventArgs,System.Int32)")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:TicTacToe.ChessActivity.TryPlay(System.Object,System.EventArgs,System.Int32)")]
