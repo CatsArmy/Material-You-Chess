@@ -69,15 +69,61 @@
   </ItemGroup>
   <ItemGroup>
     <!-- <Compile Include="\**\*.cs;\*.cs;\**" /> -->
-    <AndroidResource Include="Resources\**\*.xml;Resources\*.xml"/>
-    <AndroidResource Include="Resources\**\*.png;Resources\*.png"/>
-    <AndroidResource Include="Resources\**\*.jpeg;Resources\*.jpeg"/>
-    <AndroidResource Include="Resources\**\*.svg;Resources\*.svg"/>
-    <AndroidResource Include="Resources\**\*.SVG;Resources\*.SVG"/>
+    <AndroidResource Include="Resources\drawable-v24\ic_launcher_foreground.xml" />
+    <AndroidResource Include="Resources\drawable\bishop_black.xml" />
+    <AndroidResource Include="Resources\drawable\bishop_white.xml" />
+    <AndroidResource Include="Resources\drawable\black_square.xml" />
+    <AndroidResource Include="Resources\drawable\black_square_bottom.xml" />
+    <AndroidResource Include="Resources\drawable\black_square_top.xml" />
+    <AndroidResource Include="Resources\drawable\ic_launcher_background.xml" />
+    <AndroidResource Include="Resources\drawable\king_black.xml" />
+    <AndroidResource Include="Resources\drawable\king_white.xml" />
+    <AndroidResource Include="Resources\drawable\knight_black.xml" />
+    <AndroidResource Include="Resources\drawable\knight_white.xml" />
+    <AndroidResource Include="Resources\drawable\outline_account_circle_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_circle_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_close_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_help_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_more_horiz_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_more_vert_24.xml" />
+    <AndroidResource Include="Resources\drawable\outline_share_24.xml" />
+    <AndroidResource Include="Resources\drawable\pawn_black.xml" />
+    <AndroidResource Include="Resources\drawable\pawn_white.xml" />
+    <AndroidResource Include="Resources\drawable\queen_black.xml" />
+    <AndroidResource Include="Resources\drawable\queen_white.xml" />
+    <AndroidResource Include="Resources\drawable\rook_black.xml" />
+    <AndroidResource Include="Resources\drawable\rook_white.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_bluetooth_24.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_robot_2_24.xml" />
+    <AndroidResource Include="Resources\drawable\rounded_smartphone_24.xml" />
+    <AndroidResource Include="Resources\drawable\white_square.xml" />
+    <AndroidResource Include="Resources\drawable\white_square_bottom.xml" />
+    <AndroidResource Include="Resources\drawable\white_square_top.xml" />
+    <AndroidResource Include="Resources\layout\chess_activity.xml" />
+    <AndroidResource Include="Resources\layout\login.xml" />
+    <AndroidResource Include="Resources\layout\main_activity.xml" />
+    <AndroidResource Include="Resources\layout\signup.xml" />
+    <AndroidResource Include="Resources\menu\dialog_v1.xml" />
+    <AndroidResource Include="Resources\menu\menu1.xml" />
+    <AndroidResource Include="Resources\menu\other.xml" />
+    <AndroidResource Include="Resources\menu\share1.xml" />
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />
+    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher_round.xml" />
+    <AndroidResource Include="Resources\values\colors.xml" />
+    <AndroidResource Include="Resources\values\dimens.xml" />
+    <AndroidResource Include="Resources\values\strings.xml" />
+    <AndroidResource Include="Resources\values\styles.xml" />
+    <AndroidResource Include="Resources\**\*.png;Resources\*.png" />
+    <AndroidResource Include="Resources\**\*.jpeg;Resources\*.jpeg" />
+    <AndroidResource Include="Resources\**\*.svg;Resources\*.svg" />
+    <AndroidResource Include="Resources\**\*.SVG;Resources\*.SVG" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <Content Include="Assets\AboutAssets.txt" />
     <Content Include="Properties\AndroidManifest.xml" />
+    <AndroidResource Include="Resources\layout\main_activity.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,9 +133,8 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="ChessActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
-    
   </ItemGroup>
-<!--  <ItemGroup>
+  <!--  <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />

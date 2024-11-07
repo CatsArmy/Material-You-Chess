@@ -43,7 +43,7 @@ namespace Chess
             base.OnCreate(savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             // Set our view from the "main" layout resource
-            base.SetContentView(Resource.Layout.activity_main);
+            base.SetContentView(Resource.Layout.main_activity);
 
 
             StartGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
