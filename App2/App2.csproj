@@ -10,8 +10,8 @@
     <TemplateGuid>{122416d6-6b49-4ee2-a1e8-b825f31c79fe}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TicTacToe</RootNamespace>
-    <AssemblyName>TicTacToe</AssemblyName>
+    <RootNamespace>Chess</RootNamespace>
+    <AssemblyName>Chess</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <Deterministic>True</Deterministic>
     <AndroidApplication>True</AndroidApplication>
@@ -68,70 +68,33 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
-    <Compile Include="EnumExtensions.cs" />
+    <!-- <Compile Include="\**\*.cs;\*.cs;\**" /> -->
+    <AndroidResource Include="Resources\**\*.xml;Resources\*.xml"/>
+    <AndroidResource Include="Resources\**\*.png;Resources\*.png"/>
+    <AndroidResource Include="Resources\**\*.jpeg;Resources\*.jpeg"/>
+    <AndroidResource Include="Resources\**\*.svg;Resources\*.svg"/>
+    <AndroidResource Include="Resources\**\*.SVG;Resources\*.SVG"/>
+  </ItemGroup>
+    <ItemGroup>
+    <Content Include="Assets\AboutAssets.txt" />
+    <Content Include="Properties\AndroidManifest.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="ChessActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    
   </ItemGroup>
-  <ItemGroup>
+<!--  <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\chess_activity.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\values\colors.xml" />
-    <AndroidResource Include="Resources\values\strings.xml" />
-    <AndroidResource Include="Resources\values\styles.xml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher.xml" />
-    <AndroidResource Include="Resources\mipmap-anydpi-v26\ic_launcher_round.xml" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher_round.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_foreground.png" />
-    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\menu\menu1.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.7" />
-    <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended">
-      <Version>1.6.6</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding">
-      <Version>1.6.6</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding">
-      <Version>8.3.2</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.AndroidX.Navigation.UI">
-      <Version>2.7.7.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
-    <PackageReference Include="Xamarin.Google.Android.Material.Compose.Theme.Adapter3">
-      <Version>1.0.18.8</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
+  </ItemGroup>-->
+  <!-- <ItemGroup>
     <AndroidResource Include="Resources\layout\activity_main.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -173,16 +136,10 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\main.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\login.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\signup.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-    <AndroidResource Include="Resources\layout\profile.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\drawable\white_square.xml">
@@ -255,6 +212,26 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <Content Include="Resources\menu\share1.xml" />
+  </ItemGroup>-->
+  <ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.7" />
+    <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended">
+      <Version>1.6.6</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding">
+      <Version>1.6.6</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding">
+      <Version>8.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Navigation.UI">
+      <Version>2.7.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
+    <PackageReference Include="Xamarin.Google.Android.Material.Compose.Theme.Adapter3">
+      <Version>1.0.18.8</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

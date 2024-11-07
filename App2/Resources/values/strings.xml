@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TicTacToe</string>
+    <string name="app_name">Chess</string>
     <string name="package_name">com.catsarmy.App</string>
     <string name="action_settings">Settings</string>
     <string name="board_buttons"></string>
