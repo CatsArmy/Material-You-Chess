@@ -45,6 +45,7 @@
     <PreferNativeArm64>true</PreferNativeArm64>
     <RegisterForComInterop>false</RegisterForComInterop>
     <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -58,6 +59,7 @@
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -121,12 +123,15 @@
   <ItemGroup>
     <Content Include="Assets\AboutAssets.txt" />
     <Content Include="Properties\AndroidManifest.xml" />
-    <AndroidResource Include="Resources\layout\main_activity.xml">
+    <AndroidResource Include="Resources\drawable\outline_photo_camera_24.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivityResultCallback.cs" />
+    <Compile Include="AppPermissions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SharedPrefExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
