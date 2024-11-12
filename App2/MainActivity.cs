@@ -8,6 +8,7 @@ using Android.Util;
 using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
+using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
@@ -25,19 +26,29 @@ namespace Chess
         private AppPermissions permissions;
         private Android.Net.Uri uri;
         private Button StartGame;
+        private ChessFirebase chessFirebase;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
-
+            chessFirebase = new ChessFirebase();
             this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
-                new ActivityResultCallback<Android.Net.Uri>(uri =>
+                new ActivityResultCallback<Android.Net.Uri>(async uri =>
                 {
                     //Logic
                     Log.Debug("PhotoPicker", $"{uri}");
                     if (uri != null)
                         this.MainProfileImageView.SetImageURI(uri);
-                    this.uri = uri;
+
+                    var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync("bergman.itai@gmail.com", "Shani1998");
+                    await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
+                        .SetDisplayName("Guest3")
+                        .SetPhotoUri(uri)
+                        .Build());
+
+                    chessFirebase.auth.UpdateCurrentUser(user.User);
+
+                    //chessFirebase.auth.CurrentUser
                 }));
 
             this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
@@ -65,6 +76,7 @@ namespace Chess
             Intent intent = new Intent(this, typeof(ChessActivity))
             .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}")
             .PutExtra(nameof(this.PlayerName), this.PlayerName)
+            .PutExtra(nameof(chessFirebase.auth.CurrentUser), chessFirebase.auth.CurrentUser)
             .PutExtra(nameof(this.uri), $"{this.uri}");
             base.StartActivity(intent);
         }

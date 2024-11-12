@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64933668749",
+    "project_id": "material-you-chess",
+    "storage_bucket": "material-you-chess.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64933668749:android:a3d6ec6c10a3fe48837fc4",
+        "android_client_info": {
+          "package_name": "com.catsarmy.chess"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtqSeZJ2_E11DL1xq5JS1AKd5n7jHE2Xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
