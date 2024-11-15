@@ -14,6 +14,7 @@
     <AssemblyName>Chess</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <Deterministic>True</Deterministic>
+    <LangVersion>10.0</LangVersion>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
@@ -130,8 +131,16 @@
   <ItemGroup>
     <Compile Include="ActivityResultCallback.cs" />
     <Compile Include="AppPermissions.cs" />
+    <Compile Include="Bishop.cs" />
+    <Compile Include="BoardPiece.cs" />
+    <Compile Include="BoardSpace.cs" />
     <Compile Include="ChessFirebase.cs" />
+    <Compile Include="King.cs" />
+    <Compile Include="Knight.cs" />
+    <Compile Include="Pawn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Queen.cs" />
+    <Compile Include="Rook.cs" />
     <Compile Include="SharedPrefExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +295,7 @@
       <Version>1.0.18.8</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
     Other similar extension points exist, see Microsoft.Common.targets.
