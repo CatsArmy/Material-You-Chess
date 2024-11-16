@@ -18,6 +18,7 @@ public class ChessActivity : AppCompatActivity
     private AppPermissions permissions;
     private Android.Net.Uri uri;
 
+    private Dictionary<(string, int), BoardPiece> pieces = new Dictionary<(string, int), BoardPiece>();
     private Dictionary<(string, int), BoardSpace> board = new Dictionary<(string, int), BoardSpace>();
     private BoardPiece selected = null;
 
@@ -62,23 +63,44 @@ public class ChessActivity : AppCompatActivity
         p1MainUsername.Text = this.PlayerName;
         this.InitChessPieces();
         this.InitChessBoard();
+        selected = null;
 
         foreach (var space in board.Values)
+            space.space.Click += (sender, e) => OnClickSpace(sender, e, space);
+
+        foreach (var piece in pieces.Values)
         {
-            space.space.Click += (sender, e) => OnClick(sender, e, space);
+            piece.piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
+            piece.space.Clickable = false;
         }
     }
 
-    private void OnClick(object sender, System.EventArgs e, BoardSpace space)
+    private void OnClickPiece(object sender, System.EventArgs e, BoardPiece piece)
     {
         if (selected == null)
         {
-            if (space is BoardPiece piece)
-                selected = piece;
+            selected = piece;
+            //Log.Debug($"{nameof(OnClickPiece)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was null");
             return;
         }
 
-        if (selected.Move((BoardSpace)space, board))
+        if (selected.id == piece.id)
+            return;
+
+        //Log.Debug($"{nameof(OnClickPiece)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was not null");
+        //if (selected.Move(piece, board, pieces))
+        //    this.NextPlayer();
+    }
+    private void OnClickSpace(object sender, System.EventArgs e, BoardSpace space)
+    {
+        if (selected == null)
+        {
+            //Log.Debug($"{nameof(OnClickSpace)}", $"selected was null");
+            return;
+        }
+
+        //Log.Debug($"{nameof(OnClickSpace)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was not null");
+        if (selected.Move(space, board, pieces))
             this.NextPlayer();
     }
 
@@ -107,14 +129,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__C8;
                         bBishop1 = new Bishop(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bBishop", 1)] = bBishop1;
+                        pieces[("bBishop", 1)] = bBishop1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__F8;
                         bBishop2 = new Bishop(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bBishop", 2)] = bBishop2;
+                        pieces[("bBishop", 2)] = bBishop2;
                         continue;
                 };
             }
@@ -123,7 +145,8 @@ public class ChessActivity : AppCompatActivity
                 int spaceId = Resource.Id.gmb__E8;
                 bKing = new King(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), false, spaceId);
-                board[("bKing", 1)] = bKing;
+                pieces[("bKing", 1)] = bKing;
+                continue;
             }
             if (a.Contains("bKnight"))
             {
@@ -135,14 +158,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__B8;
                         bKnight1 = new Knight(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bKnight", 1)] = bKnight1;
+                        pieces[("bKnight", 1)] = bKnight1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__G8;
                         bKnight2 = new Knight(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bKnight", 2)] = bKnight2;
+                        pieces[("bKnight", 2)] = bKnight2;
                         continue;
                 };
             }
@@ -151,15 +174,17 @@ public class ChessActivity : AppCompatActivity
                 int spaceId = Resource.Id.gmb__A7 + (8 * (bPawnIndex + 1));
                 bPawns[bPawnIndex] = new Pawn(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), false, spaceId);
-                board[("bPawn", bPawnIndex + 1)] = bPawns[bPawnIndex];
+                pieces[("bPawn", bPawnIndex + 1)] = bPawns[bPawnIndex];
                 bPawnIndex++;
+                continue;
             }
             if (a.Contains("bQueen"))
             {
                 int spaceId = Resource.Id.gmb__D8;
                 bQueen = new Queen(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), false, spaceId);
-                board[("bQueen", 1)] = bQueen;
+                pieces[("bQueen", 1)] = bQueen;
+                continue;
             }
             if (a.Contains("bRook"))
             {
@@ -171,14 +196,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__A8;
                         bRook1 = new Rook(base.FindViewById<ImageView>(i), i,
                         base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bRook", 1)] = bRook1;
+                        pieces[("bRook", 1)] = bRook1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__H8;
                         bRook2 = new Rook(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("bRook", 2)] = bRook2;
+                        pieces[("bRook", 2)] = bRook2;
                         continue;
                 };
             }
@@ -201,14 +226,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__C1;
                         wBishop1 = new Bishop(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), true, spaceId);
-                        board[("wBishop", 1)] = wBishop1;
+                        pieces[("wBishop", 1)] = wBishop1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__F1;
                         wBishop2 = new Bishop(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), true, spaceId);
-                        board[("wBishop", 2)] = wBishop2;
+                        pieces[("wBishop", 2)] = wBishop2;
                         continue;
                 };
             }
@@ -217,7 +242,8 @@ public class ChessActivity : AppCompatActivity
                 int spaceId = Resource.Id.gmb__E1;
                 wKing = new King(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), true, spaceId);
-                board[("wKing", 1)] = wKing;
+                pieces[("wKing", 1)] = wKing;
+                continue;
             }
             if (a.Contains("wKnight"))
             {
@@ -229,14 +255,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__B1;
                         wKnight1 = new Knight(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), true, spaceId);
-                        board[("wKnight", 1)] = wKnight1;
+                        pieces[("wKnight", 1)] = wKnight1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__G1;
                         wKnight2 = new Knight(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), true, spaceId);
-                        board[("wKnight", 2)] = wKnight2;
+                        pieces[("wKnight", 2)] = wKnight2;
                         continue;
                 };
             }
@@ -245,15 +271,17 @@ public class ChessActivity : AppCompatActivity
                 int spaceId = Resource.Id.gmb__A2 + (8 * (wPawnIndex + 1));
                 wPawns[wPawnIndex] = new Pawn(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), true, spaceId);
-                board[("wPawn", wPawnIndex + 1)] = wPawns[wPawnIndex];
+                pieces[("wPawn", wPawnIndex + 1)] = wPawns[wPawnIndex];
                 wPawnIndex++;
+                continue;
             }
             if (a.Contains("wQueen"))
             {
                 int spaceId = Resource.Id.gmb__D1;
                 wQueen = new Queen(base.FindViewById<ImageView>(i), i,
                     base.FindViewById<ImageView>(spaceId), true, spaceId);
-                board[("wQueen", 1)] = wQueen;
+                pieces[("wQueen", 1)] = wQueen;
+                continue;
             }
             if (a.Contains("wRook"))
             {
@@ -265,14 +293,14 @@ public class ChessActivity : AppCompatActivity
                         spaceId = Resource.Id.gmb__A1;
                         wRook1 = new Rook(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), false, spaceId);
-                        board[("wRook", 1)] = wRook1;
+                        pieces[("wRook", 1)] = wRook1;
                         continue;
 
                     case false:
                         spaceId = Resource.Id.gmb__H1;
                         wRook2 = new Rook(base.FindViewById<ImageView>(i), i,
                             base.FindViewById<ImageView>(spaceId), true, spaceId);
-                        board[("wRook", 2)] = wRook2;
+                        pieces[("wRook", 2)] = wRook2;
                         continue;
                 };
             }

@@ -12,6 +12,7 @@ public abstract class BoardPiece : BoardSpace
     {
         this.piece = piece;
         this.id = id;
+        space.Clickable = false;
     }
 
     ///<remarks><code>
@@ -25,5 +26,10 @@ public abstract class BoardPiece : BoardSpace
     ///8 : Top_top-Parent
     ///
     /// </code></remarks>
-    public abstract bool Move(BoardSpace dest, Dictionary<(string, int), BoardSpace> board);
+    public virtual bool Move(BoardSpace dest, Dictionary<(string, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces)
+    {
+        space.Clickable = true;
+        dest.space.Clickable = false;
+        return true;
+    }
 }
