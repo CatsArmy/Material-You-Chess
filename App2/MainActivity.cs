@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Firebase.Auth;
+using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
@@ -26,6 +27,8 @@ public class MainActivity : AppCompatActivity
     private AppPermissions permissions;
     private Android.Net.Uri uri;
     private Button StartGame;
+    private ExtendedFloatingActionButton profileAction1;
+    private ExtendedFloatingActionButton profileAction2;
     private ChessFirebase chessFirebase;
 
     protected override void OnCreate(Bundle savedInstanceState)
@@ -40,7 +43,7 @@ public class MainActivity : AppCompatActivity
                 if (uri != null)
                     this.MainProfileImageView.SetImageURI(uri);
 
-                var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync("bergman.itai@gmail.com", "Shani1998");
+                var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync("bergman.itai@gmail.com", "12345");
                 await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
                     .SetDisplayName("Guest3")
                     .SetPhotoUri(uri)
@@ -69,6 +72,25 @@ public class MainActivity : AppCompatActivity
         this.StartGame.Click += StartGame_Click;
         this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
         //this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
+        bool isLoggedIn = false;
+        this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
+        this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
+        switch (isLoggedIn)
+        {
+            case true:
+                this.profileAction1.Text = "Profile";
+                this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
+                this.profileAction2.Text = "Log out";
+                this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
+                break;
+
+            case false:
+                this.profileAction1.Text = "Login";
+                this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
+                this.profileAction2.Text = "Sign up";
+                this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
+                break;
+        }
     }
 
     private void StartGame_Click(object sender, EventArgs e)
