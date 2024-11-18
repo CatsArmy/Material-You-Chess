@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Firebase.Auth;
+using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
@@ -30,6 +31,7 @@ public class MainActivity : AppCompatActivity
     private ExtendedFloatingActionButton profileAction1;
     private ExtendedFloatingActionButton profileAction2;
     private ChessFirebase chessFirebase;
+    private AndroidX.AppCompat.App.AlertDialog dialog;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -53,6 +55,10 @@ public class MainActivity : AppCompatActivity
 
                 //chessFirebase.auth.CurrentUser
             }));
+        //chessFirebase.auth.ConfirmPasswordResetAsync
+        //chessFirebase.auth.SendPasswordResetEmailAsync
+        //chessFirebase.auth.VerifyPasswordResetCodeAsync
+
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
@@ -72,14 +78,29 @@ public class MainActivity : AppCompatActivity
         this.StartGame.Click += StartGame_Click;
         this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
         //this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
-        bool isLoggedIn = false;
+        bool isLoggedIn = true;
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this,
+            Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        dialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, dialog.Context.Theme));
+        dialog.SetTitle("Profile");
+        dialog.SetView(Resource.Layout.profile_dialog);
+        dialog.SetPositiveButton("Confirm", (sender, args) =>
+        {
+
+        });
+        dialog.SetNegativeButton("Cancel", (sender, args) =>
+        {
+
+        });
+        this.dialog = dialog.Create();
         switch (isLoggedIn)
         {
             case true:
                 this.profileAction1.Text = "Profile";
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
+                this.profileAction1.Click += ProfileAction1_Click;
                 this.profileAction2.Text = "Log out";
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
                 break;
@@ -91,6 +112,12 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
                 break;
         }
+
+    }
+
+    private void ProfileAction1_Click(object sender, EventArgs e)
+    {
+        this.dialog.Show();
     }
 
     private void StartGame_Click(object sender, EventArgs e)
