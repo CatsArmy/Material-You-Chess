@@ -2,7 +2,7 @@
 using AndroidX.Activity.Result;
 using Java.Lang;
 
-namespace Chess;
+namespace Chess.Util;
 
 public class ActivityResultCallback<O> : Object, IActivityResultCallback where O : Object
 {

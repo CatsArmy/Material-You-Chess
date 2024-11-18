@@ -1,14 +1,14 @@
 ﻿using Android.Widget;
 
-namespace Chess;
+namespace Chess.ChessBoard;
 
-public class BoardSpace
+public class Space
 {
     public ImageView space;
     public bool isWhite;
     public int spaceId;
 
-    public BoardSpace(ImageView space, bool isWhite, int spaceId)
+    public Space(ImageView space, bool isWhite, int spaceId)
     {
         this.space = space;
         this.isWhite = isWhite;

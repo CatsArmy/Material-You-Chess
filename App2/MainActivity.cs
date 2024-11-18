@@ -8,10 +8,11 @@ using Android.Util;
 using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
-using Firebase.Auth;
+using Chess.Firebase;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
+using Google.Android.Material.MaterialSwitch;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess;
@@ -31,6 +32,7 @@ public class MainActivity : AppCompatActivity
     private ExtendedFloatingActionButton profileAction1;
     private ExtendedFloatingActionButton profileAction2;
     private ChessFirebase chessFirebase;
+    private ShapeableImageView DialogProfilePicture;
     private AndroidX.AppCompat.App.AlertDialog dialog;
 
     protected override void OnCreate(Bundle savedInstanceState)
@@ -43,15 +45,18 @@ public class MainActivity : AppCompatActivity
                 //Logic
                 Log.Debug("PhotoPicker", $"{uri}");
                 if (uri != null)
+                {
                     this.MainProfileImageView.SetImageURI(uri);
+                    this.DialogProfilePicture.SetImageURI(uri);
+                }
 
-                var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync("bergman.itai@gmail.com", "12345");
-                await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
-                    .SetDisplayName("Guest3")
-                    .SetPhotoUri(uri)
-                    .Build());
+                //var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
+                //await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
+                //    .SetDisplayName("Guest3")
+                //    .SetPhotoUri(uri)
+                //    .Build());
 
-                chessFirebase.auth.UpdateCurrentUser(user.User);
+                //chessFirebase.auth.UpdateCurrentUser(user.User);
 
                 //chessFirebase.auth.CurrentUser
             }));
@@ -77,7 +82,6 @@ public class MainActivity : AppCompatActivity
         this.StartGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
         this.StartGame.Click += StartGame_Click;
         this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
-        //this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
         bool isLoggedIn = true;
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
@@ -95,6 +99,8 @@ public class MainActivity : AppCompatActivity
 
         });
         this.dialog = dialog.Create();
+        this.dialog.ShowEvent += Dialog_ShowEvent;
+
         switch (isLoggedIn)
         {
             case true:
@@ -112,6 +118,20 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
                 break;
         }
+
+    }
+
+    private void Dialog_ShowEvent(object sender, EventArgs e)
+    {
+        this.DialogProfilePicture = this.dialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
+        var editProfilePicture = this.dialog.FindViewById<Button>(Resource.Id.editProfilePicture);
+        editProfilePicture.Click += (_, _) => this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
+
+        var ThemeText = this.dialog.FindViewById<TextView>(Resource.Id.ThemeText);
+        var ThemeToggle = this.dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
+
+        var UsernameText = this.dialog.FindViewById<TextView>(Resource.Id.UsernameText);
+        var EditUsername = this.dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
 
     }
 

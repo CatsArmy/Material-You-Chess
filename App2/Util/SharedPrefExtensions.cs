@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using AndroidX.AppCompat.App;
 
-namespace Chess;
+namespace Chess.Util;
 
 public static class SharedPrefExtensions
 {

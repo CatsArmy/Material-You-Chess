@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using Android.Widget;
 
-namespace Chess;
+namespace Chess.ChessBoard;
 
-public abstract class BoardPiece : BoardSpace
+public abstract class Piece : Space
 {
     public ImageView piece;
     public int id;
 
-    public BoardPiece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(space, isWhite, spaceId)
+    public Piece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(space, isWhite, spaceId)
     {
         this.piece = piece;
         this.id = id;
@@ -26,10 +26,16 @@ public abstract class BoardPiece : BoardSpace
     ///8 : Top_top-Parent
     ///
     /// </code></remarks>
-    public virtual bool Move(BoardSpace dest, Dictionary<(string, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces)
+    public virtual bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         space.Clickable = true;
         dest.space.Clickable = false;
+        return true;
+    }
+
+    public virtual bool Capture(Piece dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    {
+        //logic
         return true;
     }
 }

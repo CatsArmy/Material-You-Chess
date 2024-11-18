@@ -10,7 +10,7 @@
 		android:allowBackup="true"
 		android:supportsRtl="true"
 		android:icon="@mipmap/ic_launcher"
-		android:label="Material You Chess"
+		android:label="Material Chess"
 		android:theme="@style/Theme.Material3.DynamicColors.DayNight.NoActionBar" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<!-- Devices running Android 12L (API level 32) or lower  -->

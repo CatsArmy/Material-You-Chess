@@ -2,7 +2,7 @@
 using Android.OS;
 using AndroidX.AppCompat.App;
 
-namespace Chess;
+namespace Chess.Util;
 
 public class AppPermissions
 {

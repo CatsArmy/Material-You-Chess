@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using Android.Widget;
 
-namespace Chess;
+namespace Chess.ChessBoard;
 
-public class Knight : BoardPiece
+public class Knight : Piece
 {
     public Knight(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
 
-    public override bool Move(BoardSpace dest, Dictionary<(string, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces)
+    public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         return true;
     }

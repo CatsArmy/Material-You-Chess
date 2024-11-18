@@ -5,7 +5,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using Chess.ChessBoard;
 using Google.Android.Material.ImageView;
+using Space = Chess.ChessBoard.Space;
 
 namespace Chess;
 
@@ -18,9 +20,9 @@ public class ChessActivity : AppCompatActivity
     private AppPermissions permissions;
     private Android.Net.Uri uri;
 
-    private Dictionary<(string, int), BoardPiece> pieces = new Dictionary<(string, int), BoardPiece>();
-    private Dictionary<(string, int), BoardSpace> board = new Dictionary<(string, int), BoardSpace>();
-    private BoardPiece selected = null;
+    private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
+    private Dictionary<(string, int), Space> board = new Dictionary<(string, int), Space>();
+    private Piece selected = null;
 
     private Bishop bBishop1, bBishop2;
     private King bKing;
@@ -75,7 +77,7 @@ public class ChessActivity : AppCompatActivity
         }
     }
 
-    private void OnClickPiece(object sender, System.EventArgs e, BoardPiece piece)
+    private void OnClickPiece(object sender, System.EventArgs e, Piece piece)
     {
         if (selected == null)
         {
@@ -91,7 +93,7 @@ public class ChessActivity : AppCompatActivity
         //if (selected.Move(piece, board, pieces))
         //    this.NextPlayer();
     }
-    private void OnClickSpace(object sender, System.EventArgs e, BoardSpace space)
+    private void OnClickSpace(object sender, System.EventArgs e, Space space)
     {
         if (selected == null)
         {
@@ -312,47 +314,47 @@ public class ChessActivity : AppCompatActivity
         bool isWhite = true;
         for (int i = Resource.Id.gmb__A1, j = 1; i <= Resource.Id.gmb__A8; i++, j++)
         {
-            board[("A", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("A", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         isWhite = !isWhite;
         for (int i = Resource.Id.gmb__B1, j = 1; i <= Resource.Id.gmb__B8; i++, j++)
         {
-            board[("B", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("B", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         isWhite = !isWhite;
         for (int i = Resource.Id.gmb__C1, j = 1; i <= Resource.Id.gmb__C8; i++, j++)
         {
-            board[("C", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("C", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         isWhite = !isWhite;
         for (int i = Resource.Id.gmb__D1, j = 1; i <= Resource.Id.gmb__D8; i++, j++)
         {
-            board[("D", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("D", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         isWhite = !isWhite;
         for (int i = Resource.Id.gmb__E1, j = 1; i <= Resource.Id.gmb__E8; i++, j++)
         {
-            board[("E", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("E", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         isWhite = !isWhite;
         for (int i = Resource.Id.gmb__F1, j = 1; i <= Resource.Id.gmb__F8; i++, j++)
         {
-            board[("F", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("F", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         for (int i = Resource.Id.gmb__G1, j = 1; i <= Resource.Id.gmb__G8; i++, j++)
         {
-            board[("G", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("G", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
         for (int i = Resource.Id.gmb__H1, j = 1; i <= Resource.Id.gmb__H8; i++, j++)
         {
-            board[("H", j)] = new BoardSpace(base.FindViewById<ImageView>(i), isWhite, i);
+            board[("H", j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
     }
