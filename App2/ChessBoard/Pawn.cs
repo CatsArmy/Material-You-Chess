@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Android.Widget;
-using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
@@ -10,10 +9,11 @@ public class Pawn : Piece
 
     public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
-        base.piece.LayoutParameters = dest.space.LayoutParameters as ConstraintLayout.LayoutParams;
-        base.spaceId = dest.spaceId;
+        bool isLegalMove = true;
+        if (!isLegalMove)
+            return false;
         //promote logic
-        return true;
+        return base.Move(dest, board, pieces);
     }
 
     public void Promote()

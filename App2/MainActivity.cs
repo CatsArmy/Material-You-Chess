@@ -51,7 +51,7 @@ public class MainActivity : AppCompatActivity
                 }
 
                 //var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
-                //await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
+                //await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()`
                 //    .SetDisplayName("Guest3")
                 //    .SetPhotoUri(uri)
                 //    .Build());

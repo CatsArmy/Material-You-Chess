@@ -82,6 +82,8 @@ public class ChessActivity : AppCompatActivity
         if (selected == null)
         {
             selected = piece;
+            selected.space.Clickable = false;
+            selected.piece.Clickable = false;
             //Log.Debug($"{nameof(OnClickPiece)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was null");
             return;
         }

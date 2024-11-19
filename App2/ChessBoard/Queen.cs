@@ -9,6 +9,9 @@ public class Queen : Piece
 
     public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
-        return true;
+        bool isLegalMove = true;
+        if (!isLegalMove)
+            return false;
+        return base.Move(dest, board, pieces);
     }
 }

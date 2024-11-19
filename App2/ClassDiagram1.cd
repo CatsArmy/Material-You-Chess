@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Chess.ChessActivity" Collapsed="true">
+    <Position X="17.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAFABAAAhAIACAAAIhAAQAACACAIAgCgIACQApAEECQ=</HashCode>
+      <FileName>ChessActivity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.MainActivity" Collapsed="true">
+    <Position X="16" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAACAAAAAhEBAAIIIAAAAgACAYAAAAADAAABAAAAQ=</HashCode>
+      <FileName>MainActivity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Bishop" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.King" Collapsed="true">
+    <Position X="9.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Knight" Collapsed="true">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Pawn" Collapsed="true">
+    <Position X="5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Piece" Collapsed="true">
+    <Position X="6" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgABAAAAAAAgA=</HashCode>
+      <FileName>ChessBoard\Piece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Queen" Collapsed="true">
+    <Position X="11.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Rook" Collapsed="true">
+    <Position X="2.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.ChessBoard.Space" Collapsed="true">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAiAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ChessBoard\Space.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Firebase.ChessFirebase" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAECAAAAAAAQA=</HashCode>
+      <FileName>Firebase\ChessFirebase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Chess.Util.ActivityResultCallback&lt;O&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Util\ActivityResultCallback.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Chess.Util.AppPermissions" Collapsed="true">
+    <Position X="16" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACACAAAAAAAAAQAAIAADAAAAAAAIAAAABAAAAAAA=</HashCode>
+      <FileName>Util\AppPermissions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Chess.Util.SharedPrefExtensions" Collapsed="true">
+    <Position X="17.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Util\SharedPrefExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Chess.Firebase.IFirebaseSecrets" Collapsed="true">
+    <Position X="14.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAoAAAAAAAAAQAAgAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Firebase\IFirebaseSecrets.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Chess.Util.IFirebaseSecrets" Collapsed="true">
+    <Position X="16" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAoAAAAAAAAAQAAgAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Util\IFirebaseSecrets.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
