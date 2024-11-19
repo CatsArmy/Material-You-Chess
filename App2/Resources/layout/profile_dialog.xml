@@ -13,10 +13,10 @@
 
 		<com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ProfilePicture"
-            android:layout_width="168dp"
-            android:layout_height="168dp"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
             android:clickable="false"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
