@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Android.App;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
 using Android.Widget;
@@ -38,6 +39,8 @@ public class ChessActivity : AppCompatActivity
     private Queen wQueen;
     private Rook wRook1, wRook2;
 
+    public static Resources res;
+
     protected override void OnCreate(Bundle savedInstanceState)
     {
         bool hasValue = bool.TryParse(base.Intent.GetStringExtra(nameof(this.MaterialYouThemePreference)), out this.MaterialYouThemePreference);
@@ -51,14 +54,9 @@ public class ChessActivity : AppCompatActivity
         this.permissions = new AppPermissions();
         this.permissions.RequestPermissions(this);
 
-        //
-
-
-        //24dp
-
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
-
+        res = Resources;
         //Run our logic
         this.PlayerName = base.Intent.GetStringExtra(nameof(this.PlayerName));
         this.uri = Android.Net.Uri.Parse(base.Intent.GetStringExtra(nameof(uri)));

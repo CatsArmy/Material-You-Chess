@@ -33,10 +33,17 @@ public abstract class Piece : Space
         piece.Clickable = true;
         space.Clickable = true;
         dest.space.Clickable = false;
-        piece.LayoutParameters = dest.space.LayoutParameters as ConstraintLayout.LayoutParams;
+        ConstraintLayout.LayoutParams spaceParams = dest.space.LayoutParameters as ConstraintLayout.LayoutParams;
+        ConstraintLayout.LayoutParams @params = new ConstraintLayout.LayoutParams(spaceParams);
+        @params.TopToTop = dest.spaceId;
+        @params.BottomToBottom = dest.spaceId;
+        @params.LeftToLeft = dest.spaceId;
+        @params.RightToRight = dest.spaceId;
+        piece.LayoutParameters = @params;
         base.spaceId = dest.spaceId;
         return true;
     }
+
 
     public virtual bool Capture(Piece dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
@@ -44,8 +51,9 @@ public abstract class Piece : Space
         return true;
     }
 
-    public (string, int) PieceKey(Resources res)
+    public (string, int) PieceKey()
     {
+        Resources res = ChessActivity.res;
         string a = res.GetResourceName(id);
         //0 1 2 3 4 5 6
         //g m b _ _ A 1

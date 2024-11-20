@@ -16,8 +16,9 @@ public class Space
         this.spaceId = spaceId;
     }
 
-    public (string, int) GetSpaceKey(Resources res)
+    public (string, int) GetSpaceKey()
     {
+        Resources res = ChessActivity.res;
         string a = res.GetResourceName(this.spaceId);
         //0 1 2 3 4 5 6
         //g m b _ _ A 1
