@@ -8,6 +8,8 @@ public class Space
     public ImageView space;
     public bool isWhite;
     public int spaceId;
+    internal static Resources res;
+
 
     public Space(ImageView space, bool isWhite, int spaceId)
     {
@@ -18,7 +20,6 @@ public class Space
 
     public (string, int) GetSpaceKey()
     {
-        Resources res = ChessActivity.res;
         string a = res.GetResourceName(this.spaceId);
         //0 1 2 3 4 5 6
         //g m b _ _ A 1
@@ -30,7 +31,7 @@ public class Space
         {
             spaceStr += a[i];
         }
-        return (spaceStr, int.Parse($"{a[^1]}"));
+        return ($"{a[^2]}", int.Parse($"{a[^1]}"));
 
     }
 }

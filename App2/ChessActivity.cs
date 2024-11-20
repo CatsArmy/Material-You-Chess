@@ -119,6 +119,9 @@ public class ChessActivity : AppCompatActivity
 
     private void InitChessPieces()
     {
+        //Init resources
+        Piece.SetResources(base.Resources);
+
         int bPawnIndex = 0;
         bool bIsFirstBishop = true;
         bool bIsFirstKnight = true;
