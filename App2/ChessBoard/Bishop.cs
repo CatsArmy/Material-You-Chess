@@ -24,7 +24,10 @@ public class Bishop : Piece
     public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
-
+        var moves = GetMoves(board, pieces);
+        var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
+        if (move == null)
+            return false;
         if (!isLegalMove)
             return false;
         return base.Move(dest, board, pieces);
@@ -32,7 +35,7 @@ public class Bishop : Piece
     public List<Move> GetMoves(Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        var (rank, file) = base.GetSpaceKey();
+        var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
         int _i = int.Parse($"{file}");
 
         char j = char.Parse($"{rank[0]}");

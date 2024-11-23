@@ -34,4 +34,9 @@ public class Space
         return ($"{a[^2]}", int.Parse($"{a[^1]}"));
 
     }
+    public override string ToString()
+    {
+        string str = res.GetResourceName(spaceId);
+        return str.Split("__")[1];
+    }
 }

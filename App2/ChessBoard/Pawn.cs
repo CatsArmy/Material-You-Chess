@@ -13,9 +13,7 @@ public class Pawn : Piece
     public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
-        //do stuff
-        //2131231012
-        //2131231013
+
         var moves = GetMoves(board, pieces);
         var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
         if (move == null)
@@ -30,7 +28,7 @@ public class Pawn : Piece
     public List<Move> GetMoves(Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        var (rank, file) = base.GetSpaceKey();
+        var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
         int i = this.isWhite switch
         {
             true => i = file + 1,
@@ -45,6 +43,18 @@ public class Pawn : Piece
         Space move = board[(rank, i)];
         if (pieces.Values.FirstOrDefault(p => p.spaceId == move.spaceId) == null)
             moves.Add(new(move, false));
+
+        if (isFirstMove)
+        {
+            Space space = board[(rank, this.isWhite switch
+            {
+                true => i + 1,
+                false => i - 1,
+            })];
+            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
+            if (piece == null)
+                moves.Add(new(space, false, true));
+        }
 
         if (j < 'H')
         {
@@ -63,20 +73,6 @@ public class Pawn : Piece
                 if (piece.isWhite != this.isWhite)
                     moves.Add(new(space, true));
         }
-
-        if (isFirstMove)
-        {
-            i = this.isWhite switch
-            {
-                true => i + 1,
-                false => i - 1,
-            };
-            Space space = board[(rank, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece == null)
-                moves.Add(new(space, false, true));
-        }
-
         return moves;
     }
 

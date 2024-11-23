@@ -37,11 +37,9 @@ public abstract class Piece : Space
     /// </code></remarks>
     public virtual bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
-        this.piece.Clickable = true;
-        this.space.Clickable = true;
-        dest.space.Clickable = false;
         base.spaceId = dest.spaceId;
         base.space = dest.space;
+
         ConstraintLayout.LayoutParams @params = this.piece.LayoutParameters as ConstraintLayout.LayoutParams;
         @params.TopToTop = dest.spaceId;
         @params.BottomToBottom = dest.spaceId;
@@ -81,5 +79,12 @@ public abstract class Piece : Space
             spaceStr += a[i];
         }
         return (spaceStr, int.Parse($"{a[^1]}"));
+    }
+
+    public override string ToString()
+    {
+        string str1 = res.GetResourceName(id);
+        string str2 = res.GetResourceName(spaceId);
+        return $"[{str1.Split("__")[1]}], [{str2.Split("__")[1]}]";
     }
 }

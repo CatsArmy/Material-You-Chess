@@ -362,8 +362,7 @@
                     android:layout_height="match_parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:layout_editor_absoluteX="50dp">
+                    app:layout_constraintStart_toStartOf="parent">
 
 					<TextView
                         android:id="@+id/p2MainUsername"
@@ -1016,97 +1015,33 @@
 
 		<ImageView
             android:id="@+id/gmp__bRook1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/gmb__A8"
             app:layout_constraintEnd_toEndOf="@+id/gmb__A8"
             app:layout_constraintStart_toStartOf="@+id/gmb__A8"
             app:layout_constraintTop_toTopOf="@+id/gmb__A8"
-            
-
             app:srcCompat="@drawable/rook_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__A6"
-
-            app:layout_constraintEnd_toEndOf="@+id/gmb__A7"
-            app:layout_constraintStart_toStartOf="@+id/gmb__A7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__A1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__B2"
-
-            app:layout_constraintStart_toStartOf="@+id/gmb__A2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wRook1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__A1"
-
-            app:layout_constraintEnd_toEndOf="@+id/gmb__A1"
-            app:layout_constraintStart_toStartOf="@+id/gmb__A1"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A2"
-            app:srcCompat="@drawable/rook_white" />
-
-		<ImageView
-            android:id="@+id/gmp__bPawn2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__B6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__C7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__A7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
             android:id="@+id/gmp__bKnight1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/gmb__B8"
             app:layout_constraintEnd_toEndOf="@+id/gmb__B8"
             app:layout_constraintStart_toStartOf="@+id/gmb__B8"
             app:layout_constraintTop_toTopOf="@+id/gmb__B8"
-
             app:srcCompat="@drawable/knight_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__C6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__D7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__B7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__C8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
             android:id="@+id/gmp__bBishop1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/gmb__C8"
             app:layout_constraintEnd_toEndOf="@+id/gmb__C8"
@@ -1116,292 +1051,351 @@
 
 		<ImageView
             android:id="@+id/gmp__bQueen"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__D7"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__E8"
-            app:layout_constraintStart_toEndOf="@+id/gmb__C8"
-
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__D8"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__D8"
+            app:layout_constraintStart_toStartOf="@+id/gmb__D8"
+            app:layout_constraintTop_toTopOf="@+id/gmb__D8"
             app:srcCompat="@drawable/queen_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn4"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__D6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__E7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__C7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__D8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn4"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__D1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__E2"
-            app:layout_constraintStart_toStartOf="@+id/gmb__D2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wQueen"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__D1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__E1"
-            app:layout_constraintStart_toStartOf="@+id/gmb__D1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__D2"
-
-            app:srcCompat="@drawable/queen_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__B1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__C2"
-            app:layout_constraintStart_toStartOf="@+id/gmb__B2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wKnight1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__B1"
-            app:layout_constraintEnd_toEndOf="@+id/gmb__B1"
-
-            app:layout_constraintStart_toEndOf="@+id/gmb__A1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
-            app:srcCompat="@drawable/knight_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn3"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__C1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__D2"
-            app:layout_constraintStart_toEndOf="@+id/gmb__B2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__C3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wBishop1"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__C1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__D1"
-            app:layout_constraintStart_toEndOf="@+id/gmb__B1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__C2"
-
-            app:srcCompat="@drawable/bishop_white" />
-
-		<ImageView
             android:id="@+id/gmp__bKing"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__E7"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__F8"
-            app:layout_constraintStart_toEndOf="@+id/gmb__D8"
-
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__E8"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__E8"
+            app:layout_constraintStart_toStartOf="@+id/gmb__E8"
+            app:layout_constraintTop_toTopOf="@+id/gmb__E8"
             app:srcCompat="@drawable/king_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn5"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__E6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__F7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__D7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__E8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn5"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__E1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__F2"
-            app:layout_constraintStart_toStartOf="@+id/gmb__E2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__E3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wKing"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__E1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__F1"
-            app:layout_constraintStart_toStartOf="@+id/gmb__E1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__E2"
-
-            app:srcCompat="@drawable/king_white" />
-
-		<ImageView
             android:id="@+id/gmp__bBishop2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__F7"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__G8"
-            app:layout_constraintStart_toEndOf="@+id/gmb__E8"
-
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__F8"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__F8"
+            app:layout_constraintStart_toStartOf="@+id/gmb__F8"
+            app:layout_constraintTop_toTopOf="@+id/gmb__F8"
             app:srcCompat="@drawable/bishop_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn6"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__F6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__G7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__E7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__F8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn6"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__F1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__G2"
-            app:layout_constraintStart_toEndOf="@+id/gmb__E2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__F3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wBishop2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__F1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__G1"
-            app:layout_constraintStart_toEndOf="@+id/gmb__E1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__F2"
-
-            app:srcCompat="@drawable/bishop_white" />
-
-		<ImageView
             android:id="@+id/gmp__bKnight2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__G7"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__H8"
-            app:layout_constraintStart_toEndOf="@+id/gmp__bBishop2"
-
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__G8"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__G8"
+            app:layout_constraintStart_toStartOf="@+id/gmb__G8"
+            app:layout_constraintTop_toTopOf="@+id/gmb__G8"
             app:srcCompat="@drawable/knight_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn7"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__G6"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__H7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__F7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__G8"
-            app:srcCompat="@drawable/pawn_black" />
-
-		<ImageView
-            android:id="@+id/gmp__wPawn7"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__G1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__H2"
-            app:layout_constraintStart_toEndOf="@+id/gmb__F2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__G3"
-
-            app:srcCompat="@drawable/pawn_white" />
-
-		<ImageView
-            android:id="@+id/gmp__wKnight2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/gmb__G1"
-            app:layout_constraintEnd_toStartOf="@+id/gmb__H1"
-            app:layout_constraintStart_toEndOf="@+id/gmb__F1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__G2"
-
-            app:srcCompat="@drawable/knight_white" />
-
-		<ImageView
             android:id="@+id/gmp__bRook2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__H7"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__H8"
             app:layout_constraintEnd_toEndOf="@+id/gmb__H8"
-
-            app:layout_constraintStart_toEndOf="@+id/gmb__G8"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/gmb__H8"
+            app:layout_constraintTop_toTopOf="@+id/gmb__H8"
             app:srcCompat="@drawable/rook_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bPawn8"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/gmp__bPawn1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__H6"
-            app:layout_constraintEnd_toEndOf="@+id/gmb__H7"
-            app:layout_constraintStart_toEndOf="@+id/gmb__G7"
-
-            app:layout_constraintTop_toBottomOf="@+id/gmb__H8"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__A7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__A7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__A7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__A7"
             app:srcCompat="@drawable/pawn_black" />
 
 		<ImageView
-            android:id="@+id/gmp__wPawn8"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:id="@+id/gmp__bPawn2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/gmb__H1"
-            app:layout_constraintEnd_toEndOf="@+id/gmb__H2"
-            app:layout_constraintStart_toEndOf="@+id/gmb__G2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__H3"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__B7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__B7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__B7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__B7"
+            app:srcCompat="@drawable/pawn_black" />
 
-            app:srcCompat="@drawable/pawn_white" />
+		<ImageView
+            android:id="@+id/gmp__bPawn3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__C7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__C7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__C7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__C7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__bPawn4"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__D7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__D7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__D7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__D7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__bPawn5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__E7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__E7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__E7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__E7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__bPawn6"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__F7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__F7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__F7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__F7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__bPawn7"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__G7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__G7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__G7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__G7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__bPawn8"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__H7"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__H7"
+            app:layout_constraintStart_toStartOf="@+id/gmb__H7"
+            app:layout_constraintTop_toTopOf="@+id/gmb__H7"
+            app:srcCompat="@drawable/pawn_black" />
+
+		<ImageView
+            android:id="@+id/gmp__wRook1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__A1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__A1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__A1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__A1"
+            app:srcCompat="@drawable/rook_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wKnight1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__B1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__B1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__B1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__B1"
+            app:srcCompat="@drawable/knight_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wBishop1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__C1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__C1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__C1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__C1"
+            app:srcCompat="@drawable/bishop_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wQueen"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__D1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__D1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__D1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__D1"
+            app:srcCompat="@drawable/queen_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wKing"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__E1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__E1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__E1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__E1"
+            app:srcCompat="@drawable/king_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wBishop2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__F1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__F1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__F1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__F1"
+            app:srcCompat="@drawable/bishop_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wKnight2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__G1"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__G1"
+            app:layout_constraintStart_toStartOf="@+id/gmb__G1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__G1"
+            app:srcCompat="@drawable/knight_white" />
 
 		<ImageView
             android:id="@+id/gmp__wRook2"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/gmb__H1"
             app:layout_constraintEnd_toEndOf="@+id/gmb__H1"
-            app:layout_constraintStart_toEndOf="@+id/gmb__G1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__H2"
-
+            app:layout_constraintStart_toStartOf="@+id/gmb__H1"
+            app:layout_constraintTop_toTopOf="@+id/gmb__H1"
             app:srcCompat="@drawable/rook_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__A2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__A2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__A2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__A2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__B2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__B2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__B2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__B2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__C2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__C2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__C2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__C2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn4"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__D2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__D2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__D2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__D2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__E2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__E2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__E2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__E2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn6"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__F2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__F2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__F2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn7"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__G2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__G2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__G2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__G2"
+            app:srcCompat="@drawable/pawn_white" />
+
+		<ImageView
+            android:id="@+id/gmp__wPawn8"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/gmb__H2"
+            app:layout_constraintEnd_toEndOf="@+id/gmb__H2"
+            app:layout_constraintStart_toStartOf="@+id/gmb__H2"
+            app:layout_constraintTop_toTopOf="@+id/gmb__H2"
+            app:srcCompat="@drawable/pawn_white" />
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
