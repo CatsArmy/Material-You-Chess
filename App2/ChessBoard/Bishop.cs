@@ -21,7 +21,7 @@ public class Bishop : Piece
 {
     public Bishop(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
 
-    public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
         var moves = GetMoves(board, pieces);
@@ -32,17 +32,18 @@ public class Bishop : Piece
             return false;
         return base.Move(dest, board, pieces);
     }
-    public List<Move> GetMoves(Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
         var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
         int _i = int.Parse($"{file}");
 
-        char j = char.Parse($"{rank[0]}");
+        char j = char.Parse($"{rank}");
         j++;
+
         for (int i = _i + 1; i <= 8; i++)
         {
-            Space space = board[($"{j}", i)];
+            Space space = board[(j, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
             {
@@ -56,11 +57,12 @@ public class Bishop : Piece
             j++;
         }
 
-        char k = char.Parse($"{rank[0]}");
+        char k = char.Parse($"{rank}");
         k--;
-        for (int i = (_i + 1); i <= 8; i++)
+
+        for (int i = _i; i <= 8; i++)
         {
-            Space space = board[($"{k}", i)];
+            Space space = board[(k, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
             {
@@ -74,9 +76,12 @@ public class Bishop : Piece
             k++;
         }
 
+        j = char.Parse($"{rank}");
+        j++;
+
         for (int i = _i - 1; i <= 1; i--)
         {
-            Space space = board[($"{j}", i)];
+            Space space = board[(j, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
             {
@@ -89,11 +94,14 @@ public class Bishop : Piece
                 break;
             j++;
         }
-        k = char.Parse($"{rank[0]}");
+
+
+        k = char.Parse($"{rank}");
         k--;
+
         for (int i = _i - 1; i <= 1; i--)
         {
-            Space space = board[($"{k}", i)];
+            Space space = board[(k, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
             {

@@ -10,7 +10,7 @@ public class Pawn : Piece
 
     public Pawn(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
 
-    public override bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
 
@@ -25,7 +25,7 @@ public class Pawn : Piece
         return base.Move(dest, board, pieces);
     }
 
-    public List<Move> GetMoves(Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
         var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
@@ -35,8 +35,8 @@ public class Pawn : Piece
             false => i = file - 1,
         };
 
-        char j = char.Parse($"{rank[0]}");
-        char k = char.Parse($"{rank[0]}");
+        char j = char.Parse($"{rank}");
+        char k = char.Parse($"{rank}");
         j++;
         k--;
 
@@ -58,7 +58,7 @@ public class Pawn : Piece
 
         if (j < 'H')
         {
-            Space space = board[($"{j}", i)];
+            Space space = board[(j, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
                 if (piece.isWhite != this.isWhite)
@@ -67,7 +67,7 @@ public class Pawn : Piece
 
         if (k >= 'A')
         {
-            Space space = board[($"{k}", i)];
+            Space space = board[(k, i)];
             Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
             if (piece != null)
                 if (piece.isWhite != this.isWhite)

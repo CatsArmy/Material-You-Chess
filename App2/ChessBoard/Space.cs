@@ -18,7 +18,7 @@ public class Space
         this.spaceId = spaceId;
     }
 
-    public (string, int) GetSpaceKey()
+    public (char, int) GetSpaceKey()
     {
         string a = res.GetResourceName(this.spaceId);
         //0 1 2 3 4 5 6
@@ -31,7 +31,7 @@ public class Space
         {
             spaceStr += a[i];
         }
-        return ($"{a[^2]}", int.Parse($"{a[^1]}"));
+        return (a[^2], int.Parse($"{a[^1]}"));
 
     }
     public override string ToString()

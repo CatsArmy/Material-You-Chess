@@ -35,7 +35,7 @@ public abstract class Piece : Space
     ///8 : Top_top-Parent
     ///
     /// </code></remarks>
-    public virtual bool Move(Space dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public virtual bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         base.spaceId = dest.spaceId;
         base.space = dest.space;
@@ -58,7 +58,7 @@ public abstract class Piece : Space
     }
 
 
-    public virtual bool Capture(Piece dest, Dictionary<(string, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public virtual bool Capture(Piece dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         //logic
         return true;
