@@ -18,7 +18,7 @@ public class Pawn : Piece
         var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
         if (move == null)
             return false;
-        isFirstMove = false;
+        this.isFirstMove = false;
         if (!isLegalMove)
             return false;
         //promote logic
@@ -28,50 +28,36 @@ public class Pawn : Piece
     public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
-        int i = this.isWhite switch
+        Space move = this.Forward(board);
+        var c = move.GetPiece(pieces);
+        if (c == null)
         {
-            true => i = file + 1,
-            false => i = file - 1,
+            moves.Add(new(move));
+            if (this.isFirstMove)
+            {
+                var a = c.Forward(board);
+                var b = a.GetPiece(pieces);
+                if (b == null)
+                    moves.Add(new(a, false, true));
+            }
+        }
+
+        (Space left, Space right) = this.isWhite switch
+        {
+            true => (DiagonalUp(board, false), DiagonalUp(board, true)),
+            false => (DiagonalDown(board, false), DiagonalDown(board, true)),
         };
 
-        char j = char.Parse($"{rank}");
-        char k = char.Parse($"{rank}");
-        j++;
-        k--;
-
-        Space move = board[(rank, i)];
-        if (pieces.Values.FirstOrDefault(p => p.spaceId == move.spaceId) == null)
-            moves.Add(new(move, false));
-
-        if (isFirstMove)
+        if (left.GetPiece(pieces) != null)
         {
-            Space space = board[(rank, this.isWhite switch
-            {
-                true => i + 1,
-                false => i - 1,
-            })];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece == null)
-                moves.Add(new(space, false, true));
+            if (left.GetPiece(pieces).isWhite != this.isWhite)
+                moves.Add(new(left, true));
         }
 
-        if (j < 'H')
+        if (right.GetPiece(pieces) != null)
         {
-            Space space = board[(j, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
-        }
-
-        if (k >= 'A')
-        {
-            Space space = board[(k, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
+            if (right.GetPiece(pieces).isWhite != this.isWhite)
+                moves.Add(new(right, true));
         }
         return moves;
     }

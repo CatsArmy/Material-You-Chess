@@ -162,6 +162,7 @@
     <Compile Include="ChessBoard\Bishop.cs" />
     <Compile Include="ChessBoard\King.cs" />
     <Compile Include="ChessBoard\Knight.cs" />
+    <Compile Include="ChessBoard\Move.cs" />
     <Compile Include="ChessBoard\Pawn.cs" />
     <Compile Include="ChessBoard\Piece.cs" />
     <Compile Include="ChessBoard\Queen.cs" />

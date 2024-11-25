@@ -39,8 +39,6 @@ public class ChessActivity : AppCompatActivity
     private Queen wQueen;
     private Rook wRook1, wRook2;
 
-    public static Resources res;
-
     protected override void OnCreate(Bundle savedInstanceState)
     {
         bool hasValue = bool.TryParse(base.Intent.GetStringExtra(nameof(this.MaterialYouThemePreference)), out this.MaterialYouThemePreference);
@@ -56,7 +54,6 @@ public class ChessActivity : AppCompatActivity
 
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
-        res = Resources;
         //Run our logic
         this.PlayerName = base.Intent.GetStringExtra(nameof(this.PlayerName));
         this.uri = Android.Net.Uri.Parse(base.Intent.GetStringExtra(nameof(uri)));

@@ -4,19 +4,6 @@ using Android.Widget;
 
 namespace Chess.ChessBoard;
 
-public class Move
-{
-    public Move(Space space, bool capture, bool enPassantCapturable = false)
-    {
-        Space = space;
-        Capture = capture;
-        EnPassantCapturable = enPassantCapturable;
-    }
-    public Space Space;
-    public bool Capture;
-    public bool EnPassantCapturable = false;
-}
-
 public class Bishop : Piece
 {
     public Bishop(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
@@ -32,88 +19,14 @@ public class Bishop : Piece
             return false;
         return base.Move(dest, board, pieces);
     }
+
     public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        var (rank, file) = board.FirstOrDefault(s => s.Value.spaceId == spaceId).Key;
-        int _i = int.Parse($"{file}");
-
-        char j = char.Parse($"{rank}");
-        j++;
-
-        for (int i = _i + 1; i <= 8; i++)
-        {
-            Space space = board[(j, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-            {
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
-                break;
-            }
-            moves.Add(new(space, false));
-            if (j >= 'H')
-                break;
-            j++;
-        }
-
-        char k = char.Parse($"{rank}");
-        k--;
-
-        for (int i = _i; i <= 8; i++)
-        {
-            Space space = board[(k, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-            {
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
-                break;
-            }
-            moves.Add(new(space, false));
-            if (k < 'A')
-                break;
-            k++;
-        }
-
-        j = char.Parse($"{rank}");
-        j++;
-
-        for (int i = _i - 1; i <= 1; i--)
-        {
-            Space space = board[(j, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-            {
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
-                break;
-            }
-            moves.Add(new(space, false));
-            if (j >= 'H')
-                break;
-            j++;
-        }
-
-
-        k = char.Parse($"{rank}");
-        k--;
-
-        for (int i = _i - 1; i <= 1; i--)
-        {
-            Space space = board[(k, i)];
-            Piece piece = pieces.Values.FirstOrDefault(p => p.spaceId == space.spaceId);
-            if (piece != null)
-            {
-                if (piece.isWhite != this.isWhite)
-                    moves.Add(new(space, true));
-                break;
-            }
-            moves.Add(new(space, false));
-            if (k < 'A')
-                break;
-            k--;
-        }
+        this.DiagonalsUpRight(board, pieces, ref moves);
+        this.DiagonalsUpLeft(board, pieces, ref moves);
+        this.DiagonalsDownRight(board, pieces, ref moves);
+        this.DiagonalsDownLeft(board, pieces, ref moves);
         return moves;
     }
 }

@@ -24,17 +24,6 @@ public abstract class Piece : Space
         Space.res = _res;
     }
 
-    ///<remarks><code>
-    ///
-    ///var layout = piece.LayoutParameters as ConstraintLayout.LayoutParams;
-    ///var top = Resources.GetResourceName(id);
-    ///layout.StartToStart
-    ///A : Start_start-Parent
-    ///H : End_end-Parent
-    ///1 : Bottom_bottom-Parent
-    ///8 : Top_top-Parent
-    ///
-    /// </code></remarks>
     public virtual bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         base.spaceId = dest.spaceId;
@@ -64,21 +53,90 @@ public abstract class Piece : Space
         return true;
     }
 
-    //0 1 2 3 4 5 6
-    //g m b _ _ A 1
-    //|0|1||2|3|4|5|6|7|8|9|10|11|12|
-    //|g|m||p|_|_|w|B|i|s|h|o |p |1 
-    //|g|m||p|_|_|b|B|i|s|h|o |p |2 
-    public (string, int) PieceKey()
+    public void DiagonalsUpRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        Resources resources = res;
-        string a = resources.GetResourceName(id);
-        var spaceStr = string.Empty;
-        for (int i = 5; i < a.Length - 1; i++)
+        for (Space diagonal = this.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
-            spaceStr += a[i];
+            Piece piece = diagonal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(diagonal, true));
+                break;
+            }
+
+            moves.Add(new Move(diagonal));
         }
-        return (spaceStr, int.Parse($"{a[^1]}"));
+    }
+
+    public void DiagonalsUpLeft(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    {
+        for (Space diagonal = this.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
+        {
+            Piece piece = diagonal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(diagonal, true));
+                break;
+            }
+
+            moves.Add(new Move(diagonal));
+        }
+    }
+
+    public void DiagonalsDownRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    {
+
+        for (Space diagonal = this.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
+        {
+            Piece piece = diagonal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(diagonal, true));
+                break;
+            }
+
+            moves.Add(new Move(diagonal));
+        }
+    }
+
+    public void DiagonalsDownLeft(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    {
+        for (Space diagonal = this.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
+        {
+            Piece piece = diagonal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(diagonal, true));
+                break;
+            }
+
+            moves.Add(new Move(diagonal));
+        }
+    }
+
+    public Space Forward(Dictionary<(char, int), Space> board)
+    {
+        if (!this.isWhite)
+            return this.Down(board);
+        return this.Up(board);
+    }
+
+    public Space Backward(Dictionary<(char, int), Space> board)
+    {
+        if (!this.isWhite)
+            return this.Up(board);
+        return this.Down(board);
+    }
+
+    public (string, int) GetPieceIndex()
+    {
+        string resourceName = res.GetResourceName(id);
+        string piece = resourceName.Split("__")[1];
+        return (piece[0..^2], int.Parse(piece[0..^1]));
     }
 
     public override string ToString()
