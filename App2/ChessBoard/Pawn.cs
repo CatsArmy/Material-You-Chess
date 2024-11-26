@@ -28,6 +28,7 @@ public class Pawn : Piece
     public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
+        //move is null???
         Space move = this.Forward(board);
         var c = move.GetPiece(pieces);
         if (c == null)

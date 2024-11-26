@@ -1,4 +1,4 @@
-﻿namespace Chess.ChessBoard;
+namespace Chess.ChessBoard;
 
 public class Move
 {
