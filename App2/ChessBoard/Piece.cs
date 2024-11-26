@@ -9,7 +9,7 @@ public abstract class Piece : Space
 {
     public ImageView piece;
     public int id;
-    private static Resources res;
+
 
     public Piece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(space, isWhite, spaceId)
     {
@@ -20,7 +20,6 @@ public abstract class Piece : Space
 
     public static void SetResources(Resources _res)
     {
-        res = _res;
         Space.res = _res;
     }
 
@@ -136,7 +135,9 @@ public abstract class Piece : Space
     {
         string resourceName = res.GetResourceName(id);
         string piece = resourceName.Split("__")[1];
-        return (piece[0..^2], int.Parse(piece[0..^1]));
+        //gmp__bPawn1
+        // ^1 = '1' & 0..^2 = bPawn
+        return (piece[0..^2], int.Parse($"{piece[^1]}"));
     }
 
     public override string ToString()
