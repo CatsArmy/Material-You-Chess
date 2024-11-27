@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Android.Content.Res;
-using Android.Util;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
@@ -18,6 +17,20 @@ public class Space
         this.space = space;
         this.isWhite = isWhite;
         this.spaceId = spaceId;
+    }
+
+    public Space Forward(Dictionary<(char, int), Space> board, bool isWhite)
+    {
+        if (!isWhite)
+            return this.Down(board);
+        return this.Up(board);
+    }
+
+    public Space Backward(Dictionary<(char, int), Space> board, bool isWhite)
+    {
+        if (!isWhite)
+            return this.Up(board);
+        return this.Down(board);
     }
 
     public Space DiagonalUp(Dictionary<(char, int), Space> board, bool isRight)
@@ -120,7 +133,6 @@ public class Space
     public (char, int) GetBoardIndex()
     {
         string space = res.GetResourceName(this.spaceId).Split("__")[1];
-        Log.Debug("CatsDebug", $"space: [{space}] || {space[0]}, {space[^1]}");
         return (space[0], int.Parse($"{space[^1]}"));
     }
 

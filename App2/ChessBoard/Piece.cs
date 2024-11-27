@@ -1,15 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Android.Content.Res;
 using Android.Widget;
 using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
-public abstract class Piece : Space
+
+public interface IPiece
 {
+    public abstract bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
+    public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
+}
+
+public abstract class Piece : Space, IPiece
+{
+    internal static Resources res;
     public ImageView piece;
     public int id;
-
 
     public Piece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(space, isWhite, spaceId)
     {
@@ -20,9 +28,11 @@ public abstract class Piece : Space
 
     public static void SetResources(Resources _res)
     {
+        res = _res;
         Space.res = _res;
     }
 
+    public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
     public virtual bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         base.spaceId = dest.spaceId;
@@ -50,7 +60,36 @@ public abstract class Piece : Space
     {
         //logic
         return true;
+
     }
+    public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    {
+        this.DiagonalsUpRight(board, pieces, ref moves);
+        this.DiagonalsUpLeft(board, pieces, ref moves);
+        this.DiagonalsDownRight(board, pieces, ref moves);
+        this.DiagonalsDownLeft(board, pieces, ref moves);
+    }
+    //public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, bool isUp, ref List<Move> moves)
+    //{
+    //    Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
+    //    for (Space horizantal = iterator(board); horizantal != null; horizantal = iterator(board))
+    //    {
+    //        Piece piece = horizantal.GetPiece(pieces);
+    //        if (piece != null)
+    //        {
+    //            if (piece.isWhite != this.isWhite)
+    //                moves.Add(new Move(horizantal, true));
+    //            break;
+    //        }
+
+    //        moves.Add(new Move(horizantal));
+    //        iterator = isUp switch
+    //        {
+    //            true => horizantal.Up,
+    //            false => horizantal.Down,
+    //        };
+    //    }
+    //}
 
     public void DiagonalsUpRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
@@ -117,18 +156,54 @@ public abstract class Piece : Space
         }
     }
 
-    public Space Forward(Dictionary<(char, int), Space> board)
+    public void Horizantals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        if (!this.isWhite)
-            return this.Down(board);
-        return this.Up(board);
+        this.Horizantals(board, pieces, true, ref moves);
+        this.Horizantals(board, pieces, false, ref moves);
     }
 
-    public Space Backward(Dictionary<(char, int), Space> board)
+    public void Horizantals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
     {
-        if (!this.isWhite)
-            return this.Up(board);
-        return this.Down(board);
+        Func<Dictionary<(char, int), Space>, Space> iterator = isRight ? this.Right : this.Left;
+        for (Space horizantal = iterator(board); horizantal != null; iterator = isRight
+            ? horizantal.Right
+            : horizantal.Left, horizantal = iterator(board))
+        {
+            Piece piece = horizantal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(horizantal, true));
+                break;
+            }
+
+            moves.Add(new Move(horizantal));
+        }
+    }
+
+    public void Verticals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    {
+        this.Verticals(board, pieces, true, ref moves);
+        this.Verticals(board, pieces, false, ref moves);
+    }
+
+    public void Verticals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isUp, ref List<Move> moves)
+    {
+        Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
+        for (Space horizantal = iterator(board); horizantal != null; iterator = isUp
+            ? horizantal.Up
+            : horizantal.Down, horizantal = iterator(board))
+        {
+            Piece piece = horizantal.GetPiece(pieces);
+            if (piece != null)
+            {
+                if (piece.isWhite != this.isWhite)
+                    moves.Add(new Move(horizantal, true));
+                break;
+            }
+
+            moves.Add(new Move(horizantal));
+        }
     }
 
     public (string, int) GetPieceIndex()

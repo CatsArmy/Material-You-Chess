@@ -14,29 +14,29 @@ public class Pawn : Piece
     {
         bool isLegalMove = true;
 
-        var moves = GetMoves(board, pieces);
+        var moves = Moves(board, pieces);
         var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
         if (move == null)
             return false;
-        this.isFirstMove = false;
+
         if (!isLegalMove)
             return false;
         //promote logic
+        this.isFirstMove = false;
         return base.Move(dest, board, pieces);
     }
 
-    public List<Move> GetMoves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        //move is null???
-        Space move = this.Forward(board);
+        Space move = this.Forward(board, this.isWhite);
         var c = move.GetPiece(pieces);
         if (c == null)
         {
             moves.Add(new(move));
             if (this.isFirstMove)
             {
-                var a = c.Forward(board);
+                var a = move.Forward(board, this.isWhite);
                 var b = a.GetPiece(pieces);
                 if (b == null)
                     moves.Add(new(a, false, true));
@@ -62,8 +62,6 @@ public class Pawn : Piece
         }
         return moves;
     }
-
-
 
     public void Promote()
     {
