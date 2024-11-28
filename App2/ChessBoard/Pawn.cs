@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
@@ -13,12 +12,6 @@ public class Pawn : Piece
     public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
-
-        var moves = Moves(board, pieces);
-        var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
-        if (move == null)
-            return false;
-
         if (!isLegalMove)
             return false;
         //promote logic
@@ -30,16 +23,15 @@ public class Pawn : Piece
     {
         List<Move> moves = new List<Move>();
         Space move = this.Forward(board, this.isWhite);
-        var c = move.GetPiece(pieces);
-        if (c == null)
+        var piece = move.GetPiece(pieces);
+        if (piece == null)
         {
             moves.Add(new(move));
             if (this.isFirstMove)
             {
-                var a = move.Forward(board, this.isWhite);
-                var b = a.GetPiece(pieces);
-                if (b == null)
-                    moves.Add(new(a, false, true));
+                var move2 = move.Forward(board, this.isWhite);
+                if (move2.GetPiece(pieces) == null)
+                    moves.Add(new(move2, false, true));
             }
         }
 
@@ -49,17 +41,14 @@ public class Pawn : Piece
             false => (DiagonalDown(board, false), DiagonalDown(board, true)),
         };
 
-        if (left.GetPiece(pieces) != null)
-        {
+        if (left != null && left.GetPiece(pieces) != null)
             if (left.GetPiece(pieces).isWhite != this.isWhite)
                 moves.Add(new(left, true));
-        }
 
-        if (right.GetPiece(pieces) != null)
-        {
+        if (right != null && right.GetPiece(pieces) != null)
             if (right.GetPiece(pieces).isWhite != this.isWhite)
                 moves.Add(new(right, true));
-        }
+
         return moves;
     }
 

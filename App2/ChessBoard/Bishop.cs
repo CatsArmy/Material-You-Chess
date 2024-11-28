@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
@@ -11,10 +10,6 @@ public class Bishop : Piece
     public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         bool isLegalMove = true;
-        var moves = Moves(board, pieces);
-        var move = moves.FirstOrDefault(i => i.Space.spaceId == dest.spaceId);
-        if (move == null)
-            return false;
         if (!isLegalMove)
             return false;
         return base.Move(dest, board, pieces);

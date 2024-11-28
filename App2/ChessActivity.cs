@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Android.App;
 using Android.Content.PM;
 using Android.Content.Res;
@@ -66,16 +67,6 @@ public class ChessActivity : AppCompatActivity
 
         this.InitChessPieces();
         this.InitChessBoard();
-        //string debug = string.Empty;
-        //debug += $"{bRook1}\n{bKnight1}\n{bBishop1}\n";
-        //debug += $"{bRook1.piece.Clickable}, {bKnight1.piece.Clickable}, {bBishop1.piece.Clickable}";
-        //p1MainUsername.Text = debug;
-
-        //TextView p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
-        //string debug2 = string.Empty;
-        //debug2 += $"{wRook1}\n{wKnight1}\n{wBishop1}\n";
-        //debug2 += $"{wRook1.piece.Clickable}, {wKnight1.piece.Clickable}, {wBishop1.piece.Clickable}";
-        //p2MainUsername.Text = debug2;
         selected = null;
 
         foreach (var space in board.Values)
@@ -84,7 +75,6 @@ public class ChessActivity : AppCompatActivity
         foreach (var piece in pieces.Values)
         {
             piece.piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
-            //piece.space.Clickable = false;
             piece.piece.Clickable = true;
         }
     }
@@ -96,23 +86,15 @@ public class ChessActivity : AppCompatActivity
         if (selected == null)
         {
             selected = piece;
-            //selected.space.Clickable = false;
-            //selected.piece.Clickable = false;
-            //Log.Debug($"{nameof(OnClickPiece)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was null");
             return;
         }
 
         if (selected.isWhite == piece.isWhite)
-        {
-            //selected.space.Clickable = true;
             selected = piece;
-            //selected.space.Clickable = false;
-        }
 
         if (selected.id == piece.id)
             return;
 
-        //Log.Debug($"{nameof(OnClickPiece)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was not null");
         if (selected.Move(piece, board, pieces))
             this.NextPlayer();
     }
@@ -122,18 +104,19 @@ public class ChessActivity : AppCompatActivity
         p1MainUsername.Text = $"{space}";
 
         if (selected == null)
-        {
-            //Log.Debug($"{nameof(OnClickSpace)}", $"selected was null");
             return;
-        }
 
-        //Log.Debug($"{nameof(OnClickSpace)}", $"{Resources.GetResourceName(selected.spaceId)} || {Resources.GetResourceName(selected.id)} ||  selected was not null");
-        if (selected.Move(space, board, pieces))
+
+        if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == space) != null)
+        {
+            selected.Move(space, board, pieces);
             this.NextPlayer();
+        }
     }
 
     private void NextPlayer()
     {
+
         selected = null;
         //Next player logic
     }
@@ -303,7 +286,6 @@ public class ChessActivity : AppCompatActivity
             isWhite = !isWhite;
         }
     }
-
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {
         Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);

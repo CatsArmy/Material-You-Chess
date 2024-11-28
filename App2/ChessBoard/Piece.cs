@@ -95,6 +95,8 @@ public abstract class Piece : Space, IPiece
     {
         for (Space diagonal = this.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
+            if (diagonal == null)
+                break;
             Piece piece = diagonal.GetPiece(pieces);
             if (piece != null)
             {
@@ -111,6 +113,8 @@ public abstract class Piece : Space, IPiece
     {
         for (Space diagonal = this.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
         {
+            if (diagonal == null)
+                break;
             Piece piece = diagonal.GetPiece(pieces);
             if (piece != null)
             {
@@ -125,9 +129,10 @@ public abstract class Piece : Space, IPiece
 
     public void DiagonalsDownRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-
         for (Space diagonal = this.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
         {
+            if (diagonal == null)
+                break;
             Piece piece = diagonal.GetPiece(pieces);
             if (piece != null)
             {
@@ -144,6 +149,8 @@ public abstract class Piece : Space, IPiece
     {
         for (Space diagonal = this.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
         {
+            if (diagonal == null)
+                break;
             Piece piece = diagonal.GetPiece(pieces);
             if (piece != null)
             {
@@ -165,10 +172,11 @@ public abstract class Piece : Space, IPiece
     public void Horizantals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
     {
         Func<Dictionary<(char, int), Space>, Space> iterator = isRight ? this.Right : this.Left;
-        for (Space horizantal = iterator(board); horizantal != null; iterator = isRight
-            ? horizantal.Right
+        for (Space horizantal = iterator(board); horizantal != null; iterator = isRight ? horizantal.Right
             : horizantal.Left, horizantal = iterator(board))
         {
+            if (horizantal == null)
+                break;
             Piece piece = horizantal.GetPiece(pieces);
             if (piece != null)
             {
@@ -190,19 +198,20 @@ public abstract class Piece : Space, IPiece
     public void Verticals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isUp, ref List<Move> moves)
     {
         Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
-        for (Space horizantal = iterator(board); horizantal != null; iterator = isUp
-            ? horizantal.Up
-            : horizantal.Down, horizantal = iterator(board))
+        for (Space vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
+            : vertical.Down, vertical = iterator(board))
         {
-            Piece piece = horizantal.GetPiece(pieces);
+            if (vertical == null)
+                break;
+            Piece piece = vertical.GetPiece(pieces);
             if (piece != null)
             {
                 if (piece.isWhite != this.isWhite)
-                    moves.Add(new Move(horizantal, true));
+                    moves.Add(new Move(vertical, true));
                 break;
             }
 
-            moves.Add(new Move(horizantal));
+            moves.Add(new Move(vertical));
         }
     }
 
