@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Android.Content.Res;
+using Android.Util;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
@@ -133,6 +134,8 @@ public class Space
     public (char, int) GetBoardIndex()
     {
         string space = res.GetResourceName(this.spaceId).Split("__")[1];
+        //s = "A1";  s[0]='A'                   s[^1]='1'
+        Log.Error("DebugCatSpace", $"[{space[0]}], [{space[^1]}]");
         return (space[0], int.Parse($"{space[^1]}"));
     }
 

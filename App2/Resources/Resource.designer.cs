@@ -10708,7 +10708,7 @@ namespace Chess
 			public const int gmp__bBishop2 = 2131231043;
 			
 			// aapt resource value: 0x7F080144
-			public const int gmp__bKing = 2131231044;
+			public const int gmp__bKing1 = 2131231044;
 			
 			// aapt resource value: 0x7F080145
 			public const int gmp__bKnight1 = 2131231045;
@@ -10741,7 +10741,7 @@ namespace Chess
 			public const int gmp__bPawn8 = 2131231054;
 			
 			// aapt resource value: 0x7F08014F
-			public const int gmp__bQueen = 2131231055;
+			public const int gmp__bQueen1 = 2131231055;
 			
 			// aapt resource value: 0x7F080150
 			public const int gmp__bRook1 = 2131231056;
@@ -10756,7 +10756,7 @@ namespace Chess
 			public const int gmp__wBishop2 = 2131231059;
 			
 			// aapt resource value: 0x7F080154
-			public const int gmp__wKing = 2131231060;
+			public const int gmp__wKing1 = 2131231060;
 			
 			// aapt resource value: 0x7F080155
 			public const int gmp__wKnight1 = 2131231061;
@@ -10789,7 +10789,7 @@ namespace Chess
 			public const int gmp__wPawn8 = 2131231070;
 			
 			// aapt resource value: 0x7F08015F
-			public const int gmp__wQueen = 2131231071;
+			public const int gmp__wQueen1 = 2131231071;
 			
 			// aapt resource value: 0x7F080160
 			public const int gmp__wRook1 = 2131231072;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Android.Content.Res;
+using Android.Util;
 using Android.Widget;
 using AndroidX.ConstraintLayout.Widget;
 
@@ -15,7 +16,6 @@ public interface IPiece
 
 public abstract class Piece : Space, IPiece
 {
-    internal static Resources res;
     public ImageView piece;
     public int id;
 
@@ -28,7 +28,6 @@ public abstract class Piece : Space, IPiece
 
     public static void SetResources(Resources _res)
     {
-        res = _res;
         Space.res = _res;
     }
 
@@ -37,7 +36,7 @@ public abstract class Piece : Space, IPiece
     {
         base.spaceId = dest.spaceId;
         base.space = dest.space;
-
+        this.piece.RequestLayout();
         ConstraintLayout.LayoutParams @params = this.piece.LayoutParameters as ConstraintLayout.LayoutParams;
         @params.TopToTop = dest.spaceId;
         @params.BottomToBottom = dest.spaceId;
@@ -51,17 +50,36 @@ public abstract class Piece : Space, IPiece
         @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
         @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
         this.piece.LayoutParameters = @params;
+        this.piece.RequestLayout();
 
         return true;
     }
-
 
     public virtual bool Capture(Piece dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         //logic
-        return true;
+        //check for if move would result in a check
+        var rip = dest.GetPieceIndex();
+        pieces.Remove(rip);
+        dest.piece.Visibility = Android.Views.ViewStates.Gone;
+        dest.piece.Enabled = false;
+        dest.piece.Clickable = false;
+        //dest.piece.Touchables.Clear();
+        //var @params = dest.piece.LayoutParameters as ConstraintLayout.LayoutParams;
+        //@params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
+        //@params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
+        //@params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
+        //@params.EndToStart = ConstraintLayout.LayoutParams.Unset;
+        //@params.Height = 0;
+        //@params.Width = 0;
+        //dest.piece.LayoutParameters = @params;
+        //dest.piece.Elevation = -999;
 
+        this.Move(dest, board, pieces);
+        //add to the list of captured pieces
+        return true;
     }
+
     public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
         this.DiagonalsUpRight(board, pieces, ref moves);
@@ -69,6 +87,7 @@ public abstract class Piece : Space, IPiece
         this.DiagonalsDownRight(board, pieces, ref moves);
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
+
     //public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, bool isUp, ref List<Move> moves)
     //{
     //    Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
@@ -163,13 +182,13 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void Horizantals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        this.Horizantals(board, pieces, true, ref moves);
-        this.Horizantals(board, pieces, false, ref moves);
+        this.Horizontals(board, pieces, true, ref moves);
+        this.Horizontals(board, pieces, false, ref moves);
     }
 
-    public void Horizantals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
     {
         Func<Dictionary<(char, int), Space>, Space> iterator = isRight ? this.Right : this.Left;
         for (Space horizantal = iterator(board); horizantal != null; iterator = isRight ? horizantal.Right
@@ -219,9 +238,11 @@ public abstract class Piece : Space, IPiece
     {
         string resourceName = res.GetResourceName(id);
         string piece = resourceName.Split("__")[1];
-        //gmp__bPawn1
-        // ^1 = '1' & 0..^2 = bPawn
-        return (piece[0..^2], int.Parse($"{piece[^1]}"));
+        //     [0..^1] = "bPawn"        012345      [^1]='1'
+        //                         gmp__bPawn1 | 6 
+        //                              543210
+        Log.Error("DebugCatPiece", $"[{piece[0..^1]}], [{piece[^1]}]");
+        return (piece[0..^1], int.Parse($"{piece[^1]}"));
     }
 
     public override string ToString()

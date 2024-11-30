@@ -5,8 +5,10 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
 using Android.Runtime;
+using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
 using Google.Android.Material.ImageView;
 using Space = Chess.ChessBoard.Space;
@@ -95,8 +97,23 @@ public class ChessActivity : AppCompatActivity
         if (selected.id == piece.id)
             return;
 
-        if (selected.Move(piece, board, pieces))
+        if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == board[piece.GetBoardIndex()]) != null)
+        {
+            if (!selected.Capture(piece, board, pieces))
+            {
+                //inform user of reason for not capturing...
+                return;
+            }
+            //piece.piece.SetOnTouchListener(null);
+            var view = base.FindViewById(piece.piece.Id);
+            var parent = view.Parent as ViewGroup;
+            if (parent != null)
+            {
+                parent.RemoveView(view);
+            }
+
             this.NextPlayer();
+        }
     }
     private void OnClickSpace(object sender, System.EventArgs e, Space space)
     {
@@ -109,7 +126,27 @@ public class ChessActivity : AppCompatActivity
 
         if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == space) != null)
         {
+            var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+            view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
+            //var parent = view.Parent as ViewGroup;
+            //if (parent != null)
+            //{
+            //    ConstraintLayout.LayoutParams @params = new(this.selected.piece.LayoutParameters as ConstraintLayout.LayoutParams);
+            //    @params.TopToTop = space.spaceId;
+            //    @params.BottomToBottom = space.spaceId;
+            //    @params.StartToStart = space.spaceId;
+            //    @params.EndToEnd = space.spaceId;
+            //    @params.VerticalBias = 0.5f;
+            //    @params.HorizontalBias = 0.5f;
+            //    @params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
+            //    @params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
+            //    @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
+            //    @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
+            //    //this.selected.piece.LayoutParameters = @params;
+            //    parent.UpdateViewLayout(view, @params);
+            //}
             selected.Move(space, board, pieces);
+            view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
             this.NextPlayer();
         }
     }
@@ -144,12 +181,12 @@ public class ChessActivity : AppCompatActivity
         pieces[("bBishop", 1)] = bBishop1;
 
         spaceId = Resource.Id.gmb__D8;
-        bQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__bQueen), Resource.Id.gmp__bQueen,
+        bQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__bQueen1), Resource.Id.gmp__bQueen1,
             base.FindViewById<ImageView>(spaceId), false, spaceId);
         pieces[("bQueen", 1)] = bQueen;
 
         spaceId = Resource.Id.gmb__E8;
-        bKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__bKing), Resource.Id.gmp__bKing,
+        bKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__bKing1), Resource.Id.gmp__bKing1,
             base.FindViewById<ImageView>(spaceId), false, spaceId);
         pieces[("bKing", 1)] = bKing;
 
@@ -199,12 +236,12 @@ public class ChessActivity : AppCompatActivity
         pieces[("wBishop", 1)] = wBishop1;
 
         spaceId = Resource.Id.gmb__D1;
-        wQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__wQueen), Resource.Id.gmp__wQueen,
+        wQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__wQueen1), Resource.Id.gmp__wQueen1,
             base.FindViewById<ImageView>(spaceId), true, spaceId);
         pieces[("wQueen", 1)] = wQueen;
 
         spaceId = Resource.Id.gmb__E1;
-        wKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__wKing), Resource.Id.gmp__wKing,
+        wKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__wKing1), Resource.Id.gmp__wKing1,
             base.FindViewById<ImageView>(spaceId), true, spaceId);
         pieces[("wKing", 1)] = wKing;
 
@@ -237,6 +274,7 @@ public class ChessActivity : AppCompatActivity
             }
         }
     }
+
     private void InitChessBoard()
     {
         bool isWhite = true;
@@ -286,6 +324,7 @@ public class ChessActivity : AppCompatActivity
             isWhite = !isWhite;
         }
     }
+
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {
         Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);

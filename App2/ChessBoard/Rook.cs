@@ -10,7 +10,7 @@ public class Rook : Piece
     public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        this.Horizantals(board, pieces, ref moves);
+        this.Horizontals(board, pieces, ref moves);
         this.Verticals(board, pieces, ref moves);
         return moves;
     }

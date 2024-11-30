@@ -361,7 +361,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    
+
                     app:layout_constraintStart_toStartOf="parent">
 
 					<TextView
@@ -481,6 +481,7 @@
         android:id="@+id/ChessBoard"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:animateLayoutChanges="true"
         app:layout_constraintBottom_toTopOf="@+id/guideline6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -1050,7 +1051,7 @@
             app:srcCompat="@drawable/bishop_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bQueen"
+            android:id="@+id/gmp__bQueen1"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:elevation="4dp"
@@ -1062,7 +1063,7 @@
             app:srcCompat="@drawable/queen_black" />
 
 		<ImageView
-            android:id="@+id/gmp__bKing"
+            android:id="@+id/gmp__bKing1"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:elevation="4dp"
@@ -1242,7 +1243,7 @@
             app:srcCompat="@drawable/bishop_white" />
 
 		<ImageView
-            android:id="@+id/gmp__wQueen"
+            android:id="@+id/gmp__wQueen1"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:elevation="4dp"
@@ -1254,7 +1255,7 @@
             app:srcCompat="@drawable/queen_white" />
 
 		<ImageView
-            android:id="@+id/gmp__wKing"
+            android:id="@+id/gmp__wKing1"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:elevation="4dp"
