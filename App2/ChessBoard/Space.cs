@@ -20,65 +20,65 @@ public class Space
         this.spaceId = spaceId;
     }
 
-    public Space Forward(Dictionary<(char, int), Space> board, bool isWhite)
+    public Space? Forward(Dictionary<(char, int), Space> board, bool isWhite)
     {
         if (!isWhite)
             return this.Down(board);
         return this.Up(board);
     }
 
-    public Space Backward(Dictionary<(char, int), Space> board, bool isWhite)
+    public Space? Backward(Dictionary<(char, int), Space> board, bool isWhite)
     {
         if (!isWhite)
             return this.Up(board);
         return this.Down(board);
     }
 
-    public Space DiagonalUp(Dictionary<(char, int), Space> board, bool isRight)
+    public Space? DiagonalUp(Dictionary<(char, int), Space> board, bool isRight)
     {
-        Space up = Up(board);
+        Space? up = Up(board);
         if (up == null)
             return null;
 
         if (isRight)
         {
-            Space right = up.Right(board);
+            Space? right = up.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        Space left = up.Left(board);
+        Space? left = up.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public Space DiagonalDown(Dictionary<(char, int), Space> board, bool isRight)
+    public Space? DiagonalDown(Dictionary<(char, int), Space> board, bool isRight)
     {
-        Space down = Down(board);
+        Space? down = Down(board);
         if (down == null)
             return null;
 
         if (isRight)
         {
-            Space right = down.Right(board);
+            Space? right = down.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        Space left = down.Left(board);
+        Space? left = down.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public Space Up(Dictionary<(char, int), Space> board)
+    public Space? Up(Dictionary<(char, int), Space> board)
     {
         (char rank, int file) = GetBoardIndex();
         file++;
@@ -89,7 +89,7 @@ public class Space
         return board[index];
     }
 
-    public Space Down(Dictionary<(char, int), Space> board)
+    public Space? Down(Dictionary<(char, int), Space> board)
     {
         (char rank, int file) = GetBoardIndex();
         file--;
@@ -100,7 +100,7 @@ public class Space
         return board[index];
     }
 
-    public Space Right(Dictionary<(char, int), Space> board)
+    public Space? Right(Dictionary<(char, int), Space> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank++;
@@ -111,7 +111,7 @@ public class Space
         return board[index];
     }
 
-    public Space Left(Dictionary<(char, int), Space> board)
+    public Space? Left(Dictionary<(char, int), Space> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank--;
