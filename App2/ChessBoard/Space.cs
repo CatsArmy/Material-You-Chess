@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Android.Content.Res;
 using Android.Util;
@@ -6,18 +7,24 @@ using Android.Widget;
 
 namespace Chess.ChessBoard;
 
+[Serializable]
 public class Space
 {
-    internal static Resources res;
+    [NonSerialized]
+    protected static Resources res;
+
+    [NonSerialized]
     public ImageView space;
     public bool isWhite;
     public int spaceId;
 
-    public Space(ImageView space, bool isWhite, int spaceId)
+    public Space(ImageView space, bool isWhite, int spaceId, Resources resources = null)
     {
         this.space = space;
         this.isWhite = isWhite;
         this.spaceId = spaceId;
+        if (res == null && resources != null)
+            res = resources;
     }
 
     public Space? Forward(Dictionary<(char, int), Space> board, bool isWhite)
@@ -130,6 +137,8 @@ public class Space
 
         return boardPieces.Values.FirstOrDefault(p => p.spaceId == this.spaceId);
     }
+
+    public Space BoardSpace(Dictionary<(char, int), Space> board) => board[this.GetBoardIndex()];
 
     public (char, int) GetBoardIndex()
     {

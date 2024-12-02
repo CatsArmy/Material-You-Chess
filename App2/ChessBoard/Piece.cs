@@ -36,7 +36,6 @@ public abstract class Piece : Space, IPiece
     {
         base.spaceId = dest.spaceId;
         base.space = dest.space;
-        this.piece.RequestLayout();
         ConstraintLayout.LayoutParams @params = this.piece.LayoutParameters as ConstraintLayout.LayoutParams;
         @params.TopToTop = dest.spaceId;
         @params.BottomToBottom = dest.spaceId;

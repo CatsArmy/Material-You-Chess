@@ -3,6 +3,7 @@ using System.Linq;
 using Android.App;
 using Android.Content.PM;
 using Android.Content.Res;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -27,6 +28,12 @@ public class ChessActivity : AppCompatActivity
     private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
     private Dictionary<(char, int), Space> board = new Dictionary<(char, int), Space>();
     private Piece selected = null;
+    private List<Space> moves = null;
+    private readonly Color SelectedBlackColor = new(82, 70, 152);
+    private readonly Color SelectedWhiteColor = new(172, 162, 225);
+    private readonly Color UnselectedBlackColor = new(41, 43, 50);
+    private readonly Color UnselectedWhiteColor = new(222, 227, 195);
+
 
     private Bishop bBishop1, bBishop2;
     private King bKing;
@@ -70,9 +77,13 @@ public class ChessActivity : AppCompatActivity
         this.InitChessPieces();
         this.InitChessBoard();
         selected = null;
-
+        moves = new();
         foreach (var space in board.Values)
+        {
             space.space.Click += (sender, e) => OnClickSpace(sender, e, space);
+            space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+            moves.Add(space);
+        }
 
         foreach (var piece in pieces.Values)
         {
@@ -84,7 +95,10 @@ public class ChessActivity : AppCompatActivity
     private void OnClickPiece(object sender, System.EventArgs e, Piece piece)
     {
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        TextView p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        p2MainUsername.Text = $"{nameof(piece)}.{nameof(piece.isWhite)}:{piece.isWhite}";
         p1MainUsername.Text = $"{piece}";
+
         if (selected == null)
         {
             selected = piece;
@@ -92,34 +106,36 @@ public class ChessActivity : AppCompatActivity
         }
 
         if (selected.isWhite == piece.isWhite)
+        {
+            if (selected.id == piece.id)
+                return;
             selected = piece;
+        }
 
-        if (selected.id == piece.id)
-            return;
-
-        if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == board[piece.GetBoardIndex()]) != null)
+        var moves = selected.Moves(board, pieces);
+        if (moves.FirstOrDefault(move => move.Space == board[piece.GetBoardIndex()]) != null)
         {
             if (!selected.Capture(piece, board, pieces))
             {
                 //inform user of reason for not capturing...
                 return;
             }
-            //piece.piece.SetOnTouchListener(null);
-            var view = base.FindViewById(piece.piece.Id);
+            View view = base.FindViewById(piece.piece.Id);
             var parent = view.Parent as ViewGroup;
             if (parent != null)
-            {
                 parent.RemoveView(view);
-            }
 
             this.NextPlayer();
+            return;
         }
     }
     private void OnClickSpace(object sender, System.EventArgs e, Space space)
     {
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         p1MainUsername.Text = $"{space}";
-
+        TextView p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        p2MainUsername.Text = $"{nameof(space)}.{nameof(space.isWhite)}:{space.isWhite}";
+        ClearSelectedMoves();
         if (selected == null)
             return;
 
@@ -127,7 +143,7 @@ public class ChessActivity : AppCompatActivity
         if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == space) != null)
         {
             var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-            view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
+            //view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
             //var parent = view.Parent as ViewGroup;
             //if (parent != null)
             //{
@@ -145,9 +161,27 @@ public class ChessActivity : AppCompatActivity
             //    //this.selected.piece.LayoutParameters = @params;
             //    parent.UpdateViewLayout(view, @params);
             //}
-            selected.Move(space, board, pieces);
             view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
+            selected.Move(space, board, pieces);
             this.NextPlayer();
+            return;
+        }
+    }
+
+    private void ClearSelectedMoves()
+    {
+        foreach (var move in moves)
+        {
+            var space = move.BoardSpace(board);
+            space.space.Drawable.SetTint(space.isWhite ? UnselectedWhiteColor : UnselectedBlackColor);
+        }
+    }
+    private void SelectMoves()
+    {
+        foreach (var move in moves)
+        {
+            var space = move.BoardSpace(board);
+            space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
         }
     }
 
@@ -313,11 +347,13 @@ public class ChessActivity : AppCompatActivity
             board[('F', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
+        isWhite = !isWhite;
         for (int i = Resource.Id.gmb__G1, j = 1; i <= Resource.Id.gmb__G8; i++, j++)
         {
             board[('G', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
             isWhite = !isWhite;
         }
+        isWhite = !isWhite;
         for (int i = Resource.Id.gmb__H1, j = 1; i <= Resource.Id.gmb__H8; i++, j++)
         {
             board[('H', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
