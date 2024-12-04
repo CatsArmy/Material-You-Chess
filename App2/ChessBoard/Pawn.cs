@@ -5,24 +5,16 @@ namespace Chess.ChessBoard;
 
 public class Pawn : Piece
 {
-    private bool isFirstMove = true;
+    public bool isFirstMove = true;
+    public bool EnPassantCapturable = false;
 
     public Pawn(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
-
-    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
-    {
-        bool isLegalMove = true;
-        if (!isLegalMove)
-            return false;
-        //promote logic
-        this.isFirstMove = false;
-        return base.Move(dest, board, pieces);
-    }
-
     public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
         Space move = this.Forward(board, this.isWhite);
+        if (move == null)
+            return moves;
         var piece = move.GetPiece(pieces);
         if (piece == null)
         {

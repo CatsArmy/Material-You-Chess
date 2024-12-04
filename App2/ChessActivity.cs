@@ -28,7 +28,8 @@ public class ChessActivity : AppCompatActivity
     private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
     private Dictionary<(char, int), Space> board = new Dictionary<(char, int), Space>();
     private Piece selected = null;
-    private List<Space> moves = null;
+    private List<Space> highlighted = null;
+    private List<Move> moves = null;
     private readonly Color SelectedBlackColor = new(82, 70, 152);
     private readonly Color SelectedWhiteColor = new(172, 162, 225);
     private readonly Color UnselectedBlackColor = new(41, 43, 50);
@@ -77,12 +78,15 @@ public class ChessActivity : AppCompatActivity
         this.InitChessPieces();
         this.InitChessBoard();
         selected = null;
+        highlighted = new();
         moves = new();
+        //TODO implement EnPassantCapturable
+        //TODO Add Casstling
+        //TODO Add Promotion
+        //TODO More?
         foreach (var space in board.Values)
         {
             space.space.Click += (sender, e) => OnClickSpace(sender, e, space);
-            space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
-            moves.Add(space);
         }
 
         foreach (var piece in pieces.Values)
@@ -95,94 +99,133 @@ public class ChessActivity : AppCompatActivity
     private void OnClickPiece(object sender, System.EventArgs e, Piece piece)
     {
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        p1MainUsername.Text = $"{piece}";
         TextView p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
         p2MainUsername.Text = $"{nameof(piece)}.{nameof(piece.isWhite)}:{piece.isWhite}";
-        p1MainUsername.Text = $"{piece}";
 
         if (selected == null)
         {
             selected = piece;
+            SelectMoves();
             return;
         }
 
         if (selected.isWhite == piece.isWhite)
         {
-            if (selected.id == piece.id)
-                return;
-            selected = piece;
-        }
-
-        var moves = selected.Moves(board, pieces);
-        if (moves.FirstOrDefault(move => move.Space == board[piece.GetBoardIndex()]) != null)
-        {
-            if (!selected.Capture(piece, board, pieces))
+            if (selected.id != piece.id)
             {
-                //inform user of reason for not capturing...
-                return;
+                selected = piece;
+                SelectMoves();
             }
-            View view = base.FindViewById(piece.piece.Id);
-            var parent = view.Parent as ViewGroup;
-            if (parent != null)
-                parent.RemoveView(view);
-
-            this.NextPlayer();
             return;
         }
+
+        var move = selected.Moves(board, pieces).FirstOrDefault(move => move.Space == board[piece.GetBoardIndex()]);
+        if (move == null)
+        {
+            ClearSelectedMoves();
+            selected = null;
+            return;
+        }
+
+        var (spaceId, spaceView) = selected.FakeMove(piece.spaceId, piece.space);
+        var king = selected.isWhite ? wKing : bKing;
+        if (king.IsInCheck(board, pieces))
+        {
+            selected.FakeMove(spaceId, spaceView);
+            Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long).Show();
+            return;
+        }
+
+        if (selected is Pawn pawn)
+        {
+            pawn.isFirstMove = false;
+            pawn.EnPassantCapturable = move.EnPassantCapturable;
+            if (piece.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
+                pawn.Promote();
+        }
+
+        SelectMoves(piece);
+        selected.Capture(piece, pieces);
+        View view = base.FindViewById(piece.piece.Id);
+        var parent = view.Parent as ViewGroup;
+        parent?.RemoveView(view);
+        this.NextPlayer();
     }
+
     private void OnClickSpace(object sender, System.EventArgs e, Space space)
     {
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         p1MainUsername.Text = $"{space}";
         TextView p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
-        p2MainUsername.Text = $"{nameof(space)}.{nameof(space.isWhite)}:{space.isWhite}";
-        ClearSelectedMoves();
+        p2MainUsername.Text = $"{nameof(space.isWhite)}:{space.isWhite}";
         if (selected == null)
             return;
-
-
-        if (selected.Moves(board, pieces).FirstOrDefault(move => move.Space == space) != null)
+        Move move = selected.Moves(board, pieces).FirstOrDefault(move => move.Space == space);
+        if (move == null)
         {
-            var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-            //view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
-            //var parent = view.Parent as ViewGroup;
-            //if (parent != null)
-            //{
-            //    ConstraintLayout.LayoutParams @params = new(this.selected.piece.LayoutParameters as ConstraintLayout.LayoutParams);
-            //    @params.TopToTop = space.spaceId;
-            //    @params.BottomToBottom = space.spaceId;
-            //    @params.StartToStart = space.spaceId;
-            //    @params.EndToEnd = space.spaceId;
-            //    @params.VerticalBias = 0.5f;
-            //    @params.HorizontalBias = 0.5f;
-            //    @params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
-            //    @params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
-            //    @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
-            //    @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
-            //    //this.selected.piece.LayoutParameters = @params;
-            //    parent.UpdateViewLayout(view, @params);
-            //}
-            view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
-            selected.Move(space, board, pieces);
-            this.NextPlayer();
+            ClearSelectedMoves();
+            selected = null;
             return;
         }
+
+        var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+        view.LayoutTransition.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
+        var (spaceId, spaceView) = selected.FakeMove(space.spaceId, space.space);
+        var king = selected.isWhite ? wKing : bKing;
+        if (king.IsInCheck(board, pieces))
+        {
+            selected.FakeMove(spaceId, spaceView);
+            Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long).Show();
+            return;
+        }
+
+        if (selected is Pawn pawn)
+        {
+            pawn.isFirstMove = false;
+            pawn.EnPassantCapturable = move.EnPassantCapturable;
+            if (space.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
+                pawn.Promote();
+        }
+
+        SelectMoves(space);
+        selected.Move(space);
+        this.NextPlayer();
+        return;
     }
 
     private void ClearSelectedMoves()
     {
-        foreach (var move in moves)
-        {
-            var space = move.BoardSpace(board);
+        moves.Clear();
+        foreach (var space in highlighted)
             space.space.Drawable.SetTint(space.isWhite ? UnselectedWhiteColor : UnselectedBlackColor);
-        }
     }
+
     private void SelectMoves()
     {
+        ClearSelectedMoves();
+        moves = this.selected.Moves(board, pieces);
         foreach (var move in moves)
         {
-            var space = move.BoardSpace(board);
+            var space = move.Space.BoardSpace(board);
             space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+            highlighted.Add(space);
         }
+        var selected = this.selected.BoardSpace(board);
+        selected.space.Drawable.SetTint(selected.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+        highlighted.Add(selected);
+    }
+
+    private void SelectMoves(Piece piece) => SelectMoves(piece.BoardSpace(board));
+
+    private void SelectMoves(Space space)
+    {
+        ClearSelectedMoves();
+        var selected = this.selected.BoardSpace(board);
+        space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+        selected.space.Drawable.SetTint(selected.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+        highlighted.Add(selected);
+        highlighted.Add(space);
     }
 
     private void NextPlayer()
@@ -312,52 +355,112 @@ public class ChessActivity : AppCompatActivity
     private void InitChessBoard()
     {
         bool isWhite = true;
+        const string IsWhite = nameof(IsWhite);
+        const string IsBlack = nameof(IsBlack);
         for (int i = Resource.Id.gmb__A1, j = 1; i <= Resource.Id.gmb__A8; i++, j++)
         {
-            board[('A', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+
+            board[('A', j)] = new Space(space, isWhite, i);
+
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__B1, j = 1; i <= Resource.Id.gmb__B8; i++, j++)
         {
-            board[('B', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('B', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__C1, j = 1; i <= Resource.Id.gmb__C8; i++, j++)
         {
-            board[('C', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('C', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__D1, j = 1; i <= Resource.Id.gmb__D8; i++, j++)
         {
-            board[('D', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('D', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__E1, j = 1; i <= Resource.Id.gmb__E8; i++, j++)
         {
-            board[('E', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('E', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__F1, j = 1; i <= Resource.Id.gmb__F8; i++, j++)
         {
-            board[('F', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('F', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__G1, j = 1; i <= Resource.Id.gmb__G8; i++, j++)
         {
-            board[('G', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('G', j)] = new Space(space, isWhite, i);
         }
-        isWhite = !isWhite;
+
         for (int i = Resource.Id.gmb__H1, j = 1; i <= Resource.Id.gmb__H8; i++, j++)
         {
-            board[('H', j)] = new Space(base.FindViewById<ImageView>(i), isWhite, i);
-            isWhite = !isWhite;
+            var space = base.FindViewById<ImageView>(i);
+            string tag = (space.Tag as Java.Lang.String).ToString();
+            isWhite = tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new System.Exception("Missing a tag"),
+            };
+            board[('H', j)] = new Space(space, isWhite, i);
         }
     }
 

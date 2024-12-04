@@ -15,12 +15,4 @@ public class Queen : Piece
         this.Diagonals(board, pieces, ref moves);
         return moves;
     }
-
-    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
-    {
-        bool isLegalMove = true;
-        if (!isLegalMove)
-            return false;
-        return base.Move(dest, board, pieces);
-    }
 }

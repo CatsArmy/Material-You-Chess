@@ -941,73 +941,41 @@
             app:layout_constraintEnd_toEndOf="@id/gmb__H1" />
 
 		<ImageView
-            android:id="@+id/gmb__A8"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/white_square_top" />
-
-		<ImageView
             android:id="@+id/gmb__A7"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gmb__A8"
             app:srcCompat="@drawable/black_square" />
-
-		<ImageView
-            android:id="@+id/gmb__A6"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A7"
-            app:srcCompat="@drawable/white_square" />
 
 		<ImageView
             android:id="@+id/gmb__A5"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gmb__A6"
             app:srcCompat="@drawable/black_square" />
-
-		<ImageView
-            android:id="@+id/gmb__A4"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A5"
-            app:srcCompat="@drawable/white_square" />
 
 		<ImageView
             android:id="@+id/gmb__A3"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gmb__A4"
             app:srcCompat="@drawable/black_square" />
-
-		<ImageView
-            android:id="@+id/gmb__A2"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
-            app:srcCompat="@drawable/white_square" />
 
 		<ImageView
             android:id="@+id/gmb__A1"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gmb__A2"
             app:srcCompat="@drawable/black_square_bottom" />
@@ -1016,80 +984,44 @@
             android:id="@+id/gmb__B8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__A8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
-            android:id="@+id/gmb__B7"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__A7"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
-            app:srcCompat="@drawable/white_square" />
-
-		<ImageView
             android:id="@+id/gmb__B6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__A6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__B7"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
-            android:id="@+id/gmb__B5"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__A5"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B6"
-            app:srcCompat="@drawable/white_square" />
-
-		<ImageView
             android:id="@+id/gmb__B4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintBottom_toTopOf="@+id/gmb__B3"
             app:layout_constraintStart_toEndOf="@+id/gmb__A4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__B5"
-
             app:srcCompat="@drawable/black_square" />
-
-		<ImageView
-            android:id="@+id/gmb__B3"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__A3"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B4"
-            app:srcCompat="@drawable/white_square" />
 
 		<ImageView
             android:id="@+id/gmb__B2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__A2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__B3"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
-            android:id="@+id/gmb__B1"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__A1"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
-            app:srcCompat="@drawable/white_square" />
-
-		<ImageView
-            android:id="@+id/gmb__C8"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__B8"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/white_square" />
-
-		<ImageView
             android:id="@+id/gmb__C7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__B7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C8"
             app:srcCompat="@drawable/black_square" />
@@ -1098,15 +1030,16 @@
             android:id="@+id/gmb__D8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__C8"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
             android:id="@+id/gmb__D7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__C7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__D8"
             app:srcCompat="@drawable/white_square" />
@@ -1115,6 +1048,7 @@
             android:id="@+id/gmb__D6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__C6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__D7"
             app:srcCompat="@drawable/black_square" />
@@ -1123,6 +1057,7 @@
             android:id="@+id/gmb__D5"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__C5"
             app:layout_constraintTop_toBottomOf="@+id/gmb__D6"
             app:srcCompat="@drawable/white_square" />
@@ -1131,30 +1066,101 @@
             android:id="@+id/gmb__D4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__C4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__D5"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
-            android:id="@+id/gmb__D3"
+            android:id="@+id/gmb__A8"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__C3"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__D4"
+            android:layout_marginStart="16dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/white_square_top" />
+
+		<ImageView
+            android:id="@+id/gmb__A6"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__A7"
             app:srcCompat="@drawable/white_square" />
 
 		<ImageView
-            android:id="@+id/gmb__D2"
+            android:id="@+id/gmb__A4"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__C2"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
-            app:srcCompat="@drawable/black_square" />
+            android:layout_marginStart="16dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__A5"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__A2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__B7"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__A7"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__B5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__A5"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__B6"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__B3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__A3"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__B4"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__B1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__A1"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__C8"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__B8"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/white_square" />
 
 		<ImageView
             android:id="@+id/gmb__D1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__C1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__D2"
             app:srcCompat="@drawable/white_square" />
@@ -1163,30 +1169,52 @@
             android:id="@+id/gmb__C6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__B6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C7"
             app:srcCompat="@drawable/white_square" />
 
 		<ImageView
-            android:id="@+id/gmb__C5"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:layout_constraintStart_toEndOf="@+id/gmb__B5"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__C6"
-            app:srcCompat="@drawable/black_square" />
-
-		<ImageView
             android:id="@+id/gmb__C4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__B4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C5"
             app:srcCompat="@drawable/white_square" />
 
 		<ImageView
+            android:id="@+id/gmb__D3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsWhite"
+            app:layout_constraintStart_toEndOf="@+id/gmb__C3"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__D4"
+            app:srcCompat="@drawable/white_square" />
+
+		<ImageView
+            android:id="@+id/gmb__D2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsBlack"
+            app:layout_constraintStart_toEndOf="@+id/gmb__C2"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
+            app:srcCompat="@drawable/black_square" />
+
+		<ImageView
+            android:id="@+id/gmb__C5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:tag="IsBlack"
+            app:layout_constraintStart_toEndOf="@+id/gmb__B5"
+            app:layout_constraintTop_toBottomOf="@+id/gmb__C6"
+            app:srcCompat="@drawable/black_square" />
+
+		<ImageView
             android:id="@+id/gmb__C3"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__B3"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C4"
             app:srcCompat="@drawable/black_square" />
@@ -1195,6 +1223,7 @@
             android:id="@+id/gmb__C2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__B2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C3"
             app:srcCompat="@drawable/white_square" />
@@ -1203,6 +1232,7 @@
             android:id="@+id/gmb__C1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__B1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__C2"
             app:srcCompat="@drawable/black_square" />
@@ -1211,6 +1241,7 @@
             android:id="@+id/gmb__E8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__D8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/white_square" />
@@ -1219,6 +1250,7 @@
             android:id="@+id/gmb__E7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__D7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E8"
             app:srcCompat="@drawable/black_square" />
@@ -1227,6 +1259,7 @@
             android:id="@+id/gmb__E6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__D6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E7"
             app:srcCompat="@drawable/white_square" />
@@ -1235,6 +1268,7 @@
             android:id="@+id/gmb__E5"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__D5"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E6"
             app:srcCompat="@drawable/black_square" />
@@ -1243,6 +1277,7 @@
             android:id="@+id/gmb__E4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__D4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E5"
             app:srcCompat="@drawable/white_square" />
@@ -1251,6 +1286,7 @@
             android:id="@+id/gmb__E3"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__D3"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E4"
             app:srcCompat="@drawable/black_square" />
@@ -1259,6 +1295,7 @@
             android:id="@+id/gmb__E2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__D2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E3"
             app:srcCompat="@drawable/white_square" />
@@ -1267,6 +1304,7 @@
             android:id="@+id/gmb__E1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__D1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__E2"
             app:srcCompat="@drawable/black_square" />
@@ -1275,6 +1313,7 @@
             android:id="@+id/gmb__F8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__E8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/black_square" />
@@ -1283,6 +1322,7 @@
             android:id="@+id/gmb__F7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__E7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F8"
             app:srcCompat="@drawable/white_square" />
@@ -1291,6 +1331,7 @@
             android:id="@+id/gmb__F6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__E6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F7"
             app:srcCompat="@drawable/black_square" />
@@ -1299,6 +1340,7 @@
             android:id="@+id/gmb__F5"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__E5"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F6"
             app:srcCompat="@drawable/white_square" />
@@ -1307,16 +1349,18 @@
             android:id="@+id/gmb__F4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintBottom_toTopOf="@+id/gmb__F3"
             app:layout_constraintStart_toEndOf="@+id/gmb__E4"
-            app:layout_constraintTop_toBottomOf="@+id/gmb__F5"
 
+            app:layout_constraintTop_toBottomOf="@+id/gmb__F5"
             app:srcCompat="@drawable/black_square" />
 
 		<ImageView
             android:id="@+id/gmb__F3"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__E3"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F4"
             app:srcCompat="@drawable/white_square" />
@@ -1325,6 +1369,7 @@
             android:id="@+id/gmb__F2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__E2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F3"
             app:srcCompat="@drawable/black_square" />
@@ -1333,6 +1378,7 @@
             android:id="@+id/gmb__F1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__E1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__F2"
             app:srcCompat="@drawable/white_square" />
@@ -1341,6 +1387,7 @@
             android:id="@+id/gmb__G8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__F8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/white_square" />
@@ -1349,6 +1396,7 @@
             android:id="@+id/gmb__G7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__F7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G8"
             app:srcCompat="@drawable/black_square" />
@@ -1357,6 +1405,7 @@
             android:id="@+id/gmb__G6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__F6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G7"
             app:srcCompat="@drawable/white_square" />
@@ -1365,6 +1414,7 @@
             android:id="@+id/gmb__G5"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__F5"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G6"
             app:srcCompat="@drawable/black_square" />
@@ -1373,6 +1423,7 @@
             android:id="@+id/gmb__G4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__F4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G5"
             app:srcCompat="@drawable/white_square" />
@@ -1381,6 +1432,7 @@
             android:id="@+id/gmb__G3"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__F3"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G4"
             app:srcCompat="@drawable/black_square" />
@@ -1389,6 +1441,7 @@
             android:id="@+id/gmb__G2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__F2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G3"
             app:srcCompat="@drawable/white_square" />
@@ -1397,6 +1450,7 @@
             android:id="@+id/gmb__G1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__F1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__G2"
             app:srcCompat="@drawable/black_square" />
@@ -1405,6 +1459,7 @@
             android:id="@+id/gmb__H8"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__G8"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/black_square_top" />
@@ -1413,6 +1468,7 @@
             android:id="@+id/gmb__H7"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__G7"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H8"
             app:srcCompat="@drawable/white_square" />
@@ -1421,6 +1477,7 @@
             android:id="@+id/gmb__H6"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__G6"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H7"
             app:srcCompat="@drawable/black_square" />
@@ -1429,6 +1486,7 @@
             android:id="@+id/gmb__H5"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__G5"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H6"
             app:srcCompat="@drawable/white_square" />
@@ -1437,6 +1495,7 @@
             android:id="@+id/gmb__H4"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__G4"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H5"
             app:srcCompat="@drawable/black_square" />
@@ -1445,6 +1504,7 @@
             android:id="@+id/gmb__H3"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__G3"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H4"
             app:srcCompat="@drawable/white_square" />
@@ -1453,6 +1513,7 @@
             android:id="@+id/gmb__H2"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsBlack"
             app:layout_constraintStart_toEndOf="@+id/gmb__G2"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H3"
             app:srcCompat="@drawable/black_square" />
@@ -1461,6 +1522,7 @@
             android:id="@+id/gmb__H1"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:tag="IsWhite"
             app:layout_constraintStart_toEndOf="@+id/gmb__G1"
             app:layout_constraintTop_toBottomOf="@+id/gmb__H2"
             app:srcCompat="@drawable/white_square_bottom" />

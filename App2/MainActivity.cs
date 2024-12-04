@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Chess.Firebase;
+using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
@@ -51,14 +52,13 @@ public class MainActivity : AppCompatActivity
                 }
 
                 //var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
-                //await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()`
-                //    .SetDisplayName("Guest3")
-                //    .SetPhotoUri(uri)
-                //    .Build());
+                var user = await chessFirebase.auth.SignInWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
+                await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
+                    //.SetDisplayName("Guest3")
+                    //    .SetPhotoUri(uri)
+                    .Build());
 
-                //chessFirebase.auth.UpdateCurrentUser(user.User);
-
-                //chessFirebase.auth.CurrentUser
+                chessFirebase.auth.UpdateCurrentUser(user.User);
             }));
         //chessFirebase.auth.ConfirmPasswordResetAsync
         //chessFirebase.auth.SendPasswordResetEmailAsync

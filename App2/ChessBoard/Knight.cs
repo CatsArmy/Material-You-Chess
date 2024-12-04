@@ -26,7 +26,7 @@ public class Knight : Piece
         }
         if (upLeft != null)
         {
-            var p = upRight.GetPiece(pieces);
+            var p = upLeft.GetPiece(pieces);
             if (p == null)
             {
                 moves.Add(new(upLeft));
@@ -52,7 +52,7 @@ public class Knight : Piece
         }
         if (downLeft != null)
         {
-            var p = downRight.GetPiece(pieces);
+            var p = downLeft.GetPiece(pieces);
             if (p == null)
             {
                 moves.Add(new(downLeft));
@@ -78,7 +78,7 @@ public class Knight : Piece
         }
         if (rightDown != null)
         {
-            var p = rightUp.GetPiece(pieces);
+            var p = rightDown.GetPiece(pieces);
             if (p == null)
             {
                 moves.Add(new(rightDown));
@@ -104,7 +104,7 @@ public class Knight : Piece
         }
         if (leftDown != null)
         {
-            var p = leftUp.GetPiece(pieces);
+            var p = leftDown.GetPiece(pieces);
             if (p == null)
             {
                 moves.Add(new(leftDown));
@@ -118,47 +118,8 @@ public class Knight : Piece
         return moves;
     }
 
-    private (Space?, Space?) MovesUp(Dictionary<(char, int), Space> board)
-    {
-        var up = this.Up(board);
-        if (up == null)
-            return (null, null);
-        up = up.Up(board);
-        return (up.Right(board), up.Left(board));
-    }
-
-    private (Space?, Space?) MovesDown(Dictionary<(char, int), Space> board)
-    {
-        var down = this.Down(board);
-        if (down == null)
-            return (null, null);
-        down = down.Down(board);
-        return (down.Right(board), down.Left(board));
-    }
-
-    private (Space?, Space?) MovesRight(Dictionary<(char, int), Space> board)
-    {
-        var right = this.Right(board);
-        if (right == null)
-            return (null, null);
-        right = right.Right(board);
-        return (right.Up(board), right.Down(board));
-    }
-
-    private (Space?, Space?) MovesLeft(Dictionary<(char, int), Space> board)
-    {
-        var left = this.Left(board);
-        if (left == null)
-            return (null, null);
-        left = left.Left(board);
-        return (left.Up(board), left.Down(board));
-    }
-
-    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
-    {
-        bool isLegalMove = true;
-        if (!isLegalMove)
-            return false;
-        return base.Move(dest, board, pieces);
-    }
+    private (Space, Space) MovesUp(Dictionary<(char, int), Space> board) => this.KnightMovesUp(board);
+    private (Space, Space) MovesDown(Dictionary<(char, int), Space> board) => this.KnightMovesDown(board);
+    private (Space, Space) MovesRight(Dictionary<(char, int), Space> board) => this.KnightMovesRight(board);
+    private (Space, Space) MovesLeft(Dictionary<(char, int), Space> board) => this.KnightMovesLeft(board);
 }

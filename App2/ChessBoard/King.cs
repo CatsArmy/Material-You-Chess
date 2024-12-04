@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
@@ -69,12 +70,26 @@ public class King : Piece
         return moves;
     }
 
-    public override bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public bool IsInCheck(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
-        bool isLegalMove = true;
-        if (!isLegalMove)
+        char key = this.isWhite ? 'b' : 'w';
+        List<Move> moves = new List<Move>();
+        foreach (var piece in pieces)
+        {
+            if (!piece.Key.Item1.StartsWith(key))
+                continue;
+
+            moves.AddRange(piece.Value.Moves(board, pieces));
+        }
+        moves = moves.Where(move => move.Capture).ToList();
+        return moves.FirstOrDefault(move => IsCheck(move, pieces)) != null;
+    }
+
+    public bool IsCheck(Move move, Dictionary<(string, int), Piece> pieces)
+    {
+        var piece = move.Space.GetPiece(pieces);
+        if (piece == null)
             return false;
-        //promote logic
-        return base.Move(dest, board, pieces);
+        return piece == this;
     }
 }

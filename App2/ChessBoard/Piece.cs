@@ -10,7 +10,7 @@ namespace Chess.ChessBoard;
 
 public interface IPiece
 {
-    public abstract bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
+    public void Move(Space dest);
     public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
 }
 
@@ -32,7 +32,7 @@ public abstract class Piece : Space, IPiece
     }
 
     public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
-    public virtual bool Move(Space dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public void Move(Space dest)
     {
         base.spaceId = dest.spaceId;
         base.space = dest.space;
@@ -50,11 +50,18 @@ public abstract class Piece : Space, IPiece
         @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
         this.piece.LayoutParameters = @params;
         this.piece.RequestLayout();
-
-        return true;
     }
 
-    public virtual bool Capture(Piece dest, Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public (int, ImageView) FakeMove(int spaceId, ImageView spaceView)
+    {
+        var lastSpaceView = base.space;
+        var lastSpaceId = base.spaceId;
+        base.spaceId = spaceId;
+        base.space = spaceView;
+        return (lastSpaceId, lastSpaceView);
+    }
+
+    public void Capture(Piece dest, Dictionary<(string, int), Piece> pieces)
     {
         //logic
         //check for if move would result in a check
@@ -63,20 +70,9 @@ public abstract class Piece : Space, IPiece
         dest.piece.Visibility = Android.Views.ViewStates.Gone;
         dest.piece.Enabled = false;
         dest.piece.Clickable = false;
-        //dest.piece.Touchables.Clear();
-        //var @params = dest.piece.LayoutParameters as ConstraintLayout.LayoutParams;
-        //@params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
-        //@params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
-        //@params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
-        //@params.EndToStart = ConstraintLayout.LayoutParams.Unset;
-        //@params.Height = 0;
-        //@params.Width = 0;
-        //dest.piece.LayoutParameters = @params;
-        //dest.piece.Elevation = -999;
 
-        this.Move(dest, board, pieces);
+        this.Move(dest);
         //add to the list of captured pieces
-        return true;
     }
 
     public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
@@ -86,28 +82,6 @@ public abstract class Piece : Space, IPiece
         this.DiagonalsDownRight(board, pieces, ref moves);
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
-
-    //public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, bool isUp, ref List<Move> moves)
-    //{
-    //    Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
-    //    for (Space horizantal = iterator(board); horizantal != null; horizantal = iterator(board))
-    //    {
-    //        Piece piece = horizantal.GetPiece(pieces);
-    //        if (piece != null)
-    //        {
-    //            if (piece.isWhite != this.isWhite)
-    //                moves.Add(new Move(horizantal, true));
-    //            break;
-    //        }
-
-    //        moves.Add(new Move(horizantal));
-    //        iterator = isUp switch
-    //        {
-    //            true => horizantal.Up,
-    //            false => horizantal.Down,
-    //        };
-    //    }
-    //}
 
     public void DiagonalsUpRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
@@ -231,6 +205,49 @@ public abstract class Piece : Space, IPiece
 
             moves.Add(new Move(vertical));
         }
+    }
+    public (Space, Space) KnightMovesUp(Dictionary<(char, int), Space> board)
+    {
+        var up = this.Up(board);
+        if (up == null)
+            return (null, null);
+        up = up.Up(board);
+        if (up == null)
+            return (null, null);
+        return (up.Right(board), up.Left(board));
+    }
+
+    public (Space, Space) KnightMovesDown(Dictionary<(char, int), Space> board)
+    {
+        var down = this.Down(board);
+        if (down == null)
+            return (null, null);
+        down = down.Down(board);
+        if (down == null)
+            return (null, null);
+        return (down.Right(board), down.Left(board));
+    }
+
+    public (Space, Space) KnightMovesRight(Dictionary<(char, int), Space> board)
+    {
+        var right = this.Right(board);
+        if (right == null)
+            return (null, null);
+        right = right.Right(board);
+        if (right == null)
+            return (null, null);
+        return (right.Up(board), right.Down(board));
+    }
+
+    public (Space, Space) KnightMovesLeft(Dictionary<(char, int), Space> board)
+    {
+        var left = this.Left(board);
+        if (left == null)
+            return (null, null);
+        left = left.Left(board);
+        if (left == null)
+            return (null, null);
+        return (left.Up(board), left.Down(board));
     }
 
     public (string, int) GetPieceIndex()
