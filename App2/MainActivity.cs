@@ -19,6 +19,46 @@ using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 namespace Chess;
 
 
+//[Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
+//public class MainActivity2 : AppCompatActivity
+//{
+//    public const int BluetoothRequestCode = 200;
+//    private bool BluetoothEnabled = false;
+//    protected override void OnCreate(Bundle savedInstanceState)
+//    {
+//        BluetoothManager bluetoothManager = base.GetSystemService(BluetoothService) as BluetoothManager;
+//        var adapter = bluetoothManager.Adapter;
+//        if (adapter == null || adapter.IsEnabled)
+//        {
+//            return;
+//        }
+//        Intent enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
+//        base.StartActivityForResult(enableBtIntent, BluetoothRequestCode);
+//        adapter.StartDiscovery();
+//        BroadcastReceiver enableBtReceiver = new BluetoothDiscoveryReceiver();
+//        IntentFilter filter = new IntentFilter(BluetoothDevice.ActionFound);
+
+//        var intent = RegisterReceiver(enableBtReceiver, filter);
+
+//    }
+
+//    protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+//    {
+//        base.OnActivityResult(requestCode, resultCode, data);
+//        if (requestCode == BluetoothRequestCode)
+//        {
+//            if (resultCode == Result.Ok)
+//            {
+//                BluetoothEnabled = true;
+//            }
+//            else
+//            {
+//                BluetoothEnabled = false;
+//            }
+//        }
+
+//    }
+//}
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
@@ -75,6 +115,8 @@ public class MainActivity : AppCompatActivity
         Xamarin.Essentials.Platform.Init(this, savedInstanceState);
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
+        var a = new BluetoothDeviceManager(this);
+        //a.PickDevice()
         // Permission request logic
         this.permissions = new AppPermissions();
         this.permissions.RequestPermissions(this);

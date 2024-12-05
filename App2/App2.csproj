@@ -24,6 +24,9 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
+    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
+    <AndroidUseAapt2>false</AndroidUseAapt2>
+    <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,11 +37,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>True</EnableLLVM>
-    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
     <MandroidI18n />
     <PreferNativeArm64>true</PreferNativeArm64>
@@ -50,7 +53,6 @@
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidHttpClientHandlerType />
-    <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -126,8 +128,8 @@
     <AndroidResource Include="Resources\**\*.SVG;Resources\*.SVG" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\AboutAssets.txt" />
-    <None Include="Properties\AndroidManifest.xml" />
+    <Content Include="Assets\AboutAssets.txt" />
+    <Content Include="Properties\AndroidManifest.xml" />
     <AndroidResource Include="Resources\drawable\outline_photo_camera_24.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -184,6 +186,7 @@
     <Compile Include="Firebase\ChessFirebase.cs" />
     <Compile Include="Firebase\IFirebaseSecrets.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BluetoothDiscoveryReceiver.cs" />
     <Compile Include="Util\ActivityResultCallback.cs" />
     <Compile Include="Util\AppPermissions.cs" />
     <Compile Include="Util\IFirebaseSecrets.cs" />

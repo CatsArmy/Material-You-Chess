@@ -63,6 +63,7 @@ public class ChessActivity : AppCompatActivity
         this.permissions = new AppPermissions();
         this.permissions.RequestPermissions(this);
 
+
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
         //Run our logic
