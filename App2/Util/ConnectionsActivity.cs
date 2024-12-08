@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Android;
-using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Common.Apis;
 using Android.Gms.Extensions;
@@ -8,9 +7,11 @@ using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
 using Android.Runtime;
-using Android.Util;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
+using Chess.Util.Logger;
 using Java.Lang;
 using Java.Util;
 using KeySet = System.Collections.Generic.Dictionary<string, EndPoint>.KeyCollection;
@@ -39,7 +40,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnConnectionInitiated(string endpointId, ConnectionInfo connectionInfo)
         {
-            Log.Debug("CatDebug", $"{nameof(OnConnectionInitiated)}({nameof(endpointId)}={endpointId}," +
+            Log.Debug($"{nameof(OnConnectionInitiated)}({nameof(endpointId)}={endpointId}," +
                 $" {nameof(connectionInfo.EndpointName)}={connectionInfo.EndpointName})");
             EndPoint endPoint = new(endpointId, connectionInfo.EndpointName);
             this.instance.PendingConnections.Add(endpointId, endPoint);
@@ -48,22 +49,25 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnConnectionResult(string endpointId, ConnectionResolution result)
         {
-            Log.Debug("CatDebug", $"OnConnectionResponse({nameof(endpointId)}={endpointId}, {nameof(result)}={result})");
+            Log.Debug($"OnConnectionResponse({nameof(endpointId)}={endpointId}, {nameof(result)}={result})");
             this.instance.IsConnecting = false;
             if (!result.Status.IsSuccess)
             {
-                Log.Warn("CatDebug", $"Connection failed. Received status {this.instance.ToString(result.Status)}");
+                Log.Warn($"Connection failed. Received status {this.instance.ToString(result.Status)}");
                 var a = this.instance.PendingConnections[endpointId];
                 this.instance.PendingConnections.Remove(endpointId);
                 this.instance.OnConnectionFailed(a);
+                return;
             }
+            this.instance.ConnectedToEndpoint(this.instance.PendingConnections[endpointId]);
+            this.instance.PendingConnections.Remove(endpointId);
         }
 
         public override void OnDisconnected(string endpointId)
         {
             if (!this.instance.EstablishedConnections.ContainsKey(endpointId))
             {
-                Log.Warn("CatDebug", "Unexpected disconnection from endpoint " + endpointId);
+                Log.Warn("Unexpected disconnection from endpoint " + endpointId);
                 return;
             }
             this.instance.DisconnectedFromEndpoint(this.instance.EstablishedConnections[endpointId]);
@@ -80,13 +84,13 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnPayloadReceived(string endpointId, Payload payload)
         {
-            Log.Debug("CatDebug", $"OnPayloadReceived(endpointId={endpointId}, payload={payload}");
+            Log.Debug($"OnPayloadReceived(endpointId={endpointId}, payload={payload}");
             this.instance.OnReceive(this.instance.EstablishedConnections[endpointId], payload);
         }
 
         public override void OnPayloadTransferUpdate(string endpointId, PayloadTransferUpdate update)
         {
-            Log.Debug("CatDebug", $"OnPayloadTransferUpdate(endpointId={endpointId}, update={update}");
+            Log.Debug($"OnPayloadTransferUpdate(endpointId={endpointId}, update={update}");
         }
     };
 
@@ -100,7 +104,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnEndpointFound(string endpointId, DiscoveredEndpointInfo info)
         {
-            Log.Debug("CatDebug", $"OnEndpointFound(endpointId={endpointId}, serviceId={info.ServiceId}, endpointName={info.EndpointName})");
+            Log.Debug($"OnEndpointFound(endpointId={endpointId}, serviceId={info.ServiceId}, endpointName={info.EndpointName})");
             if (this.instance.GetServiceId().Equals(info.ServiceId))
             {
                 EndPoint endpoint = new EndPoint(endpointId, info.EndpointName);
@@ -111,7 +115,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnEndpointLost(string endpointId)
         {
-            Log.Debug("CatDebug", $"OnEndpointLost(endpointId={endpointId})");
+            Log.Debug($"OnEndpointLost(endpointId={endpointId})");
         }
     }
 
@@ -123,23 +127,42 @@ public abstract class ConnectionsActivity : AppCompatActivity
         requiredPermissions = GetRequiredPermissions();
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+
     /** Called when our Activity has been made visible to the user. */
 
     protected override void OnStart()
     {
         base.OnStart();
-        if (!HasPermissions(this, GetRequiredPermissions()))
+        this.requiredPermissions = GetRequiredPermissions();
+        if (this.HasPermissions())
+            return;
+
+        switch (Build.VERSION.SdkInt)
         {
-            if (Build.VERSION.SdkInt < BuildVersionCodes.M)
+            case < BuildVersionCodes.M:
+                ActivityCompat.RequestPermissions(this, requiredPermissions, RequestCodeRequiredPermissions);
+                break;
+            default:
+                base.RequestPermissions(requiredPermissions, RequestCodeRequiredPermissions);
+                break;
+        }
+
+    }
+
+    private bool HasPermissions()
+    {
+        foreach (string requiredPermission in this.requiredPermissions)
+        {
+            if (ContextCompat.CheckSelfPermission(this, requiredPermission) != Permission.Granted)
             {
-                base.RequestPermissions(
-                    GetRequiredPermissions(), RequestCodeRequiredPermissions);
-            }
-            else
-            {
-                RequestPermissions(GetRequiredPermissions(), RequestCodeRequiredPermissions);
+                return false;
             }
         }
+        return true;
     }
 
     /** Called when the user has accepted (or denied) our permission request. */
@@ -152,7 +175,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
             {
                 if (grantResult == Permission.Denied)
                 {
-                    Log.Warn("CatDebug", "Failed to request the permission " + permissions[i]);
+                    Log.Warn("Failed to request the permission " + permissions[i]);
                     Toast.MakeText(this, "string.error_missing_permissions", ToastLength.Long).Show();
                     Finish();
                     return;
@@ -178,18 +201,18 @@ public abstract class ConnectionsActivity : AppCompatActivity
         AdvertisingOptions.Builder advertisingOptions = new AdvertisingOptions.Builder();
         advertisingOptions.SetStrategy(GetStrategy());
 
-        var a = ConnectionsClient.StartAdvertising(localEndpointName, GetServiceId(),
-            new ConnectionLifecycleCallback(this), advertisingOptions.Build()).AsAsync();
+        var a = ConnectionsClient.StartAdvertisingAsync(localEndpointName, GetServiceId(),
+            new ConnectionLifecycleCallback(this), advertisingOptions.Build());
         await a;
         if (a.IsCompletedSuccessfully)
         {
-            Log.Verbose("CatDebug", "Now advertising endpoint " + localEndpointName);
+            Log.Verbose("Now advertising endpoint " + localEndpointName);
             OnAdvertisingStarted();
         }
         if (a.IsFaulted)
         {
             IsAdvertising = false;
-            Log.Warn("CatDebug", "startAdvertising() failed.", a.Exception);
+            Log.Warn($"startAdvertising() failed. {a.Exception}");
             OnAdvertisingFailed();
         }
     }
@@ -219,11 +242,11 @@ public abstract class ConnectionsActivity : AppCompatActivity
     protected async void AcceptConnection(EndPoint endpoint)
     {
         var a = ConnectionsClient
-            .AcceptConnection(endpoint.id, new PayloadCallback(this)).AsAsync();
+            .AcceptConnectionAsync(endpoint.id, new PayloadCallback(this));
         await a;
         if (a.IsFaulted)
         {
-            Log.Warn("CatDebug", $"AcceptConnection() failed. {a.Exception}");
+            Log.Warn($"AcceptConnection() failed. {a.Exception}");
         }
     }
 
@@ -231,11 +254,11 @@ public abstract class ConnectionsActivity : AppCompatActivity
     protected async void RejectConnection(EndPoint endpoint)
     {
         var a = ConnectionsClient
-            .RejectConnection(endpoint.id).AsAsync();
+            .RejectConnectionAsync(endpoint.id);
         await a;
         if (a.IsFaulted)
         {
-            Log.Warn("CatDebug", $"RejectConnection() failed. {a.Exception}");
+            Log.Warn($"RejectConnection() failed. {a.Exception}");
         }
     }
 
@@ -250,7 +273,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
         DiscoveredEndpoints.Clear();
         DiscoveryOptions.Builder discoveryOptions = new DiscoveryOptions.Builder();
         discoveryOptions.SetStrategy(GetStrategy());
-        var a = ConnectionsClient.StartDiscovery(GetServiceId(), new EndpointDiscoveryCallback(this), discoveryOptions.Build()).AsAsync();
+        var a = ConnectionsClient.StartDiscoveryAsync(GetServiceId(), new EndpointDiscoveryCallback(this), discoveryOptions.Build());
         await a;
         if (a.IsCompletedSuccessfully)
         {
@@ -259,7 +282,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
         if (a.IsFaulted)
         {
             IsDiscovering = false;
-            Log.Warn("CatDebug", $"startDiscovering() failed. {a.Exception}");
+            Log.Warn($"startDiscovering() failed. {a.Exception}");
             OnDiscoveryFailed();
         }
     }
@@ -319,16 +342,16 @@ public abstract class ConnectionsActivity : AppCompatActivity
      */
     protected async void ConnectToEndpoint(EndPoint endpoint)
     {
-        Log.Verbose("CatDebug", "Sending a connection request to endpoint " + endpoint);
+        Log.Verbose("Sending a connection request to endpoint " + endpoint);
         // Mark ourselves as connecting so we don't connect multiple times
         IsConnecting = true;
 
         // Ask to connect
-        var a = ConnectionsClient.RequestConnection(GetName(), endpoint.id, new ConnectionLifecycleCallback(this)).AsAsync();
+        var a = ConnectionsClient.RequestConnectionAsync(GetName(), endpoint.id, new ConnectionLifecycleCallback(this));
         await a;
         if (a.IsFaulted)
         {
-            Log.Warn("CatDebug", $"RequestConnection() failed. {a.Exception}");
+            Log.Warn($"RequestConnection() failed. {a.Exception}");
             IsConnecting = false;
             OnConnectionFailed(endpoint);
         }
@@ -336,14 +359,14 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     internal void ConnectedToEndpoint(EndPoint endpoint)
     {
-        Log.Debug("CatDebug", $"connectedToEndpoint(endpoint={endpoint})");
+        Log.Debug($"connectedToEndpoint(endpoint={endpoint})");
         EstablishedConnections.Add(endpoint.id, endpoint);
         OnEndpointConnected(endpoint);
     }
 
     internal void DisconnectedFromEndpoint(EndPoint endpoint)
     {
-        Log.Debug("CatDebug", $"disconnectedFromEndpoint(endpoint={endpoint})");
+        Log.Debug($"disconnectedFromEndpoint(endpoint={endpoint})");
         EstablishedConnections.Remove(endpoint.id);
         OnEndpointDisconnected(endpoint);
     }
@@ -385,11 +408,11 @@ public abstract class ConnectionsActivity : AppCompatActivity
     private async void Send(Payload payload, KeySet endpoints)
     {
         var a = ConnectionsClient
-                .SendPayload(new List<string>(endpoints), payload).AsAsync();
+                .SendPayloadAsync(new List<string>(endpoints), payload);
         await a;
         if (a.IsFaulted)
         {
-            Log.Warn("CatDebug", $"sendPayload() failed. {a.Exception}");
+            Log.Warn($"sendPayload() failed. {a.Exception}");
         }
     }
 
@@ -482,22 +505,6 @@ public abstract class ConnectionsActivity : AppCompatActivity
                 : ConnectionsStatusCodes.GetStatusCodeString(status.StatusCode)).ToString();
     }
 
-    /**
-     * Returns {@code true} if the app was granted all the permissions. Otherwise, returns {@code
-     * false}.
-     */
-    public bool HasPermissions(Context context, string[] permissions)
-    {
-        foreach (string permission in permissions)
-        {
-            if (base.CheckSelfPermission(permission) != Permission.Granted)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }
 
 public class EndPoint
@@ -509,7 +516,7 @@ public class EndPoint
     {
         this.id = id;
         this.name = name;
-        Log.Debug("CatDebug", $"Endpoint created: {this.ToString()}");
+        Log.Debug($"Endpoint created: {this.ToString()}");
     }
 
     public override int GetHashCode()

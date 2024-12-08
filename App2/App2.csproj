@@ -198,6 +198,7 @@
     <Compile Include="Util\AppPermissions.cs" />
     <Compile Include="Util\ConnectionsActivity.cs" />
     <Compile Include="Util\IFirebaseSecrets.cs" />
+    <Compile Include="Util\Log.cs" />
     <Compile Include="Util\NearbySample.cs" />
     <Compile Include="Util\SharedPrefExtensions.cs" />
     <Compile Include="Util\WalkiTalkiSample.cs" />

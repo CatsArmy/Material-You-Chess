@@ -135,7 +135,7 @@ public class MainActivity : AppCompatActivity
         Xamarin.Essentials.Platform.Init(this, savedInstanceState);
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
-        base.StartActivity(new Intent(this, typeof(MainActivity2)));
+        //base.StartActivity(new Intent(this, typeof(MainActivity2)));
         return;
         //var deviceManager = new BluetoothDeviceManager(this);
         //deviceManager.PickDevice(device => this.device = device);

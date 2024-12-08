@@ -5,11 +5,11 @@ using Android.App;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
 using Android.Text.Method;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.Annotations;
 using Chess;
+using Chess.Util.Logger;
 
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class MainActivity2 : ConnectionsActivity
@@ -52,6 +52,8 @@ public class MainActivity2 : ConnectionsActivity
     private TextView mDebugLogView;
     private TextView previousStateView;
     private TextView currentStateView;
+    private ListView discovered;
+    private ListView connected;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -61,11 +63,20 @@ public class MainActivity2 : ConnectionsActivity
         mDebugLogView = base.FindViewById<TextView>(Resource.Id.logView);
         mDebugLogView.Visibility = DEBUG ? ViewStates.Visible : ViewStates.Gone;
         mDebugLogView.MovementMethod = new ScrollingMovementMethod();
+        Log.LogView = mDebugLogView;
+        //mDebugLogView.Text.Append(
         previousStateView = base.FindViewById<TextView>(Resource.Id.oldState);
         currentStateView = base.FindViewById<TextView>(Resource.Id.newState);
         //the username from firebase
         mName = "Guest2";
+        discovered = base.FindViewById<ListView>(Resource.Id.discoverList);
+        discovered.Adapter = new ArrayAdapter<EndPoint>(this, Resource.Id.discoverList, this.DiscoveredEndpoints.Values.ToList());
+        connected = base.FindViewById<ListView>(Resource.Id.connectedList);
+        connected.Adapter = new ArrayAdapter<EndPoint>(this, Resource.Id.connectedList, this.EstablishedConnections.Values.ToList());
     }
+
+
+
     protected override void OnStart()
     {
         base.OnStart();
@@ -81,7 +92,9 @@ public class MainActivity2 : ConnectionsActivity
     }
 
 
+#pragma warning disable CS0672 // Member overrides obsolete member
     public override void OnBackPressed()
+#pragma warning restore CS0672 // Member overrides obsolete member
     {
         if (state == State.Connected)
         {
@@ -95,6 +108,7 @@ public class MainActivity2 : ConnectionsActivity
     {
         // We found an advertiser!
         StopDiscovering();
+        (discovered.Adapter as ArrayAdapter<EndPoint>).Add(endpoint);
         ConnectToEndpoint(endpoint);
     }
 
@@ -114,6 +128,8 @@ public class MainActivity2 : ConnectionsActivity
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.name}", ToastLength.Short).Show();
+        (discovered.Adapter as ArrayAdapter<EndPoint>).Remove(endpoint);
+        (connected.Adapter as ArrayAdapter<EndPoint>).Add(endpoint);
         SetState(State.Connected);
     }
 
@@ -142,11 +158,11 @@ public class MainActivity2 : ConnectionsActivity
     {
         if (this.state == state)
         {
-            Log.Warn("CatDebug", "State set to " + state + " but already in that state");
+            Log.Warn("State set to " + state + " but already in that state");
             return;
         }
 
-        Log.Debug("CatDebug", "State set to " + state);
+        Log.Debug("State set to " + state);
         State oldState = this.state;
         this.state = state;
         OnStateChanged(oldState, state);
@@ -250,7 +266,7 @@ public class MainActivity2 : ConnectionsActivity
         }
         catch (Exception e)
         {
-            Log.Error("CatDebug", $"startRecording() failed {e}");
+            Log.Error($"startRecording() failed {e}");
         }
     }
 
@@ -260,7 +276,7 @@ public class MainActivity2 : ConnectionsActivity
         var perms = base.GetRequiredPermissions().ToList();
         var newPerms = new List<string>();
         newPerms.AddRange(perms);
-        newPerms.Add(Android.Manifest.Permission.RecordAudio);
+        //newPerms.Add(Android.Manifest.Permission.RecordAudio);
         return newPerms.ToArray();
     }
 
@@ -294,3 +310,4 @@ public class MainActivity2 : ConnectionsActivity
         Connected
     }
 }
+
