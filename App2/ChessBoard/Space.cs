@@ -13,6 +13,8 @@ public class Space
     [NonSerialized]
     protected static Resources res;
 
+    public Space(Resources _res) => res = _res;
+
     [NonSerialized]
     public ImageView space;
     public bool isWhite;

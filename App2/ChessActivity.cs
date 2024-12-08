@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Android.App;
 using Android.Content.PM;
@@ -34,7 +35,6 @@ public class ChessActivity : AppCompatActivity
     private readonly Color SelectedWhiteColor = new(172, 162, 225);
     private readonly Color UnselectedBlackColor = new(41, 43, 50);
     private readonly Color UnselectedWhiteColor = new(222, 227, 195);
-
 
     private Bishop bBishop1, bBishop2;
     private King bKing;
@@ -140,7 +140,7 @@ public class ChessActivity : AppCompatActivity
 
         if (selected is Pawn pawn)
         {
-            pawn.isFirstMove = false;
+            //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
             if (piece.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
                 pawn.Promote();
@@ -183,7 +183,7 @@ public class ChessActivity : AppCompatActivity
 
         if (selected is Pawn pawn)
         {
-            pawn.isFirstMove = false;
+            //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
             if (space.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
                 pawn.Promote();
@@ -236,51 +236,56 @@ public class ChessActivity : AppCompatActivity
         //Next player logic
     }
 
+    private void OnNextPlayer()
+    {
+        //Update pieces and board
+    }
+
     private void InitChessPieces()
     {
         //Init resources
-        Piece.SetResources(base.Resources);
+        _ = new Space(base.Resources);
 
         int spaceId;
-
+        Action callback = OnNextPlayer;
         spaceId = Resource.Id.gmb__A8;
         bRook1 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__bRook1), Resource.Id.gmp__bRook1,
-        base.FindViewById<ImageView>(spaceId), false, spaceId);
+        base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bRook", 1)] = bRook1;
 
         spaceId = Resource.Id.gmb__B8;
         bKnight1 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__bKnight1), Resource.Id.gmp__bKnight1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bKnight", 1)] = bKnight1;
 
         spaceId = Resource.Id.gmb__C8;
         bBishop1 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__bBishop1), Resource.Id.gmp__bBishop1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bBishop", 1)] = bBishop1;
 
         spaceId = Resource.Id.gmb__D8;
         bQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__bQueen1), Resource.Id.gmp__bQueen1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bQueen", 1)] = bQueen;
 
         spaceId = Resource.Id.gmb__E8;
         bKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__bKing1), Resource.Id.gmp__bKing1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bKing", 1)] = bKing;
 
         spaceId = Resource.Id.gmb__F8;
         bBishop2 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__bBishop2), Resource.Id.gmp__bBishop2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bBishop", 2)] = bBishop2;
 
         spaceId = Resource.Id.gmb__G8;
         bKnight2 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__bKnight2), Resource.Id.gmp__bKnight2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bKnight", 2)] = bKnight2;
 
         spaceId = Resource.Id.gmb__H8;
         bRook2 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__bRook2), Resource.Id.gmp__bRook2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId);
+            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
         pieces[("bRook", 2)] = bRook2;
 
         int bPawnIndex = 0;
@@ -291,7 +296,7 @@ public class ChessActivity : AppCompatActivity
             {
                 spaceId = Resource.Id.gmb__A7 + (8 * bPawnIndex);
                 bPawns[bPawnIndex] = new Pawn(base.FindViewById<ImageView>(i), i,
-                    base.FindViewById<ImageView>(spaceId), false, spaceId);
+                    base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
                 pieces[("bPawn", bPawnIndex + 1)] = bPawns[bPawnIndex];
                 bPawnIndex++;
                 continue;
@@ -300,42 +305,42 @@ public class ChessActivity : AppCompatActivity
 
         spaceId = Resource.Id.gmb__A1;
         wRook1 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__wRook1), Resource.Id.gmp__wRook1,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wRook", 1)] = wRook1;
 
         spaceId = Resource.Id.gmb__B1;
         wKnight1 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__wKnight1), Resource.Id.gmp__wKnight1,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wKnight", 1)] = wKnight1;
 
         spaceId = Resource.Id.gmb__C1;
         wBishop1 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__wBishop1), Resource.Id.gmp__wBishop1,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wBishop", 1)] = wBishop1;
 
         spaceId = Resource.Id.gmb__D1;
         wQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__wQueen1), Resource.Id.gmp__wQueen1,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wQueen", 1)] = wQueen;
 
         spaceId = Resource.Id.gmb__E1;
         wKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__wKing1), Resource.Id.gmp__wKing1,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wKing", 1)] = wKing;
 
         spaceId = Resource.Id.gmb__F1;
         wBishop2 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__wBishop2), Resource.Id.gmp__wBishop2,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wBishop", 2)] = wBishop2;
 
         spaceId = Resource.Id.gmb__G1;
         wKnight2 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__wKnight2), Resource.Id.gmp__wKnight2,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wKnight", 2)] = wKnight2;
 
         spaceId = Resource.Id.gmb__H1;
         wRook2 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__wRook2), Resource.Id.gmp__wRook2,
-            base.FindViewById<ImageView>(spaceId), true, spaceId);
+            base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
         pieces[("wRook", 2)] = wRook2;
 
         int wPawnIndex = 0;
@@ -346,7 +351,7 @@ public class ChessActivity : AppCompatActivity
             {
                 spaceId = Resource.Id.gmb__A2 + (8 * wPawnIndex);
                 wPawns[wPawnIndex] = new Pawn(base.FindViewById<ImageView>(i), i,
-                    base.FindViewById<ImageView>(spaceId), true, spaceId);
+                    base.FindViewById<ImageView>(spaceId), true, spaceId, callback);
                 pieces[("wPawn", wPawnIndex + 1)] = wPawns[wPawnIndex];
                 wPawnIndex++;
             }
@@ -366,7 +371,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
 
             board[('A', j)] = new Space(space, isWhite, i);
@@ -381,7 +386,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('B', j)] = new Space(space, isWhite, i);
         }
@@ -394,7 +399,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('C', j)] = new Space(space, isWhite, i);
         }
@@ -407,7 +412,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('D', j)] = new Space(space, isWhite, i);
         }
@@ -420,7 +425,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('E', j)] = new Space(space, isWhite, i);
         }
@@ -433,7 +438,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('F', j)] = new Space(space, isWhite, i);
         }
@@ -446,7 +451,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('G', j)] = new Space(space, isWhite, i);
         }
@@ -459,7 +464,7 @@ public class ChessActivity : AppCompatActivity
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception("Missing a tag"),
+                _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
             board[('H', j)] = new Space(space, isWhite, i);
         }

@@ -1,37 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using Android.Content.Res;
 using Android.Util;
 using Android.Widget;
 using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
-
-public interface IPiece
-{
-    public void Move(Space dest);
-    public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
-}
-
+[Serializable]
 public abstract class Piece : Space, IPiece
 {
+    [NonSerialized]
     public ImageView piece;
     public int id;
 
-    public Piece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(space, isWhite, spaceId)
+    public Piece(ImageView piece, int id, ImageView space, bool isWhite, int spaceId, Action callback) : base(space, isWhite, spaceId)
     {
         this.piece = piece;
         this.id = id;
+        //this.callback = callback;
         space.Clickable = false;
     }
 
-    public static void SetResources(Resources _res)
-    {
-        Space.res = _res;
-    }
-
     public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
+
+    public virtual void Update() { }
+
     public void Move(Space dest)
     {
         base.spaceId = dest.spaceId;

@@ -13,16 +13,16 @@
         app:layout_constraintGuide_percent="0.14" />
 
 	<com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewElevatedStyle"
+        style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardBackgroundColor="#292B32"
+        android:backgroundTint="?attr/colorPrimaryContainer"
+        app:cardBackgroundColor="#DEE3C3"
         app:layout_constraintBottom_toTopOf="@+id/guideline8p"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline14"
-        app:strokeColor="#F4F7FA"
-        app:strokeWidth="3dp">
+        app:strokeColor="#DEE3C3">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -36,6 +36,7 @@
                 app:layout_constraintGuide_percent="0.58" />
 
 			<LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="8dp"
@@ -46,15 +47,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-				<com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/p1MainProfileImageView"
+				<androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:clickable="false"
-                    android:scaleType="fitCenter"
-                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                    app:srcCompat="@drawable/outline_account_circle_24" />
+                    android:layout_height="96dp">
+
+					<com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/p1MainProfileImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:clickable="false"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:srcCompat="@drawable/outline_account_circle_24" />
+
+					<ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.050000012"
+                        app:srcCompat="@drawable/king_white" />
+
+				</androidx.constraintlayout.widget.ConstraintLayout>
 
 				<androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -268,6 +290,13 @@
                         app:layout_constraintVertical_bias="0.0"
                         app:srcCompat="@drawable/rook_black" />
 
+					<androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/guideline17p1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        app:layout_constraintGuide_percent="0.65" />
+
 					<TextView
                         android:id="@+id/p1MainUsername"
                         android:layout_width="0dp"
@@ -275,7 +304,7 @@
                         android:layout_weight="1"
                         android:gravity="bottom"
                         android:text="Guest"
-                        android:textColor="#DEE3C3"
+                        android:textColor="?android:attr/textColorTertiary"
                         android:textSize="24sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/guideline17p1"
@@ -283,13 +312,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="1.0" />
-
-					<androidx.constraintlayout.widget.Guideline
-                        android:id="@+id/guideline17p1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        app:layout_constraintGuide_percent="0.65" />
 
 					<com.google.android.material.divider.MaterialDivider
                         android:id="@+id/WhiteMaterialDivider"
@@ -310,16 +332,16 @@
 	</com.google.android.material.card.MaterialCardView>
 
 	<com.google.android.material.card.MaterialCardView
-        style="?attr/materialCardViewElevatedStyle"
+        style="?attr/materialCardViewOutlinedStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardBackgroundColor="#DEE3C3"
+        android:backgroundTint="?attr/colorPrimaryContainer"
+        app:cardBackgroundColor="#292B32"
         app:layout_constraintBottom_toTopOf="@+id/guideline15"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline18"
-        app:strokeColor="#34364C"
-        app:strokeWidth="3dp">
+        app:strokeColor="#292B32">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -343,15 +365,35 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-				<com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/p2MainProfileImageView"
+				<androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:clickable="false"
-                    android:scaleType="fitCenter"
-                    app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-                    app:srcCompat="@drawable/outline_account_circle_24" />
+                    android:layout_height="96dp">
+
+					<com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/p2MainProfileImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:clickable="false"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                        app:srcCompat="@drawable/outline_account_circle_24" />
+
+					<ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.050000012"
+                        app:srcCompat="@drawable/king_black" />
+				</androidx.constraintlayout.widget.ConstraintLayout>
 
 				<androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -572,7 +614,7 @@
                         android:layout_weight="1"
                         android:gravity="bottom"
                         android:text="Guest"
-                        android:textColor="#292B32"
+                        android:textColor="?android:attr/textColorTertiary"
                         android:textSize="24sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/guideline17p2"

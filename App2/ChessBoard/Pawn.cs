@@ -1,14 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Android.Widget;
 
 namespace Chess.ChessBoard;
 
+[Serializable]
 public class Pawn : Piece
 {
     public bool isFirstMove = true;
     public bool EnPassantCapturable = false;
 
-    public Pawn(ImageView piece, int id, ImageView space, bool isWhite, int spaceId) : base(piece, id, space, isWhite, spaceId) { }
+    public Pawn(ImageView piece, int id, ImageView space, bool isWhite, int spaceId, Action callback) : base(piece, id, space, isWhite, spaceId, callback) { }
+
+    public override void Update()
+    {
+        if (this.isFirstMove)
+        {
+            this.isFirstMove = false;
+        }
+        else
+        {
+            this.EnPassantCapturable = false;
+        }
+    }
+
     public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
