@@ -210,8 +210,8 @@
     <Compile Include="Resources\Resource.designer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="GoogleGson">
-      <Version>2.10.1.8</Version>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.7" />
     <PackageReference Include="Xamarin.AndroidX.Biometric">

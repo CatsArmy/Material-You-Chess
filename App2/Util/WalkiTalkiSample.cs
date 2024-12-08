@@ -130,6 +130,7 @@ public class MainActivity2 : ConnectionsActivity
         Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.name}", ToastLength.Short).Show();
         (discovered.Adapter as ArrayAdapter<EndPoint>).Remove(endpoint);
         (connected.Adapter as ArrayAdapter<EndPoint>).Add(endpoint);
+
         SetState(State.Connected);
     }
 
