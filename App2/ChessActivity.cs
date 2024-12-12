@@ -4,7 +4,6 @@ using System.Linq;
 using Android.App;
 using Android.Content.PM;
 using Android.Content.Res;
-using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -14,6 +13,7 @@ using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
 using Google.Android.Material.ImageView;
 using Space = Chess.ChessBoard.Space;
+
 
 namespace Chess;
 
@@ -31,10 +31,6 @@ public class ChessActivity : AppCompatActivity
     private Piece selected = null;
     private List<Space> highlighted = null;
     private List<Move> moves = null;
-    private readonly Color SelectedBlackColor = new(82, 70, 152);
-    private readonly Color SelectedWhiteColor = new(172, 162, 225);
-    private readonly Color UnselectedBlackColor = new(41, 43, 50);
-    private readonly Color UnselectedWhiteColor = new(222, 227, 195);
 
     private Bishop bBishop1, bBishop2;
     private King bKing;
@@ -199,7 +195,7 @@ public class ChessActivity : AppCompatActivity
     {
         moves.Clear();
         foreach (var space in highlighted)
-            space.space.Drawable.SetTint(space.isWhite ? UnselectedWhiteColor : UnselectedBlackColor);
+            space.space.Drawable.SetTintList(null);
     }
 
     private void SelectMoves()
@@ -209,11 +205,15 @@ public class ChessActivity : AppCompatActivity
         foreach (var move in moves)
         {
             var space = move.Space.BoardSpace(board);
-            space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+            var _colorId = space.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
+            var _color = FindViewById<RelativeLayout>(_colorId).BackgroundTintList.DefaultColor;
+            space.space.Drawable.SetTint(_color);
             highlighted.Add(space);
         }
         var selected = this.selected.BoardSpace(board);
-        selected.space.Drawable.SetTint(selected.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+        var colorId = selected.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
+        var color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
+        selected.space.Drawable.SetTint(color);
         highlighted.Add(selected);
     }
 
@@ -222,9 +222,14 @@ public class ChessActivity : AppCompatActivity
     private void SelectMoves(Space space)
     {
         ClearSelectedMoves();
+        var colorId = space.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
+        var color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
+        space.space.Drawable.SetTint(color);
+
         var selected = this.selected.BoardSpace(board);
-        space.space.Drawable.SetTint(space.isWhite ? SelectedWhiteColor : SelectedBlackColor);
-        selected.space.Drawable.SetTint(selected.isWhite ? SelectedWhiteColor : SelectedBlackColor);
+        colorId = selected.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
+        color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
+        selected.space.Drawable.SetTint(color);
         highlighted.Add(selected);
         highlighted.Add(space);
     }

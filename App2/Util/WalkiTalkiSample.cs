@@ -1,59 +1,27 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Android.App;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
 using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
-using AndroidX.Annotations;
 using Chess;
 using Chess.Util.Logger;
 
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class MainActivity2 : ConnectionsActivity
 {
-    /** If true, debug logs are shown on the device. */
     private const bool DEBUG = true;
-
-    /**
-     * The connection strategy we'll use for Nearby Connections. In this case, we've decided on
-     * P2P_STAR, which is a combination of Bluetooth Classic and WiFi Hotspots.
-     */
-    private static readonly Strategy Strategy = Strategy.P2pPointToPoint;
-
-    /**
-     * This service id lets us find other nearby devices that are interested in the same thing. Our
-     * sample does exactly one thing, so we hardcode the ID.
-     */
-    private const string ServiceId =
-        "com.google.location.nearby.apps.walkietalkie.automatic.SERVICE_ID";
-
-    /**
-     * The state of the app. As the app changes states, the UI will update and advertising/discovery
-     * will start/stop.
-     */
+    private static readonly Strategy Strategy = Strategy.P2pCluster;
+    private const string ServiceId = "com.google.location.nearby.apps.chess";
     private State state = State.Unknown;
-
-    /** A random UID used as this device's endpoint name. */
     private string mName;
-
-    /**
-     * The background color of the 'CONNECTED' state. This is randomly chosen from the {@link #COLORS}
-     * list, based off the authentication token.
-     */
-
-
-    /** An animator that controls the animation from previous state to current state. */
-
-
-    /** A running log of debug messages. Only visible when DEBUG=true. */
     private TextView mDebugLogView;
     private TextView previousStateView;
     private TextView currentStateView;
-    private ListView discovered;
-    private ListView connected;
+    //private System.Timers.Timer timer;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -64,18 +32,32 @@ public class MainActivity2 : ConnectionsActivity
         mDebugLogView.Visibility = DEBUG ? ViewStates.Visible : ViewStates.Gone;
         mDebugLogView.MovementMethod = new ScrollingMovementMethod();
         Log.LogView = mDebugLogView;
-        //mDebugLogView.Text.Append(
         previousStateView = base.FindViewById<TextView>(Resource.Id.oldState);
         currentStateView = base.FindViewById<TextView>(Resource.Id.newState);
         //the username from firebase
-        mName = "Guest2";
-        discovered = base.FindViewById<ListView>(Resource.Id.discoverList);
-        discovered.Adapter = new ArrayAdapter<EndPoint>(this, Resource.Id.discoverList, this.DiscoveredEndpoints.Values.ToList());
-        connected = base.FindViewById<ListView>(Resource.Id.connectedList);
-        connected.Adapter = new ArrayAdapter<EndPoint>(this, Resource.Id.connectedList, this.EstablishedConnections.Values.ToList());
+        mName = true ? "Itai" : "Gila";
+
+        //timer.AutoReset = false;
+        //timer = new Timer(new TimeSpan(0, 0, 15).TotalMilliseconds);
+        //timer.Elapsed += StopSearching;
     }
 
+    //private void OnRefresh()
+    //{
+    //    //clear found devices ^^^
+    //    timer.Elapsed -= StopSearching;
+    //    timer.Elapsed += (_, _) => StopAllEndpoints();
+    //    timer.Stop();
+    //    timer.Elapsed -= (_, _) => StopAllEndpoints();
+    //    timer.Interval = new TimeSpan(0, 0, 15).TotalMilliseconds;
+    //    timer.Elapsed += StopSearching;
+    //    timer.Start();
+    //}
 
+    //private void StopSearching(object sender, EventArgs args)
+    //{
+
+    //}
 
     protected override void OnStart()
     {
@@ -87,8 +69,17 @@ public class MainActivity2 : ConnectionsActivity
     protected override void OnStop()
     {
         // After our Activity stops, we disconnect from Nearby Connections.
+        if (this.state == State.Connected)
+            return;
+
         SetState(State.Unknown);
         base.OnStop();
+    }
+
+    public override void Finish()
+    {
+        SetState(State.Unknown);
+        base.Finish();
     }
 
 
@@ -108,7 +99,7 @@ public class MainActivity2 : ConnectionsActivity
     {
         // We found an advertiser!
         StopDiscovering();
-        (discovered.Adapter as ArrayAdapter<EndPoint>).Add(endpoint);
+        Thread.Sleep(10);
         ConnectToEndpoint(endpoint);
     }
 
@@ -128,9 +119,6 @@ public class MainActivity2 : ConnectionsActivity
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.name}", ToastLength.Short).Show();
-        (discovered.Adapter as ArrayAdapter<EndPoint>).Remove(endpoint);
-        (connected.Adapter as ArrayAdapter<EndPoint>).Add(endpoint);
-
         SetState(State.Connected);
     }
 
@@ -222,7 +210,6 @@ public class MainActivity2 : ConnectionsActivity
     }
 
     /** Updates the {@link TextView} with the correct color/text for the given {@link State}. */
-    [UiThread]
     private void UpdateTextView(TextView textView, State state, string textViewName)
     {
         switch (state)
@@ -239,7 +226,6 @@ public class MainActivity2 : ConnectionsActivity
         }
     }
 
-    /** {@see ConnectionsActivity#onReceive(Endpoint, Payload)} */
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
         if (payload.PayloadType == Payload.Type.Bytes)
@@ -248,67 +234,27 @@ public class MainActivity2 : ConnectionsActivity
         }
     }
 
-
-    /** Starts recording sound from the microphone and streaming it to all connected devices. */
-    private void startRecording()
-    {
-        //logV("startRecording()");
-        try
-        {
-            ParcelFileDescriptor[] payloadPipe = ParcelFileDescriptor.CreatePipe();
-            //networking
-            //Payload.FromBytes();
-            // Send the first half of the payload (the read side) to Nearby Connections.
-            Send(Payload.FromStream(payloadPipe[0]));
-
-            // Use the second half of the payload (the write side) in AudioRecorder.
-            //mRecorder = new AudioRecorder(payloadPipe[1]);
-            //mRecorder.start();
-        }
-        catch (Exception e)
-        {
-            Log.Error($"startRecording() failed {e}");
-        }
-    }
-
-    /** {@see ConnectionsActivity#getRequiredPermissions()} */
     protected override string[] GetRequiredPermissions()
     {
         var perms = base.GetRequiredPermissions().ToList();
         var newPerms = new List<string>();
         newPerms.AddRange(perms);
-        //newPerms.Add(Android.Manifest.Permission.RecordAudio);
         return newPerms.ToArray();
     }
 
-    /**
-     * Queries the phone's contacts for their own profile, and returns their name. Used when
-     * connecting to another device.
-     */
     protected override string GetName()
     {
         return mName;
     }
-
-    /** {@see ConnectionsActivity#getServiceId()} */
 
     protected override string GetServiceId()
     {
         return ServiceId;
     }
 
-    /** {@see ConnectionsActivity#getStrategy()} */
-
     protected override Strategy GetStrategy()
     {
         return Strategy;
-    }
-
-    public enum State
-    {
-        Unknown,
-        Searching,
-        Connected
     }
 }
 

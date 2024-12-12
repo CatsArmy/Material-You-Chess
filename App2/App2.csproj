@@ -30,18 +30,18 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidLinkMode>Full</AndroidLinkMode>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
     <BundleAssemblies>false</BundleAssemblies>
     <MandroidI18n />
     <PreferNativeArm64>true</PreferNativeArm64>
@@ -77,8 +77,9 @@
     <Reference Include="System.Numerics.Vectors" />
   </ItemGroup>
   <ItemGroup>
+  <Content Include="Assets\AboutAssets.txt" />
+    <Content Include="Properties\AndroidManifest.xml" />
     <!-- <Compile Include="\**\*.cs;\*.cs;\**" /> -->
-    <AndroidResource Include="Resources\drawable-v24\ic_launcher_foreground.xml" />
     <AndroidResource Include="Resources\drawable\bishop_black.xml" />
     <AndroidResource Include="Resources\drawable\bishop_white.xml" />
     <AndroidResource Include="Resources\drawable\black_square.xml" />
@@ -122,60 +123,127 @@
     <AndroidResource Include="Resources\values\dimens.xml" />
     <AndroidResource Include="Resources\values\strings.xml" />
     <AndroidResource Include="Resources\values\styles.xml" />
-    <AndroidResource Include="Resources\**\*.png;Resources\*.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\ic_stat_name.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\ic_stat_name.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_stat_name.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_stat_name.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\mipmap-hdpi\ic_launcher_round.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\mipmap-mdpi\ic_launcher_round.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\mipmap-xhdpi\ic_launcher_round.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\mipmap-xxhdpi\ic_launcher_round.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher.png" />
+    <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
     <AndroidResource Include="Resources\**\*.jpeg;Resources\*.jpeg" />
     <AndroidResource Include="Resources\**\*.svg;Resources\*.svg" />
     <AndroidResource Include="Resources\**\*.SVG;Resources\*.SVG" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\AboutAssets.txt" />
-    <Content Include="Properties\AndroidManifest.xml" />
+    
     <AndroidResource Include="Resources\drawable\outline_photo_camera_24.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_manage_accounts.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_person.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_person_add.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_person_remove.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\layout\profile_dialog.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\layout\username_dialog.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_edit.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_palette.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_person_edit.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\drawable\outline_settings_account_box.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\font\roboto_medium.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\values\preloaded_fonts.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\values\font_certs.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
+
     <AndroidResource Include="Resources\layout\nearby_template.xml">
-      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable\p2p.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable\flag.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable\ic_launcher_foreground.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable-anydpi\ic_stat_name.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable-hdpi\ic_stat_name.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable-mdpi\ic_stat_name.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable-xhdpi\ic_stat_name.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\drawable-xxhdpi\ic_stat_name.png">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\layout\select_device_dialog.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+
+    <AndroidResource Include="Resources\values-night\colors.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
+
   <ItemGroup>
     <Compile Include="BluetoothDeviceReceiver.cs" />
     <Compile Include="ChessBoard\Bishop.cs" />
@@ -203,15 +271,22 @@
     <Compile Include="Util\SharedPrefExtensions.cs" />
     <Compile Include="Util\WalkiTalkiSample.cs" />
   </ItemGroup>
+  
   <ItemGroup>
+    <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="ChessActivity.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Annotation">
+      <Version>1.7.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm">
+      <Version>1.7.1.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.7" />
     <PackageReference Include="Xamarin.AndroidX.Biometric">
@@ -276,6 +351,10 @@
   <ItemGroup>
     <None Include="ClassDiagram1.cd" />
   </ItemGroup>
+  <!-- "C:\Program Files\dotnet\sdk\9.0.100-rc.2.24474.11\Xamarin\Android\Xamarin.Android.CSharp.targets" was not found.
+       "C:\Program Files\dotnet\sdk\9.0.100-rc.2.24474.11\Xamarin\Android\Xamarin.Android.CSharp.targets" is correct?
+        that the file exists on disk.e:\Source\repos\School\Android\Android-App-Material-You\App2\App2.csproj(MSB4019) 
+  -->
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

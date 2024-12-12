@@ -8,16 +8,16 @@
     android:paddingLeft="12dp"
     android:layout_height="match_parent">
 
-	<LinearLayout
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-		<Switch
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/hostMode"
             android:text="Is Host" />
-		<EditText
+        <EditText
             android:inputType="textPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,21 +25,21 @@
             android:layout_marginRight="0.0dp"
             android:layout_marginLeft="0.0dp" />
 
-	</LinearLayout>
+    </LinearLayout>
 
-	<ProgressBar
+    <ProgressBar
         android:id="@+id/uploadProgress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-	<LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:orientation="horizontal">
 
-		<TextView
+        <TextView
             android:id="@+id/oldState"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -48,7 +48,7 @@
             android:text="TextView"
             android:textAlignment="center" />
 
-		<TextView
+        <TextView
             android:id="@+id/newState"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -56,61 +56,68 @@
             android:layout_weight="0.5"
             android:text="TextView"
             android:textAlignment="center" />
-	</LinearLayout>
+    </LinearLayout>
 
-	<Button
-        android:id="@+id/btnImage"
+    <com.google.android.material.card.MaterialCardView
+        style="?attr/materialCardViewFilledStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Send Image" />
+        android:layout_height="wrap_content">
 
-	<LinearLayout
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:srcCompat="@drawable/bishop_black" />
+    </com.google.android.material.card.MaterialCardView>
+
+
+    <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-		<LinearLayout
+        <LinearLayout
             android:layout_weight="0.8"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-			<LinearLayout
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5">
-				<TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Discovered devices" />
-				<ListView
+                <ListView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/discoverList" />
-			</LinearLayout>
-			<LinearLayout
+            </LinearLayout>
+            <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5">
-				<TextView
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Connected devices" />
-				<ListView
+                <ListView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/connectedList" />
-			</LinearLayout>
-		</LinearLayout>
-		<ScrollView
+            </LinearLayout>
+        </LinearLayout>
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.2">
-			<TextView
+            <TextView
                 android:id="@+id/logView"
                 android:autoLink="web"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
-		</ScrollView>
-	</LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </LinearLayout>

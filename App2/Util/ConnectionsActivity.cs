@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using Android;
 using Android.Content.PM;
 using Android.Gms.Common.Apis;
-using Android.Gms.Extensions;
 using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
@@ -26,9 +26,10 @@ public abstract class ConnectionsActivity : AppCompatActivity
     public readonly Dictionary<string, EndPoint> EstablishedConnections = new();
     public readonly Dictionary<string, EndPoint> PendingConnections = new();
     public readonly Dictionary<string, EndPoint> DiscoveredEndpoints = new();
-    internal IConnectionsClient ConnectionsClient;
     private const int RequestCodeRequiredPermissions = 1;
+    internal IConnectionsClient ConnectionsClient;
     private string[] requiredPermissions;
+    private List<string> requestPermissions;
 
     internal class ConnectionLifecycleCallback : Android.Gms.Nearby.Connection.ConnectionLifecycleCallback
     {
@@ -40,7 +41,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnConnectionInitiated(string endpointId, ConnectionInfo connectionInfo)
         {
-            Log.Debug($"{nameof(OnConnectionInitiated)}({nameof(endpointId)}={endpointId}," +
+            Log.Debug($"OnConnectionInitiated({nameof(endpointId)}={endpointId}," +
                 $" {nameof(connectionInfo.EndpointName)}={connectionInfo.EndpointName})");
             EndPoint endPoint = new(endpointId, connectionInfo.EndpointName);
             this.instance.PendingConnections.Add(endpointId, endPoint);
@@ -59,7 +60,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
                 this.instance.OnConnectionFailed(a);
                 return;
             }
-            this.instance.ConnectedToEndpoint(this.instance.PendingConnections[endpointId]);
+            this.instance.ConnectedToEndpoint(new(this.instance.PendingConnections[endpointId]));
             this.instance.PendingConnections.Remove(endpointId);
         }
 
@@ -119,12 +120,23 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     }
 
+    public enum State
+    {
+        Unknown,
+        Searching,
+        Connected
+    }
+
     /** Called when our Activity is first created. */
     protected override void OnCreate(Bundle savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         ConnectionsClient = NearbyClass.GetConnectionsClient(this);
+        ConnectionsClient.StopDiscovery();
+        ConnectionsClient.StopAdvertising();
+        ConnectionsClient.StopAllEndpoints();
         requiredPermissions = GetRequiredPermissions();
+        requestPermissions = new List<string>();
     }
 
     protected override void OnDestroy()
@@ -136,33 +148,39 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     protected override void OnStart()
     {
-        base.OnStart();
         this.requiredPermissions = GetRequiredPermissions();
         if (this.HasPermissions())
+        {
+            base.OnStart();
             return;
+        }
 
         switch (Build.VERSION.SdkInt)
         {
             case < BuildVersionCodes.M:
-                ActivityCompat.RequestPermissions(this, requiredPermissions, RequestCodeRequiredPermissions);
+                ActivityCompat.RequestPermissions(this, requestPermissions.ToArray(), RequestCodeRequiredPermissions);
                 break;
             default:
-                base.RequestPermissions(requiredPermissions, RequestCodeRequiredPermissions);
+                base.RequestPermissions(requiredPermissions.ToArray(), RequestCodeRequiredPermissions);
                 break;
         }
-
+        base.OnStart();
     }
+
+
 
     private bool HasPermissions()
     {
+        bool returnValue = true;
         foreach (string requiredPermission in this.requiredPermissions)
         {
             if (ContextCompat.CheckSelfPermission(this, requiredPermission) != Permission.Granted)
             {
-                return false;
+                requestPermissions.Add(requiredPermission);
+                returnValue = false;
             }
         }
-        return true;
+        return returnValue;
     }
 
     /** Called when the user has accepted (or denied) our permission request. */
@@ -182,7 +200,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
                 }
                 i++;
             }
-            Recreate();
+            base.OnStart();
         }
 
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -241,8 +259,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /** Accepts a connection request. */
     protected async void AcceptConnection(EndPoint endpoint)
     {
-        var a = ConnectionsClient
-            .AcceptConnectionAsync(endpoint.id, new PayloadCallback(this));
+        var a = ConnectionsClient.AcceptConnectionAsync(endpoint.id, new PayloadCallback(this));
         await a;
         if (a.IsFaulted)
         {
@@ -253,8 +270,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /** Rejects a connection request. */
     protected async void RejectConnection(EndPoint endpoint)
     {
-        var a = ConnectionsClient
-            .RejectConnectionAsync(endpoint.id);
+        var a = ConnectionsClient.RejectConnectionAsync(endpoint.id);
         await a;
         if (a.IsFaulted)
         {
@@ -354,6 +370,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
             Log.Warn($"RequestConnection() failed. {a.Exception}");
             IsConnecting = false;
             OnConnectionFailed(endpoint);
+            return;
         }
     }
 
@@ -390,7 +407,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     }
 
     /** Returns a list of currently connected endpoints. */
-    protected ValueSet getConnectedEndpoints()
+    protected ValueSet GetConnectedEndpoints()
     {
         return EstablishedConnections.Values;
     }
@@ -517,6 +534,12 @@ public class EndPoint
         this.id = id;
         this.name = name;
         Log.Debug($"Endpoint created: {this.ToString()}");
+    }
+
+    public EndPoint(EndPoint other)
+    {
+        this.id = other.id;
+        this.name = other.name;
     }
 
     public override int GetHashCode()

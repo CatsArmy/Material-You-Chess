@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorSurface">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ChipMiddle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ChipWhite"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="White"
+            app:chipIcon="@drawable/outline_person"
+            app:closeIcon="@drawable/king_white"
+            app:closeIconSize="24dp"
+          
+            app:layout_constraintBottom_toBottomOf="@id/ds_material_divider"
+            app:layout_constraintEnd_toStartOf="@+id/ChipMiddle"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:chipIconVisible="true"
+            tools:closeIconVisible="true" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/ChipBlack"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Black"
+            app:chipIcon="@drawable/outline_person"
+            app:closeIcon="@drawable/king_black"
+            app:closeIconSize="24dp"
+           
+            app:layout_constraintBottom_toBottomOf="@id/ds_material_divider"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toStartOf="@+id/ChipMiddle"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:chipIconVisible="true"
+            tools:closeIconVisible="true" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/ds_material_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ChipWhite"
+            app:layout_constraintVertical_bias="0.05" />
+
+        <!--        <com.google.android.material.carousel.MaskableFrameLayout-->
+        <!--            android:id="@+id/carousel_item_container"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            android:foreground="?attr/selectableItemBackground"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/ds_material_divider">-->
+
+        <!--            <com.google.android.material.card.MaterialCardView-->
+        <!--                style="?attr/materialCardViewOutlinedStyle"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent">-->
+
+        <!--                <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="match_parent">-->
+
+        <!--                    <com.google.android.material.imageview.ShapeableImageView-->
+        <!--                        android:id="@+id/Pfp"-->
+        <!--                        android:layout_width="0dp"-->
+        <!--                        android:layout_height="0dp"-->
+        <!--                        android:clickable="false"-->
+        <!--                        android:scaleType="fitCenter"-->
+        <!--                        app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                        app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                        app:layout_constraintStart_toStartOf="parent"-->
+        <!--                        app:layout_constraintTop_toTopOf="parent"-->
+        <!--                        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"-->
+        <!--                        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"-->
+        <!--                        app:srcCompat="@drawable/outline_account_circle_24" />-->
+        <!--                </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <!--            </com.google.android.material.card.MaterialCardView>-->
+        <!--        </com.google.android.material.carousel.MaskableFrameLayout>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/carousel_recycler_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ds_material_divider" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

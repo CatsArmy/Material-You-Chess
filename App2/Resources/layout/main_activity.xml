@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-	<com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
@@ -18,25 +18,25 @@
         app:layout_constraintTop_toTopOf="parent"
         app:strokeWidth="2dp">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline24"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.35" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.25" />
 
-			<com.google.android.material.imageview.ShapeableImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/MainProfileImageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
@@ -52,7 +52,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/outline_account_circle_24" />
 
-			<TextView
+            <TextView
                 android:id="@+id/MainUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -66,79 +66,77 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/MainProfileImageView" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline17"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.84" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toStartOf="@id/profileAction1" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.76" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline11"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.725" />
 
-			<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/profileAction1"
                 android:layout_width="128dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:autoSizeMaxTextSize="16sp"
                 android:autoSizeTextType="uniform"
                 android:clickable="true"
                 android:text="Login"
                 android:textAlignment="textStart"
+                app:backgroundTint="@color/m3_fab_efab_background_color_selector"
                 app:icon="@drawable/outline_person"
                 app:iconGravity="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintVertical_bias="0.100000024"
                 tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
 
-			<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/profileAction2"
                 android:layout_width="128dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:autoSizeMaxTextSize="16sp"
                 android:autoSizeTextType="uniform"
                 android:clickable="true"
                 android:text="Sign up"
                 android:textAlignment="textStart"
+                app:backgroundTint="@color/m3_fab_efab_background_color_selector"
                 app:icon="@drawable/outline_person_add"
                 app:iconGravity="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintVertical_bias="0.9"
                 tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
-	</com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-	<com.google.android.material.button.MaterialButtonToggleGroup
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/GameModeSelector"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -154,7 +152,7 @@
         app:selectionRequired="true"
         app:singleSelection="true">
 
-		<Button
+        <Button
             android:id="@+id/btnOnline"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
@@ -169,7 +167,7 @@
             app:icon="@drawable/rounded_bluetooth_24"
             app:iconSize="24dp" />
 
-		<Button
+        <Button
             android:id="@+id/btnBot"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
@@ -182,7 +180,7 @@
             app:icon="@drawable/rounded_robot_2_24"
             app:iconSize="24dp" />
 
-		<Button
+        <Button
             android:id="@+id/btnLocal"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
@@ -197,9 +195,9 @@
             app:icon="@drawable/rounded_smartphone_24"
             app:iconSize="24dp" />
 
-	</com.google.android.material.button.MaterialButtonToggleGroup>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
-	<Button
+    <Button
         android:id="@+id/btnStartGame"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -215,7 +213,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintVertical_bias="0.2" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -224,7 +222,7 @@
         app:layout_constraintGuide_percent="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -233,7 +231,7 @@
         app:layout_constraintGuide_percent="0.6"
         app:layout_constraintStart_toStartOf="parent" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -242,35 +240,35 @@
         app:layout_constraintGuide_percent="0.7"
         app:layout_constraintStart_toStartOf="parent" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.04" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.96" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.18" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline16"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.25" />
 
-	<ImageView
+    <ImageView
         android:id="@+id/mChessLogo"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -282,28 +280,28 @@
         app:layout_constraintTop_toTopOf="@+id/guideline16"
         app:srcCompat="@drawable/knight_black" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline12"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.15" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
-	<TextView
+    <TextView
         android:id="@+id/mTitle"
         android:layout_width="0dp"
         android:layout_height="0dp"

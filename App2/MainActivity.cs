@@ -1,7 +1,5 @@
 ﻿using System;
-using Android;
 using Android.App;
-using Android.Bluetooth;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -10,8 +8,6 @@ using Android.Util;
 using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
-using AndroidX.Core.App;
-using AndroidX.Core.Content;
 using Chess.Firebase;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
@@ -79,7 +75,7 @@ public class MainActivity : AppCompatActivity
     private ChessFirebase chessFirebase;
     private ShapeableImageView DialogProfilePicture;
     private AndroidX.AppCompat.App.AlertDialog dialog;
-    private BluetoothDevice device;
+    //private BluetoothDevice device;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -104,6 +100,7 @@ public class MainActivity : AppCompatActivity
                     .Build());
 
                 chessFirebase.auth.UpdateCurrentUser(user.User);
+
             }));
         //chessFirebase.auth.ConfirmPasswordResetAsync
         //chessFirebase.auth.SendPasswordResetEmailAsync
@@ -112,21 +109,21 @@ public class MainActivity : AppCompatActivity
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
-        const int locationPermissionsRequestCode = 1000;
+        //const int locationPermissionsRequestCode = 1000;
 
-        var locationPermissions = (Manifest.Permission.AccessCoarseLocation, Manifest.Permission.AccessFineLocation);
-        if (ContextCompat.CheckSelfPermission(this, locationPermissions.AccessFineLocation) == Permission.Denied ||
-                ContextCompat.CheckSelfPermission(this, locationPermissions.AccessCoarseLocation) == Permission.Denied)
-        {
-            ActivityCompat.RequestPermissions(this, new string[] { locationPermissions.AccessFineLocation, locationPermissions.AccessCoarseLocation },
-                locationPermissionsRequestCode);
-        }
-        var bluetooth = ContextCompat.CheckSelfPermission(this, Manifest.Permission.Bluetooth);
-        var bluetoothConnect = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothConnect);
-        var bluetoothScan = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothScan);
-        var bluetoothAdmin = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdmin);
-        var bluetoothAdvertise = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdvertise);
-        var nearbyWifiDevices = ContextCompat.CheckSelfPermission(this, Manifest.Permission.NearbyWifiDevices);
+        //var locationPermissions = (Manifest.Permission.AccessCoarseLocation, Manifest.Permission.AccessFineLocation);
+        //if (ContextCompat.CheckSelfPermission(this, locationPermissions.AccessFineLocation) == Permission.Denied ||
+        //        ContextCompat.CheckSelfPermission(this, locationPermissions.AccessCoarseLocation) == Permission.Denied)
+        //{
+        //    ActivityCompat.RequestPermissions(this, new string[] { locationPermissions.AccessFineLocation, locationPermissions.AccessCoarseLocation },
+        //        locationPermissionsRequestCode);
+        //}
+        //var bluetooth = ContextCompat.CheckSelfPermission(this, Manifest.Permission.Bluetooth);
+        //var bluetoothConnect = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothConnect);
+        //var bluetoothScan = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothScan);
+        //var bluetoothAdmin = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdmin);
+        //var bluetoothAdvertise = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdvertise);
+        //var nearbyWifiDevices = ContextCompat.CheckSelfPermission(this, Manifest.Permission.NearbyWifiDevices);
 
         if (!this.MaterialYouThemePreference)
             base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
@@ -135,8 +132,8 @@ public class MainActivity : AppCompatActivity
         Xamarin.Essentials.Platform.Init(this, savedInstanceState);
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
-        base.StartActivity(new Intent(this, typeof(MainActivity2)));
-        return;
+        //base.StartActivity(new Intent(this, typeof(MainActivity2)));
+        //return;
         //var deviceManager = new BluetoothDeviceManager(this);
         //deviceManager.PickDevice(device => this.device = device);
 

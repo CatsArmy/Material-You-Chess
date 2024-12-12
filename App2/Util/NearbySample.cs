@@ -13,7 +13,6 @@ using Android.OS;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Resource = Chess.Resource;
 using Uri = Android.Net.Uri;
 
 public interface IConnectionLifeCycleCallback
@@ -146,7 +145,6 @@ public class NearbySample : AppCompatActivity,
     private bool isGoogleApiAvailable = true;
     private ListView connectedList;
     private ArrayAdapter<DiscoverItem> connectedListAdapter;
-    private Button selectImage;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -159,7 +157,7 @@ public class NearbySample : AppCompatActivity,
             .Build();
 
         // Set our view from the "main" layout resource
-        base.SetContentView(Resource.Layout.nearby_template);
+        base.SetContentView(Chess.Resource.Layout.nearby_template);
 
         this.PrepareUI();
         this.HandleClicks();
@@ -193,26 +191,24 @@ public class NearbySample : AppCompatActivity,
 
     private void PrepareUI()
     {
-        this.hostMode = FindViewById<Switch>(Resource.Id.hostMode);
-        this.name = FindViewById<EditText>(Resource.Id.deviceName);
+        this.hostMode = FindViewById<Switch>(Chess.Resource.Id.hostMode);
+        this.name = FindViewById<EditText>(Chess.Resource.Id.deviceName);
         name.Text = TryGetDeviceId();
 
-        this.discoverList = FindViewById<ListView>(Resource.Id.discoverList);
+        this.discoverList = FindViewById<ListView>(Chess.Resource.Id.discoverList);
         this.discoverListAdapter = new ArrayAdapter<DiscoverItem>(this,
             Android.Resource.Layout.SimpleListItem1,
             new List<DiscoverItem>());
 
         this.discoverList.Adapter = discoverListAdapter;
 
-        this.connectedList = FindViewById<ListView>(Resource.Id.connectedList);
+        this.connectedList = FindViewById<ListView>(Chess.Resource.Id.connectedList);
         this.connectedListAdapter = new ArrayAdapter<DiscoverItem>(this,
             Android.Resource.Layout.SimpleListItem1, new List<DiscoverItem>());
         this.connectedList.Adapter = connectedListAdapter;
 
-        this.selectImage = FindViewById<Button>(Resource.Id.btnImage);
-
-        this.logView = FindViewById<TextView>(Resource.Id.logView);
-        this.progress = FindViewById<ProgressBar>(Resource.Id.uploadProgress);
+        this.logView = FindViewById<TextView>(Chess.Resource.Id.logView);
+        this.progress = FindViewById<ProgressBar>(Chess.Resource.Id.uploadProgress);
         this.progress.Visibility = ViewStates.Gone;
     }
 
@@ -244,7 +240,7 @@ public class NearbySample : AppCompatActivity,
                 this.isAdvertising = true;
             }
 
-            selectImage.Visibility = ViewStates.Gone;
+            //selectImage.Visibility = ViewStates.Gone;
         }
         else
         {
@@ -267,7 +263,7 @@ public class NearbySample : AppCompatActivity,
                 Log("Start discovery done");
             }
 
-            selectImage.Visibility = ViewStates.Visible;
+            //selectImage.Visibility = ViewStates.Visible;
         }
     }
 
@@ -302,12 +298,12 @@ public class NearbySample : AppCompatActivity,
             this.connectedListAdapter.Remove(item);
         };
 
-        this.selectImage.Click += async (sender, args) =>
-        {
-            var intent = new Intent(Intent.ActionGetContent);
-            intent.SetType("image/*");
-            StartActivityForResult(intent, ChooseFileResultCode);
-        };
+        //this.selectImage.Click += async (sender, args) =>
+        //{
+        //    var intent = new Intent(Intent.ActionGetContent);
+        //    intent.SetType("image/*");
+        //    StartActivityForResult(intent, ChooseFileResultCode);
+        //};
     }
 
 
@@ -341,7 +337,7 @@ public class NearbySample : AppCompatActivity,
                         var item = this.connectedListAdapter.GetItem(i);
                         {
                             Log($"Sending payload to {item.Name} [{item.Endpoint}]");
-                            this.selectImage.Enabled = false;
+                            //this.selectImage.Enabled = false;
                             await NearbyClass.Connections.SendPayload(this.googleApi, item.Endpoint, payload);
                             Log($"Done sending payload to {item.Name} [{item.Endpoint}]");
                         }
@@ -570,7 +566,7 @@ public class NearbySample : AppCompatActivity,
         switch (update.TransferStatus)
         {
             case PayloadTransferUpdate.Status.InProgress:
-                this.selectImage.Enabled = false;
+                //this.selectImage.Enabled = false;
                 this.progress.Visibility = ViewStates.Visible;
                 this.progress.Max = 10000;
 
@@ -578,11 +574,11 @@ public class NearbySample : AppCompatActivity,
                 break;
             case PayloadTransferUpdate.Status.Failure:
                 Log($"OnPayloadTransferUpdate: {endpointId} Failure - {update.TransferStatus} {update.BytesTransferred} of {update.TotalBytes}");
-                this.selectImage.Enabled = true;
+                //this.selectImage.Enabled = true;
                 this.progress.Visibility = ViewStates.Gone;
                 break;
             case PayloadTransferUpdate.Status.Success:
-                this.selectImage.Enabled = true;
+                //this.selectImage.Enabled = true;
                 this.progress.Visibility = ViewStates.Gone;
                 Log($"OnPayloadTransferUpdate: {endpointId} Succes - {update.TransferStatus} {update.BytesTransferred} of {update.TotalBytes}");
                 break;

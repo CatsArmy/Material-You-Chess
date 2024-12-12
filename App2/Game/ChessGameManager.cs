@@ -1,6 +1,6 @@
-//using System;
-//using System.Collections.Generic;
-//using Chess.ChessBoard;
+using System;
+using System.Collections.Generic;
+using Chess.ChessBoard;
 
 //namespace Chess.Game;
 
@@ -14,27 +14,29 @@
 
 //}
 
-//public interface IChessGame
-//{
-//    public Dictionary<(string, int), Piece> AllPieces { get; set; }
-//    public Dictionary<(string, int), Piece> WhitePieces { get; set; }
-//    public Dictionary<(string, int), Piece> BlackPieces { get; set; }
-//    public Dictionary<(char, int), Space> Board { get; set; }
-//    public IPlayer Player1 { get; set; }
-//    public IPlayer Player2 { get; set; }
-//    public bool IsOngoing { get; set; }
 
-//}
+//If both chip White and chip Black are unselected the colors of each player will be determined by a coin flip
+public interface IChessGame
+{
+    public Dictionary<(string, int), Piece> AllPieces { get; set; }
+    public Dictionary<(string, int), Piece> WhitePieces { get; set; }
+    public Dictionary<(string, int), Piece> BlackPieces { get; set; }
+    public Dictionary<(char, int), Space> Board { get; set; }
+    public IPlayer Player1 { get; set; }
+    public IPlayer Player2 { get; set; }
+    public bool IsOngoing { get; set; }
+    //public bool IsOngoing { get; set; }
+}
 
 
-//[Serializable]
-//public enum GameOutcome
-//{
-//    Draw,
-//    Resign,
-//    Win,
-//    Lose,
-//}
+[Serializable]
+public enum GameOutcome
+{
+    Draw,
+    Resign,
+    Win,
+    Lose,
+}
 
 
 //public interface INetworkedPlayer : IPlayer
@@ -42,12 +44,13 @@
 //    public bool HasColorPreference { get; set; }
 //}
 
-//public interface IPlayer
-//{
-//    public bool IsWhite { get; set; }
-//    public GameOutcome Outcome { get; set; }
-//    internal Dictionary<(string, int), Piece> pieces { get; set; }
-//}
+public interface IPlayer
+{
+    public bool IsWhite { get; set; }
+    public GameOutcome Outcome { get; set; }
+    internal Dictionary<(string, int), Piece> pieces { get; set; }
+
+}
 
 //public class ChessGameManager
 //{
