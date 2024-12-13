@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="ic_launcher_background">#2C3E50</color>
-	<color name="Crossout">#cac4d0</color>
+    <color name="ic_launcher_background">#2C3E50</color>
+    <color name="Crossout">#cac4d0</color>
 
-	<!--Dark mode-->
-	<color name="white_space_color">?attr/colorOnSecondaryContainer</color>
-	<color name="black_space_color">?attr/colorSecondaryContainer</color>
+    <!--Dark mode-->
+    <color name="white_space_color">?attr/colorOnSecondaryContainer</color>
+    <color name="black_space_color">?attr/colorSecondaryContainer</color>
 
-	<color name="white_space_overlay_color">?attr/colorOnTertiaryContainer</color>
-	<color name="black_space_overlay_color">?attr/colorTertiaryContainer</color>
+    <color name="white_space_overlay_color">?attr/colorOnTertiaryContainer</color>
+    <color name="black_space_overlay_color">?attr/colorTertiaryContainer</color>
 
-	<color name="white_piece_color">?attr/colorOnPrimaryContainer</color>
-	<color name="black_piece_color">?attr/colorPrimaryContainer</color>
+    <color name="white_piece_color">?attr/colorOnPrimaryContainer</color>
+    <color name="black_piece_color">?attr/colorPrimaryContainer</color>
 </resources>

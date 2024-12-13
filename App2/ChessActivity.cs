@@ -46,6 +46,31 @@ public class ChessActivity : AppCompatActivity
     private Queen wQueen;
     private Rook wRook1, wRook2;
 
+    /*<!--            <androidx.recyclerview.widget.RecyclerView-->
+                <!--                android:id="@+id/capturedWhitePieces"-->
+                <!--                android:layout_width="0dp"-->
+                <!--                android:layout_height="28dp"-->
+                <!--                android:clipChildren="false"-->
+                <!--                android:clipToPadding="false"-->
+                <!--                android:orientation="horizontal"-->
+                <!--                app:layout_constraintBottom_toTopOf="@+id/boardCenterH"-->
+                <!--                app:layout_constraintEnd_toEndOf="@+id/gmb__H8"-->
+                <!--                app:layout_constraintStart_toStartOf="@+id/boardCenterV"-->
+                <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+                <!--            <androidx.recyclerview.widget.RecyclerView-->
+                <!--                android:id="@+id/capturedBlackPieces"-->
+                <!--                android:layout_width="0dp"-->
+                <!--                android:layout_height="28dp"-->
+                <!--                android:clipChildren="false"-->
+                <!--                android:clipToPadding="false"-->
+                <!--                android:orientation="horizontal"-->
+                <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--                app:layout_constraintEnd_toEndOf="@+id/gmb__H1"-->
+                <!--                app:layout_constraintStart_toStartOf="@+id/boardCenterV"-->
+                <!--                app:layout_constraintTop_toBottomOf="@+id/gmb__A1"-->
+                <!--                app:layout_constraintVertical_bias="0.8" />-->
+    */
     protected override void OnCreate(Bundle savedInstanceState)
     {
         bool hasValue = bool.TryParse(base.Intent.GetStringExtra(nameof(this.MaterialYouThemePreference)), out this.MaterialYouThemePreference);
@@ -191,11 +216,13 @@ public class ChessActivity : AppCompatActivity
         return;
     }
 
+
+
     private void ClearSelectedMoves()
     {
         moves.Clear();
         foreach (var space in highlighted)
-            space.space.Drawable.SetTintList(null);
+            space.UnselectSpace();
     }
 
     private void SelectMoves()
@@ -205,15 +232,11 @@ public class ChessActivity : AppCompatActivity
         foreach (var move in moves)
         {
             var space = move.Space.BoardSpace(board);
-            var _colorId = space.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
-            var _color = FindViewById<RelativeLayout>(_colorId).BackgroundTintList.DefaultColor;
-            space.space.Drawable.SetTint(_color);
+            space.SelectSpace();
             highlighted.Add(space);
         }
         var selected = this.selected.BoardSpace(board);
-        var colorId = selected.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
-        var color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
-        selected.space.Drawable.SetTint(color);
+        selected.SelectSpace();
         highlighted.Add(selected);
     }
 
@@ -222,21 +245,16 @@ public class ChessActivity : AppCompatActivity
     private void SelectMoves(Space space)
     {
         ClearSelectedMoves();
-        var colorId = space.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
-        var color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
-        space.space.Drawable.SetTint(color);
+        space.SelectSpace();
+        highlighted.Add(space);
 
         var selected = this.selected.BoardSpace(board);
-        colorId = selected.isWhite ? Resource.Id.white_space_overlay_tint_color : Resource.Id.black_space_overlay_tint_color;
-        color = FindViewById<RelativeLayout>(colorId).BackgroundTintList.DefaultColor;
-        selected.space.Drawable.SetTint(color);
+        selected.SelectSpace();
         highlighted.Add(selected);
-        highlighted.Add(space);
     }
 
     private void NextPlayer()
     {
-
         selected = null;
         //Next player logic
     }

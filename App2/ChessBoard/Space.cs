@@ -29,6 +29,25 @@ public class Space
             res = resources;
     }
 
+    public void SelectSpace()
+    {
+        //var colorId = isWhite ? Resource.Color.white_space_overlay_color : Resource.Color.black_space_overlay_color;
+        /////<returns> </returns>A single color value in the form 0xAARRGGBB.
+        //var colorARGB = ContextCompat.GetColor(context, colorId);
+
+        space.SetImageLevel(1);
+    }
+
+    public void UnselectSpace()
+    {
+        //var colorId = isWhite ? Resource.Color.white_space_overlay_color : Resource.Color.black_space_overlay_color;
+        /////<returns> </returns>A single color value in the form 0xAARRGGBB.
+        //var colorARGB = ContextCompat.GetColor(context, colorId);
+
+        space.SetImageLevel(0);
+    }
+
+
     public Space Forward(Dictionary<(char, int), Space> board, bool isWhite)
     {
         if (!isWhite)
