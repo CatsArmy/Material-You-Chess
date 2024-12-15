@@ -1,6 +1,6 @@
-<level-list>
-    <item>
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+<level-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:maxLevel="0">
+        <vector
             android:width="32dp"
             android:height="32dp"
             android:viewportWidth="34"
@@ -10,8 +10,8 @@
                 android:pathData="M34,0l-34.0001,0l-0,34.0001l34.0001,0z" />
         </vector>
     </item>
-    <item>
-        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    <item android:maxLevel="1">
+        <vector 
             android:width="32dp"
             android:height="32dp"
             android:viewportWidth="34"

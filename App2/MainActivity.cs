@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
@@ -14,6 +15,7 @@ using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
+using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess;
@@ -74,56 +76,35 @@ public class MainActivity : AppCompatActivity
     private ExtendedFloatingActionButton profileAction2;
     private ChessFirebase chessFirebase;
     private ShapeableImageView DialogProfilePicture;
-    private AndroidX.AppCompat.App.AlertDialog dialog;
-    //private BluetoothDevice device;
+    private AndroidX.AppCompat.App.AlertDialog editProfileDialog;
+    private AndroidX.AppCompat.App.AlertDialog loginDialog;
+    private AndroidX.AppCompat.App.AlertDialog signUpDialog;
+    private UserProfileChangeRequest.Builder editProfile;
+    private TextInputEditText EmailInput;
+    private TextInputEditText PasswordInput;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
+        Thread.Sleep(TimeSpan.FromSeconds(5));
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
         chessFirebase = new ChessFirebase();
         this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
             new ActivityResultCallback<Android.Net.Uri>(async uri =>
             {
-                //Logic
                 Log.Debug("PhotoPicker", $"{uri}");
-                if (uri != null)
+                if (chessFirebase.auth.CurrentUser == null)
+                    return;
+
+                if (uri == null)
                 {
-                    this.MainProfileImageView.SetImageURI(uri);
-                    this.DialogProfilePicture.SetImageURI(uri);
+                    return;
                 }
-
-                //var user = await chessFirebase.auth.CreateUserWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
-                var user = await chessFirebase.auth.SignInWithEmailAndPasswordAsync(chessFirebase.TemplateEmail, chessFirebase.TemplatePassword);
-                await user.User.UpdateProfileAsync(new UserProfileChangeRequest.Builder()
-                    //.SetDisplayName("Guest3")
-                    //    .SetPhotoUri(uri)
-                    .Build());
-
-                chessFirebase.auth.UpdateCurrentUser(user.User);
-
+                editProfile.SetPhotoUri(uri);
             }));
-        //chessFirebase.auth.ConfirmPasswordResetAsync
-        //chessFirebase.auth.SendPasswordResetEmailAsync
-        //chessFirebase.auth.VerifyPasswordResetCodeAsync
 
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
-        //const int locationPermissionsRequestCode = 1000;
-
-        //var locationPermissions = (Manifest.Permission.AccessCoarseLocation, Manifest.Permission.AccessFineLocation);
-        //if (ContextCompat.CheckSelfPermission(this, locationPermissions.AccessFineLocation) == Permission.Denied ||
-        //        ContextCompat.CheckSelfPermission(this, locationPermissions.AccessCoarseLocation) == Permission.Denied)
-        //{
-        //    ActivityCompat.RequestPermissions(this, new string[] { locationPermissions.AccessFineLocation, locationPermissions.AccessCoarseLocation },
-        //        locationPermissionsRequestCode);
-        //}
-        //var bluetooth = ContextCompat.CheckSelfPermission(this, Manifest.Permission.Bluetooth);
-        //var bluetoothConnect = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothConnect);
-        //var bluetoothScan = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothScan);
-        //var bluetoothAdmin = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdmin);
-        //var bluetoothAdvertise = ContextCompat.CheckSelfPermission(this, Manifest.Permission.BluetoothAdvertise);
-        //var nearbyWifiDevices = ContextCompat.CheckSelfPermission(this, Manifest.Permission.NearbyWifiDevices);
 
         if (!this.MaterialYouThemePreference)
             base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
@@ -134,8 +115,6 @@ public class MainActivity : AppCompatActivity
         base.SetContentView(Resource.Layout.main_activity);
         //base.StartActivity(new Intent(this, typeof(MainActivity2)));
         //return;
-        //var deviceManager = new BluetoothDeviceManager(this);
-        //deviceManager.PickDevice(device => this.device = device);
 
         // Permission request logic
         this.permissions = new AppPermissions();
@@ -144,62 +123,110 @@ public class MainActivity : AppCompatActivity
         this.StartGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
         this.StartGame.Click += StartGame_Click;
         this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
-        bool isLoggedIn = true;
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
-        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this,
-            Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        dialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, dialog.Context.Theme));
-        dialog.SetTitle("Profile");
-        dialog.SetView(Resource.Layout.profile_dialog);
-        dialog.SetPositiveButton("Confirm", (sender, args) =>
-        {
+        InitDialogs();
+        UpdateUserState();
+    }
 
-        });
-        dialog.SetNegativeButton("Cancel", (sender, args) =>
-        {
-
-        });
-        this.dialog = dialog.Create();
-        this.dialog.ShowEvent += Dialog_ShowEvent;
+    private void UpdateUserState()
+    {
+        bool isLoggedIn = chessFirebase.auth.CurrentUser != null;
 
         switch (isLoggedIn)
         {
             case true:
                 this.profileAction1.Text = "Profile";
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
-                this.profileAction1.Click += ProfileAction1_Click;
+                this.profileAction1.Click += (sender, e) => editProfileDialog.Show();
                 this.profileAction2.Text = "Log out";
+                this.profileAction2.Click += (sender, e) =>
+                {
+                    chessFirebase.auth.SignOut();
+                    UpdateUserState();
+                };
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
                 break;
 
             case false:
+                //TODO alter the dumb fucking
                 this.profileAction1.Text = "Login";
+                this.profileAction1.Click += (sender, e) =>
+                {
+                    loginDialog.Show();
+                };
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
                 this.profileAction2.Text = "Sign up";
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
                 break;
         }
+    }
 
+    private void InitDialogs()
+    {
+        MaterialAlertDialogBuilder editProfileDialog = new MaterialAlertDialogBuilder(this,
+            Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        editProfileDialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, editProfileDialog.Context.Theme));
+        editProfileDialog.SetTitle("Profile");
+        editProfileDialog.SetView(Resource.Layout.profile_dialog);
+        editProfileDialog.SetPositiveButton("Confirm", (sender, args) =>
+        {
+            if (editProfile.DisplayName == chessFirebase.auth.CurrentUser.DisplayName
+            && editProfile.PhotoUri == chessFirebase.auth.CurrentUser.PhotoUrl)
+            {
+                return;
+            }
+            chessFirebase.auth.CurrentUser.UpdateProfileAsync(editProfile.Build());
+        });
+        editProfileDialog.SetNegativeButton("Cancel", (sender, args) =>
+        {
+            editProfile.SetDisplayName(chessFirebase.auth.CurrentUser.DisplayName);
+            editProfile.SetPhotoUri(chessFirebase.auth.CurrentUser.PhotoUrl);
+        });
+        this.editProfileDialog = editProfileDialog.Create();
+        this.editProfileDialog.ShowEvent += Dialog_ShowEvent;
+        MaterialAlertDialogBuilder loginDialog = new MaterialAlertDialogBuilder(this,
+            Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        loginDialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, loginDialog.Context.Theme));
+        loginDialog.SetTitle("Login");
+        loginDialog.SetView(Resource.Layout.login);
+        loginDialog.SetPositiveButton("Confirm", async (sender, args) =>
+        {
+            string email = this.EmailInput.Text;
+            string password = this.PasswordInput.Text;
+            var result = await chessFirebase.auth.SignInWithEmailAndPasswordAsync(email, password);
+            if (result == null)
+            {
+
+            }
+        });
+        loginDialog.SetNegativeButton("Cancel", (sender, args) =>
+        {
+            this.EmailInput.Text = "";
+            this.PasswordInput.Text = "";
+        });
+        this.loginDialog = loginDialog.Create();
+        this.loginDialog.ShowEvent += (sender, e) =>
+        {
+            this.EmailInput = this.loginDialog.FindViewById<TextInputEditText>(Resource.Id.LoginEmailInput);
+            this.PasswordInput = this.loginDialog.FindViewById<TextInputEditText>(Resource.Id.LoginPasswordInput);
+        };
     }
 
     private void Dialog_ShowEvent(object sender, EventArgs e)
     {
-        this.DialogProfilePicture = this.dialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
-        var editProfilePicture = this.dialog.FindViewById<Button>(Resource.Id.editProfilePicture);
+        editProfile = new UserProfileChangeRequest.Builder();
+        this.DialogProfilePicture = this.editProfileDialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
+        var editProfilePicture = this.editProfileDialog.FindViewById<Button>(Resource.Id.editProfilePicture);
         editProfilePicture.Click += (_, _) => this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
 
-        var ThemeText = this.dialog.FindViewById<TextView>(Resource.Id.ThemeText);
-        var ThemeToggle = this.dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
+        var ThemeText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.ThemeText);
+        var ThemeToggle = this.editProfileDialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
 
-        var UsernameText = this.dialog.FindViewById<TextView>(Resource.Id.UsernameText);
-        var EditUsername = this.dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
+        var UsernameText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.UsernameText);
+        var EditUsername = this.editProfileDialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
 
-    }
 
-    private void ProfileAction1_Click(object sender, EventArgs e)
-    {
-        this.dialog.Show();
     }
 
     private void StartGame_Click(object sender, EventArgs e)

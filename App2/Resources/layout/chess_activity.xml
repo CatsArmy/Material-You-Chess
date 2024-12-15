@@ -20,7 +20,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline14"
-        app:strokeColor="@color/white_space_color"
         app:strokeWidth="1dp">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
@@ -103,7 +102,6 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/guideline18"
-        app:strokeColor="@color/black_space_color"
         app:strokeWidth="1dp">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
