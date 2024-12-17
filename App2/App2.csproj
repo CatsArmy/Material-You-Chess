@@ -38,7 +38,7 @@
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <AotAssemblies>false</AotAssemblies>
     <EnableLLVM>false</EnableLLVM>
     <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
@@ -46,7 +46,7 @@
     <MandroidI18n />
     <PreferNativeArm64>true</PreferNativeArm64>
     <RegisterForComInterop>false</RegisterForComInterop>
-    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
+    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AndroidSupportedAbis />
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
@@ -384,6 +384,18 @@
     </PackageReference>
     <PackageReference Include="Xamarin.AndroidX.Navigation.UI">
       <Version>2.7.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.Database">
+      <Version>120.3.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.Database.Connection">
+      <Version>116.0.2.14</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.Sessions">
+      <Version>101.2.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.Storage">
+      <Version>120.3.0.2</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" />
     <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />

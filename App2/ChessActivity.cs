@@ -11,6 +11,8 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
+using Chess.FirebaseApp;
+using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Space = Chess.ChessBoard.Space;
 
@@ -22,9 +24,8 @@ namespace Chess;
 public class ChessActivity : AppCompatActivity
 {
     public bool MaterialYouThemePreference;
-    private string PlayerName = "Guest2";
     private AppPermissions permissions;
-    private Android.Net.Uri uri;
+    private ChessFirebase chessFirebase;
 
     private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
     private Dictionary<(char, int), Space> board = new Dictionary<(char, int), Space>();
@@ -88,15 +89,11 @@ public class ChessActivity : AppCompatActivity
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
         //Run our logic
-        this.PlayerName = base.Intent.GetStringExtra(nameof(this.PlayerName));
-        this.uri = Android.Net.Uri.Parse(base.Intent.GetStringExtra(nameof(uri)));
 
         ShapeableImageView p1MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        if (this.uri != null)
-            p1MainProfileImageView.SetImageURI(this.uri);
+        p1MainProfileImageView.SetImageURI(FirebaseAuth.Instance.CurrentUser.PhotoUrl);
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
-        p1MainUsername.Text = this.PlayerName;
-
+        p1MainUsername.Text = FirebaseAuth.Instance.CurrentUser.DisplayName;
         this.InitChessPieces();
         this.InitChessBoard();
         selected = null;

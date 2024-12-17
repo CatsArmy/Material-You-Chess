@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Util;
 using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
-using Chess.Firebase;
+using Chess.FirebaseApp;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
@@ -20,51 +20,9 @@ using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess;
 
-
-//[Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
-//public class MainActivity2 : AppCompatActivity
-//{
-//    public const int BluetoothRequestCode = 200;
-//    private bool BluetoothEnabled = false;
-//    protected override void OnCreate(Bundle savedInstanceState)
-//    {
-//        BluetoothManager bluetoothManager = base.GetSystemService(BluetoothService) as BluetoothManager;
-//        var adapter = bluetoothManager.Adapter;
-//        if (adapter == null || adapter.IsEnabled)
-//        {
-//            return;
-//        }
-//        Intent enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
-//        base.StartActivityForResult(enableBtIntent, BluetoothRequestCode);
-//        adapter.StartDiscovery();
-//        BroadcastReceiver enableBtReceiver = new BluetoothDiscoveryReceiver();
-//        IntentFilter filter = new IntentFilter(BluetoothDevice.ActionFound);
-
-//        var intent = RegisterReceiver(enableBtReceiver, filter);
-
-//    }
-
-//    protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
-//    {
-//        base.OnActivityResult(requestCode, resultCode, data);
-//        if (requestCode == BluetoothRequestCode)
-//        {
-//            if (resultCode == Result.Ok)
-//            {
-//                BluetoothEnabled = true;
-//            }
-//            else
-//            {
-//                BluetoothEnabled = false;
-//            }
-//        }
-
-//    }
-//}
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
-    private string PlayerName = "Guest2";
     private bool MaterialYouThemePreference = true;
     private PickVisualMediaRequest.Builder pickVisualMediaRequestBuilder;
     private ShapeableImageView MainProfileImageView;
@@ -79,29 +37,45 @@ public class MainActivity : AppCompatActivity
     private AndroidX.AppCompat.App.AlertDialog editProfileDialog;
     private AndroidX.AppCompat.App.AlertDialog loginDialog;
     private AndroidX.AppCompat.App.AlertDialog signUpDialog;
+    private TextView MainUsername;
+    private TextView EditProfileUsername;
+    private Bitmap newPfp;
+
     private UserProfileChangeRequest.Builder editProfile;
     private TextInputEditText EmailInput;
     private TextInputEditText PasswordInput;
+    private TextInputEditText UsernameTextInput;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
-        Thread.Sleep(TimeSpan.FromSeconds(5));
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
         chessFirebase = new ChessFirebase();
         this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<Android.Net.Uri>(async uri =>
+    new ActivityResultCallback<Android.Net.Uri>(async uri =>
+        {
+            Log.Debug("PhotoPicker", $"{uri}");
+            if (FirebaseAuth.Instance.CurrentUser == null)
+                return;
+
+            if (uri == null)
+                return;
+
+            var stream = this.ApplicationContext.OpenFileOutput("temp", FileCreationMode.Private);
+
+            this.uri = uri;
+            this.DialogProfilePicture.SetImageURI(uri);
+            DialogProfilePicture.RequestLayout();
+            DialogProfilePicture.RefreshDrawableState();
+            this.editProfile.SetPhotoUri(uri);
+            this.newPfp = ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(ContentResolver, uri));
+
+            if (!await newPfp.CompressAsync(Bitmap.CompressFormat.Png, quality: 77, stream))
             {
-                Log.Debug("PhotoPicker", $"{uri}");
-                if (chessFirebase.auth.CurrentUser == null)
-                    return;
-
-                if (uri == null)
-                {
-                    return;
-                }
-                editProfile.SetPhotoUri(uri);
-            }));
-
+                Log.Debug("CatDebug", "failed to compress bitmap");
+                return;
+            }
+            stream.Close();
+        }));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
@@ -123,40 +97,63 @@ public class MainActivity : AppCompatActivity
         this.StartGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
         this.StartGame.Click += StartGame_Click;
         this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
+        this.MainUsername = base.FindViewById<TextView>(Resource.Id.MainUsername);
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
         InitDialogs();
         UpdateUserState();
     }
 
+    private void OpenProfileDialog(object sender, EventArgs e)
+    {
+        editProfileDialog.Show();
+    }
+
+    private void OpenLoginDialog(object sender, EventArgs e)
+    {
+        loginDialog.Show();
+    }
+
+    private void OpenSignupDialog(object sender, EventArgs e) { }
+
+    ///Todo add confirmation
+    private void OpenLogoutDialog(object sender, EventArgs e)
+    {
+        FirebaseAuth.Instance.SignOut();
+        UpdateUserState();
+    }
+
     private void UpdateUserState()
     {
-        bool isLoggedIn = chessFirebase.auth.CurrentUser != null;
+        bool isLoggedIn = FirebaseAuth.Instance.CurrentUser != null;
 
         switch (isLoggedIn)
         {
             case true:
                 this.profileAction1.Text = "Profile";
+                this.profileAction1.Click -= OpenLoginDialog;
+                //this.profileAction1.Click -= OpenProfileDialog;
+                this.profileAction1.Click += OpenProfileDialog;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
-                this.profileAction1.Click += (sender, e) => editProfileDialog.Show();
+
                 this.profileAction2.Text = "Log out";
-                this.profileAction2.Click += (sender, e) =>
-                {
-                    chessFirebase.auth.SignOut();
-                    UpdateUserState();
-                };
+                this.profileAction2.Click -= OpenSignupDialog;
+                //this.profileAction2.Click -= OpenLogoutDialog;
+                this.profileAction2.Click += OpenLogoutDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
                 break;
 
             case false:
-                //TODO alter the dumb fucking
                 this.profileAction1.Text = "Login";
-                this.profileAction1.Click += (sender, e) =>
-                {
-                    loginDialog.Show();
-                };
+                this.profileAction1.Click -= OpenProfileDialog;
+                //this.profileAction1.Click -= OpenLoginDialog;
+                this.profileAction1.Click += OpenLoginDialog;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
+
                 this.profileAction2.Text = "Sign up";
+                this.profileAction2.Click -= OpenLogoutDialog;
+                //this.profileAction2.Click -= OpenSignupDialog;
+                this.profileAction2.Click += OpenSignupDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
                 break;
         }
@@ -169,22 +166,40 @@ public class MainActivity : AppCompatActivity
         editProfileDialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, editProfileDialog.Context.Theme));
         editProfileDialog.SetTitle("Profile");
         editProfileDialog.SetView(Resource.Layout.profile_dialog);
-        editProfileDialog.SetPositiveButton("Confirm", (sender, args) =>
+        editProfileDialog.SetPositiveButton("Confirm", async (sender, args) =>
         {
-            if (editProfile.DisplayName == chessFirebase.auth.CurrentUser.DisplayName
-            && editProfile.PhotoUri == chessFirebase.auth.CurrentUser.PhotoUrl)
+            if (editProfile.PhotoUri != null)
             {
-                return;
+                //Todo Fix firebase storage requesting billing information and not letting me input the fucking INFORMATION so i can replace this patch
+                var tempStream = ApplicationContext.OpenFileInput("temp");
+                var outputStream = ApplicationContext.OpenFileOutput("ProfilePicture", FileCreationMode.Private);
+                tempStream.CopyTo(outputStream);
+                tempStream.Close();
+                outputStream.Close();
+                ApplicationContext.DeleteFile("temp");
+                var uri = Android.Net.Uri.FromFile(ApplicationContext.GetFileStreamPath("ProfilePicture"));
+                editProfile.SetPhotoUri(uri);
+                this.MainProfileImageView.SetImageURI(editProfile.PhotoUri);
+                this.MainProfileImageView.RefreshDrawableState();
+                this.DialogProfilePicture.SetImageURI(editProfile.PhotoUri);
             }
-            chessFirebase.auth.CurrentUser.UpdateProfileAsync(editProfile.Build());
+            if (editProfile.DisplayName != null)
+            {
+                this.MainUsername.Text = editProfile.DisplayName;
+                this.EditProfileUsername.Text = editProfile.DisplayName;
+            }
+
+            await FirebaseAuth.Instance.CurrentUser.UpdateProfileAsync(editProfile.Build());
         });
         editProfileDialog.SetNegativeButton("Cancel", (sender, args) =>
         {
-            editProfile.SetDisplayName(chessFirebase.auth.CurrentUser.DisplayName);
-            editProfile.SetPhotoUri(chessFirebase.auth.CurrentUser.PhotoUrl);
+            editProfile.SetDisplayName(FirebaseAuth.Instance.CurrentUser.DisplayName);
+            editProfile.SetPhotoUri(FirebaseAuth.Instance.CurrentUser.PhotoUrl);
         });
         this.editProfileDialog = editProfileDialog.Create();
         this.editProfileDialog.ShowEvent += Dialog_ShowEvent;
+
+
         MaterialAlertDialogBuilder loginDialog = new MaterialAlertDialogBuilder(this,
             Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
         loginDialog.SetIcon(Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, loginDialog.Context.Theme));
@@ -194,17 +209,26 @@ public class MainActivity : AppCompatActivity
         {
             string email = this.EmailInput.Text;
             string password = this.PasswordInput.Text;
-            var result = await chessFirebase.auth.SignInWithEmailAndPasswordAsync(email, password);
-            if (result == null)
+            try
             {
-
+                var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(email, password);
             }
+            catch (Exception e)
+            {
+                Log.Debug("CatDebug", $"{e}");
+            }
+            finally
+            {
+                UpdateUserState();
+            }
+
         });
         loginDialog.SetNegativeButton("Cancel", (sender, args) =>
         {
             this.EmailInput.Text = "";
             this.PasswordInput.Text = "";
         });
+
         this.loginDialog = loginDialog.Create();
         this.loginDialog.ShowEvent += (sender, e) =>
         {
@@ -215,27 +239,40 @@ public class MainActivity : AppCompatActivity
 
     private void Dialog_ShowEvent(object sender, EventArgs e)
     {
-        editProfile = new UserProfileChangeRequest.Builder();
+        this.editProfile = new UserProfileChangeRequest.Builder();
         this.DialogProfilePicture = this.editProfileDialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
+        //this.DialogProfilePicture.SetImageURI(chessFirebase.auth.CurrentUser.PhotoUrl);
         var editProfilePicture = this.editProfileDialog.FindViewById<Button>(Resource.Id.editProfilePicture);
         editProfilePicture.Click += (_, _) => this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
 
         var ThemeText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.ThemeText);
         var ThemeToggle = this.editProfileDialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
 
-        var UsernameText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.UsernameText);
+        this.EditProfileUsername = this.editProfileDialog.FindViewById<TextView>(Resource.Id.UsernameText);
         var EditUsername = this.editProfileDialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
 
-
+        MaterialAlertDialogBuilder editUsernameDialogBuilder = new MaterialAlertDialogBuilder(this,
+        Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        editUsernameDialogBuilder.SetTitle("Edit Username");
+        editUsernameDialogBuilder.SetView(Resource.Layout.username_dialog);
+        editUsernameDialogBuilder.SetPositiveButton("Confirm", (sender, args) =>
+        {
+            editProfile.SetDisplayName(UsernameTextInput.Text);
+            this.EditProfileUsername.Text = editProfile.DisplayName;
+        });
+        var editUsernameDialog = editUsernameDialogBuilder.Create();
+        editUsernameDialog.ShowEvent += (sender, e) =>
+        {
+            UsernameTextInput = editUsernameDialog.FindViewById<TextInputEditText>(Resource.Id.MainUsernameInput);
+            UsernameTextInput.Hint = editProfile.DisplayName;
+        };
+        EditUsername.Click += (sender, e) => editUsernameDialog.Show();
     }
 
     private void StartGame_Click(object sender, EventArgs e)
     {
         Intent intent = new Intent(this, typeof(ChessActivity))
-        .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}")
-        .PutExtra(nameof(this.PlayerName), this.PlayerName)
-        .PutExtra(nameof(chessFirebase.auth.CurrentUser), chessFirebase.auth.CurrentUser)
-        .PutExtra(nameof(this.uri), $"{this.uri}");
+        .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
         base.StartActivity(intent);
     }
 

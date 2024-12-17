@@ -1,8 +1,7 @@
 ﻿using Android.App;
 using Firebase;
-using Firebase.Auth;
 
-namespace Chess.Firebase;
+namespace Chess.FirebaseApp;
 
 public class ChessFirebase : IFirebaseSecrets
 {
@@ -12,22 +11,17 @@ public class ChessFirebase : IFirebaseSecrets
     //No need to manualy set the current user
     //
 
-    public readonly FirebaseAuth auth;
-    public readonly FirebaseApp app;
+    public readonly Firebase.FirebaseApp app;
     public readonly string TemplateEmail = IFirebaseSecrets.TemplateUserEmail;
     public readonly string TemplatePassword = IFirebaseSecrets.TemplateUserPassword;
     public ChessFirebase()
     {
-        app = FirebaseApp.InitializeApp(Application.Context);
-        if (app is null || app?.Options is null)
-            app = FirebaseApp.InitializeApp(Application.Context,
-                new FirebaseOptions.Builder()
-                .SetApplicationId(IFirebaseSecrets.ApplicationId)
-                .SetStorageBucket(IFirebaseSecrets.StorageBucket)
-                .SetApiKey(IFirebaseSecrets.ApiKey)
-                .SetProjectId(IFirebaseSecrets.ProjectId)
-                .Build());
-
-        auth = FirebaseAuth.Instance;
+        app = Firebase.FirebaseApp.InitializeApp(Application.Context,
+            new FirebaseOptions.Builder()
+            .SetApplicationId(IFirebaseSecrets.ApplicationId)
+            .SetStorageBucket(IFirebaseSecrets.StorageBucket)
+            .SetApiKey(IFirebaseSecrets.ApiKey)
+            .SetProjectId(IFirebaseSecrets.ProjectId)
+            .Build());
     }
 }
