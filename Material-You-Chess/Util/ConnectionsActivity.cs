@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Android;
 using Android.Content.PM;
 using Android.Gms.Common.Apis;
@@ -7,12 +5,10 @@ using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
 using Android.Runtime;
-using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 using Chess.Util.Logger;
-using Java.Lang;
 using Java.Util;
 using KeySet = System.Collections.Generic.Dictionary<string, EndPoint>.KeyCollection;
 using ValueSet = System.Collections.Generic.Dictionary<string, EndPoint>.ValueCollection;
@@ -515,7 +511,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     private string ToString(Statuses status)
     {
-        return String.Format(Locale.Us,
+        return Java.Lang.String.Format(Locale.Us,
             "[%d]%s",
             status.StatusCode,
             status.StatusMessage != null ? status.StatusMessage

@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Android.App;
-using Android.Content.PM;
+﻿using Android.Content.PM;
 using Android.Content.Res;
-using Android.OS;
 using Android.Runtime;
 using Android.Views;
-using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
 using Chess.FirebaseApp;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
-using Space = Chess.ChessBoard.Space;
+using Microsoft.Maui.ApplicationModel;
 
 
 namespace Chess;
@@ -25,12 +19,12 @@ public class ChessActivity : AppCompatActivity
 {
     public bool MaterialYouThemePreference;
     private AppPermissions permissions;
-    private ChessFirebase chessFirebase;
+    private FirebaseSecrets chessFirebase;
 
     private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
-    private Dictionary<(char, int), Space> board = new Dictionary<(char, int), Space>();
+    private Dictionary<(char, int), BoardSpace> board = new Dictionary<(char, int), BoardSpace>();
     private Piece selected = null;
-    private List<Space> highlighted = null;
+    private List<BoardSpace> highlighted = null;
     private List<Move> moves = null;
 
     private Bishop bBishop1, bBishop2;
@@ -79,7 +73,7 @@ public class ChessActivity : AppCompatActivity
             base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
 
         base.OnCreate(savedInstanceState);
-        Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+        Platform.Init(this, savedInstanceState);
 
         // Permission request logic
         this.permissions = new AppPermissions();
@@ -172,7 +166,7 @@ public class ChessActivity : AppCompatActivity
         this.NextPlayer();
     }
 
-    private void OnClickSpace(object sender, System.EventArgs e, Space space)
+    private void OnClickSpace(object sender, System.EventArgs e, BoardSpace space)
     {
         TextView p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         p1MainUsername.Text = $"{space}";
@@ -228,24 +222,24 @@ public class ChessActivity : AppCompatActivity
         moves = this.selected.Moves(board, pieces);
         foreach (var move in moves)
         {
-            var space = move.Space.BoardSpace(board);
+            var space = move.Space.GetBoardSpace(board);
             space.SelectSpace();
             highlighted.Add(space);
         }
-        var selected = this.selected.BoardSpace(board);
+        var selected = this.selected.GetBoardSpace(board);
         selected.SelectSpace();
         highlighted.Add(selected);
     }
 
-    private void SelectMoves(Piece piece) => SelectMoves(piece.BoardSpace(board));
+    private void SelectMoves(Piece piece) => SelectMoves(piece.GetBoardSpace(board));
 
-    private void SelectMoves(Space space)
+    private void SelectMoves(BoardSpace space)
     {
         ClearSelectedMoves();
         space.SelectSpace();
         highlighted.Add(space);
 
-        var selected = this.selected.BoardSpace(board);
+        var selected = this.selected.GetBoardSpace(board);
         selected.SelectSpace();
         highlighted.Add(selected);
     }
@@ -264,7 +258,7 @@ public class ChessActivity : AppCompatActivity
     private void InitChessPieces()
     {
         //Init resources
-        _ = new Space(base.Resources);
+        _ = new BoardSpace(base.Resources);
 
         int spaceId;
         Action callback = OnNextPlayer;
@@ -394,7 +388,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
 
-            board[('A', j)] = new Space(space, isWhite, i);
+            board[('A', j)] = new BoardSpace(space, isWhite, i);
 
         }
 
@@ -408,7 +402,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('B', j)] = new Space(space, isWhite, i);
+            board[('B', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__C1, j = 1; i <= Resource.Id.gmb__C8; i++, j++)
@@ -421,7 +415,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('C', j)] = new Space(space, isWhite, i);
+            board[('C', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__D1, j = 1; i <= Resource.Id.gmb__D8; i++, j++)
@@ -434,7 +428,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('D', j)] = new Space(space, isWhite, i);
+            board[('D', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__E1, j = 1; i <= Resource.Id.gmb__E8; i++, j++)
@@ -447,7 +441,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('E', j)] = new Space(space, isWhite, i);
+            board[('E', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__F1, j = 1; i <= Resource.Id.gmb__F8; i++, j++)
@@ -460,7 +454,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('F', j)] = new Space(space, isWhite, i);
+            board[('F', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__G1, j = 1; i <= Resource.Id.gmb__G8; i++, j++)
@@ -473,7 +467,7 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('G', j)] = new Space(space, isWhite, i);
+            board[('G', j)] = new BoardSpace(space, isWhite, i);
         }
 
         for (int i = Resource.Id.gmb__H1, j = 1; i <= Resource.Id.gmb__H8; i++, j++)
@@ -486,13 +480,13 @@ public class ChessActivity : AppCompatActivity
                 IsBlack => false,
                 _ => throw new System.Exception($"{Resources.GetResourceEntryName(i)}: Missing a tag"),
             };
-            board[('H', j)] = new Space(space, isWhite, i);
+            board[('H', j)] = new BoardSpace(space, isWhite, i);
         }
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {
-        Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         // Handle permission requests results
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }

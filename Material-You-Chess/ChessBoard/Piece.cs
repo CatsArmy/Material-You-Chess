@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Util;
-using Android.Widget;
+﻿using Android.Util;
 using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
 [Serializable]
-public abstract class Piece : Space, IPiece
+public abstract class Piece : BoardSpace, IPiece
 {
     [NonSerialized]
     public ImageView piece;
@@ -21,11 +18,11 @@ public abstract class Piece : Space, IPiece
         space.Clickable = false;
     }
 
-    public abstract List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces);
+    public abstract List<Move> Moves(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces);
 
     public virtual void Update() { }
 
-    public void Move(Space dest)
+    public void Move(BoardSpace dest)
     {
         base.spaceId = dest.spaceId;
         base.space = dest.space;
@@ -68,7 +65,7 @@ public abstract class Piece : Space, IPiece
         //add to the list of captured pieces
     }
 
-    public void Diagonals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void Diagonals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
         this.DiagonalsUpRight(board, pieces, ref moves);
         this.DiagonalsUpLeft(board, pieces, ref moves);
@@ -76,9 +73,9 @@ public abstract class Piece : Space, IPiece
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
 
-    public void DiagonalsUpRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void DiagonalsUpRight(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        for (Space diagonal = this.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
+        for (BoardSpace diagonal = this.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
             if (diagonal == null)
                 break;
@@ -94,9 +91,9 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void DiagonalsUpLeft(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void DiagonalsUpLeft(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        for (Space diagonal = this.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
+        for (BoardSpace diagonal = this.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
         {
             if (diagonal == null)
                 break;
@@ -112,9 +109,9 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void DiagonalsDownRight(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void DiagonalsDownRight(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        for (Space diagonal = this.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
+        for (BoardSpace diagonal = this.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
         {
             if (diagonal == null)
                 break;
@@ -130,9 +127,9 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void DiagonalsDownLeft(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void DiagonalsDownLeft(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
-        for (Space diagonal = this.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
+        for (BoardSpace diagonal = this.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
         {
             if (diagonal == null)
                 break;
@@ -148,16 +145,16 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void Horizontals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
         this.Horizontals(board, pieces, true, ref moves);
         this.Horizontals(board, pieces, false, ref moves);
     }
 
-    public void Horizontals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, bool isRight, ref List<Move> moves)
     {
-        Func<Dictionary<(char, int), Space>, Space> iterator = isRight ? this.Right : this.Left;
-        for (Space horizantal = iterator(board); horizantal != null; iterator = isRight ? horizantal.Right
+        Func<Dictionary<(char, int), BoardSpace>, BoardSpace> iterator = isRight ? this.Right : this.Left;
+        for (BoardSpace horizantal = iterator(board); horizantal != null; iterator = isRight ? horizantal.Right
             : horizantal.Left, horizantal = iterator(board))
         {
             if (horizantal == null)
@@ -174,16 +171,16 @@ public abstract class Piece : Space, IPiece
         }
     }
 
-    public void Verticals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
+    public void Verticals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, ref List<Move> moves)
     {
         this.Verticals(board, pieces, true, ref moves);
         this.Verticals(board, pieces, false, ref moves);
     }
 
-    public void Verticals(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces, bool isUp, ref List<Move> moves)
+    public void Verticals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces, bool isUp, ref List<Move> moves)
     {
-        Func<Dictionary<(char, int), Space>, Space> iterator = isUp ? this.Up : this.Down;
-        for (Space vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
+        Func<Dictionary<(char, int), BoardSpace>, BoardSpace> iterator = isUp ? this.Up : this.Down;
+        for (BoardSpace vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
             : vertical.Down, vertical = iterator(board))
         {
             if (vertical == null)
@@ -199,7 +196,7 @@ public abstract class Piece : Space, IPiece
             moves.Add(new Move(vertical));
         }
     }
-    public (Space, Space) KnightMovesUp(Dictionary<(char, int), Space> board)
+    public (BoardSpace, BoardSpace) KnightMovesUp(Dictionary<(char, int), BoardSpace> board)
     {
         var up = this.Up(board);
         if (up == null)
@@ -210,7 +207,7 @@ public abstract class Piece : Space, IPiece
         return (up.Right(board), up.Left(board));
     }
 
-    public (Space, Space) KnightMovesDown(Dictionary<(char, int), Space> board)
+    public (BoardSpace, BoardSpace) KnightMovesDown(Dictionary<(char, int), BoardSpace> board)
     {
         var down = this.Down(board);
         if (down == null)
@@ -221,7 +218,7 @@ public abstract class Piece : Space, IPiece
         return (down.Right(board), down.Left(board));
     }
 
-    public (Space, Space) KnightMovesRight(Dictionary<(char, int), Space> board)
+    public (BoardSpace, BoardSpace) KnightMovesRight(Dictionary<(char, int), BoardSpace> board)
     {
         var right = this.Right(board);
         if (right == null)
@@ -232,7 +229,7 @@ public abstract class Piece : Space, IPiece
         return (right.Up(board), right.Down(board));
     }
 
-    public (Space, Space) KnightMovesLeft(Dictionary<(char, int), Space> board)
+    public (BoardSpace, BoardSpace) KnightMovesLeft(Dictionary<(char, int), BoardSpace> board)
     {
         var left = this.Left(board);
         if (left == null)

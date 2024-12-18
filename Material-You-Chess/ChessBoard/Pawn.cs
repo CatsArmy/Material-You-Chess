@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Widget;
-
-namespace Chess.ChessBoard;
+﻿namespace Chess.ChessBoard;
 
 [Serializable]
 public class Pawn : Piece
@@ -24,10 +20,10 @@ public class Pawn : Piece
         }
     }
 
-    public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public override List<Move> Moves(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
-        Space move = this.Forward(board, this.isWhite);
+        BoardSpace move = this.Forward(board, this.isWhite);
         if (move == null)
             return moves;
         var piece = move.GetPiece(pieces);
@@ -42,7 +38,7 @@ public class Pawn : Piece
             }
         }
 
-        (Space left, Space right) = this.isWhite switch
+        (BoardSpace left, BoardSpace right) = this.isWhite switch
         {
             true => (DiagonalUp(board, false), DiagonalUp(board, true)),
             false => (DiagonalDown(board, false), DiagonalDown(board, true)),

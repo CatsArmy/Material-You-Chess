@@ -1,26 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Android.Content.Res;
+﻿using Android.Content.Res;
 using Android.Util;
-using Android.Widget;
 
 namespace Chess.ChessBoard;
 
 [Serializable]
-public class Space
+public class BoardSpace
 {
     [NonSerialized]
     protected static Resources res;
 
-    public Space(Resources _res) => res = _res;
+    public BoardSpace(Resources _res) => res = _res;
 
     [NonSerialized]
     public ImageView space;
     public bool isWhite;
     public int spaceId;
 
-    public Space(ImageView space, bool isWhite, int spaceId, Resources resources = null)
+    public BoardSpace(ImageView space, bool isWhite, int spaceId, Resources resources = null)
     {
         this.space = space;
         this.isWhite = isWhite;
@@ -48,65 +44,65 @@ public class Space
     }
 
 
-    public Space Forward(Dictionary<(char, int), Space> board, bool isWhite)
+    public BoardSpace Forward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Down(board);
         return this.Up(board);
     }
 
-    public Space Backward(Dictionary<(char, int), Space> board, bool isWhite)
+    public BoardSpace Backward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Up(board);
         return this.Down(board);
     }
 
-    public Space DiagonalUp(Dictionary<(char, int), Space> board, bool isRight)
+    public BoardSpace DiagonalUp(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        Space up = Up(board);
+        BoardSpace up = Up(board);
         if (up == null)
             return null;
 
         if (isRight)
         {
-            Space right = up.Right(board);
+            BoardSpace right = up.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        Space left = up.Left(board);
+        BoardSpace left = up.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public Space DiagonalDown(Dictionary<(char, int), Space> board, bool isRight)
+    public BoardSpace DiagonalDown(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        Space down = Down(board);
+        BoardSpace down = Down(board);
         if (down == null)
             return null;
 
         if (isRight)
         {
-            Space right = down.Right(board);
+            BoardSpace right = down.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        Space left = down.Left(board);
+        BoardSpace left = down.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public Space Up(Dictionary<(char, int), Space> board)
+    public BoardSpace Up(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         file++;
@@ -117,7 +113,7 @@ public class Space
         return board[index];
     }
 
-    public Space Down(Dictionary<(char, int), Space> board)
+    public BoardSpace Down(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         file--;
@@ -128,7 +124,7 @@ public class Space
         return board[index];
     }
 
-    public Space Right(Dictionary<(char, int), Space> board)
+    public BoardSpace Right(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank++;
@@ -139,7 +135,7 @@ public class Space
         return board[index];
     }
 
-    public Space Left(Dictionary<(char, int), Space> board)
+    public BoardSpace Left(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank--;
@@ -159,7 +155,7 @@ public class Space
         return boardPieces.Values.FirstOrDefault(p => p.spaceId == this.spaceId);
     }
 
-    public Space BoardSpace(Dictionary<(char, int), Space> board) => board[this.GetBoardIndex()];
+    public BoardSpace GetBoardSpace(Dictionary<(char, int), BoardSpace> board) => board[this.GetBoardIndex()];
 
     public (char, int) GetBoardIndex()
     {

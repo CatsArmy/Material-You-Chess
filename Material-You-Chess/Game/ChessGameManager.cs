@@ -21,7 +21,7 @@ public interface IChessGame
     public Dictionary<(string, int), Piece> AllPieces { get; set; }
     public Dictionary<(string, int), Piece> WhitePieces { get; set; }
     public Dictionary<(string, int), Piece> BlackPieces { get; set; }
-    public Dictionary<(char, int), Space> Board { get; set; }
+    public Dictionary<(char, int), BoardSpace> Board { get; set; }
     public IPlayer Player1 { get; set; }
     public IPlayer Player2 { get; set; }
     public bool IsOngoing { get; set; }

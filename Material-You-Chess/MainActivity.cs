@@ -1,12 +1,9 @@
-﻿using System;
-using Android.App;
-using Android.Content;
+﻿using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.Graphics;
-using Android.OS;
 using Android.Runtime;
 using Android.Util;
-using Android.Widget;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Chess.FirebaseApp;
@@ -16,6 +13,7 @@ using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
 using Google.Android.Material.TextField;
+using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess;
@@ -32,7 +30,6 @@ public class MainActivity : AppCompatActivity
     private Button StartGame;
     private ExtendedFloatingActionButton profileAction1;
     private ExtendedFloatingActionButton profileAction2;
-    private ChessFirebase chessFirebase;
     private ShapeableImageView DialogProfilePicture;
     private AndroidX.AppCompat.App.AlertDialog editProfileDialog;
     private AndroidX.AppCompat.App.AlertDialog loginDialog;
@@ -49,7 +46,7 @@ public class MainActivity : AppCompatActivity
     protected override void OnCreate(Bundle savedInstanceState)
     {
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
-        chessFirebase = new ChessFirebase();
+        new FirebaseSecrets();
         this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
     new ActivityResultCallback<Android.Net.Uri>(async uri =>
         {
@@ -84,7 +81,7 @@ public class MainActivity : AppCompatActivity
             base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
 
         base.OnCreate(savedInstanceState);
-        Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+        Platform.Init(this, savedInstanceState);
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
         //base.StartActivity(new Intent(this, typeof(MainActivity2)));
@@ -223,7 +220,7 @@ public class MainActivity : AppCompatActivity
             }
 
         });
-        loginDialog.SetNegativeButton("Cancel", (sender, args) =>
+        loginDialog.SetNegativeButton("Cancel", (object sender, DialogClickEventArgs args) =>
         {
             this.EmailInput.Text = "";
             this.PasswordInput.Text = "";
@@ -278,8 +275,89 @@ public class MainActivity : AppCompatActivity
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {
-        Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         // Handle permission requests results
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+}
+
+public interface IMaterialDialog
+{
+    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public MaterialAlertDialogBuilder Builder { get; set; }
+
+    public void OnShow(object sender, EventArgs args);
+    public void OnConfirm(object sender, DialogClickEventArgs args);
+    public void OnCancel(object sender, DialogClickEventArgs args);
+
+}
+public interface ILoginDialog : IMaterialDialog
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public TextInputEditText EmailInput { get; set; }
+    public TextInputEditText PasswordInput { get; set; }
+}
+
+public class LoginDialog : ILoginDialog
+{
+    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public MaterialAlertDialogBuilder Builder { get; set; }
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public TextInputEditText EmailInput { get; set; }
+    public TextInputEditText PasswordInput { get; set; }
+
+    private Action onLoginSuccess;
+    private bool wasShown = false;
+
+    public LoginDialog(AppCompatActivity app, Action onLoginSuccess)
+    {
+        Builder = new MaterialAlertDialogBuilder(app, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        Builder.SetIcon(app.Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, Builder.Context.Theme));
+        Builder.SetTitle("Login");
+        Builder.SetView(Resource.Layout.login);
+        Builder.SetPositiveButton("Confirm", OnConfirm);
+        Builder.SetNegativeButton("Cancel", OnCancel);
+        Dialog = Builder.Create();
+        Dialog.ShowEvent += OnShow;
+        this.onLoginSuccess = onLoginSuccess;
+    }
+
+    public void OnShow(object sender, EventArgs args)
+    {
+        this.EmailInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.LoginEmailInput);
+        this.PasswordInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.LoginPasswordInput);
+        if (!wasShown)
+        {
+            this.EmailInput.TextChanged += (sender, args) => this.Email = this.EmailInput.Text;
+            this.PasswordInput.TextChanged += (sender, args) => this.Password = this.PasswordInput.Text;
+            wasShown = true;
+        }
+        this.EmailInput.Text = "";
+        this.PasswordInput.Text = "";
+    }
+
+    public async void OnConfirm(object sender, DialogClickEventArgs args)
+    {
+        try
+        {
+            var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(Email, Password);
+        }
+        catch (Exception e)
+        {
+            Log.Debug("CatDebug", $"{e}");
+        }
+        finally
+        {
+            this.onLoginSuccess();
+        }
+    }
+
+    public void OnCancel(object sender, DialogClickEventArgs args)
+    {
+        this.EmailInput.Text = "";
+        this.PasswordInput.Text = "";
+    }
+
 }

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Android.Widget;
-
-namespace Chess.ChessBoard;
+﻿namespace Chess.ChessBoard;
 
 [Serializable]
 public class Knight : Piece
 {
     public Knight(ImageView piece, int id, ImageView space, bool isWhite, int spaceId, Action callback) : base(piece, id, space, isWhite, spaceId, callback) { }
 
-    public override List<Move> Moves(Dictionary<(char, int), Space> board, Dictionary<(string, int), Piece> pieces)
+    public override List<Move> Moves(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces)
     {
         List<Move> moves = new List<Move>();
 
@@ -88,8 +84,8 @@ public class Knight : Piece
         return moves;
     }
 
-    private (Space, Space) MovesUp(Dictionary<(char, int), Space> board) => this.KnightMovesUp(board);
-    private (Space, Space) MovesDown(Dictionary<(char, int), Space> board) => this.KnightMovesDown(board);
-    private (Space, Space) MovesRight(Dictionary<(char, int), Space> board) => this.KnightMovesRight(board);
-    private (Space, Space) MovesLeft(Dictionary<(char, int), Space> board) => this.KnightMovesLeft(board);
+    private (BoardSpace, BoardSpace) MovesUp(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesUp(board);
+    private (BoardSpace, BoardSpace) MovesDown(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesDown(board);
+    private (BoardSpace, BoardSpace) MovesRight(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesRight(board);
+    private (BoardSpace, BoardSpace) MovesLeft(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesLeft(board);
 }
