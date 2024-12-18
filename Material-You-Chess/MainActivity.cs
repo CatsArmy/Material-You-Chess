@@ -46,7 +46,8 @@ public class MainActivity : AppCompatActivity
     protected override void OnCreate(Bundle savedInstanceState)
     {
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
-        new FirebaseSecrets();
+        _ = new FirebaseSecrets();
+
         this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
     new ActivityResultCallback<Android.Net.Uri>(async uri =>
         {
@@ -56,22 +57,10 @@ public class MainActivity : AppCompatActivity
 
             if (uri == null)
                 return;
-
-            var stream = this.ApplicationContext.OpenFileOutput("temp", FileCreationMode.Private);
-
+            base.ContentResolver?.TakePersistableUriPermission(uri, ActivityFlags.GrantReadUriPermission);
             this.uri = uri;
             this.DialogProfilePicture.SetImageURI(uri);
-            DialogProfilePicture.RequestLayout();
-            DialogProfilePicture.RefreshDrawableState();
-            this.editProfile.SetPhotoUri(uri);
-            this.newPfp = ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(ContentResolver, uri));
-
-            if (!await newPfp.CompressAsync(Bitmap.CompressFormat.Png, quality: 77, stream))
-            {
-                Log.Debug("CatDebug", "failed to compress bitmap");
-                return;
-            }
-            stream.Close();
+            this.DialogProfilePicture.RequestLayout();
         }));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
@@ -165,25 +154,21 @@ public class MainActivity : AppCompatActivity
         editProfileDialog.SetView(Resource.Layout.profile_dialog);
         editProfileDialog.SetPositiveButton("Confirm", async (sender, args) =>
         {
+            if (editProfile.PhotoUri is null && editProfile.DisplayName is null)
+                return;
+
             if (editProfile.PhotoUri != null)
             {
-                //Todo Fix firebase storage requesting billing information and not letting me input the fucking INFORMATION so i can replace this patch
-                var tempStream = ApplicationContext.OpenFileInput("temp");
-                var outputStream = ApplicationContext.OpenFileOutput("ProfilePicture", FileCreationMode.Private);
-                tempStream.CopyTo(outputStream);
-                tempStream.Close();
-                outputStream.Close();
-                ApplicationContext.DeleteFile("temp");
-                var uri = Android.Net.Uri.FromFile(ApplicationContext.GetFileStreamPath("ProfilePicture"));
                 editProfile.SetPhotoUri(uri);
                 this.MainProfileImageView.SetImageURI(editProfile.PhotoUri);
                 this.MainProfileImageView.RefreshDrawableState();
                 this.DialogProfilePicture.SetImageURI(editProfile.PhotoUri);
             }
+
             if (editProfile.DisplayName != null)
             {
                 this.MainUsername.Text = editProfile.DisplayName;
-                this.EditProfileUsername.Text = editProfile.DisplayName;
+                EditProfileUsername.Text = editProfile.DisplayName;
             }
 
             await FirebaseAuth.Instance.CurrentUser.UpdateProfileAsync(editProfile.Build());
@@ -239,14 +224,14 @@ public class MainActivity : AppCompatActivity
         this.editProfile = new UserProfileChangeRequest.Builder();
         this.DialogProfilePicture = this.editProfileDialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
         //this.DialogProfilePicture.SetImageURI(chessFirebase.auth.CurrentUser.PhotoUrl);
-        var editProfilePicture = this.editProfileDialog.FindViewById<Button>(Resource.Id.editProfilePicture);
+        Button? editProfilePicture = this.editProfileDialog.FindViewById<Button>(Resource.Id.editProfilePicture);
         editProfilePicture.Click += (_, _) => this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
 
-        var ThemeText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.ThemeText);
-        var ThemeToggle = this.editProfileDialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
+        TextView? ThemeText = this.editProfileDialog.FindViewById<TextView>(Resource.Id.ThemeText);
+        MaterialSwitch? ThemeToggle = this.editProfileDialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
 
-        this.EditProfileUsername = this.editProfileDialog.FindViewById<TextView>(Resource.Id.UsernameText);
-        var EditUsername = this.editProfileDialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
+        TextView EditProfileUsername = this.editProfileDialog.FindViewById<TextView>(Resource.Id.UsernameText);
+        FloatingActionButton? EditUsername = this.editProfileDialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
 
         MaterialAlertDialogBuilder editUsernameDialogBuilder = new MaterialAlertDialogBuilder(this,
         Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
@@ -261,7 +246,7 @@ public class MainActivity : AppCompatActivity
         editUsernameDialog.ShowEvent += (sender, e) =>
         {
             UsernameTextInput = editUsernameDialog.FindViewById<TextInputEditText>(Resource.Id.MainUsernameInput);
-            UsernameTextInput.Hint = editProfile.DisplayName;
+            UsernameTextInput.Hint = FirebaseAuth.Instance.CurrentUser.DisplayName;
         };
         EditUsername.Click += (sender, e) => editUsernameDialog.Show();
     }
@@ -279,85 +264,4 @@ public class MainActivity : AppCompatActivity
         // Handle permission requests results
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-}
-
-public interface IMaterialDialog
-{
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
-    public MaterialAlertDialogBuilder Builder { get; set; }
-
-    public void OnShow(object sender, EventArgs args);
-    public void OnConfirm(object sender, DialogClickEventArgs args);
-    public void OnCancel(object sender, DialogClickEventArgs args);
-
-}
-public interface ILoginDialog : IMaterialDialog
-{
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public TextInputEditText EmailInput { get; set; }
-    public TextInputEditText PasswordInput { get; set; }
-}
-
-public class LoginDialog : ILoginDialog
-{
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
-    public MaterialAlertDialogBuilder Builder { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public TextInputEditText EmailInput { get; set; }
-    public TextInputEditText PasswordInput { get; set; }
-
-    private Action onLoginSuccess;
-    private bool wasShown = false;
-
-    public LoginDialog(AppCompatActivity app, Action onLoginSuccess)
-    {
-        Builder = new MaterialAlertDialogBuilder(app, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        Builder.SetIcon(app.Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, Builder.Context.Theme));
-        Builder.SetTitle("Login");
-        Builder.SetView(Resource.Layout.login);
-        Builder.SetPositiveButton("Confirm", OnConfirm);
-        Builder.SetNegativeButton("Cancel", OnCancel);
-        Dialog = Builder.Create();
-        Dialog.ShowEvent += OnShow;
-        this.onLoginSuccess = onLoginSuccess;
-    }
-
-    public void OnShow(object sender, EventArgs args)
-    {
-        this.EmailInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.LoginEmailInput);
-        this.PasswordInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.LoginPasswordInput);
-        if (!wasShown)
-        {
-            this.EmailInput.TextChanged += (sender, args) => this.Email = this.EmailInput.Text;
-            this.PasswordInput.TextChanged += (sender, args) => this.Password = this.PasswordInput.Text;
-            wasShown = true;
-        }
-        this.EmailInput.Text = "";
-        this.PasswordInput.Text = "";
-    }
-
-    public async void OnConfirm(object sender, DialogClickEventArgs args)
-    {
-        try
-        {
-            var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(Email, Password);
-        }
-        catch (Exception e)
-        {
-            Log.Debug("CatDebug", $"{e}");
-        }
-        finally
-        {
-            this.onLoginSuccess();
-        }
-    }
-
-    public void OnCancel(object sender, DialogClickEventArgs args)
-    {
-        this.EmailInput.Text = "";
-        this.PasswordInput.Text = "";
-    }
-
 }
