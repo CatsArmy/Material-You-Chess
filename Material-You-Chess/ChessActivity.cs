@@ -10,9 +10,7 @@ using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
-
 namespace Chess;
-
 
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class ChessActivity : AppCompatActivity

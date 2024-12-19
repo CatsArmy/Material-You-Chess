@@ -31,6 +31,10 @@
   <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
 </PropertyGroup>
 
+<ItemGroup>
+  <None Remove="Resources\layout\login_signup_dialog.xml" />
+</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.21" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
