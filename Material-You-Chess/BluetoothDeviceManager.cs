@@ -90,7 +90,7 @@ public class BluetoothDeviceManager : IBluetoothDevicePicker
 //    /// </summary>
 //    /// <param name="sender"></param>
 //    /// <param name="e"></param>
-//    private void DiscoveryFinished(object sender, List<BluetoothDevice> e)
+//    private void DiscoveryFinished(object? sender, List<BluetoothDevice> e)
 //    {
 //        context.UnregisterReceiver(bluetoothReceiver);
 //        bluetoothReceiver = null;

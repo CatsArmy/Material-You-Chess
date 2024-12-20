@@ -27,15 +27,15 @@ public class UsernameDialog : IUsernameDialog
         this.OnConfirmation = OnConfirmation;
     }
 
-    public void OnShow(object sender, EventArgs args)
+    public void OnShow(object? sender, EventArgs args)
     {
         UsernameInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.MainUsernameInput);
         UsernameLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.MainUsernameLayout);
-        UsernameInput.Hint = FirebaseAuth.Instance.CurrentUser.DisplayName;
+        UsernameInput.Hint = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
     }
-    public void OnConfirm(object sender, DialogClickEventArgs args)
+    public void OnConfirm(object? sender, DialogClickEventArgs args)
     {
         this.OnConfirmation(UsernameInput.Text);
     }
-    public void OnCancel(object sender, DialogClickEventArgs args) { }
+    public void OnCancel(object? sender, DialogClickEventArgs args) { }
 }

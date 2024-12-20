@@ -146,7 +146,7 @@ public class NearbySample : AppCompatActivity,
     private ListView connectedList;
     private ArrayAdapter<DiscoverItem> connectedListAdapter;
 
-    protected override void OnCreate(Bundle savedInstanceState)
+    protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
 

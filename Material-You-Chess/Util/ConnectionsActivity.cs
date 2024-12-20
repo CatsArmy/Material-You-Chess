@@ -124,7 +124,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     }
 
     /** Called when our Activity is first created. */
-    protected override void OnCreate(Bundle savedInstanceState)
+    protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         ConnectionsClient = NearbyClass.GetConnectionsClient(this);
@@ -543,7 +543,7 @@ public class EndPoint
         return this.id.GetHashCode();
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is EndPoint other)
             return this.id.Equals(other);

@@ -9,6 +9,7 @@ using Chess.FirebaseApp;
 using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
+using Google.Android.Material.ProgressIndicator;
 using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
@@ -18,38 +19,28 @@ namespace Chess;
 public class MainActivity : AppCompatActivity
 {
     private bool MaterialYouThemePreference = true;
-    private PickVisualMediaRequest.Builder pickVisualMediaRequestBuilder;
-    private ShapeableImageView MainProfileImageView;
-    private ActivityResultLauncher photoPicker;
-    private AppPermissions permissions;
-    private Android.Net.Uri uri;
-    private Button StartGame;
-    private TextView MainUsername;
-    private ExtendedFloatingActionButton profileAction1;
-    private ExtendedFloatingActionButton profileAction2;
-    private ProfileDialog profileDialog;
-    private LogoutDialog logoutDialog;
-    private LoginDialog loginDialog;
-    private SignupDialog signupDialog;
+    private ActivityResultLauncher? photoPicker;
+    private AppPermissions? permissions;
+    private Android.Net.Uri? selectedPhoto;
+    private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
 
-    protected override void OnCreate(Bundle savedInstanceState)
+    private ShapeableImageView? mainProfilePicture;
+    private Button? startGame;
+    private TextView? mainUsername;
+    private CircularProgressIndicator? UserProgressIndicator;
+    private ExtendedFloatingActionButton? profileAction1;
+    private ExtendedFloatingActionButton? profileAction2;
+    private ProfileDialog? profileDialog;
+    private LogoutDialog? logoutDialog;
+    private LoginDialog? loginDialog;
+    private SignupDialog? signupDialog;
+
+    protected override void OnCreate(Bundle? savedInstanceState)
     {
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
         _ = new FirebaseSecrets();
 
-        this.photoPicker = RegisterForActivityResult(new PickVisualMedia(),
-    new ActivityResultCallback<Android.Net.Uri>(async uri =>
-        {
-            Log.Debug("PhotoPicker", $"{uri}");
-            if (FirebaseAuth.Instance.CurrentUser == null)
-                return;
-
-            if (uri == null)
-                return;
-            base.ContentResolver?.TakePersistableUriPermission(uri, ActivityFlags.GrantReadUriPermission);
-            this.uri = uri;
-            this.profileDialog.OnSelectPhoto(uri);
-        }));
+        this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(), new ActivityResultCallback<Android.Net.Uri>(SelectPhoto));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
@@ -65,36 +56,45 @@ public class MainActivity : AppCompatActivity
         //return;
 
         // Permission request logic
-        this.permissions = new AppPermissions();
-        this.permissions.RequestPermissions(this);
+        this.permissions = new AppPermissions(this);
+
         //Run our logic
-        this.StartGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
-        this.StartGame.Click += StartGame_Click;
-        this.MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
-        this.MainUsername = base.FindViewById<TextView>(Resource.Id.MainUsername);
+        this.startGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
+        this.UserProgressIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
+        this.mainProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
+        this.mainUsername = base.FindViewById<TextView>(Resource.Id.MainUsername);
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
         this.logoutDialog = new LogoutDialog(this, UpdateUserState);
         this.loginDialog = new LoginDialog(this, UpdateUserState);
         this.signupDialog = new SignupDialog(this, UpdateUserState);
         this.profileDialog = new ProfileDialog(this, OpenPhotoPicker, UpdateUserState);
+        this.startGame.Click += StartGame_Click;
         UpdateUserState();
     }
 
-    private void OpenPhotoPicker(object sender, EventArgs args) =>
-        this.photoPicker.Launch(this.pickVisualMediaRequestBuilder.Build());
+    private async void SelectPhoto(Android.Net.Uri photo)
+    {
+        Log.Debug("PhotoPicker", $"{photo}");
+        if (FirebaseAuth.Instance.CurrentUser == null || photo == null)
+            return;
 
-    ///Todo add confirmation
-    private void OpenLogoutDialog(object sender, EventArgs e) => logoutDialog.Dialog.Show();
-    private void OpenProfileDialog(object sender, EventArgs e) => profileDialog.Dialog.Show();
-    private void OpenLoginDialog(object sender, EventArgs e) => loginDialog.Dialog.Show();
-    private void OpenSignupDialog(object sender, EventArgs e) => signupDialog.Dialog.Show();
+        base.ContentResolver?.TakePersistableUriPermission(photo, ActivityFlags.GrantReadUriPermission);
+        this.selectedPhoto = photo;
+        this.profileDialog?.OnSelectPhoto(photo);
+    }
+
+    private void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+    private void OpenLogoutDialog(object? sender, EventArgs e) => logoutDialog?.Dialog.Show();
+    private void OpenProfileDialog(object? sender, EventArgs e) => profileDialog?.Dialog.Show();
+    private void OpenLoginDialog(object? sender, EventArgs e) => loginDialog?.Dialog.Show();
+    private void OpenSignupDialog(object? sender, EventArgs e) => signupDialog?.Dialog.Show();
+
 
     private void UpdateUserState()
     {
-        bool isLoggedIn = FirebaseAuth.Instance.CurrentUser != null;
         //Todo Add a progress indicator
-        switch (isLoggedIn)
+        switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:
                 this.profileAction1.Text = "Profile";
@@ -107,9 +107,9 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.Click += OpenLogoutDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
 
-                this.MainUsername.Text = FirebaseAuth.Instance.CurrentUser.DisplayName;
-                this.MainProfileImageView.SetImageURI(FirebaseAuth.Instance.CurrentUser.PhotoUrl);
-                this.MainProfileImageView.RequestLayout();
+                this.mainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+                this.mainProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+                this.mainProfilePicture.RequestLayout();
                 break;
 
             case false:
@@ -123,14 +123,18 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.Click += OpenSignupDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
 
-                this.MainUsername.Text = "Guest";
-                this.MainProfileImageView.SetImageURI(null);
-                this.MainProfileImageView.RequestLayout();
+                this.mainUsername.Text = "Guest";
+                this.mainProfilePicture.SetImageURI(null);
+                this.mainProfilePicture.RequestLayout();
                 break;
         }
     }
 
-    private void StartGame_Click(object sender, EventArgs e)
+    public void StartProgressIndicator() => UserProgressIndicator.Show();
+
+    public void StopProgressIndicator() => UserProgressIndicator.Hide();
+
+    private void StartGame_Click(object? sender, EventArgs e)
     {
         Intent intent = new Intent(this, typeof(ChessActivity))
         .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");

@@ -12,12 +12,13 @@ public class AppPermissions
     public Permission READ_MEDIA_VIDEO;
     public Permission READ_EXTERNAL_STORAGE;
 
-    public AppPermissions()
+    public AppPermissions(AppCompatActivity App)
     {
         this.READ_MEDIA_VISUAL_USER_SELECTED = Permission.Denied;
         this.READ_MEDIA_IMAGES = Permission.Denied;
         this.READ_MEDIA_VIDEO = Permission.Denied;
         this.READ_EXTERNAL_STORAGE = Permission.Denied;
+        this.RequestPermissions(App);
     }
 
     public void RequestPermissions(AppCompatActivity app)
@@ -61,25 +62,28 @@ public class AppPermissions
             READ_MEDIA_VISUAL_USER_SELECTED = app.CheckSelfPermission(nameof(READ_MEDIA_VISUAL_USER_SELECTED));
             READ_MEDIA_IMAGES = app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES));
             READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
+            return;
         }
-        else if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu) // Full access on Android 13 (API level 33) or higher
+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu) // Full access on Android 13 (API level 33) or higher
         {
             READ_MEDIA_IMAGES = app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES));
             READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
+            return;
         }
-        else // Full access up to Android 12 (API level 32)
-        {
-            READ_EXTERNAL_STORAGE = app.CheckSelfPermission(nameof(READ_EXTERNAL_STORAGE));
-        }
+
+        // Full access up to Android 12 (API level 32)
+        READ_EXTERNAL_STORAGE = app.CheckSelfPermission(nameof(READ_EXTERNAL_STORAGE));
     }
 
     private (string[], int) PermissionRequestLogic()
     {
         if (Build.VERSION.SdkInt >= (UpsideDownCake))
             return (new string[] { nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO), nameof(READ_MEDIA_VISUAL_USER_SELECTED) }, 3);
-        else if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             return (new string[] { nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO) }, 2);
-        else
-            return (new string[] { nameof(READ_EXTERNAL_STORAGE) }, 1);
+
+        return (new string[] { nameof(READ_EXTERNAL_STORAGE) }, 1);
     }
 }

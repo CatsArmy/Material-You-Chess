@@ -23,7 +23,7 @@ public class MainActivity2 : ConnectionsActivity
     private TextView currentStateView;
     //private System.Timers.Timer timer;
 
-    protected override void OnCreate(Bundle savedInstanceState)
+    protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         base.SetContentView(Resource.Layout.nearby_template);
@@ -54,7 +54,7 @@ public class MainActivity2 : ConnectionsActivity
     //    timer.Start();
     //}
 
-    //private void StopSearching(object sender, EventArgs args)
+    //private void StopSearching(object? sender, EventArgs args)
     //{
 
     //}

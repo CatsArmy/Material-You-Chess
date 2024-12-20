@@ -7,16 +7,14 @@ namespace Chess.ChessBoard;
 public class BoardSpace
 {
     [NonSerialized]
-    protected static Resources res;
-
-    public BoardSpace(Resources _res) => res = _res;
+    protected static Resources? res;
 
     [NonSerialized]
-    public ImageView space;
+    public ImageView? space;
     public bool isWhite;
     public int spaceId;
 
-    public BoardSpace(ImageView space, bool isWhite, int spaceId, Resources resources = null)
+    public BoardSpace(ImageView? space, bool isWhite, int spaceId, Resources? resources = null)
     {
         this.space = space;
         this.isWhite = isWhite;
@@ -25,149 +23,128 @@ public class BoardSpace
             res = resources;
     }
 
-    public void SelectSpace()
-    {
-        //var colorId = isWhite ? Resource.Color.white_space_overlay_color : Resource.Color.black_space_overlay_color;
-        /////<returns> </returns>A single color value in the form 0xAARRGGBB.
-        //var colorARGB = ContextCompat.GetColor(context, colorId);
+    public BoardSpace(Resources _res) => res = _res;
+    public BoardSpace? GetBoardSpace(Dictionary<(char, int), BoardSpace> board) => board[this.GetBoardIndex()];
+    public override string? ToString() => res?.GetResourceName(this.spaceId)?.Split("__")[1];
+    public void SelectSpace() => this.space?.SetImageLevel(1);
+    public void UnselectSpace() => this.space?.SetImageLevel(0);
 
-        space.SetImageLevel(1);
-    }
-
-    public void UnselectSpace()
-    {
-        //var colorId = isWhite ? Resource.Color.white_space_overlay_color : Resource.Color.black_space_overlay_color;
-        /////<returns> </returns>A single color value in the form 0xAARRGGBB.
-        //var colorARGB = ContextCompat.GetColor(context, colorId);
-
-        space.SetImageLevel(0);
-    }
-
-
-    public BoardSpace Forward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
+    public BoardSpace? Forward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Down(board);
         return this.Up(board);
     }
 
-    public BoardSpace Backward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
+    public BoardSpace? Backward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Up(board);
         return this.Down(board);
     }
 
-    public BoardSpace DiagonalUp(Dictionary<(char, int), BoardSpace> board, bool isRight)
+    public BoardSpace? DiagonalUp(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        BoardSpace up = Up(board);
+        BoardSpace? up = this.Up(board);
         if (up == null)
             return null;
 
         if (isRight)
         {
-            BoardSpace right = up.Right(board);
+            BoardSpace? right = up.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        BoardSpace left = up.Left(board);
+        BoardSpace? left = up.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public BoardSpace DiagonalDown(Dictionary<(char, int), BoardSpace> board, bool isRight)
+    public BoardSpace? DiagonalDown(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        BoardSpace down = Down(board);
+        BoardSpace? down = Down(board);
         if (down == null)
             return null;
 
         if (isRight)
         {
-            BoardSpace right = down.Right(board);
+            BoardSpace? right = down.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        BoardSpace left = down.Left(board);
+        BoardSpace? left = down.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public BoardSpace Up(Dictionary<(char, int), BoardSpace> board)
+    public BoardSpace? Up(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         file++;
         (char, int) index = (rank, file);
-        if (!board.ContainsKey(index))
+        if (!board.TryGetValue(index, out BoardSpace? value))
             return null;
 
-        return board[index];
+        return value;
     }
 
-    public BoardSpace Down(Dictionary<(char, int), BoardSpace> board)
+    public BoardSpace? Down(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         file--;
         (char, int) index = (rank, file);
-        if (!board.ContainsKey(index))
+        if (!board.TryGetValue(index, out BoardSpace? value))
             return null;
 
-        return board[index];
+        return value;
     }
 
-    public BoardSpace Right(Dictionary<(char, int), BoardSpace> board)
+    public BoardSpace? Right(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank++;
         (char, int) index = (rank, file);
-        if (!board.ContainsKey(index))
+        if (!board.TryGetValue(index, out BoardSpace? value))
             return null;
 
-        return board[index];
+        return value;
     }
 
-    public BoardSpace Left(Dictionary<(char, int), BoardSpace> board)
+    public BoardSpace? Left(Dictionary<(char, int), BoardSpace> board)
     {
         (char rank, int file) = GetBoardIndex();
         rank--;
         (char, int) index = (rank, file);
-        if (!board.ContainsKey(index))
+        if (!board.TryGetValue(index, out BoardSpace? value))
             return null;
 
-        return board[index];
+        return value;
     }
 
-    public Piece GetPiece(Dictionary<(string, int), Piece> boardPieces)
+    public Piece? GetPiece(Dictionary<(string, int), Piece> boardPieces)
     {
-        var pieces = boardPieces.Values.Where(p => p.spaceId == this.spaceId).ToList();
-        if (pieces.Count <= 0)
+        if (boardPieces.Values.Where(p => p.spaceId == this.spaceId).ToList().Count <= 0)
             return null;
 
         return boardPieces.Values.FirstOrDefault(p => p.spaceId == this.spaceId);
     }
 
-    public BoardSpace GetBoardSpace(Dictionary<(char, int), BoardSpace> board) => board[this.GetBoardIndex()];
-
     public (char, int) GetBoardIndex()
     {
-        string space = res.GetResourceName(this.spaceId).Split("__")[1];
+        string? space = res?.GetResourceName(this.spaceId)?.Split("__")[1];
         //s = "A1";  s[0]='A'                   s[^1]='1'
         Log.Error("DebugCatSpace", $"[{space[0]}], [{space[^1]}]");
         return (space[0], int.Parse($"{space[^1]}"));
     }
 
-    public override string ToString()
-    {
-        string resourceName = res.GetResourceName(spaceId);
-        return resourceName.Split("__")[1];
-    }
 }

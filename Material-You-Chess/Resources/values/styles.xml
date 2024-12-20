@@ -1,10 +1,10 @@
 <resources>
 
-    <!-- Base application theme. -->
+	<!-- Base application theme. -->
 	<style name="Theme.Material3.DynamicColors.DayNight.NoActionBar" parent="Theme.Material3.DynamicColors.DayNight">
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
-		
+
 		<item name="android:statusBarColor">#00000000</item>
 	</style>
 
@@ -15,7 +15,7 @@
 
 		<item name="android:statusBarColor">#00000000</item>
 	</style>
-	
+
 	<style name="Widget.Catalog.Button.TextButton.Dialog.FullWidth" parent="Widget.Material3.Button.TextButton.Dialog">
 		<item name="android:layout_width">0dp</item>
 		<item name="android:layout_weight">1</item>
@@ -38,5 +38,4 @@
 		<item name="buttonBarNegativeButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
 		<item name="buttonBarNeutralButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
 	</style>
-
 </resources>

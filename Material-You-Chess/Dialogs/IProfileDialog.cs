@@ -1,5 +1,4 @@
-﻿using AndroidX.AppCompat.App;
-using Firebase.Auth;
+﻿using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
@@ -8,7 +7,7 @@ namespace Chess.Dialogs;
 
 public interface IProfileDialog : IMaterialDialog
 {
-    public AppCompatActivity App { get; set; }
+    public MainActivity App { get; set; }
     public Action UpdateInformation { get; set; }
     public Action<object, EventArgs> OpenPhotoPicker { get; set; }
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; }

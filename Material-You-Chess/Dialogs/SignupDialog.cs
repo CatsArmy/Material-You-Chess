@@ -1,7 +1,6 @@
 ﻿using Android.Content;
 using Android.Util;
 using Android.Views;
-using AndroidX.AppCompat.App;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
@@ -23,15 +22,15 @@ public partial class SignupDialog : ISignupDialog
     public TextInputLayout PasswordLayout { get; set; }
     public TextInputEditText PasswordInput { get; set; }
     public Action OnSuccess { get; set; }
-    private AppCompatActivity App { get; set; }
+    private MainActivity App { get; set; }
     private bool hasCatched { get; set; } = false;
 
-    public SignupDialog(AppCompatActivity App, Action OnLoginSuccess)
+    public SignupDialog(MainActivity App, Action OnLoginSuccess)
     {
-        this.App = this.App;
+        this.App = App;
         Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        Builder.SetIcon(App.Resources.GetDrawable(Resource.Drawable.outline_settings_account_box, Builder.Context.Theme));
-        Builder.SetTitle("Login");
+        Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person_add));
+        Builder.SetTitle("Signup");
         Builder.SetView(Resource.Layout.login_signup_dialog);
         Builder.SetPositiveButton("Confirm", OnConfirm);
         Builder.SetNegativeButton("Cancel", OnCancel);
@@ -40,7 +39,7 @@ public partial class SignupDialog : ISignupDialog
         this.OnSuccess = OnLoginSuccess;
     }
 
-    public void OnShow(object sender, EventArgs args)
+    public void OnShow(object? sender, EventArgs args)
     {
         this.UsernameInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.DialogUsernameInput);
         this.UsernameLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.DialogUsernameLayout);
@@ -58,7 +57,7 @@ public partial class SignupDialog : ISignupDialog
         UsernameLayout.Visibility = ViewStates.Visible;
     }
 
-    public async void OnConfirm(object sender, DialogClickEventArgs args)
+    public async void OnConfirm(object? sender, DialogClickEventArgs args)
     {
         if (Username == string.Empty)
         {
@@ -83,23 +82,23 @@ public partial class SignupDialog : ISignupDialog
             if (Dialog.IsShowing)
                 Dialog.Hide();
             Dialog.Show();
-
-            //thrown if the user account corresponding to email does not exist or has been disabled
-            if (e is FirebaseAuthInvalidUserException)
+            //thrown if the password is not strong enough
+            if (e is FirebaseAuthWeakPasswordException)
             {
-                EmailLayout.Error = "The account corresponding to the email does not exist or has been disabled";
+                PasswordLayout.Error = "Password too weak";
+                Toast.MakeText(Dialog.Context, "Authentication Error", ToastLength.Long).Show();
+            }
+            //thrown if the email address is malformed
+            if (e is FirebaseAuthInvalidCredentialsException)
+            {
+                EmailLayout.Error = "Email address is malformed";
                 Toast.MakeText(Dialog.Context, "Authentication Error", ToastLength.Long).Show();
                 return;
             }
-            //When Email Enumeration Protection is disabled,
-            //throwns if the password is wrong
-            //When Email Enumeration Protection is enabled (reccomended),
-            //throwns if the email or password is invalid.
-            if (e is FirebaseAuthInvalidCredentialsException)
+            //thrown if there already exists an account with the given email address
+            if (e is FirebaseAuthUserCollisionException)
             {
-                const string error = "the email or password is invalid";
-                EmailLayout.Error = error;
-                PasswordLayout.Error = error;
+                EmailLayout.Error = "Account with the given email address already exists";
             }
         }
         finally
@@ -108,15 +107,16 @@ public partial class SignupDialog : ISignupDialog
             {
                 UserProfileChangeRequest.Builder builder = new();
                 builder.SetDisplayName(Username);
-                //await FirebaseAuth.Instance.CurrentUser.ReloadAsync();
-                await FirebaseAuth.Instance.CurrentUser.UpdateProfileAsync(builder.Build());
-                //await FirebaseAuth.Instance.CurrentUser.ReloadAsync();
+                App.StartProgressIndicator();
+                await FirebaseAuth.Instance?.CurrentUser?.UpdateProfileAsync(builder.Build());
+                await FirebaseAuth.Instance?.CurrentUser?.ReloadAsync();
+                App.StopProgressIndicator();
                 this.OnSuccess();
             }
         }
     }
 
-    public void OnCancel(object sender, DialogClickEventArgs args)
+    public void OnCancel(object? sender, DialogClickEventArgs args)
     {
         this.EmailInput.Text = "";
         this.PasswordInput.Text = "";
