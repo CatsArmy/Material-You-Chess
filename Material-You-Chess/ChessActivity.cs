@@ -84,6 +84,8 @@ public class ChessActivity : AppCompatActivity
             piece.piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
             piece.piece.Clickable = true;
         }
+        //The sequence "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
+        //describes the piece placement field of the starting position of a game of chess.
     }
 
     private void OnClickPiece(object? sender, EventArgs args, Piece piece)
