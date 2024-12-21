@@ -14,6 +14,7 @@ namespace Chess;
 [Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class ChessActivity : AppCompatActivity
 {
+    public static ChessActivity? Instance = null;
     public bool MaterialYouThemePreference;
     private AppPermissions? permissions;
     private ShapeableImageView? p1MainProfileImageView;
@@ -62,7 +63,8 @@ public class ChessActivity : AppCompatActivity
         this.p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
 
-        p1MainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        this.p1MainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        Instance = this;
 
         this.InitChessPieces();
         this.InitChessBoard();

@@ -3,6 +3,47 @@ using Android.Util;
 
 namespace Chess.ChessBoard;
 
+//public interface IPieceV2
+//{
+//    public ISpace? Space { get; set; }
+//    public ImageView? Piece { get; set; }
+//    public bool IsWhite { get; set; }
+//    public int Id
+//    {
+//        get;
+//        set;
+//        //{
+//        //    this.Piece = ChessActivity.Instance?.FindViewById<ImageView>(value);
+//        //    this.Id = value;
+//        //}
+//    }
+//    public char Abbreviation { get; set; }
+//}
+
+
+//public interface ISpace
+//{
+//    public ImageView? Space { get; set; }
+//    public bool IsWhite { get; set; }
+//    public int Id
+//    {
+//        get;
+//        set;
+//        //{
+//        //    this.Space = ChessActivity.Instance?.FindViewById<ImageView>(value);
+//        //    this.Id = value;
+//        //}
+//    }
+//    public void SelectSpace();
+//    public void UnselectSpace();
+//    public (char, int) Index();
+//    public char File();
+//    public int Rank();
+//}
+
+//[Serializable]
+//[NonSerialized]
+
 [Serializable]
 public class BoardSpace
 {

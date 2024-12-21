@@ -17,6 +17,7 @@
     <TrimMode>full</TrimMode>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
