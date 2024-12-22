@@ -13,7 +13,7 @@ using Java.Util;
 using KeySet = System.Collections.Generic.Dictionary<string, EndPoint>.KeyCollection;
 using ValueSet = System.Collections.Generic.Dictionary<string, EndPoint>.ValueCollection;
 
-
+//todo rename all var a to a meaningful name 
 public abstract class ConnectionsActivity : AppCompatActivity
 {
     public bool IsConnecting { get; private set; } = false;

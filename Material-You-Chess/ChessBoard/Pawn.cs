@@ -1,12 +1,10 @@
 ﻿namespace Chess.ChessBoard;
 
 [Serializable]
-public class Pawn : Piece
+public class Pawn(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
     public bool isFirstMove = true;
     public bool EnPassantCapturable = false;
-
-    public Pawn(ImageView piece, int id, ImageView space, bool isWhite, int spaceId, Action callback) : base(piece, id, space, isWhite, spaceId, callback) { }
 
     public override void Update()
     {
@@ -20,36 +18,36 @@ public class Pawn : Piece
         }
     }
 
-    public override List<Move> Moves(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces)
+    public override List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
-        List<Move> moves = new List<Move>();
-        BoardSpace move = this.Forward(board, this.isWhite);
+        List<Move> moves = base.Moves(board, pieces);
+        ISpace? move = this.Space.Forward(board, this.IsWhite);
         if (move == null)
             return moves;
-        var piece = move.GetPiece(pieces);
+        var piece = move.Piece(pieces);
         if (piece == null)
         {
             moves.Add(new(move));
             if (this.isFirstMove)
             {
-                var move2 = move.Forward(board, this.isWhite);
-                if (move2.GetPiece(pieces) == null)
-                    moves.Add(new(move2, false, true));
+                var move2 = move.Forward(board, this.IsWhite);
+                if (move2?.Piece(pieces) == null)
+                    moves.Add(new(move2!, false, true));
             }
         }
 
-        (BoardSpace left, BoardSpace right) = this.isWhite switch
+        (ISpace? left, ISpace? right) = this.IsWhite switch
         {
-            true => (DiagonalUp(board, false), DiagonalUp(board, true)),
-            false => (DiagonalDown(board, false), DiagonalDown(board, true)),
+            true => (this.Space.DiagonalUp(board, false), this.Space.DiagonalUp(board, true)),
+            false => (this.Space.DiagonalDown(board, false), this.Space.DiagonalDown(board, true)),
         };
 
-        if (left != null && left.GetPiece(pieces) != null)
-            if (left.GetPiece(pieces).isWhite != this.isWhite)
+        if (left != null && left.Piece(pieces) != null)
+            if (left.Piece(pieces).IsWhite != this.IsWhite)
                 moves.Add(new(left, true));
 
-        if (right != null && right.GetPiece(pieces) != null)
-            if (right.GetPiece(pieces).isWhite != this.isWhite)
+        if (right != null && right.Piece(pieces) != null)
+            if (right.Piece(pieces).IsWhite != this.IsWhite)
                 moves.Add(new(right, true));
 
         return moves;

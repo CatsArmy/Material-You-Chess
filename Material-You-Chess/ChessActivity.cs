@@ -1,5 +1,4 @@
 ﻿using Android.Content.PM;
-using Android.Content.Res;
 using Android.Runtime;
 using Android.Views;
 using AndroidX.AppCompat.App;
@@ -22,10 +21,10 @@ public class ChessActivity : AppCompatActivity
     private TextView? p1MainUsername;
     private TextView? p2MainUsername;
 
-    private Dictionary<(string, int), Piece> pieces = new Dictionary<(string, int), Piece>();
-    private Dictionary<(char, int), BoardSpace> board = new Dictionary<(char, int), BoardSpace>();
-    private Piece? selected = null;
-    private List<BoardSpace>? highlighted = null;
+    private Dictionary<(string, int), IPiece> pieces = new Dictionary<(string, int), IPiece>();
+    private Dictionary<(char, int), ISpace> board = new Dictionary<(char, int), ISpace>();
+    private IPiece? selected = null;
+    private List<ISpace>? highlighted = null;
     private List<Move>? moves = null;
 
     private Bishop? bBishop1, bBishop2;
@@ -66,34 +65,34 @@ public class ChessActivity : AppCompatActivity
         this.p1MainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         Instance = this;
 
-        this.InitChessPieces();
         this.InitChessBoard();
+        this.InitChessPieces();
 
         this.selected = null;
-        this.highlighted = new List<BoardSpace>();
-        this.moves = new List<Move>();
+        this.highlighted = new();
+        this.moves = new();
         //TODO implement EnPassantCapturable
         //TODO Add Casstling
         //TODO Add Promotion
         //TODO More?
         foreach (var space in this.board.Values)
         {
-            space.space.Click += (sender, e) => OnClickSpace(sender, e, space);
+            space.SpaceView.Click += (sender, e) => OnClickSpace(sender, e, space);
         }
 
         foreach (var piece in this.pieces.Values)
         {
-            piece.piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
-            piece.piece.Clickable = true;
+            piece.Piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
+            piece.Piece.Clickable = true;
         }
         //The sequence "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
         //describes the piece placement field of the starting position of a game of chess.
     }
 
-    private void OnClickPiece(object? sender, EventArgs args, Piece piece)
+    private void OnClickPiece(object? sender, EventArgs args, IPiece piece)
     {
         this.p1MainUsername.Text = $"{piece}";
-        this.p2MainUsername.Text = $"{nameof(piece)}.{nameof(piece.isWhite)}:{piece.isWhite}";
+        this.p2MainUsername.Text = $"{nameof(piece)}.{nameof(piece.IsWhite)}:{piece.IsWhite}";
 
         if (this.selected == null)
         {
@@ -102,9 +101,9 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        if (this.selected.isWhite == piece.isWhite)
+        if (this.selected.IsWhite == piece.IsWhite)
         {
-            if (this.selected.id != piece.id)
+            if (this.selected.Id != piece.Id)
             {
                 this.selected = piece;
                 this.SelectMoves();
@@ -112,7 +111,7 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var move = this.selected.Moves(this.board, this.pieces).FirstOrDefault(move => move.Space == this.board[piece.GetBoardIndex()]);
+        var move = this.selected.Moves(this.board, this.pieces).FirstOrDefault(move => move.Space == this.board[piece.Space.Index]);
         if (move == null)
         {
             ClearSelectedMoves();
@@ -120,8 +119,8 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var (spaceId, spaceView) = this.selected.FakeMove(piece.spaceId, piece.space);
-        var king = this.selected.isWhite ? this.wKing : this.bKing;
+        var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.SpaceView);
+        var king = this.selected.IsWhite ? this.wKing : this.bKing;
         if (king.IsInCheck(board, pieces))
         {
             this.selected.FakeMove(spaceId, spaceView);
@@ -133,22 +132,22 @@ public class ChessActivity : AppCompatActivity
         {
             //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
-            if (piece.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
+            if (piece.Space?.File == (pawn.IsWhite ? 'H' : 'A'))
                 pawn.Promote();
         }
 
         SelectMoves(piece);
         selected.Capture(piece, pieces);
-        View view = base.FindViewById(piece.piece.Id);
+        View view = base.FindViewById(piece.Piece.Id);
         var parent = view.Parent as ViewGroup;
         parent?.RemoveView(view);
         this.NextPlayer();
     }
 
-    private void OnClickSpace(object? sender, System.EventArgs e, BoardSpace space)
+    private void OnClickSpace(object? sender, System.EventArgs e, ISpace space)
     {
         p1MainUsername.Text = $"{space}";
-        p2MainUsername.Text = $"{nameof(space.isWhite)}:{space.isWhite}";
+        p2MainUsername.Text = $"{nameof(space.IsWhite)}:{space.IsWhite}";
 
         if (this.selected == null)
             return;
@@ -163,8 +162,8 @@ public class ChessActivity : AppCompatActivity
 
         var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         view?.LayoutTransition?.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
-        var (spaceId, spaceView) = this.selected!.FakeMove(space.spaceId, space.space);
-        var king = this.selected.isWhite ? this.wKing : this.bKing;
+        var (spaceId, spaceView) = this.selected!.FakeMove(space.Id, space.SpaceView);
+        var king = this.selected.IsWhite ? this.wKing : this.bKing;
         if (king.IsInCheck(this.board, this.pieces))
         {
             this.selected.FakeMove(spaceId, spaceView);
@@ -176,7 +175,7 @@ public class ChessActivity : AppCompatActivity
         {
             //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
-            if (space.GetBoardIndex().Item1 == (pawn.isWhite ? 'H' : 'A'))
+            if (space.File == (pawn.IsWhite ? 'H' : 'A'))
                 pawn.Promote();
         }
 
@@ -191,7 +190,7 @@ public class ChessActivity : AppCompatActivity
     private void ClearSelectedMoves()
     {
         this.moves?.Clear();
-        foreach (var space in this.highlighted)
+        foreach (var space in this.highlighted!)
             space.UnselectSpace();
     }
 
@@ -199,26 +198,26 @@ public class ChessActivity : AppCompatActivity
     {
         this.ClearSelectedMoves();
         this.moves = this.selected?.Moves(board, pieces);
-        foreach (var move in this.moves)
+        foreach (var move in this.moves!)
         {
-            var space = move.Space.GetBoardSpace(this.board);
+            var space = this.board[move.Space.Index]!;
             space.SelectSpace();
             this.highlighted?.Add(space);
         }
-        var selected = this.selected?.GetBoardSpace(this.board);
-        selected?.SelectSpace();
-        this.highlighted?.Add(selected);
+        var selected = this.board[this.selected!.Space.Index]!;
+        selected.SelectSpace();
+        this.highlighted!.Add(selected);
     }
 
-    private void SelectMoves(Piece piece) => SelectMoves(piece.GetBoardSpace(this.board));
+    private void SelectMoves(IPiece piece) => SelectMoves(piece.Space);
 
-    private void SelectMoves(BoardSpace space)
+    private void SelectMoves(ISpace space)
     {
         ClearSelectedMoves();
         space.SelectSpace();
         this.highlighted?.Add(space);
 
-        var selected = this.selected.GetBoardSpace(this.board);
+        var selected = this.selected!.Space;
         selected.SelectSpace();
         this.highlighted?.Add(selected);
     }
@@ -236,230 +235,185 @@ public class ChessActivity : AppCompatActivity
 
     private void InitChessPieces()
     {
-        //Init resources
-        _ = new BoardSpace(base.Resources);
-
-        int spaceId;
-        Action callback = OnNextPlayer;
-        spaceId = Resource.Id.gmb__A8;
-        this.bRook1 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__bRook1), Resource.Id.gmp__bRook1,
-        base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
+        char file = 'A';
+        int blackRank = 8;
+        int whiteRank = 1;
+        this.bRook1 = new Rook(Resource.Id.gmp__bRook1, false, this.board[(file, blackRank)]);
         this.pieces[("bRook", 1)] = this.bRook1;
 
-        spaceId = Resource.Id.gmb__B8;
-        this.bKnight1 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__bKnight1), Resource.Id.gmp__bKnight1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
+        this.wRook1 = new Rook(Resource.Id.gmp__wRook1, true, this.board[(file, whiteRank)]);
+        this.pieces[("wRook", 1)] = this.wRook1;
+        file++;
+
+        this.bKnight1 = new Knight(Resource.Id.gmp__bKnight1, false, this.board[(file, blackRank)]);
         this.pieces[("bKnight", 1)] = this.bKnight1;
 
-        spaceId = Resource.Id.gmb__C8;
-        this.bBishop1 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__bBishop1), Resource.Id.gmp__bBishop1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
+        this.wKnight1 = new Knight(Resource.Id.gmp__wKnight1, true, this.board[(file, whiteRank)]);
+        this.pieces[("wKnight", 1)] = this.wKnight1;
+        file++;
+
+        this.bBishop1 = new Bishop(Resource.Id.gmp__bBishop1, false, this.board[(file, blackRank)]);
         this.pieces[("bBishop", 1)] = this.bBishop1;
 
-        spaceId = Resource.Id.gmb__D8;
-        this.bQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__bQueen1), Resource.Id.gmp__bQueen1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
+        this.wBishop1 = new Bishop(Resource.Id.gmp__wBishop1, true, this.board[(file, whiteRank)]);
+        this.pieces[("wBishop", 1)] = this.wBishop1;
+        file++;
+
+        this.bQueen = new Queen(Resource.Id.gmp__bQueen1, false, this.board[(file, blackRank)]);
         this.pieces[("bQueen", 1)] = this.bQueen;
 
-        spaceId = Resource.Id.gmb__E8;
-        bKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__bKing1), Resource.Id.gmp__bKing1,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
-        pieces[("bKing", 1)] = bKing;
+        this.wQueen = new Queen(Resource.Id.gmp__wQueen1, true, this.board[(file, whiteRank)]);
+        this.pieces[("wQueen", 1)] = this.wQueen;
+        file++;
 
-        spaceId = Resource.Id.gmb__F8;
-        bBishop2 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__bBishop2), Resource.Id.gmp__bBishop2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
-        pieces[("bBishop", 2)] = bBishop2;
+        this.bKing = new King(Resource.Id.gmp__bKing1, false, this.board[(file, blackRank)]);
+        this.pieces[("bKing", 1)] = this.bKing;
 
-        spaceId = Resource.Id.gmb__G8;
-        bKnight2 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__bKnight2), Resource.Id.gmp__bKnight2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
-        pieces[("bKnight", 2)] = bKnight2;
+        this.wKing = new King(Resource.Id.gmp__wKing1, true, this.board[(file, whiteRank)]);
+        this.pieces[("wKing", 1)] = this.wKing;
+        file++;
 
-        spaceId = Resource.Id.gmb__H8;
-        bRook2 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__bRook2), Resource.Id.gmp__bRook2,
-            base.FindViewById<ImageView>(spaceId), false, spaceId, callback);
-        pieces[("bRook", 2)] = bRook2;
+        this.bBishop2 = new Bishop(Resource.Id.gmp__bBishop2, false, this.board[(file, blackRank)]);
+        this.pieces[("bBishop", 2)] = this.bBishop2;
 
-        int bPawnIndex = 0;
-        for (int i = Resource.Id.gmp__bPawn1; i <= Resource.Id.gmp__bPawn8; i++)
+        this.wBishop2 = new Bishop(Resource.Id.gmp__wBishop2, true, this.board[(file, whiteRank)]);
+        this.pieces[("wBishop", 2)] = this.wBishop2;
+        file++;
+
+        this.bKnight2 = new Knight(Resource.Id.gmp__bKnight2, false, this.board[(file, blackRank)]);
+        this.pieces[("bKnight", 2)] = this.bKnight2;
+
+        this.wKnight2 = new Knight(Resource.Id.gmp__wKnight2, true, this.board[(file, whiteRank)]);
+        this.pieces[("wKnight", 2)] = this.wKnight2;
+        file++;
+
+        this.bRook2 = new Rook(Resource.Id.gmp__bRook2, false, this.board[(file, blackRank)]);
+        this.pieces[("bRook", 2)] = this.bRook2;
+
+        this.wRook2 = new Rook(Resource.Id.gmp__wRook2, true, this.board[(file, whiteRank)]);
+        this.pieces[("wRook", 2)] = this.wRook2;
+
+        file = 'A';
+        blackRank--;
+        whiteRank++;
+
+        for (int i = 0; i < 8; i++)
         {
-            string? pawn = Resources.GetResourceName(i);
-            if (pawn!.Contains("bPawn"))
-            {
-                spaceId = Resource.Id.gmb__A7 + (8 * bPawnIndex);
-                bPawns[bPawnIndex] = new Pawn(base.FindViewById<ImageView>(i)!, i,
-                    base.FindViewById<ImageView>(spaceId)!, false, spaceId, callback);
-                pieces[("bPawn", bPawnIndex + 1)] = bPawns[bPawnIndex];
-                bPawnIndex++;
-                continue;
-            }
-        }
+            this.bPawns[i] = new Pawn(Resource.Id.gmp__bPawn1 + i, false, this.board[(file, blackRank)]);
+            this.pieces[("bPawn", i + 1)] = bPawns[i];
 
-        spaceId = Resource.Id.gmb__A1;
-        wRook1 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__wRook1)!, Resource.Id.gmp__wRook1,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wRook", 1)] = wRook1;
-
-        spaceId = Resource.Id.gmb__B1;
-        wKnight1 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__wKnight1)!, Resource.Id.gmp__wKnight1,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wKnight", 1)] = wKnight1;
-
-        spaceId = Resource.Id.gmb__C1;
-        wBishop1 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__wBishop1)!, Resource.Id.gmp__wBishop1,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wBishop", 1)] = wBishop1;
-
-        spaceId = Resource.Id.gmb__D1;
-        wQueen = new Queen(base.FindViewById<ImageView>(Resource.Id.gmp__wQueen1)!, Resource.Id.gmp__wQueen1,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wQueen", 1)] = wQueen;
-
-        spaceId = Resource.Id.gmb__E1;
-        wKing = new King(base.FindViewById<ImageView>(Resource.Id.gmp__wKing1)!, Resource.Id.gmp__wKing1,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wKing", 1)] = wKing;
-
-        spaceId = Resource.Id.gmb__F1;
-        wBishop2 = new Bishop(base.FindViewById<ImageView>(Resource.Id.gmp__wBishop2)!, Resource.Id.gmp__wBishop2,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wBishop", 2)] = wBishop2;
-
-        spaceId = Resource.Id.gmb__G1;
-        wKnight2 = new Knight(base.FindViewById<ImageView>(Resource.Id.gmp__wKnight2)!, Resource.Id.gmp__wKnight2,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wKnight", 2)] = wKnight2;
-
-        spaceId = Resource.Id.gmb__H1;
-        wRook2 = new Rook(base.FindViewById<ImageView>(Resource.Id.gmp__wRook2)!, Resource.Id.gmp__wRook2,
-            base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-        pieces[("wRook", 2)] = wRook2;
-
-        int wPawnIndex = 0;
-        for (int i = Resource.Id.gmp__wPawn1; i <= Resource.Id.gmp__wPawn8; i++)
-        {
-            var pawn = this.Resources.GetResourceName(i);
-            if (pawn!.Contains("wPawn"))
-            {
-                spaceId = Resource.Id.gmb__A2 + (8 * wPawnIndex);
-                wPawns[wPawnIndex] = new Pawn(base.FindViewById<ImageView>(i)!, i,
-                    base.FindViewById<ImageView>(spaceId)!, true, spaceId, callback);
-                pieces[("wPawn", wPawnIndex + 1)] = wPawns[wPawnIndex];
-                wPawnIndex++;
-            }
+            this.wPawns[i] = new Pawn(Resource.Id.gmp__wPawn1 + i, true, this.board[(file, whiteRank)]);
+            this.pieces[("wPawn", i + 1)] = this.wPawns[i];
+            file++;
         }
     }
 
     private void InitChessBoard()
     {
-        bool isWhite = true;
         const string IsWhite = nameof(IsWhite);
         const string IsBlack = nameof(IsBlack);
-        for (int i = Resource.Id.gmb__A1, j = 1; i <= Resource.Id.gmb__A8; i++, j++)
+        char file = 'A';
+        for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-
-            board[('A', j)] = new BoardSpace(space, isWhite, i);
-
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__B1, j = 1; i <= Resource.Id.gmb__B8; i++, j++)
+        for (int id = Resource.Id.gmb__B1, rank = 1; id <= Resource.Id.gmb__B8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('B', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__C1, j = 1; i <= Resource.Id.gmb__C8; i++, j++)
+        for (int id = Resource.Id.gmb__C1, rank = 1; id <= Resource.Id.gmb__C8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('C', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__D1, j = 1; i <= Resource.Id.gmb__D8; i++, j++)
+        for (int id = Resource.Id.gmb__D1, rank = 1; id <= Resource.Id.gmb__D8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
-            string tag = (space.Tag as Java.Lang.String).ToString();
-            isWhite = tag switch
-            {
-                IsWhite => true,
-                IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('D', j)] = new BoardSpace(space, isWhite, i);
-        }
-
-        for (int i = Resource.Id.gmb__E1, j = 1; i <= Resource.Id.gmb__E8; i++, j++)
-        {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('E', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__F1, j = 1; i <= Resource.Id.gmb__F8; i++, j++)
+        for (int id = Resource.Id.gmb__E1, rank = 1; id <= Resource.Id.gmb__E8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('F', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__G1, j = 1; i <= Resource.Id.gmb__G8; i++, j++)
+        for (int id = Resource.Id.gmb__F1, rank = 1; id <= Resource.Id.gmb__F8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            board[('G', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
+        file++;
 
-        for (int i = Resource.Id.gmb__H1, j = 1; i <= Resource.Id.gmb__H8; i++, j++)
+        for (int id = Resource.Id.gmb__G1, rank = 1; id <= Resource.Id.gmb__G8; id++, rank++)
         {
-            var space = base.FindViewById<ImageView>(i);
+            var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            isWhite = tag switch
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
             {
                 IsWhite => true,
                 IsBlack => false,
-                _ => throw new System.Exception($"{this.Resources?.GetResourceEntryName(i)}: Missing a tag"),
-            };
-            this.board[('H', j)] = new BoardSpace(space, isWhite, i);
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
+        }
+        file++;
+
+        for (int id = Resource.Id.gmb__H1, rank = 1; id <= Resource.Id.gmb__H8; id++, rank++)
+        {
+            var space = base.FindViewById<ImageView>(id);
+            string? tag = (space?.Tag as Java.Lang.String)?.ToString();
+            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            {
+                IsWhite => true,
+                IsBlack => false,
+                _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            }, id);
         }
     }
 

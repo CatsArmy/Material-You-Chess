@@ -1,91 +1,84 @@
 ﻿namespace Chess.ChessBoard;
 
 [Serializable]
-public class Knight : Piece
+public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
-    public Knight(ImageView piece, int id, ImageView space, bool isWhite, int spaceId, Action callback) : base(piece, id, space, isWhite, spaceId, callback) { }
-
-    public override List<Move> Moves(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), Piece> pieces)
+    public override List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
-        List<Move> moves = new List<Move>();
+        List<Move> moves = base.Moves(board, pieces);
 
-        var (upRight, upLeft) = MovesUp(board);
+        var (upRight, upLeft) = DiagonalMovesUp(board);
         if (upRight != null)
         {
-            var p = upRight.GetPiece(pieces);
+            var p = upRight.Piece(pieces);
             if (p == null)
                 moves.Add(new(upRight));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(upRight, true));
         }
         if (upLeft != null)
         {
-            var p = upLeft.GetPiece(pieces);
+            var p = upLeft.Piece(pieces);
             if (p == null)
                 moves.Add(new(upLeft));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(upLeft, true));
         }
 
-        var (downRight, downLeft) = MovesDown(board);
+        var (downRight, downLeft) = DiagonalMovesDown(board);
         if (downRight != null)
         {
-            var p = downRight.GetPiece(pieces);
+            var p = downRight.Piece(pieces);
             if (p == null)
                 moves.Add(new(downRight));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(downRight, true));
         }
         if (downLeft != null)
         {
-            var p = downLeft.GetPiece(pieces);
+            var p = downLeft.Piece(pieces);
             if (p == null)
                 moves.Add(new(downLeft));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(downLeft, true));
         }
 
-        var (rightUp, rightDown) = MovesRight(board);
+        var (rightUp, rightDown) = DiagonalMovesRight(board);
         if (rightUp != null)
         {
-            var p = rightUp.GetPiece(pieces);
+            var p = rightUp.Piece(pieces);
             if (p == null)
                 moves.Add(new(rightUp));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(rightUp, true));
         }
         if (rightDown != null)
         {
-            var p = rightDown.GetPiece(pieces);
+            var p = rightDown.Piece(pieces);
             if (p == null)
                 moves.Add(new(rightDown));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(rightDown, true));
         }
 
-        var (leftUp, leftDown) = MovesLeft(board);
+        var (leftUp, leftDown) = DiagonalMovesLeft(board);
         if (leftUp != null)
         {
-            var p = leftUp.GetPiece(pieces);
+            var p = leftUp.Piece(pieces);
             if (p == null)
                 moves.Add(new(leftUp));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(leftUp, true));
         }
         if (leftDown != null)
         {
-            var p = leftDown.GetPiece(pieces);
+            var p = leftDown.Piece(pieces);
             if (p == null)
                 moves.Add(new(leftDown));
-            else if (p.isWhite != this.isWhite)
+            else if (p.IsWhite != this.IsWhite)
                 moves.Add(new(leftDown, true));
         }
 
         return moves;
     }
-
-    private (BoardSpace, BoardSpace) MovesUp(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesUp(board);
-    private (BoardSpace, BoardSpace) MovesDown(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesDown(board);
-    private (BoardSpace, BoardSpace) MovesRight(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesRight(board);
-    private (BoardSpace, BoardSpace) MovesLeft(Dictionary<(char, int), BoardSpace> board) => this.KnightMovesLeft(board);
 }
