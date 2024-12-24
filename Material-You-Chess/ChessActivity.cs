@@ -20,6 +20,7 @@ public class ChessActivity : AppCompatActivity
     private ShapeableImageView? p2MainProfileImageView;
     private TextView? p1MainUsername;
     private TextView? p2MainUsername;
+    private string BoardState = string.Empty;
 
     private Dictionary<(string, int), IPiece> pieces = new Dictionary<(string, int), IPiece>();
     private Dictionary<(char, int), ISpace> board = new Dictionary<(char, int), ISpace>();
@@ -85,8 +86,16 @@ public class ChessActivity : AppCompatActivity
             piece.Piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
             piece.Piece.Clickable = true;
         }
-        //The sequence "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
-        //describes the piece placement field of the starting position of a game of chess.
+        ///rank = player is white switch {
+        ///true => 1;
+        ///false => 8;
+        /// }
+        ///BoardState.contains(e{rank}) && !BoardState.contains(#)  == Can casstale if move is legal 
+        ///try diff method
+
+        /*
+           1. d3 Nc6 2. c3 b6 3. b3 Ba6 4. e3 d5 5. e4 Qd6 6. c4 O-O-O 7. Ke2 e6 *
+        */
     }
 
     private void OnClickPiece(object? sender, EventArgs args, IPiece piece)
@@ -244,49 +253,49 @@ public class ChessActivity : AppCompatActivity
 
         this.wRook1 = new Rook(Resource.Id.gmp__wRook1, true, this.board[(file, whiteRank)]);
         this.pieces[("wRook", 1)] = this.wRook1;
-        file++;
+        file++;//B
 
         this.bKnight1 = new Knight(Resource.Id.gmp__bKnight1, false, this.board[(file, blackRank)]);
         this.pieces[("bKnight", 1)] = this.bKnight1;
 
         this.wKnight1 = new Knight(Resource.Id.gmp__wKnight1, true, this.board[(file, whiteRank)]);
         this.pieces[("wKnight", 1)] = this.wKnight1;
-        file++;
+        file++;//C
 
         this.bBishop1 = new Bishop(Resource.Id.gmp__bBishop1, false, this.board[(file, blackRank)]);
         this.pieces[("bBishop", 1)] = this.bBishop1;
 
         this.wBishop1 = new Bishop(Resource.Id.gmp__wBishop1, true, this.board[(file, whiteRank)]);
         this.pieces[("wBishop", 1)] = this.wBishop1;
-        file++;
+        file++;//D
 
         this.bQueen = new Queen(Resource.Id.gmp__bQueen1, false, this.board[(file, blackRank)]);
         this.pieces[("bQueen", 1)] = this.bQueen;
 
         this.wQueen = new Queen(Resource.Id.gmp__wQueen1, true, this.board[(file, whiteRank)]);
         this.pieces[("wQueen", 1)] = this.wQueen;
-        file++;
+        file++;//E
 
         this.bKing = new King(Resource.Id.gmp__bKing1, false, this.board[(file, blackRank)]);
         this.pieces[("bKing", 1)] = this.bKing;
 
         this.wKing = new King(Resource.Id.gmp__wKing1, true, this.board[(file, whiteRank)]);
         this.pieces[("wKing", 1)] = this.wKing;
-        file++;
+        file++;//F
 
         this.bBishop2 = new Bishop(Resource.Id.gmp__bBishop2, false, this.board[(file, blackRank)]);
         this.pieces[("bBishop", 2)] = this.bBishop2;
 
         this.wBishop2 = new Bishop(Resource.Id.gmp__wBishop2, true, this.board[(file, whiteRank)]);
         this.pieces[("wBishop", 2)] = this.wBishop2;
-        file++;
+        file++;//G
 
         this.bKnight2 = new Knight(Resource.Id.gmp__bKnight2, false, this.board[(file, blackRank)]);
         this.pieces[("bKnight", 2)] = this.bKnight2;
 
         this.wKnight2 = new Knight(Resource.Id.gmp__wKnight2, true, this.board[(file, whiteRank)]);
         this.pieces[("wKnight", 2)] = this.wKnight2;
-        file++;
+        file++;//H
 
         this.bRook2 = new Rook(Resource.Id.gmp__bRook2, false, this.board[(file, blackRank)]);
         this.pieces[("bRook", 2)] = this.bRook2;
