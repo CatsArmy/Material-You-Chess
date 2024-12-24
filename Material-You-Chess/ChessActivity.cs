@@ -1,16 +1,16 @@
 ﻿using Android.Content.PM;
 using Android.Runtime;
-using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
+using Chess.Util.Logger;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
 namespace Chess;
 
-[Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class ChessActivity : AppCompatActivity
 {
     public static ChessActivity? Instance = null;
@@ -45,7 +45,7 @@ public class ChessActivity : AppCompatActivity
     {
         bool hasValue = bool.TryParse(base.Intent?.GetStringExtra(nameof(this.MaterialYouThemePreference)), out this.MaterialYouThemePreference);
         if (hasValue && !this.MaterialYouThemePreference)
-            base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
+            base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
@@ -71,13 +71,13 @@ public class ChessActivity : AppCompatActivity
         this.selected = null;
         this.highlighted = new();
         this.moves = new();
-        //TODO implement EnPassantCapturable
-        //TODO Add Casstling
-        //TODO Add Promotion
+        //TODO implement En Passant difficulty Medium--
+        //TODO Add Casstling difficulty Medium
+        //TODO Add Promotion difficulty Easy+ / Medium-
         //TODO More?
         foreach (var space in this.board.Values)
         {
-            space.SpaceView.Click += (sender, e) => OnClickSpace(sender, e, space);
+            space.Space.Click += (sender, e) => OnClickSpace(sender, e, space);
         }
 
         foreach (var piece in this.pieces.Values)
@@ -111,7 +111,9 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var move = this.selected.Moves(this.board, this.pieces).FirstOrDefault(move => move.Space == this.board[piece.Space.Index]);
+        var moves = this.selected.Moves(this.board, this.pieces);
+        Log.Debug($"moves lookup done");
+        var move = moves.FirstOrDefault(move => move.Destination == this.board[piece.Space.Index]);
         if (move == null)
         {
             ClearSelectedMoves();
@@ -119,7 +121,7 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.SpaceView);
+        var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.Space);
         var king = this.selected.IsWhite ? this.wKing : this.bKing;
         if (king.IsInCheck(board, pieces))
         {
@@ -133,14 +135,13 @@ public class ChessActivity : AppCompatActivity
             //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
             if (piece.Space?.File == (pawn.IsWhite ? 'H' : 'A'))
+                /*await*/
                 pawn.Promote();
         }
-
+        /**/
         SelectMoves(piece);
-        selected.Capture(piece, pieces);
-        View view = base.FindViewById(piece.Piece.Id);
-        var parent = view.Parent as ViewGroup;
-        parent?.RemoveView(view);
+        this.selected.Capture(piece!, pieces);
+
         this.NextPlayer();
     }
 
@@ -152,7 +153,7 @@ public class ChessActivity : AppCompatActivity
         if (this.selected == null)
             return;
 
-        Move? move = this.selected?.Moves(this.board, this.pieces)?.FirstOrDefault(move => move.Space == space);
+        Move? move = this.selected?.Moves(this.board, this.pieces)?.FirstOrDefault(move => move.Destination == space);
         if (move == null)
         {
             ClearSelectedMoves();
@@ -160,9 +161,9 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var view = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        view?.LayoutTransition?.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
-        var (spaceId, spaceView) = this.selected!.FakeMove(space.Id, space.SpaceView);
+        var layout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+        layout?.LayoutTransition?.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
+        var (spaceId, spaceView) = this.selected!.FakeMove(space.Id, space.Space);
         var king = this.selected.IsWhite ? this.wKing : this.bKing;
         if (king.IsInCheck(this.board, this.pieces))
         {
@@ -200,7 +201,7 @@ public class ChessActivity : AppCompatActivity
         this.moves = this.selected?.Moves(board, pieces);
         foreach (var move in this.moves!)
         {
-            var space = this.board[move.Space.Index]!;
+            var space = this.board[move.Destination.Index]!;
             space.SelectSpace();
             this.highlighted?.Add(space);
         }

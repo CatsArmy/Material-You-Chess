@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,10 +10,8 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:hint="Username"
-        app:errorEnabled="false"
         app:expandedHintEnabled="false"
-        app:startIconDrawable="@drawable/outline_person_edit"
-        app:startIconTint="@color/material_dynamic_secondary40">
+        app:startIconDrawable="@drawable/outline_person_edit">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/MainUsernameInput"
@@ -23,7 +20,5 @@
             android:hint="Guest"
             android:inputType="textPersonName"
             android:textSize="20sp" />
-
     </com.google.android.material.textfield.TextInputLayout>
-
 </LinearLayout>

@@ -5,10 +5,10 @@ public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
     private const int Select = 1;
     private const int Unselect = 0;
 
-    public ImageView? SpaceView { get; set; } = Space;
+    public ImageView? Space { get; set; } = Space;
     public bool IsWhite { get; set; } = IsWhite;
     public int Id { get; set; } = Id;
-    public (char, int) Index { get => (File, Rank); }
+    public (char, int) Index { get => (this.File, this.Rank); }
 
     public char File { get => ChessActivity.Instance!.Resources!.GetResourceName(this.Id)!.Split("__")[1][0]!; }
 
@@ -16,25 +16,11 @@ public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
 
     public override string? ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1];
 
-    public void SelectSpace() => this.SpaceView?.SetImageLevel(Select);
+    public void SelectSpace() => this.Space?.SetImageLevel(Select);
 
-    public void UnselectSpace() => this.SpaceView?.SetImageLevel(Unselect);
+    public void UnselectSpace() => this.Space?.SetImageLevel(Unselect);
 
     public ISpace? GetBoardSpace(Dictionary<(char, int), ISpace> board) => board[this.Index];
-
-    public ISpace? Forward(Dictionary<(char, int), ISpace> board, bool isWhite)
-    {
-        if (!isWhite)
-            return this.Down(board);
-        return this.Up(board);
-    }
-
-    public ISpace? Backward(Dictionary<(char, int), ISpace> board, bool isWhite)
-    {
-        if (!isWhite)
-            return this.Up(board);
-        return this.Down(board);
-    }
 
     public ISpace? DiagonalUp(Dictionary<(char, int), ISpace> board, bool isRight)
     {
@@ -114,6 +100,20 @@ public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
             return null;
 
         return value;
+    }
+
+    public ISpace? Forward(Dictionary<(char, int), ISpace> board, bool isWhite)
+    {
+        if (!isWhite)
+            return this.Down(board);
+        return this.Up(board);
+    }
+
+    public ISpace? Backward(Dictionary<(char, int), ISpace> board, bool isWhite)
+    {
+        if (!isWhite)
+            return this.Up(board);
+        return this.Down(board);
     }
 
     public IPiece? Piece(Dictionary<(string, int), IPiece> boardPieces)

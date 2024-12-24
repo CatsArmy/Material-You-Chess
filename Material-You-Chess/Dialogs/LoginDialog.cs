@@ -19,11 +19,12 @@ public class LoginDialog : ILoginDialog
     public TextInputEditText PasswordInput { get; set; }
     public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
-    private bool hasCatched { get; set; } = false;
+    private bool HasCaught { get; set; } = false;
     public LoginDialog(MainActivity App, Action OnLoginSuccess)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        Builder = new MaterialAlertDialogBuilder(App//TODO, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons
+            );
         Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person));
         Builder.SetTitle("Login");
         Builder.SetView(Resource.Layout.login_signup_dialog);
@@ -52,12 +53,12 @@ public class LoginDialog : ILoginDialog
     {
         try
         {
-            this.hasCatched = false;
+            this.HasCaught = false;
             var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(Email, Password);
         }
         catch (Exception e)
         {
-            this.hasCatched = true;
+            this.HasCaught = true;
             Log.Debug("CatDebug", $"{e}");
             if (Dialog.IsShowing)
                 Dialog.Hide();
@@ -81,7 +82,7 @@ public class LoginDialog : ILoginDialog
         }
         finally
         {
-            if (!hasCatched)
+            if (!HasCaught)
                 this.OnSuccess();
             App.StartProgressIndicator();
             await FirebaseAuth.Instance?.CurrentUser?.ReloadAsync();

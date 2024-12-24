@@ -2,20 +2,13 @@
 
 public interface IPiece
 {
+    public ISpace Space { get; set; }
     public ImageView? Piece { get; set; }
     public int Id { get; set; }
     public bool IsWhite { get; set; }
-    public (string, int) Index
-    {
-        get
-        {
-            string? resourceName = ChessActivity.Instance?.Resources?.GetResourceName(this.Space.Id);
-            string? piece = resourceName?.Split("__")[1];
-            return (piece[0..^1], int.Parse($"{piece[^1]}"));
-        }
-    }
-    public ISpace Space { get; set; }
-    public void Update() { }
+    public (string, int) Index { get; }
+    public char Abbreviation { get; set; }
+    public void Update();
     public List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces);
     public void Move(ISpace destination);
     public (int, ImageView?) FakeMove(int spaceId, ImageView? spaceView);

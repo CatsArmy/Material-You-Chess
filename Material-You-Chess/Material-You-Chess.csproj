@@ -26,6 +26,8 @@
   <DebugType>embedded</DebugType>
   <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
   <EnableLLVM>False</EnableLLVM>
+  <AndroidKeyStore>False</AndroidKeyStore>
+  <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
 </PropertyGroup>
 
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -34,6 +36,7 @@
   <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
   <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
   <EnableLLVM>False</EnableLLVM>
+  <AndroidKeyStore>False</AndroidKeyStore>
 </PropertyGroup>
 
   <ItemGroup>

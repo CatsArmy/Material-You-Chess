@@ -1,41 +1,92 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+	<!-- Styles -->
+    <style name="Widget.Chess.Button.TextButton.Dialog.FullWidth" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:maxWidth">@null</item>
+    </style>
 
-	<!-- Base application theme. -->
-	<style name="Theme.Material3.DynamicColors.DayNight.NoActionBar" parent="Theme.Material3.DynamicColors.DayNight">
+    <style name="Widget.Chess.Button.TextButton.Dialog.Flush.FullWidth" parent="Widget.Material3.Button.TextButton.Dialog.Flush">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:maxWidth">@null</item>
+    </style>
+
+    <style name="MaterialAlertDialog.MaterialYou.Title.Icon.CenterStacked" parent="MaterialAlertDialog.Material3.Title.Icon.CenterStacked">
+        <item name="tint">?attr/colorSecondary</item>
+        <item name="tintMode">src_in</item>
+    </style>
+
+    <style name="MaterialAlertDialog.MaterialYou.Title.Icon" parent="MaterialAlertDialog.Material3.Title.Icon">
+        <item name="tint">?attr/colorSecondary</item>
+        <item name="tintMode">src_in</item>
+    </style>
+	
+	<!-- Themes -->
+	<!-- Base Material You application theme -->
+	<style name="AppTheme.Material3.DynamicColors.DayNight.NoActionBar" parent="Theme.Material3.DynamicColors.DayNight">
+		<item name="materialAlertDialogTheme">
+			@style/ThemeOverlay.Chess.MaterialAlertDialog.Centered
+		</item>
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
-
 		<item name="android:statusBarColor">#00000000</item>
 	</style>
 
-	<!-- Base application theme. -->
-	<style name="Theme.Material3.DayNight.NoActionBar.Alt" parent="Theme.Material3.DayNight.NoActionBar">
+	<!-- Base material3 application theme -->
+	<style name="AppTheme.Material3.DayNight.NoActionBar" parent="Theme.Material3.DayNight.NoActionBar">
+		<item name="materialAlertDialogTheme">
+			@style/ThemeOverlay.Chess.MaterialAlertDialog.Centered
+		</item>
 		<item name="windowActionBar">false</item>
 		<item name="windowNoTitle">true</item>
-
 		<item name="android:statusBarColor">#00000000</item>
 	</style>
-
-	<style name="Widget.Catalog.Button.TextButton.Dialog.FullWidth" parent="Widget.Material3.Button.TextButton.Dialog">
-		<item name="android:layout_width">0dp</item>
-		<item name="android:layout_weight">1</item>
-		<item name="android:maxWidth">@null</item>
-	</style>
-
+	<!-- Theme Overlays -->
 	<!-- A theme overlay for dialogs with buttons that span the width of the dialog. -->
-	<style name="ThemeOverlay.Catalog.MaterialAlertDialog.FullWidthButtons" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-		<item name="materialAlertDialogButtonSpacerVisibility">@integer/mtrl_view_gone</item>
-		<item name="buttonBarPositiveButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
-		<item name="buttonBarNegativeButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
-		<item name="buttonBarNeutralButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
+	<style name="ThemeOverlay.Chess.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+		<item name="materialAlertDialogTitleIconStyle">
+			@style/MaterialAlertDialog.MaterialYou.Title.Icon
+		</item>
+		<!-- Mark spacer as gone when showing full width buttons -->
+		<item name="materialAlertDialogButtonSpacerVisibility" tools:ignore="PrivateResource">
+			@integer/mtrl_view_gone
+		</item>
+		<item name="buttonBarButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarPositiveButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarNegativeButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarNeutralButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.Flush.FullWidth
+		</item>
 	</style>
 
 	<!-- A theme overlay for dialogs with a center aligned title text, icon and buttons that span the width of the dialog. -->
-	<style name="ThemeOverlay.Catalog.MaterialAlertDialog.Centered.FullWidthButtons" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+	<style name="ThemeOverlay.Chess.MaterialAlertDialog.Centered" parent="ThemeOverlay.Material3.MaterialAlertDialog.Centered">
+		<item name="materialAlertDialogTitleIconStyle">
+			@style/MaterialAlertDialog.MaterialYou.Title.Icon.CenterStacked
+		</item>
 		<!-- Mark spacer as gone when showing full width buttons -->
-		<item name="materialAlertDialogButtonSpacerVisibility">@integer/mtrl_view_gone</item>
-		<item name="buttonBarPositiveButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
-		<item name="buttonBarNegativeButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
-		<item name="buttonBarNeutralButtonStyle">@style/Widget.Catalog.Button.TextButton.Dialog.FullWidth</item>
+		<item name="materialAlertDialogButtonSpacerVisibility" tools:ignore="PrivateResource">
+			@integer/mtrl_view_gone
+		</item>
+		<item name="buttonBarButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarPositiveButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarNegativeButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.FullWidth
+		</item>
+		<item name="buttonBarNeutralButtonStyle">
+			@style/Widget.Chess.Button.TextButton.Dialog.Flush.FullWidth
+		</item>
 	</style>
 </resources>

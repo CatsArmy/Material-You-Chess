@@ -1,6 +1,8 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
 
-[Serializable]
+namespace Chess.ChessBoard;
+
+[DataContract]
 public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
     public override List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
@@ -12,17 +14,17 @@ public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite
         {
             var p = upRight.Piece(pieces);
             if (p == null)
-                moves.Add(new(upRight));
+                moves.Add(new(this.Space, upRight));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(upRight, true));
+                moves.Add(new(this.Space, upRight, true));
         }
         if (upLeft != null)
         {
             var p = upLeft.Piece(pieces);
             if (p == null)
-                moves.Add(new(upLeft));
+                moves.Add(new(this.Space, upLeft));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(upLeft, true));
+                moves.Add(new(this.Space, upLeft, true));
         }
 
         var (downRight, downLeft) = DiagonalMovesDown(board);
@@ -30,17 +32,17 @@ public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite
         {
             var p = downRight.Piece(pieces);
             if (p == null)
-                moves.Add(new(downRight));
+                moves.Add(new(this.Space, downRight));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(downRight, true));
+                moves.Add(new(this.Space, downRight, true));
         }
         if (downLeft != null)
         {
             var p = downLeft.Piece(pieces);
             if (p == null)
-                moves.Add(new(downLeft));
+                moves.Add(new(this.Space, downLeft));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(downLeft, true));
+                moves.Add(new(this.Space, downLeft, true));
         }
 
         var (rightUp, rightDown) = DiagonalMovesRight(board);
@@ -48,17 +50,17 @@ public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite
         {
             var p = rightUp.Piece(pieces);
             if (p == null)
-                moves.Add(new(rightUp));
+                moves.Add(new(this.Space, rightUp));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(rightUp, true));
+                moves.Add(new(this.Space, rightUp, true));
         }
         if (rightDown != null)
         {
             var p = rightDown.Piece(pieces);
             if (p == null)
-                moves.Add(new(rightDown));
+                moves.Add(new(this.Space, rightDown));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(rightDown, true));
+                moves.Add(new(this.Space, rightDown, true));
         }
 
         var (leftUp, leftDown) = DiagonalMovesLeft(board);
@@ -66,17 +68,17 @@ public class Knight(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite
         {
             var p = leftUp.Piece(pieces);
             if (p == null)
-                moves.Add(new(leftUp));
+                moves.Add(new(this.Space, leftUp));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(leftUp, true));
+                moves.Add(new(this.Space, leftUp, true));
         }
         if (leftDown != null)
         {
             var p = leftDown.Piece(pieces);
             if (p == null)
-                moves.Add(new(leftDown));
+                moves.Add(new(this.Space, leftDown));
             else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(leftDown, true));
+                moves.Add(new(this.Space, leftDown, true));
         }
 
         return moves;

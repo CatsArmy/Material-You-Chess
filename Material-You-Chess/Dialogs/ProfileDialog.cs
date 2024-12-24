@@ -28,8 +28,8 @@ public class ProfileDialog : IProfileDialog
     public ProfileDialog(MainActivity App, Action<object, EventArgs> OpenPhotoPicker, Action UpdateInformation)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_settings_account_box));
+        Builder = new MaterialAlertDialogBuilder(App);
+        Builder.SetIcon(Resource.Drawable.outline_settings_account_box);
         Builder.SetTitle("Profile");
         Builder.SetView(Resource.Layout.profile_dialog);
         Builder.SetPositiveButton("Confirm", OnConfirm);
@@ -49,7 +49,7 @@ public class ProfileDialog : IProfileDialog
 
     public void OnSelectPhoto(Android.Net.Uri photoUri)
     {
-        this.DialogProfilePicture?.SetImageURI(photoUri);
+        //this.DialogProfilePicture?.SetImageURI(photoUri);
         this.DialogProfilePicture?.RequestLayout();
     }
 
@@ -67,7 +67,7 @@ public class ProfileDialog : IProfileDialog
             || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
             Log.Debug("Display name is missing???");
         this.EditProfileUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        this.DialogProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+        //this.DialogProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
         if (!WasShown)
         {
             this.EditProfilePicture.Click += (sender, args) => OpenPhotoPicker(sender, args);
@@ -83,7 +83,8 @@ public class ProfileDialog : IProfileDialog
 
         if (UserProfileChangeRequest.PhotoUri == null)
         {
-            if (true)//TODO implement logic for clearing pfp
+            //TODO implement logic for clearing pfp
+            if (true)
                 UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
         }
 

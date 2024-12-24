@@ -23,13 +23,13 @@ public partial class SignupDialog : ISignupDialog
     public TextInputEditText PasswordInput { get; set; }
     public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
-    private bool hasCatched { get; set; } = false;
+    private bool HasCaught { get; set; } = false;
 
     public SignupDialog(MainActivity App, Action OnLoginSuccess)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person_add));
+        Builder = new MaterialAlertDialogBuilder(App);
+        Builder.SetIcon(Resource.Drawable.outline_person_add);
         Builder.SetTitle("Signup");
         Builder.SetView(Resource.Layout.login_signup_dialog);
         Builder.SetPositiveButton("Confirm", OnConfirm);
@@ -71,13 +71,13 @@ public partial class SignupDialog : ISignupDialog
 
         try
         {
-            this.hasCatched = false;
+            this.HasCaught = false;
             var result = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(Email, Password);
 
         }
         catch (Exception e)
         {
-            this.hasCatched = true;
+            this.HasCaught = true;
             Log.Debug("CatDebug", $"{e}");
             if (Dialog.IsShowing)
                 Dialog.Hide();
@@ -103,7 +103,7 @@ public partial class SignupDialog : ISignupDialog
         }
         finally
         {
-            if (!hasCatched)
+            if (!HasCaught)
             {
                 UserProfileChangeRequest.Builder builder = new();
                 builder.SetDisplayName(Username);

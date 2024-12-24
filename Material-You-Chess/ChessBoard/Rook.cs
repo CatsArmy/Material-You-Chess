@@ -1,6 +1,8 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
 
-[Serializable]
+namespace Chess.ChessBoard;
+
+[DataContract]
 public class Rook(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
     public bool HasMoved = false;

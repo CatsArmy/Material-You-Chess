@@ -1,5 +1,8 @@
-﻿namespace Chess.ChessBoard;
-[Serializable]
+﻿using System.Runtime.Serialization;
+
+namespace Chess.ChessBoard;
+
+[DataContract]
 public class King(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
     public bool HasMoved = false;
@@ -10,57 +13,57 @@ public class King(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, 
         ISpace? up = this.Space?.Up(board);
         if (up != null)
             if (up.Piece(pieces) == null)
-                moves.Add(new(up));
+                moves.Add(new(this.Space, up));
             else if (up.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(up, true));
+                moves.Add(new(this.Space, up, true));
 
         ISpace? down = this.Space?.Down(board);
         if (down != null)
             if (down.Piece(pieces) == null)
-                moves.Add(new(down));
+                moves.Add(new(this.Space, down));
             else if (down.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(down, true));
+                moves.Add(new(this.Space, down, true));
         ISpace? left = this.Space?.Left(board);
         if (left != null)
             if (left.Piece(pieces) == null)
-                moves.Add(new(left));
+                moves.Add(new(this.Space, left));
             else if (left.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(left, true));
+                moves.Add(new(this.Space, left, true));
 
         ISpace? right = this.Space?.Right(board);
         if (right != null)
             if (right.Piece(pieces) == null)
-                moves.Add(new(right));
+                moves.Add(new(this.Space, right));
             else if (right.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(right, true));
+                moves.Add(new(this.Space, right, true));
 
         ISpace? topLeft = this.Space?.DiagonalUp(board, false);
         if (topLeft != null)
             if (topLeft.Piece(pieces) == null)
-                moves.Add(new(topLeft));
+                moves.Add(new(this.Space, topLeft));
             else if (topLeft.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(topLeft, true));
+                moves.Add(new(this.Space, topLeft, true));
 
         ISpace? topRight = this.Space?.DiagonalUp(board, true);
         if (topRight != null)
             if (topRight.Piece(pieces) == null)
-                moves.Add(new(topRight));
+                moves.Add(new(this.Space, topRight));
             else if (topRight.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(topRight, true));
+                moves.Add(new(this.Space, topRight, true));
 
         ISpace? bottomLeft = this.Space?.DiagonalDown(board, false);
         if (bottomLeft != null)
             if (bottomLeft.Piece(pieces) == null)
-                moves.Add(new(bottomLeft));
+                moves.Add(new(this.Space, bottomLeft));
             else if (bottomLeft.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(bottomLeft, true));
+                moves.Add(new(this.Space, bottomLeft, true));
 
         ISpace? bottomRight = this.Space?.DiagonalDown(board, true);
         if (bottomRight != null)
             if (bottomRight.Piece(pieces) == null)
-                moves.Add(new(bottomRight));
+                moves.Add(new(this.Space, bottomRight));
             else if (bottomRight.Piece(pieces)?.IsWhite != this.IsWhite)
-                moves.Add(new(bottomRight, true));
+                moves.Add(new(this.Space, bottomRight, true));
 
         return moves;
     }
@@ -82,7 +85,7 @@ public class King(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, 
 
     public bool IsCheck(Move move, Dictionary<(string, int), IPiece> pieces)
     {
-        var piece = move.Space.Piece(pieces);
+        var piece = move.Destination.Piece(pieces);
         if (piece == null)
             return false;
         return piece == this;

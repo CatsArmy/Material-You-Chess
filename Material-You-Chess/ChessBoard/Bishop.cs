@@ -1,6 +1,8 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
 
-[Serializable]
+namespace Chess.ChessBoard;
+
+[DataContract]
 public class Bishop(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
     public override List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)

@@ -15,7 +15,7 @@ using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess;
 
-[Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
     private bool MaterialYouThemePreference = true;
@@ -46,7 +46,7 @@ public class MainActivity : AppCompatActivity
             .SetMediaType(PickVisualMedia.ImageOnly.Instance);
 
         if (!this.MaterialYouThemePreference)
-            base.SetTheme(Resource.Style.Theme_Material3_DayNight_NoActionBar_Alt);
+            base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);

@@ -1,16 +1,20 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
 
-[Serializable]
+namespace Chess.ChessBoard;
+
+[DataContract]
 public class Pawn(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
 {
-    public bool isFirstMove = true;
+    public bool HasMoved = true;
     public bool EnPassantCapturable = false;
+    public override char Abbreviation { get => base.Abbreviation; set => base.Abbreviation = value; }
+
 
     public override void Update()
     {
-        if (this.isFirstMove)
+        if (this.HasMoved)
         {
-            this.isFirstMove = false;
+            this.HasMoved = false;
         }
         else
         {
@@ -27,12 +31,12 @@ public class Pawn(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, 
         var piece = move.Piece(pieces);
         if (piece == null)
         {
-            moves.Add(new(move));
-            if (this.isFirstMove)
+            moves.Add(new(this.Space, move));
+            if (this.HasMoved)
             {
                 var move2 = move.Forward(board, this.IsWhite);
                 if (move2?.Piece(pieces) == null)
-                    moves.Add(new(move2!, false, true));
+                    moves.Add(new(this.Space, move2!, false, true));
             }
         }
 
@@ -44,11 +48,11 @@ public class Pawn(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, 
 
         if (left != null && left.Piece(pieces) != null)
             if (left.Piece(pieces).IsWhite != this.IsWhite)
-                moves.Add(new(left, true));
+                moves.Add(new(this.Space, left, true));
 
         if (right != null && right.Piece(pieces) != null)
             if (right.Piece(pieces).IsWhite != this.IsWhite)
-                moves.Add(new(right, true));
+                moves.Add(new(this.Space, right, true));
 
         return moves;
     }

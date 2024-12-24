@@ -16,7 +16,7 @@
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:clickable="false"
-            android:scaleType="fitCenter"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -40,11 +40,6 @@
             app:layout_constraintVertical_bias="0.95"
             tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_weight="2">-->
 
     <com.google.android.material.card.MaterialCardView
         style="?attr/materialCardViewElevatedStyle"

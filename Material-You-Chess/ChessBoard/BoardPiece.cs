@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.Util.Logger;
 
@@ -20,15 +21,18 @@ public class BoardPiece : IPiece
     public bool IsWhite { get; set; }
 
     [IgnoreDataMember]
-    public (string?, int?) Index
+    public (string, int) Index
     {
         get
         {
             string? resourceName = ChessActivity.Instance?.Resources?.GetResourceName(this.Space.Id);
             string? piece = resourceName?.Split("__")[1];
-            return (piece?[0..^1], int.Parse($"{piece?[^1]}"));
+            return (piece?[0..^1]!, int.Parse($"{piece?[^1]}")!);
         }
     }
+
+    [IgnoreDataMember]
+    public virtual char Abbreviation { get; set; }
 
     public BoardPiece(int id, bool isWhite, ISpace space)
     {
@@ -36,14 +40,14 @@ public class BoardPiece : IPiece
         this.Piece = ChessActivity.Instance?.FindViewById<ImageView>(id);
         this.IsWhite = isWhite;
         this.Space = space;
-        this.Space.SpaceView!.Clickable = false;
+        this.Space.Space!.Clickable = false;
     }
 
     public virtual List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
 
     public virtual void Update() { }
 
-    public void Move(ISpace destination)
+    public virtual void Move(ISpace destination)
     {
         this.Space = destination;
         if (this.Piece?.LayoutParameters is not ConstraintLayout.LayoutParams @params)
@@ -69,9 +73,9 @@ public class BoardPiece : IPiece
 
     public (int, ImageView?) FakeMove(int spaceId, ImageView? spaceView)
     {
-        var lastSpaceView = this.Space.SpaceView;
+        var lastSpaceView = this.Space.Space;
         var lastSpaceId = this.Space.Id;
-        this.Space.SpaceView = spaceView;
+        this.Space.Space = spaceView;
         this.Space.Id = spaceId;
         return (lastSpaceId, lastSpaceView);
     }
@@ -80,11 +84,13 @@ public class BoardPiece : IPiece
     {
         //logic
         //check for if move would result in a check
-        var rip = destination.Index;
-        pieces.Remove(rip);
+        pieces.Remove(destination.Index);
         destination.Piece.Visibility = Android.Views.ViewStates.Gone;
         destination.Piece.Enabled = false;
         destination.Piece.Clickable = false;
+        if (ChessActivity.Instance!.FindViewById(this.Id) is View view)
+            if (view.Parent is ViewGroup parent)
+                parent.RemoveView(view);
 
         this.Move(destination.Space);
         //add to the list of captured pieces
@@ -108,11 +114,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(diagonal, true));
+                    moves.Add(new Move(this.Space, diagonal, true));
                 break;
             }
 
-            moves.Add(new Move(diagonal));
+            moves.Add(new Move(this.Space, diagonal));
         }
     }
 
@@ -126,11 +132,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(diagonal, true));
+                    moves.Add(new Move(this.Space, diagonal, true));
                 break;
             }
 
-            moves.Add(new Move(diagonal));
+            moves.Add(new Move(this.Space, diagonal));
         }
     }
 
@@ -144,11 +150,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(diagonal, true));
+                    moves.Add(new Move(this.Space, diagonal, true));
                 break;
             }
 
-            moves.Add(new Move(diagonal));
+            moves.Add(new Move(this.Space, diagonal));
         }
     }
 
@@ -162,11 +168,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(diagonal, true));
+                    moves.Add(new Move(this.Space, diagonal, true));
                 break;
             }
 
-            moves.Add(new Move(diagonal));
+            moves.Add(new Move(this.Space, diagonal));
         }
     }
 
@@ -188,11 +194,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(horizontal, true));
+                    moves.Add(new Move(this.Space, horizontal, true));
                 break;
             }
 
-            moves.Add(new Move(horizontal));
+            moves.Add(new Move(this.Space, horizontal));
         }
     }
 
@@ -214,11 +220,11 @@ public class BoardPiece : IPiece
             if (piece != null)
             {
                 if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(vertical, true));
+                    moves.Add(new Move(this.Space, vertical, true));
                 break;
             }
 
-            moves.Add(new Move(vertical));
+            moves.Add(new Move(this.Space, vertical));
         }
     }
 

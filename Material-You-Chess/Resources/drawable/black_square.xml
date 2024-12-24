@@ -11,7 +11,7 @@
         </vector>
     </item>
     <item android:maxLevel="1">
-        <vector 
+        <vector
             android:width="32dp"
             android:height="32dp"
             android:viewportWidth="34"

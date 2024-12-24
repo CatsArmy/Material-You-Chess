@@ -11,8 +11,8 @@ public class LogoutDialog : IMaterialDialog
     private Action OnConfirmation { get; set; }
     public LogoutDialog(MainActivity App, Action OnConfirmation)
     {
-        Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
-        Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person_remove));
+        Builder = new MaterialAlertDialogBuilder(App);
+        Builder.SetIcon(Resource.Drawable.outline_person_remove);
         Builder.SetTitle("Logout");
         Builder.SetMessage("Are you sure you want to logout?");
         Builder.SetPositiveButton("Confirm", OnConfirm);

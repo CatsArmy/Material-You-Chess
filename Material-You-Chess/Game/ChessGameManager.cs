@@ -1,57 +1,56 @@
-using System;
-using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Chess.ChessBoard;
 
-//namespace Chess.Game;
-
-//public interface ILocalGame : IChessGame
-//{
-
-//}
-
-//public interface IOnlineGame : IChessGame
-//{
-
-//}
+namespace Chess.Game;
 
 
 //If both chip White and chip Black are unselected the colors of each player will be determined by a coin flip
 public interface IChessGame
 {
-    public Dictionary<(string, int), IPiece> AllPieces { get; set; }
-    public Dictionary<(string, int), IPiece> WhitePieces { get; set; }
-    public Dictionary<(string, int), IPiece> BlackPieces { get; set; }
-    public Dictionary<(char?, int?), BoardSpace> Board { get; set; }
-    public IPlayer Player1 { get; set; }
-    public IPlayer Player2 { get; set; }
-    public bool IsOngoing { get; set; }
-    //public bool IsOngoing { get; set; }
+    //[DataMember] public bool IsOngoing { get; set; }
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> AllPieces { get; set; }
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> WhitePieces { get; }
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> BlackPieces { get; }
+    [IgnoreDataMember] public Dictionary<(char, int), ISpace> Board { get; }
+    [DataMember] public IPlayer Player1 { get; set; }
+    [DataMember] public IPlayer Player2 { get; set; }
+}
+
+public class ChessGame : IChessGame
+{
+    //[DataMember] public bool IsOngoing { get; set; }
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> AllPieces { get; set; } = new();
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> WhitePieces { get; } = new();
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> BlackPieces { get; } = new();
+    [IgnoreDataMember] public Dictionary<(char, int), ISpace> Board { get; } = new();
+    [DataMember] public IPlayer Player1 { get; set; }
+    [DataMember] public IPlayer Player2 { get; set; }
 }
 
 
-[Serializable]
+[DataContract]
 public enum GameOutcome
 {
-    Draw,
-    Resign,
-    Win,
-    Lose,
+    [DataMember] Draw,
+    [DataMember] Resign,
+    [DataMember] Win,
+    [DataMember] Lose,
 }
 
+
+
+
+public interface IPlayer
+{
+    [DataMember] public bool IsWhite { get; set; }
+    [DataMember] public GameOutcome Outcome { get; set; }
+    [IgnoreDataMember] public Dictionary<(string, int), IPiece> Pieces { get; set; }
+}
 
 //public interface INetworkedPlayer : IPlayer
 //{
 //    public bool HasColorPreference { get; set; }
 //}
-
-public interface IPlayer
-{
-    public bool IsWhite { get; set; }
-    public GameOutcome Outcome { get; set; }
-    internal Dictionary<(string, int), IPiece> pieces { get; set; }
-
-}
-
 //public class ChessGameManager
 //{
 //    public ChessGameManager(IChessGame game)

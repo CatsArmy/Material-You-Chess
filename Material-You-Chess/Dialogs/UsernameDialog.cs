@@ -18,7 +18,7 @@ public class UsernameDialog : IUsernameDialog
     public UsernameDialog(AppCompatActivity App, Action<string> OnConfirmation)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons);
+        Builder = new MaterialAlertDialogBuilder(App);
         Builder.SetTitle("Edit Username");
         Builder.SetView(Resource.Layout.username_dialog);
         Builder.SetPositiveButton("Confirm", OnConfirm);
