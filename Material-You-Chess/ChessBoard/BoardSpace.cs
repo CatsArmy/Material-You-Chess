@@ -2,19 +2,19 @@
 
 public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
 {
-    private const int Select = 1;
-    private const int Unselect = 0;
+    public const int Select = 1;
+    public const int Unselect = 0;
 
     public ImageView? Space { get; set; } = Space;
     public bool IsWhite { get; set; } = IsWhite;
     public int Id { get; set; } = Id;
     public (char, int) Index { get => (this.File, this.Rank); }
 
-    public char File { get => ChessActivity.Instance!.Resources!.GetResourceName(this.Id)!.Split("__")[1][0]!; }
+    public char File { get; init => field = $"{this}"[0]; }
 
-    public int Rank { get => int.Parse($"{ChessActivity.Instance!.Resources!.GetResourceName(this.Id)!.Split("__")[1][^1]}")!; }
+    public int Rank { get; init => field = int.Parse($"{this.ToString()[^1]}")!; }
 
-    public override string? ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1];
+    public override string ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]!;
 
     public void SelectSpace() => this.Space?.SetImageLevel(Select);
 
@@ -116,11 +116,5 @@ public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
         return this.Down(board);
     }
 
-    public IPiece? Piece(Dictionary<(string, int), IPiece> boardPieces)
-    {
-        if (boardPieces.Values.Where(p => p.Space == this).ToList().Count <= 0)
-            return null;
-
-        return boardPieces.Values.FirstOrDefault(p => p.Space == this);
-    }
+    public IPiece? Piece(Dictionary<(string, int), IPiece> boardPieces) => boardPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
 }

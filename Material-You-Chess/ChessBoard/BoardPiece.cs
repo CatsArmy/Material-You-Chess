@@ -6,19 +6,19 @@ using Chess.Util.Logger;
 namespace Chess.ChessBoard;
 
 [DataContract]
-public class BoardPiece : IPiece
+public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
 {
     [IgnoreDataMember]
-    public ImageView? Piece { get; set; }
+    public ImageView? Piece { get; set; } = ChessActivity.Instance?.FindViewById<ImageView>(id);
 
     [DataMember]
-    public ISpace Space { get; set; }
+    public ISpace Space { get; set; } = space;
 
     [DataMember]
-    public int Id { get; set; }
+    public int Id { get; set; } = id;
 
     [DataMember]
-    public bool IsWhite { get; set; }
+    public bool IsWhite { get; set; } = isWhite;
 
     [IgnoreDataMember]
     public (string, int) Index
@@ -34,15 +34,6 @@ public class BoardPiece : IPiece
     [IgnoreDataMember]
     public virtual char Abbreviation { get; set; }
 
-    public BoardPiece(int id, bool isWhite, ISpace space)
-    {
-        this.Id = id;
-        this.Piece = ChessActivity.Instance?.FindViewById<ImageView>(id);
-        this.IsWhite = isWhite;
-        this.Space = space;
-        this.Space.Space!.Clickable = false;
-    }
-
     public virtual List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
 
     public virtual void Update() { }
@@ -55,18 +46,17 @@ public class BoardPiece : IPiece
             Log.Warn("Piece layout params are not the correct type");
             return;
         }
-
-        @params.TopToTop = destination.Id;
-        @params.BottomToBottom = destination.Id;
-        @params.StartToStart = destination.Id;
-        @params.EndToEnd = destination.Id;
-        @params.VerticalBias = 0.5f;
-        @params.HorizontalBias = 0.5f;
-
+        const float Half = 0.5f;
+        @params.VerticalBias = Half;
+        @params.HorizontalBias = Half;
         @params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
         @params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
         @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
         @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
+        @params.TopToTop = destination.Id;
+        @params.BottomToBottom = destination.Id;
+        @params.StartToStart = destination.Id;
+        @params.EndToEnd = destination.Id;
         this.Piece.LayoutParameters = @params;
         this.Piece.RequestLayout();
     }
@@ -85,9 +75,9 @@ public class BoardPiece : IPiece
         //logic
         //check for if move would result in a check
         pieces.Remove(destination.Index);
-        destination.Piece.Visibility = Android.Views.ViewStates.Gone;
-        destination.Piece.Enabled = false;
-        destination.Piece.Clickable = false;
+        destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
+        destination.Piece!.Enabled = false;
+        //destination.Piece!.Clickable = false;
         if (ChessActivity.Instance!.FindViewById(this.Id) is View view)
             if (view.Parent is ViewGroup parent)
                 parent.RemoveView(view);

@@ -3,7 +3,6 @@ using Android.Runtime;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
-using Chess.Util.Logger;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
@@ -22,11 +21,11 @@ public class ChessActivity : AppCompatActivity
     private TextView? p2MainUsername;
     private string BoardState = string.Empty;
 
-    private Dictionary<(string, int), IPiece> pieces = new Dictionary<(string, int), IPiece>();
-    private Dictionary<(char, int), ISpace> board = new Dictionary<(char, int), ISpace>();
+    private Dictionary<(string, int), IPiece> pieces = new();
+    private Dictionary<(char, int), ISpace> board = new();
     private IPiece? selected = null;
-    private List<ISpace>? highlighted = null;
-    private List<Move>? moves = null;
+    private List<ISpace> highlighted = new();
+    private List<Move>? moves = new();
 
     private Bishop? bBishop1, bBishop2;
     private King? bKing;
@@ -63,27 +62,24 @@ public class ChessActivity : AppCompatActivity
         this.p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
 
-        this.p1MainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        this.p1MainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         Instance = this;
 
         this.InitChessBoard();
         this.InitChessPieces();
-
-        this.selected = null;
-        this.highlighted = new();
-        this.moves = new();
         //TODO implement En Passant difficulty Medium--
         //TODO Add Casstling difficulty Medium
         //TODO Add Promotion difficulty Easy+ / Medium-
         //TODO More?
         foreach (var space in this.board.Values)
         {
-            space.Space.Click += (sender, e) => OnClickSpace(sender, e, space);
+            space!.Space!.Click += (sender, e) => OnClickSpace(sender, e, space);
+            space.Space.Clickable = true;
         }
 
         foreach (var piece in this.pieces.Values)
         {
-            piece.Piece.Click += (sender, e) => OnClickPiece(sender, e, piece);
+            piece!.Piece!.Click += (sender, e) => OnClickPiece(sender, e, piece);
             piece.Piece.Clickable = true;
         }
         ///rank = player is white switch {
@@ -100,8 +96,8 @@ public class ChessActivity : AppCompatActivity
 
     private void OnClickPiece(object? sender, EventArgs args, IPiece piece)
     {
-        this.p1MainUsername.Text = $"{piece}";
-        this.p2MainUsername.Text = $"{nameof(piece)}.{nameof(piece.IsWhite)}:{piece.IsWhite}";
+        this.p1MainUsername!.Text = $"{piece}";
+        this.p2MainUsername!.Text = $"{nameof(piece)}.{nameof(piece.IsWhite)}:{piece.IsWhite}";
 
         if (this.selected == null)
         {
@@ -120,9 +116,62 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var moves = this.selected.Moves(this.board, this.pieces);
-        Log.Debug($"moves lookup done");
-        var move = moves.FirstOrDefault(move => move.Destination == this.board[piece.Space.Index]);
+        //the first move in the list of all legal moves where:
+        //the destination space is the same space as the clicked piece
+        var move = this.moves!.FirstOrDefault(move => move.Destination.Index == piece.Space.Index);
+        if (move == null)
+        {
+            //the destination space is never the same space as the clicked piece therefor that move is not only not legal
+            //but also an indication that the played wants to deselect the all pieces
+            ClearSelectedMoves();
+            this.selected = null;
+            return;
+        }
+
+        //var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.Space);
+        //var king = this.selected.IsWhite ? this.wKing : this.bKing;
+        //if (king!.IsInCheck(board, pieces))
+        //{
+        //    this.selected.FakeMove(spaceId, spaceView);
+        //    Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long)?.Show();
+        //    return;
+        //}
+
+        if (selected is Pawn pawn)
+        {
+            //pawn.isFirstMove = false;
+            pawn.EnPassantCapturable = move.EnPassantCapturable;
+            if (piece.Space?.Rank == (pawn.IsWhite ? 8 : 1))
+                /*await*/
+                pawn.Promote();
+        }
+        /*
+          set
+                {
+                    field = value;
+
+                }
+         */
+        ClearSelectedMoves();
+        piece!.Space!.SelectSpace();
+        this.selected!.Space.SelectSpace();
+
+        this.highlighted?.Add(piece.Space);
+        this.highlighted?.Add(this.selected!.Space);
+
+        this.selected.Capture(piece!, pieces);
+        this.NextPlayer();
+    }
+
+    private void OnClickSpace(object? sender, System.EventArgs e, ISpace space)
+    {
+        this.p1MainUsername!.Text = $"{space}";
+        this.p2MainUsername!.Text = $"{nameof(space.IsWhite)}:{space.IsWhite}";
+
+        if (this.selected == null)
+            return;
+
+        Move? move = this.selected?.Moves(this.board, this.pieces)?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move == null)
         {
             ClearSelectedMoves();
@@ -130,72 +179,36 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.Space);
-        var king = this.selected.IsWhite ? this.wKing : this.bKing;
-        if (king.IsInCheck(board, pieces))
-        {
-            this.selected.FakeMove(spaceId, spaceView);
-            Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long)?.Show();
-            return;
-        }
-
-        if (selected is Pawn pawn)
-        {
-            //pawn.isFirstMove = false;
-            pawn.EnPassantCapturable = move.EnPassantCapturable;
-            if (piece.Space?.File == (pawn.IsWhite ? 'H' : 'A'))
-                /*await*/
-                pawn.Promote();
-        }
-        /**/
-        SelectMoves(piece);
-        this.selected.Capture(piece!, pieces);
-
-        this.NextPlayer();
-    }
-
-    private void OnClickSpace(object? sender, System.EventArgs e, ISpace space)
-    {
-        p1MainUsername.Text = $"{space}";
-        p2MainUsername.Text = $"{nameof(space.IsWhite)}:{space.IsWhite}";
-
-        if (this.selected == null)
-            return;
-
-        Move? move = this.selected?.Moves(this.board, this.pieces)?.FirstOrDefault(move => move.Destination == space);
-        if (move == null)
-        {
-            ClearSelectedMoves();
-            selected = null;
-            return;
-        }
-
         var layout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         layout?.LayoutTransition?.EnableTransitionType(Android.Animation.LayoutTransitionType.Changing);
-        var (spaceId, spaceView) = this.selected!.FakeMove(space.Id, space.Space);
-        var king = this.selected.IsWhite ? this.wKing : this.bKing;
-        if (king.IsInCheck(this.board, this.pieces))
-        {
-            this.selected.FakeMove(spaceId, spaceView);
-            Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long)?.Show();
-            return;
-        }
+        //var (spaceId, spaceView) = this.selected!.FakeMove(space.Id, space.Space);
+        //var king = this.selected.IsWhite ? this.wKing : this.bKing;
+        //if (king!.IsInCheck(this.board, this.pieces))
+        //{
+        //    this.selected.FakeMove(spaceId, spaceView);
+        //    Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long)?.Show();
+        //    return;
+        //}
 
         if (this.selected is Pawn pawn)
         {
             //pawn.isFirstMove = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
-            if (space.File == (pawn.IsWhite ? 'H' : 'A'))
+            if (space.Rank == (pawn.IsWhite ? 8 : 1))
                 pawn.Promote();
         }
 
-        this.SelectMoves(space);
+        ClearSelectedMoves();
+        space.SelectSpace();
+        this.selected!.Space.SelectSpace();
+
+        this.highlighted?.Add(space);
+        this.highlighted?.Add(this.selected!.Space);
+
         this.selected.Move(space);
         this.NextPlayer();
         return;
     }
-
-
 
     private void ClearSelectedMoves()
     {
@@ -207,29 +220,20 @@ public class ChessActivity : AppCompatActivity
     private void SelectMoves()
     {
         this.ClearSelectedMoves();
-        this.moves = this.selected?.Moves(board, pieces);
+        this.moves = this.selected?.Moves(this.board, this.pieces);
+        if (this.moves is null || this.moves?.Count <= 0)
+            return;
+
         foreach (var move in this.moves!)
         {
-            var space = this.board[move.Destination.Index]!;
-            space.SelectSpace();
-            this.highlighted?.Add(space);
+            move.Destination.SelectSpace();
+            this.highlighted?.Add(move.Destination);
+            if (move?.Origin?.Space?.Drawable?.Level == BoardSpace.Unselect)
+            {
+                move.Origin.SelectSpace();
+                this.highlighted?.Add(move.Origin);
+            }
         }
-        var selected = this.board[this.selected!.Space.Index]!;
-        selected.SelectSpace();
-        this.highlighted!.Add(selected);
-    }
-
-    private void SelectMoves(IPiece piece) => SelectMoves(piece.Space);
-
-    private void SelectMoves(ISpace space)
-    {
-        ClearSelectedMoves();
-        space.SelectSpace();
-        this.highlighted?.Add(space);
-
-        var selected = this.selected!.Space;
-        selected.SelectSpace();
-        this.highlighted?.Add(selected);
     }
 
     private void NextPlayer()
@@ -334,7 +338,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //B
 
         for (int id = Resource.Id.gmb__B1, rank = 1; id <= Resource.Id.gmb__B8; id++, rank++)
         {
@@ -347,7 +351,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++;  //C
 
         for (int id = Resource.Id.gmb__C1, rank = 1; id <= Resource.Id.gmb__C8; id++, rank++)
         {
@@ -360,7 +364,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //D
 
         for (int id = Resource.Id.gmb__D1, rank = 1; id <= Resource.Id.gmb__D8; id++, rank++)
         {
@@ -373,7 +377,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //E
 
         for (int id = Resource.Id.gmb__E1, rank = 1; id <= Resource.Id.gmb__E8; id++, rank++)
         {
@@ -386,7 +390,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //F
 
         for (int id = Resource.Id.gmb__F1, rank = 1; id <= Resource.Id.gmb__F8; id++, rank++)
         {
@@ -399,7 +403,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //G
 
         for (int id = Resource.Id.gmb__G1, rank = 1; id <= Resource.Id.gmb__G8; id++, rank++)
         {
@@ -412,7 +416,7 @@ public class ChessActivity : AppCompatActivity
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
-        file++;
+        file++; //H
 
         for (int id = Resource.Id.gmb__H1, rank = 1; id <= Resource.Id.gmb__H8; id++, rank++)
         {

@@ -9,4 +9,14 @@
 
     <color name="white_piece_color">?attr/colorPrimaryContainer</color>
     <color name="black_piece_color">?attr/colorOnPrimaryContainer</color>
+
+    <color name="theme_app_ring">@color/material_dynamic_primary70</color>
+    <color name="on_theme_app">@color/material_dynamic_primary30</color>
+    <color name="theme_app">@color/material_dynamic_primary90</color>
+
+
+    <color name="theme_app_white_piece">@color/material_dynamic_primary90</color>
+    <color name="theme_app_black_piece">@color/material_dynamic_primary10</color>
+    <color name="theme_app_star">@color/material_dynamic_tertiary50</color>
+    <color name="theme_app_star_alt">@color/material_dynamic_tertiary20</color>
 </resources>

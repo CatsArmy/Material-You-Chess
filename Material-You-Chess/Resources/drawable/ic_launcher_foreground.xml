@@ -12,8 +12,8 @@
           android:centerY="32.5"
           android:gradientRadius="57.27"
           android:type="radial">
-        <item android:offset="0" android:color="@color/white_space_overlay_color"/>
-        <item android:offset="1" android:color="@color/black_space_overlay_color"/>
+        <item android:offset="0" android:color="@color/theme_app_star"/>
+        <item android:offset="1" android:color="@color/theme_app_star_alt"/>
       </gradient>
     </aapt:attr>
   </path>
@@ -22,13 +22,13 @@
         android:pathData="M31.5,31.5h45v45h-45z"/>
     <path
         android:pathData="M50.06,31.82C50.88,31.72 51.69,32.05 52.23,32.67L57.33,38.62C63.19,40.07 66.59,44.48 68.46,49.99C70.4,55.66 70.88,62.86 70.88,70.25C70.88,71.63 69.76,72.75 68.38,72.75H45.07C43.74,72.75 42.64,71.71 42.57,70.39C42.5,69.21 42.78,67.15 43.61,65.06L43.62,65.02C41.27,66.28 38.65,65.98 36.71,64.6C34.36,62.92 33.05,59.63 34.54,56.39C35.62,54.05 36.79,52.81 37.67,51.87C38.49,51 38.83,50.61 39.07,49.64C40.54,43.76 43.57,40.38 46.82,38.83C46.77,38.16 46.81,37.51 46.89,36.93C47.1,35.47 47.6,34.12 48.12,33.14C48.51,32.4 49.23,31.91 50.06,31.82Z"
-        android:fillColor="@color/black_piece_color"/>
+        android:fillColor="@color/theme_app_black_piece"/>
     <path
         android:pathData="M55.98,40.89L50.34,34.3C49.52,35.85 48.73,38.59 49.86,40.57C49.31,40.62 48.78,40.71 48.37,40.88C45.77,41.92 42.91,44.63 41.5,50.25C41.09,51.88 40.36,52.66 39.49,53.59C38.67,54.46 37.72,55.47 36.81,57.44C34.94,61.5 40,65.56 43.69,61.87C45.76,59.8 47.58,58.94 49.1,58.22C51.29,57.19 52.88,56.44 53.77,52.75C54.2,54.47 54.03,58.53 49.93,61.01C45.83,63.48 44.98,68.7 45.07,70.25H68.37C68.37,55.55 66.43,42.85 55.98,40.89Z"
-        android:fillColor="@color/white_piece_color"
+        android:fillColor="@color/theme_app_white_piece"
         android:fillType="evenOdd"/>
     <path
         android:pathData="M49,50.25C50.04,50.25 50.88,49.41 50.88,48.38C50.88,47.34 50.04,46.5 49,46.5C47.96,46.5 47.13,47.34 47.13,48.38C47.13,49.41 47.96,50.25 49,50.25Z"
-        android:fillColor="@color/black_piece_color"/>
+        android:fillColor="@color/theme_app_black_piece"/>
   </group>
 </vector>
