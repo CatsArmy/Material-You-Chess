@@ -1,8 +1,10 @@
-﻿using Android.Content.PM;
+﻿using Android.Animation;
+using Android.Content.PM;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.ChessBoard;
+using Chess.Util;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
@@ -28,16 +30,22 @@ public class ChessActivity : AppCompatActivity
         get; set
         {
             field = value;
-            if (value is null)
-            {
-                this.ClearSelectedMoves();
-            }
             if (value is not null)
             {
                 this.SelectMoves();
             }
+            if (this.skipClearingSelected)
+            {
+                this.skipClearingSelected = false;
+                return;
+            }
+            if (value is null)
+            {
+                this.ClearSelectedMoves();
+            }
         }
     } = null;
+    private bool skipClearingSelected = false;
     private List<ISpace> highlighted = new();
     private List<IMove>? moves = new();
 
@@ -85,33 +93,111 @@ public class ChessActivity : AppCompatActivity
         //TODO Add Casstling difficulty Medium
         //TODO Add Promotion difficulty Easy+ / Medium-
         //TODO More?
-        foreach (var space in this.board.Values)
+        foreach (KeyValuePair<(char, int), ISpace> keyValuePair in this.board)
         {
-            space!.Space!.Click += (sender, e) => OnClickSpace(sender, e, space);
-            space.Space.Clickable = true;
+            keyValuePair.Value.Space!.Click += OnClick;
+            keyValuePair.Value.Space!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
+            keyValuePair.Value.Space!.Clickable = true;
         }
 
-        foreach (var piece in this.pieces.Values)
+        foreach (KeyValuePair<(string, int), IPiece> keyValuePair in this.pieces)
         {
-            piece!.Piece!.Click += (sender, e) => OnClickPiece(sender, e, piece);
-            piece.Piece.Clickable = true;
+            keyValuePair.Value.Piece!.Click += OnClick;
+            keyValuePair.Value.Piece!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
+            keyValuePair.Value.Piece!.Clickable = true;
         }
     }
 
+    private void OnClick(object? sender, EventArgs args)
+    {
+        if (sender is not ImageView imageView)
+            return;
+
+        if (imageView?.Tag is not Java.Lang.String javaString)
+            return;
+
+        string tag = javaString.ToString();
+        var sIndex = SpaceTagToIndex(tag);
+        var pIndex = PieceTagToIndex(tag);
+        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
+        //----------+-----------+-----------+-----------+-----------+-----------
+        //lowercase &   len <= 2|   unknown |   unknown | uppercase &   len > 2 
+
+        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
+            return;
+
+        //----------+-----------+-----------+-----------+-----------+-----------
+        //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
+        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
+        {
+            sIndex = this.pieces[pIndex].Space.Index;
+            var piece = this.pieces[pIndex];
+            if (this.selected == null)
+            {
+                this.selected = piece;
+                return;
+            }
+
+            if (this.selected.IsWhite == piece.IsWhite)
+            {
+                if (this.selected.Id != piece.Id)
+                {
+                    this.selected = piece;
+                }
+                return;
+            }
+        }
+        else if (this.selected == null)
+            return;
+
+
+        ISpace space = board[sIndex];
+        if (this.moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not IMove move)
+        {
+            this.selected = null;
+            return;
+        }
+
+        space!.SelectSpace();
+        this.selected!.Space.SelectSpace();
+
+        this.highlighted?.Add(space);
+        this.highlighted?.Add(this.selected!.Space);
+        if (this.selected is Pawn pawn)
+        {
+            if (move is Pawn.DoubleMove doubleMove)
+            {
+                doubleMove.Pawn.EnPassantCapturable = true;
+            }
+            else if (move is Pawn.EnPassant enPassant)
+            {
+                enPassant.Pawn.Space.SelectSpace();
+                this.highlighted?.Add(enPassant.Pawn.Space);
+                this.selected.Capture(enPassant.Pawn, pieces);
+            }
+            pawn.HasMoved = true;
+        }
+        else if (move is ICapture capture)
+            this.selected.Capture(capture.Piece, pieces);
+
+        else
+            base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard)?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+
+        this.selected.Move(move.Destination);
+        this.skipClearingSelected = true;
+        this.selected = null;
+    }
+    public static (char, int) SpaceTagToIndex(string Tag) => (Tag[0], int.Parse($"{Tag[^1]}"));
+    public static (string, int) PieceTagToIndex(string Tag) => (Tag[0..^1], int.Parse($"{Tag[^1]}"));
+    /*
     private void OnClickPiece(object? sender, EventArgs args, IPiece piece)
     {
         this.p1MainUsername!.Text = $"{piece}";
         this.p2MainUsername!.Text = $"{nameof(piece)}.{nameof(piece.IsWhite)}:{piece.IsWhite}";
 
-        if (sender is ImageView view)
-        {
-            //view.Tag = ;
-        }
-
         if (this.selected == null)
         {
             this.selected = piece;
-            this.SelectMoves();
             return;
         }
 
@@ -120,7 +206,6 @@ public class ChessActivity : AppCompatActivity
             if (this.selected.Id != piece.Id)
             {
                 this.selected = piece;
-                this.SelectMoves();
             }
             return;
         }
@@ -128,12 +213,10 @@ public class ChessActivity : AppCompatActivity
         var move = this.moves!.FirstOrDefault(move => move.Destination.Index == piece.Space.Index);
         if (move == null)
         {
-            ClearSelectedMoves();
             this.selected = null;
             return;
         }
 
-        this.ClearSelectedMoves();
         piece!.Space!.SelectSpace();
         this.selected!.Space.SelectSpace();
 
@@ -147,8 +230,10 @@ public class ChessActivity : AppCompatActivity
         }
         else if (move is ICapture capture)
             this.selected.Capture(capture.Piece, pieces);
+        else
+            base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard)?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
         this.selected.Move(move.Destination!);
-        this.NextPlayer();
+        this.selected = null;
     }
 
     private void OnClickSpace(object? sender, System.EventArgs e, ISpace space)
@@ -159,10 +244,8 @@ public class ChessActivity : AppCompatActivity
         if (this.selected == null)
             return;
 
-        Move? move = this.moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
-        if (move == null)
+        if (this.moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not IMove move)
         {
-            ClearSelectedMoves();
             this.selected = null;
             return;
         }
@@ -181,7 +264,6 @@ public class ChessActivity : AppCompatActivity
         if (this.selected is Pawn pawn)
         {
             pawn.HasMoved = false;
-            pawn.EnPassantCapturable = move.EnPassantCapturable;
             if (space.Rank == (pawn.IsWhite ? 8 : 1))
                 pawn.Promote();
         }
@@ -197,7 +279,7 @@ public class ChessActivity : AppCompatActivity
         this.NextPlayer();
         return;
     }
-
+    */
     private void ClearSelectedMoves()
     {
         this.moves?.Clear();

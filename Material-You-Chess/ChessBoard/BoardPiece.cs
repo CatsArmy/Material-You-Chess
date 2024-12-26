@@ -29,6 +29,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
     public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
 
     public virtual void Update() { }
+
     public virtual void Move(ISpace destination)
     {
         this.Space = destination;
@@ -92,15 +93,14 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         {
             if (diagonal == null)
                 break;
-            IPiece? piece = diagonal.Piece(pieces);
-            if (piece != null)
+            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, diagonal, true));
+                if (diagonalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, diagonal));
+            moves.Add(new Move(this, diagonal));
         }
     }
 
@@ -110,15 +110,14 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         {
             if (diagonal == null)
                 break;
-            IPiece? piece = diagonal.Piece(pieces);
-            if (piece != null)
+            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, diagonal, true));
+                if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, diagonal));
+            moves.Add(new Move(this, diagonal));
         }
     }
 
@@ -128,15 +127,14 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         {
             if (diagonal == null)
                 break;
-            IPiece? piece = diagonal.Piece(pieces);
-            if (piece != null)
+            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, diagonal, true));
+                if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, diagonal));
+            moves.Add(new Move(this, diagonal));
         }
     }
 
@@ -146,15 +144,14 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         {
             if (diagonal == null)
                 break;
-            IPiece? piece = diagonal.Piece(pieces);
-            if (piece != null)
+            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, diagonal, true));
+                if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, diagonal));
+            moves.Add(new Move(this, diagonal));
         }
     }
 
@@ -166,21 +163,20 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
 
     public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isRight, ref List<IMove> moves)
     {
-        Func<Dictionary<(char, int), ISpace>, ISpace> iterator = isRight ? this.Space.Right : this.Space.Left;
+        Func<Dictionary<(char, int), ISpace>, ISpace?> iterator = isRight ? this.Space.Right : this.Space.Left;
         for (ISpace? horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
             : horizontal.Left, horizontal = iterator(board))
         {
             if (horizontal == null)
                 break;
-            IPiece? piece = horizontal.Piece(pieces);
-            if (piece != null)
+            if (horizontal.Piece(pieces) is IPiece horizontalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, horizontal, true));
+                if (horizontalPiece is not null && horizontalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, horizontalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, horizontal));
+            moves.Add(new Move(this, horizontal));
         }
     }
 
@@ -192,21 +188,20 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
 
     public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isUp, ref List<IMove> moves)
     {
-        Func<Dictionary<(char, int), ISpace>, ISpace> iterator = isUp ? this.Space.Up : this.Space.Down;
+        Func<Dictionary<(char, int), ISpace>, ISpace?> iterator = isUp ? this.Space.Up : this.Space.Down;
         for (ISpace? vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
             : vertical.Down, vertical = iterator(board))
         {
             if (vertical == null)
                 break;
-            IPiece? piece = vertical.Piece(pieces);
-            if (piece != null)
+            if (vertical.Piece(pieces) is IPiece verticalPiece)
             {
-                if (piece.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this.Space, vertical, true));
+                if (verticalPiece is not null && verticalPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, verticalPiece));
                 break;
             }
 
-            moves.Add(new Move(this.Space, vertical));
+            moves.Add(new Move(this, vertical));
         }
     }
 

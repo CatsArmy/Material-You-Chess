@@ -1,6 +1,4 @@
-﻿using Java.IO;
-
-namespace Chess.ChessBoard;
+﻿namespace Chess.ChessBoard;
 
 public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {

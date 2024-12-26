@@ -13,73 +13,65 @@ public class Knight(int id, (string, int) index, bool isWhite, ISpace space) : B
         var (upRight, upLeft) = DiagonalMovesUp(board);
         if (upRight != null)
         {
-            var p = upRight.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, upRight));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, upRight, true));
+            if (upRight.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, upRight));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
         if (upLeft != null)
         {
-            var p = upLeft.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, upLeft));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, upLeft, true));
+            if (upLeft.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, upLeft));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
 
         var (downRight, downLeft) = DiagonalMovesDown(board);
         if (downRight != null)
         {
-            var p = downRight.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, downRight));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, downRight, true));
+            if (downRight.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, downRight));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
         if (downLeft != null)
         {
-            var p = downLeft.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, downLeft));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, downLeft, true));
+            if (downLeft.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, downLeft));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
 
         var (rightUp, rightDown) = DiagonalMovesRight(board);
         if (rightUp != null)
         {
-            var p = rightUp.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, rightUp));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, rightUp, true));
+            if (rightUp.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, rightUp));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
         if (rightDown != null)
         {
-            var p = rightDown.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, rightDown));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, rightDown, true));
+            if (rightDown.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, rightDown));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
 
         var (leftUp, leftDown) = DiagonalMovesLeft(board);
         if (leftUp != null)
         {
-            var p = leftUp.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, leftUp));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, leftUp, true));
+            if (leftUp.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, leftUp));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
         if (leftDown != null)
         {
-            var p = leftDown.Piece(pieces);
-            if (p == null)
-                moves.Add(new(this.Space, leftDown));
-            else if (p.IsWhite != this.IsWhite)
-                moves.Add(new(this.Space, leftDown, true));
+            if (leftDown.Piece(pieces) is not IPiece piece)
+                moves.Add(new Move(this, leftDown));
+            else if (piece.IsWhite != this.IsWhite)
+                moves.Add(new Capture(this, piece));
         }
 
         return moves;
