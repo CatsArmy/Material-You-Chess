@@ -6,7 +6,7 @@ using Chess.Util.Logger;
 namespace Chess.ChessBoard;
 
 [DataContract]
-public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
+public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space) : IPiece
 {
     [IgnoreDataMember]
     public ImageView? Piece { get; set; } = ChessActivity.Instance?.FindViewById<ImageView>(id);
@@ -15,29 +15,20 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
     public ISpace Space { get; set; } = space;
 
     [DataMember]
-    public int Id { get; set; } = id;
+    public int Id { get; } = id;
 
     [DataMember]
-    public bool IsWhite { get; set; } = isWhite;
+    public bool IsWhite { get; } = isWhite;
 
     [IgnoreDataMember]
-    public (string, int) Index
-    {
-        get
-        {
-            string? resourceName = ChessActivity.Instance?.Resources?.GetResourceName(this.Space.Id);
-            string? piece = resourceName?.Split("__")[1];
-            return (piece?[0..^1]!, int.Parse($"{piece?[^1]}")!);
-        }
-    }
+    public (string, int) Index { get; } = index;
 
     [IgnoreDataMember]
-    public virtual char Abbreviation { get; set; }
+    public char Abbreviation { get; set; } = abbreviation;
 
-    public virtual List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
+    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
 
     public virtual void Update() { }
-
     public virtual void Move(ISpace destination)
     {
         this.Space = destination;
@@ -72,21 +63,22 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
 
     public void Capture(IPiece destination, Dictionary<(string, int), IPiece> pieces)
     {
+        Log.Debug("Capture");
         //logic
         //check for if move would result in a check
-        pieces.Remove(destination.Index);
         destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
         destination.Piece!.Enabled = false;
+        pieces.Remove(destination.Index);
         //destination.Piece!.Clickable = false;
         if (ChessActivity.Instance!.FindViewById(this.Id) is View view)
             if (view.Parent is ViewGroup parent)
                 parent.RemoveView(view);
 
-        this.Move(destination.Space);
+        //this.Move(destination.Space);
         //add to the list of captured pieces
     }
 
-    public void Diagonals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void Diagonals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         this.DiagonalsUpRight(board, pieces, ref moves);
         this.DiagonalsUpLeft(board, pieces, ref moves);
@@ -94,7 +86,7 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
 
-    public void DiagonalsUpRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void DiagonalsUpRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         for (ISpace? diagonal = this.Space.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
@@ -112,7 +104,7 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         }
     }
 
-    public void DiagonalsUpLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void DiagonalsUpLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         for (ISpace? diagonal = this.Space.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
         {
@@ -130,7 +122,7 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         }
     }
 
-    public void DiagonalsDownRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void DiagonalsDownRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         for (ISpace? diagonal = this.Space.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
         {
@@ -148,7 +140,7 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         }
     }
 
-    public void DiagonalsDownLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void DiagonalsDownLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         for (ISpace? diagonal = this.Space.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
         {
@@ -166,13 +158,13 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         }
     }
 
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         this.Horizontals(board, pieces, true, ref moves);
         this.Horizontals(board, pieces, false, ref moves);
     }
 
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isRight, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isRight, ref List<IMove> moves)
     {
         Func<Dictionary<(char, int), ISpace>, ISpace> iterator = isRight ? this.Space.Right : this.Space.Left;
         for (ISpace? horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
@@ -192,13 +184,13 @@ public class BoardPiece(int id, bool isWhite, ISpace space) : IPiece
         }
     }
 
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<Move> moves)
+    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
     {
         this.Verticals(board, pieces, true, ref moves);
         this.Verticals(board, pieces, false, ref moves);
     }
 
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isUp, ref List<Move> moves)
+    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isUp, ref List<IMove> moves)
     {
         Func<Dictionary<(char, int), ISpace>, ISpace> iterator = isUp ? this.Space.Up : this.Space.Down;
         for (ISpace? vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up

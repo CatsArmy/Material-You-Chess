@@ -23,9 +23,23 @@ public class ChessActivity : AppCompatActivity
 
     private Dictionary<(string, int), IPiece> pieces = new();
     private Dictionary<(char, int), ISpace> board = new();
-    private IPiece? selected = null;
+    private IPiece? selected
+    {
+        get; set
+        {
+            field = value;
+            if (value is null)
+            {
+                this.ClearSelectedMoves();
+            }
+            if (value is not null)
+            {
+                this.SelectMoves();
+            }
+        }
+    } = null;
     private List<ISpace> highlighted = new();
-    private List<Move>? moves = new();
+    private List<IMove>? moves = new();
 
     private Bishop? bBishop1, bBishop2;
     private King? bKing;
@@ -82,22 +96,17 @@ public class ChessActivity : AppCompatActivity
             piece!.Piece!.Click += (sender, e) => OnClickPiece(sender, e, piece);
             piece.Piece.Clickable = true;
         }
-        ///rank = player is white switch {
-        ///true => 1;
-        ///false => 8;
-        /// }
-        ///BoardState.contains(e{rank}) && !BoardState.contains(#)  == Can casstale if move is legal 
-        ///try diff method
-
-        /*
-           1. d3 Nc6 2. c3 b6 3. b3 Ba6 4. e3 d5 5. e4 Qd6 6. c4 O-O-O 7. Ke2 e6 *
-        */
     }
 
     private void OnClickPiece(object? sender, EventArgs args, IPiece piece)
     {
         this.p1MainUsername!.Text = $"{piece}";
         this.p2MainUsername!.Text = $"{nameof(piece)}.{nameof(piece.IsWhite)}:{piece.IsWhite}";
+
+        if (sender is ImageView view)
+        {
+            //view.Tag = ;
+        }
 
         if (this.selected == null)
         {
@@ -116,50 +125,29 @@ public class ChessActivity : AppCompatActivity
             return;
         }
 
-        //the first move in the list of all legal moves where:
-        //the destination space is the same space as the clicked piece
         var move = this.moves!.FirstOrDefault(move => move.Destination.Index == piece.Space.Index);
         if (move == null)
         {
-            //the destination space is never the same space as the clicked piece therefor that move is not only not legal
-            //but also an indication that the played wants to deselect the all pieces
             ClearSelectedMoves();
             this.selected = null;
             return;
         }
 
-        //var (spaceId, spaceView) = this.selected.FakeMove(piece.Space.Id, piece.Space?.Space);
-        //var king = this.selected.IsWhite ? this.wKing : this.bKing;
-        //if (king!.IsInCheck(board, pieces))
-        //{
-        //    this.selected.FakeMove(spaceId, spaceView);
-        //    Toast.MakeText(this, "Cant play that move would result in a check", ToastLength.Long)?.Show();
-        //    return;
-        //}
-
-        if (selected is Pawn pawn)
-        {
-            //pawn.isFirstMove = false;
-            pawn.EnPassantCapturable = move.EnPassantCapturable;
-            if (piece.Space?.Rank == (pawn.IsWhite ? 8 : 1))
-                /*await*/
-                pawn.Promote();
-        }
-        /*
-          set
-                {
-                    field = value;
-
-                }
-         */
-        ClearSelectedMoves();
+        this.ClearSelectedMoves();
         piece!.Space!.SelectSpace();
         this.selected!.Space.SelectSpace();
 
         this.highlighted?.Add(piece.Space);
         this.highlighted?.Add(this.selected!.Space);
-
-        this.selected.Capture(piece!, pieces);
+        if (move is IEnPassant enPassant)
+        {
+            enPassant.Pawn.Space.SelectSpace();
+            this.highlighted?.Add(enPassant.Pawn.Space);
+            this.selected.Capture(enPassant.Pawn, pieces);
+        }
+        else if (move is ICapture capture)
+            this.selected.Capture(capture.Piece, pieces);
+        this.selected.Move(move.Destination!);
         this.NextPlayer();
     }
 
@@ -171,7 +159,7 @@ public class ChessActivity : AppCompatActivity
         if (this.selected == null)
             return;
 
-        Move? move = this.selected?.Moves(this.board, this.pieces)?.FirstOrDefault(move => move.Destination.Index == space.Index);
+        Move? move = this.moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move == null)
         {
             ClearSelectedMoves();
@@ -192,7 +180,7 @@ public class ChessActivity : AppCompatActivity
 
         if (this.selected is Pawn pawn)
         {
-            //pawn.isFirstMove = false;
+            pawn.HasMoved = false;
             pawn.EnPassantCapturable = move.EnPassantCapturable;
             if (space.Rank == (pawn.IsWhite ? 8 : 1))
                 pawn.Promote();
@@ -252,59 +240,59 @@ public class ChessActivity : AppCompatActivity
         char file = 'A';
         int blackRank = 8;
         int whiteRank = 1;
-        this.bRook1 = new Rook(Resource.Id.gmp__bRook1, false, this.board[(file, blackRank)]);
+        this.bRook1 = new Rook(Resource.Id.gmp__bRook1, ("bRook", 1), false, this.board[(file, blackRank)]);
         this.pieces[("bRook", 1)] = this.bRook1;
 
-        this.wRook1 = new Rook(Resource.Id.gmp__wRook1, true, this.board[(file, whiteRank)]);
+        this.wRook1 = new Rook(Resource.Id.gmp__wRook1, ("wRook", 1), true, this.board[(file, whiteRank)]);
         this.pieces[("wRook", 1)] = this.wRook1;
         file++;//B
 
-        this.bKnight1 = new Knight(Resource.Id.gmp__bKnight1, false, this.board[(file, blackRank)]);
+        this.bKnight1 = new Knight(Resource.Id.gmp__bKnight1, ("bKnight", 1), false, this.board[(file, blackRank)]);
         this.pieces[("bKnight", 1)] = this.bKnight1;
 
-        this.wKnight1 = new Knight(Resource.Id.gmp__wKnight1, true, this.board[(file, whiteRank)]);
+        this.wKnight1 = new Knight(Resource.Id.gmp__wKnight1, ("wKnight", 1), true, this.board[(file, whiteRank)]);
         this.pieces[("wKnight", 1)] = this.wKnight1;
         file++;//C
 
-        this.bBishop1 = new Bishop(Resource.Id.gmp__bBishop1, false, this.board[(file, blackRank)]);
+        this.bBishop1 = new Bishop(Resource.Id.gmp__bBishop1, ("bBishop", 1), false, this.board[(file, blackRank)]);
         this.pieces[("bBishop", 1)] = this.bBishop1;
 
-        this.wBishop1 = new Bishop(Resource.Id.gmp__wBishop1, true, this.board[(file, whiteRank)]);
+        this.wBishop1 = new Bishop(Resource.Id.gmp__wBishop1, ("wBishop", 1), true, this.board[(file, whiteRank)]);
         this.pieces[("wBishop", 1)] = this.wBishop1;
         file++;//D
 
-        this.bQueen = new Queen(Resource.Id.gmp__bQueen1, false, this.board[(file, blackRank)]);
+        this.bQueen = new Queen(Resource.Id.gmp__bQueen1, ("bQueen", 1), false, this.board[(file, blackRank)]);
         this.pieces[("bQueen", 1)] = this.bQueen;
 
-        this.wQueen = new Queen(Resource.Id.gmp__wQueen1, true, this.board[(file, whiteRank)]);
+        this.wQueen = new Queen(Resource.Id.gmp__wQueen1, ("wQueen", 1), true, this.board[(file, whiteRank)]);
         this.pieces[("wQueen", 1)] = this.wQueen;
         file++;//E
 
-        this.bKing = new King(Resource.Id.gmp__bKing1, false, this.board[(file, blackRank)]);
+        this.bKing = new King(Resource.Id.gmp__bKing1, ("bKing", 1), false, this.board[(file, blackRank)]);
         this.pieces[("bKing", 1)] = this.bKing;
 
-        this.wKing = new King(Resource.Id.gmp__wKing1, true, this.board[(file, whiteRank)]);
+        this.wKing = new King(Resource.Id.gmp__wKing1, ("wKing", 1), true, this.board[(file, whiteRank)]);
         this.pieces[("wKing", 1)] = this.wKing;
         file++;//F
 
-        this.bBishop2 = new Bishop(Resource.Id.gmp__bBishop2, false, this.board[(file, blackRank)]);
+        this.bBishop2 = new Bishop(Resource.Id.gmp__bBishop2, ("bBishop", 2), false, this.board[(file, blackRank)]);
         this.pieces[("bBishop", 2)] = this.bBishop2;
 
-        this.wBishop2 = new Bishop(Resource.Id.gmp__wBishop2, true, this.board[(file, whiteRank)]);
+        this.wBishop2 = new Bishop(Resource.Id.gmp__wBishop2, ("wBishop", 2), true, this.board[(file, whiteRank)]);
         this.pieces[("wBishop", 2)] = this.wBishop2;
         file++;//G
 
-        this.bKnight2 = new Knight(Resource.Id.gmp__bKnight2, false, this.board[(file, blackRank)]);
+        this.bKnight2 = new Knight(Resource.Id.gmp__bKnight2, ("bKnight", 2), false, this.board[(file, blackRank)]);
         this.pieces[("bKnight", 2)] = this.bKnight2;
 
-        this.wKnight2 = new Knight(Resource.Id.gmp__wKnight2, true, this.board[(file, whiteRank)]);
+        this.wKnight2 = new Knight(Resource.Id.gmp__wKnight2, ("wKnight", 2), true, this.board[(file, whiteRank)]);
         this.pieces[("wKnight", 2)] = this.wKnight2;
         file++;//H
 
-        this.bRook2 = new Rook(Resource.Id.gmp__bRook2, false, this.board[(file, blackRank)]);
+        this.bRook2 = new Rook(Resource.Id.gmp__bRook2, ("bRook", 2), false, this.board[(file, blackRank)]);
         this.pieces[("bRook", 2)] = this.bRook2;
 
-        this.wRook2 = new Rook(Resource.Id.gmp__wRook2, true, this.board[(file, whiteRank)]);
+        this.wRook2 = new Rook(Resource.Id.gmp__wRook2, ("wRook", 2), true, this.board[(file, whiteRank)]);
         this.pieces[("wRook", 2)] = this.wRook2;
 
         file = 'A';
@@ -313,10 +301,10 @@ public class ChessActivity : AppCompatActivity
 
         for (int i = 0; i < 8; i++)
         {
-            this.bPawns[i] = new Pawn(Resource.Id.gmp__bPawn1 + i, false, this.board[(file, blackRank)]);
+            this.bPawns[i] = new Pawn(Resource.Id.gmp__bPawn1 + i, ("bPawn", i + 1), false, this.board[(file, blackRank)]);
             this.pieces[("bPawn", i + 1)] = bPawns[i];
 
-            this.wPawns[i] = new Pawn(Resource.Id.gmp__wPawn1 + i, true, this.board[(file, whiteRank)]);
+            this.wPawns[i] = new Pawn(Resource.Id.gmp__wPawn1 + i, ("wPawn", i + 1), true, this.board[(file, whiteRank)]);
             this.pieces[("wPawn", i + 1)] = this.wPawns[i];
             file++;
         }
@@ -324,17 +312,17 @@ public class ChessActivity : AppCompatActivity
 
     private void InitChessBoard()
     {
-        const string IsWhite = nameof(IsWhite);
-        const string IsBlack = nameof(IsBlack);
+        const string isWhite = "IsWhite";
+        const string isBlack = "IsBlack";
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -344,10 +332,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -357,10 +345,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -370,10 +358,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -383,10 +371,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -396,10 +384,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -409,10 +397,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
@@ -422,10 +410,10 @@ public class ChessActivity : AppCompatActivity
         {
             var space = base.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-            this.board[(file, rank)] = new BoardSpace(space, tag switch
+            this.board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
-                IsWhite => true,
-                IsBlack => false,
+                isWhite => true,
+                isBlack => false,
                 _ => throw new Exception($"{this.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }

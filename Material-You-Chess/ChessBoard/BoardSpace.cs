@@ -1,6 +1,8 @@
-﻿namespace Chess.ChessBoard;
+﻿using Java.IO;
 
-public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
+namespace Chess.ChessBoard;
+
+public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {
     public const int Select = 1;
     public const int Unselect = 0;
@@ -8,11 +10,19 @@ public class BoardSpace(ImageView? Space, bool IsWhite, int Id) : ISpace
     public ImageView? Space { get; set; } = Space;
     public bool IsWhite { get; set; } = IsWhite;
     public int Id { get; set; } = Id;
-    public (char, int) Index { get => (this.File, this.Rank); }
+    public (char, int) Index { get; } = (file, rank);
 
-    public char File { get; init => field = $"{this}"[0]; }
+    public char File
+    {
+        get;
+        //init => field = $"{this}"[0];
+    } = file;
 
-    public int Rank { get; init => field = int.Parse($"{this.ToString()[^1]}")!; }
+    public int Rank
+    {
+        get;
+        //init => field = int.Parse($"{this.ToString()[^1]}")!;
+    } = rank;
 
     public override string ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]!;
 

@@ -1,38 +1,49 @@
 namespace Chess.ChessBoard;
 
-public class Move(ISpace origin, ISpace destination, bool capture = false, bool enPassantCapturable = false) : IMove
+public class Move(IPiece origin, ISpace destination) : IMove
 {
     public ISpace Destination { get; set; } = destination;
     public int DestinationId { get; set; } = destination.Id;
-    public ISpace Origin { get; set; } = origin;
+    public ISpace Origin { get; set; } = origin.Space;
+    public IPiece OriginPiece { get; set; } = origin;
     public int OriginId { get; set; } = origin.Id;
-    public bool Capture { get; set; } = capture;
-    public bool EnPassantCapturable { get; set; } = enPassantCapturable;
-    public override string ToString()
-    {
-        return $@"Move
-{{
-[{nameof(Capture)}: {Capture}],
-[{nameof(Origin)}: {Origin}],
-[{nameof(Destination)}: {Destination}],
-}}";
-    }
 }
-
 
 public interface IMove
 {
     public ISpace Destination { get; set; }
     public int DestinationId { get; set; }
     public ISpace Origin { get; set; }
+    public IPiece OriginPiece { get; set; }
     public int OriginId { get; set; }
-    public bool Capture { get; set; }
-    public bool EnPassantCapturable { get; set; }
 }
 
-public interface ISpecial : IMove
+public class EnPassantMove(IPiece origin, ISpace destination, Pawn captured) : IEnPassant
 {
-    public bool Condition1 { get; set; }
-    public bool Condition2 { get; set; }
-    public void OnMove();
+    public ISpace Destination { get; set; } = destination;
+    public int DestinationId { get; set; } = destination.Id;
+    public ISpace Origin { get; set; } = origin.Space;
+    public IPiece OriginPiece { get; set; } = origin;
+    public int OriginId { get; set; } = origin.Id;
+    public Pawn Pawn { get; } = captured;
+    public IPiece Piece { get; } = captured;
+}
+public class Capture(IPiece origin, IPiece destination) : ICapture
+{
+    public ISpace Destination { get; set; } = destination.Space;
+    public int DestinationId { get; set; } = destination.Id;
+    public ISpace Origin { get; set; } = origin.Space;
+    public IPiece OriginPiece { get; set; } = origin;
+    public int OriginId { get; set; } = origin.Id;
+    public IPiece Piece { get; } = destination;
+}
+
+public interface IEnPassant : ICapture
+{
+    public Pawn Pawn { get; }
+}
+
+public interface ICapture : IMove
+{
+    public IPiece Piece { get; }
 }

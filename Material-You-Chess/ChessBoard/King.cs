@@ -3,13 +3,14 @@
 namespace Chess.ChessBoard;
 
 [DataContract]
-public class King(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, space)
+public class King(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
 {
+    private const char _Abbreviation = 'K';
     public bool HasMoved = false;
 
-    public override List<Move> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
+    public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
-        List<Move> moves = base.Moves(board, pieces);
+        List<IMove> moves = base.Moves(board, pieces);
         ISpace? up = this.Space?.Up(board);
         if (up != null)
             if (up.Piece(pieces) == null)
@@ -71,7 +72,7 @@ public class King(int id, bool isWhite, ISpace space) : BoardPiece(id, isWhite, 
     public bool IsInCheck(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
         char key = this.IsWhite ? 'b' : 'w';
-        List<Move> moves = new List<Move>();
+        List<IMove> moves = new List<IMove>();
         foreach (var piece in pieces)
         {
             if (!piece.Key.Item1.StartsWith(key))
