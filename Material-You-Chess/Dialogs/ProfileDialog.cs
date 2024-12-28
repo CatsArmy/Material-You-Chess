@@ -13,8 +13,6 @@ public class ProfileDialog : IProfileDialog
     public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public MainActivity App { get; set; }
-    public Action UpdateInformation { get; set; }
-    public Action<object?, EventArgs> OpenPhotoPicker { get; set; }
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; }
     public ShapeableImageView? DialogProfilePicture { get; set; }
     public Button? EditProfilePicture { get; set; }
@@ -25,20 +23,19 @@ public class ProfileDialog : IProfileDialog
     public UsernameDialog? UsernameDialog { get; set; }
     public bool WasShown { get; set; } = false;
 
-    public ProfileDialog(MainActivity App, Action<object?, EventArgs> OpenPhotoPicker, Action UpdateInformation)
+    private Android.Net.Uri? PhotoUri = null;
+    public ProfileDialog(MainActivity App)
     {
         this.App = App;
         this.Builder = new MaterialAlertDialogBuilder(App);
         this.Builder.SetIcon(Resource.Drawable.outline_settings_account_box);
         this.Builder.SetTitle("Profile");
         this.Builder.SetView(Resource.Layout.profile_dialog);
-        this.Builder.SetPositiveButton("Confirm", OnConfirm);
-        this.Builder.SetNegativeButton("Cancel", OnCancel);
-        this.Dialog = Builder.Create();
-        this.Dialog.ShowEvent += OnShow;
-        this.OpenPhotoPicker = OpenPhotoPicker;
-        this.UpdateInformation = UpdateInformation;
-        this.UsernameDialog = new UsernameDialog(App, OnUsernameChange);
+        this.Builder.SetPositiveButton("Confirm", this.OnConfirm);
+        this.Builder.SetNegativeButton("Cancel", this.OnCancel);
+        this.Dialog = this.Builder.Create();
+        this.Dialog.ShowEvent += this.OnShow;
+        this.UsernameDialog = new UsernameDialog(App, this.OnUsernameChange);
         this.UserProfileChangeRequest = new UserProfileChangeRequest.Builder();
     }
 
@@ -50,7 +47,8 @@ public class ProfileDialog : IProfileDialog
 
     public void OnSelectPhoto(Android.Net.Uri photoUri)
     {
-        //this.DialogProfilePicture?.SetImageURI(photoUri);
+        this.PhotoUri = photoUri;
+        this.DialogProfilePicture?.SetImageURI(photoUri);
         this.DialogProfilePicture?.RequestLayout();
     }
 
@@ -71,7 +69,7 @@ public class ProfileDialog : IProfileDialog
         //this.DialogProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
         if (!this.WasShown)
         {
-            this.EditProfilePicture!.Click += (sender, args) => OpenPhotoPicker(sender, args);
+            this.EditProfilePicture!.Click += this.App.OpenPhotoPicker;
             this.EditUsername!.Click += (sender, args) => this.UsernameDialog?.Dialog.Show();
             this.WasShown = true;
         }

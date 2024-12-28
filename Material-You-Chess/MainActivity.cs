@@ -20,7 +20,8 @@ namespace Chess;
 public class MainActivity : AppCompatActivity
 {
     private bool MaterialYouThemePreference = true;
-    private ActivityResultLauncher? photoPicker;
+    private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
+    private ActivityResultLauncher<Android.Net.Uri>? photoTaker;
     private AppPermissions? permissions;
     private Android.Net.Uri? selectedPhoto;
     private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
@@ -41,10 +42,15 @@ public class MainActivity : AppCompatActivity
         _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
         _ = new FirebaseSecrets();
 
-        this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(), new ActivityResultCallback<Android.Net.Uri>(SelectPhoto));
+        this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
+            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto)) as ActivityResultLauncher<PickVisualMediaRequest>;
 
-        this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder()
-            .SetMediaType(PickVisualMedia.ImageOnly.Instance);
+        this.photoTaker = base.RegisterForActivityResult(new TakePicture(),
+            new ActivityResultCallback<Java.Lang.Boolean>(this.CapturePhoto)) as ActivityResultLauncher<Android.Net.Uri>;
+
+        //I: Android.Net.UriA, O: PickVisualMediaRequestA
+        //I: Android.Net.Uri, O: Java.Lang.Boolean
+        this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
 
         if (!this.MaterialYouThemePreference)
             base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
@@ -66,11 +72,11 @@ public class MainActivity : AppCompatActivity
         this.mainUsername = base.FindViewById<TextView>(Resource.Id.MainUsername);
         this.profileAction1 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
-        this.logoutDialog = new LogoutDialog(this, UpdateUserState);
-        this.loginDialog = new LoginDialog(this, UpdateUserState);
-        this.signupDialog = new SignupDialog(this, UpdateUserState);
-        this.profileDialog = new ProfileDialog(this, OpenPhotoPicker, UpdateUserState);
-        this.startGame!.Click += StartGame_Click;
+        this.logoutDialog = new LogoutDialog(this, this.UpdateUserState);
+        this.loginDialog = new LoginDialog(this, this.UpdateUserState);
+        this.signupDialog = new SignupDialog(this, this.UpdateUserState);
+        this.profileDialog = new ProfileDialog(this);
+        this.startGame!.Click += this.StartGame_Click;
         this.UpdateUserState();
     }
 
@@ -85,16 +91,33 @@ public class MainActivity : AppCompatActivity
         this.profileDialog?.OnSelectPhoto(photo);
     }
 
-    private void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
-    private void OpenLogoutDialog(object? sender, EventArgs e) => logoutDialog?.Dialog.Show();
-    private void OpenProfileDialog(object? sender, EventArgs e) => profileDialog?.Dialog.Show();
-    private void OpenLoginDialog(object? sender, EventArgs e) => loginDialog?.Dialog.Show();
-    private void OpenSignupDialog(object? sender, EventArgs e) => signupDialog?.Dialog.Show();
+    private void CapturePhoto(Java.Lang.Boolean hasCaptured)
+    {
+        Log.Debug("PhotoTaker", $"{hasCaptured}");
+        if (FirebaseAuth.Instance.CurrentUser == null || hasCaptured == null)
+            return;
+
+
+        if (!hasCaptured.BooleanValue())
+        {
+            return;
+        }
+        //todo inform the profile dialog of the new photo
+
+        //base.ContentResolver?.TakePersistableUriPermission(photo, ActivityFlags.GrantReadUriPermission);
+        //this.selectedPhoto = photo;
+        //this.profileDialog?.OnSelectPhoto(photo);
+    }
+
+    public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+    private void OpenLogoutDialog(object? sender, EventArgs args) => this.logoutDialog?.Dialog.Show();
+    private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
+    private void OpenLoginDialog(object? sender, EventArgs args) => this.loginDialog?.Dialog.Show();
+    private void OpenSignupDialog(object? sender, EventArgs args) => this.signupDialog?.Dialog.Show();
 
 
     private void UpdateUserState()
     {
-        //Todo Add a progress indicator
         switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:

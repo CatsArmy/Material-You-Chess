@@ -84,7 +84,11 @@ public class ChessActivity : AppCompatActivity
         this.p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
 
-        this.p1MainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        this.p1MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
+        {
+            true => "Guest",
+            false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
+        };
         Instance = this;
 
         this.InitChessBoard();
@@ -180,8 +184,7 @@ public class ChessActivity : AppCompatActivity
         else if (move is ICapture capture)
             this.selected.Capture(capture.Piece, pieces);
 
-        else
-            base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard)?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard)?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
 
         this.selected.Move(move.Destination);
         this.skipClearingSelected = true;

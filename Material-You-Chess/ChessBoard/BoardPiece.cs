@@ -55,8 +55,8 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
         destination.Piece!.Enabled = false;
         pieces.Remove(destination.Index);
-        //destination.Piece!.Clickable = false;
-        if (ChessActivity.Instance!.FindViewById(this.Id) is View view)
+        destination.Piece!.Clickable = false;
+        if (ChessActivity.Instance!.FindViewById(destination.Id) is View view)
             if (view.Parent is ViewGroup parent)
                 parent.RemoveView(view);
 
