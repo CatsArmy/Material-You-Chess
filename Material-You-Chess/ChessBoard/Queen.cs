@@ -6,6 +6,7 @@ namespace Chess.ChessBoard;
 public class Queen(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
 {
     private const char _Abbreviation = 'Q';
+
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
         List<IMove> moves = base.Moves(board, pieces);

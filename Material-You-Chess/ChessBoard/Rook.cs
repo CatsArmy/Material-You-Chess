@@ -6,7 +6,7 @@ namespace Chess.ChessBoard;
 public class Rook(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
 {
     private const char _Abbreviation = 'R';
-    public bool HasMoved = false;
+    [DataMember] public bool HasMoved = false;
 
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {

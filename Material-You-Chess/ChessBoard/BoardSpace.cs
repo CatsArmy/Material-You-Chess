@@ -1,34 +1,32 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
+
+namespace Chess.ChessBoard;
 
 public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {
-    public const int Select = 1;
-    public const int Unselect = 0;
+    [IgnoreDataMember]
+    public ImageView? Space { get; } = Space;
 
-    public ImageView? Space { get; set; } = Space;
-    public bool IsWhite { get; set; } = IsWhite;
-    public int Id { get; set; } = Id;
+    [DataMember]
+    public bool IsWhite { get; } = IsWhite;
+
+    [DataMember]
+    public int Id { get; } = Id;
+
+    [DataMember]
     public (char, int) Index { get; } = (file, rank);
 
-    public char File
-    {
-        get;
-        //init => field = $"{this}"[0];
-    } = file;
+    [DataMember]
+    public char File { get; } = file;
 
-    public int Rank
-    {
-        get;
-        //init => field = int.Parse($"{this.ToString()[^1]}")!;
-    } = rank;
+    [DataMember]
+    public int Rank { get; } = rank;
 
-    public override string ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]!;
+    public override string ToString() => $"{File}{Rank}";
 
-    public void SelectSpace() => this.Space?.SetImageLevel(Select);
+    public void SelectSpace() => this.Space?.SetImageLevel(ISpace.Select);
 
-    public void UnselectSpace() => this.Space?.SetImageLevel(Unselect);
-
-    public ISpace? GetBoardSpace(Dictionary<(char, int), ISpace> board) => board[this.Index];
+    public void UnselectSpace() => this.Space?.SetImageLevel(ISpace.Unselect);
 
     public ISpace? DiagonalUp(Dictionary<(char, int), ISpace> board, bool isRight)
     {

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Android;
 using Android.Content.PM;
 using Android.Gms.Common.Apis;
@@ -13,7 +14,6 @@ using Java.Util;
 using KeySet = System.Collections.Generic.Dictionary<string, EndPoint>.KeyCollection;
 using ValueSet = System.Collections.Generic.Dictionary<string, EndPoint>.ValueCollection;
 
-//todo rename all var a to a meaningful name 
 public abstract class ConnectionsActivity : AppCompatActivity
 {
     public bool IsConnecting { get; private set; } = false;
@@ -23,9 +23,9 @@ public abstract class ConnectionsActivity : AppCompatActivity
     public readonly Dictionary<string, EndPoint> PendingConnections = new();
     public readonly Dictionary<string, EndPoint> DiscoveredEndpoints = new();
     private const int RequestCodeRequiredPermissions = 1;
-    internal IConnectionsClient ConnectionsClient;
-    private string[] requiredPermissions;
-    private List<string> requestPermissions;
+    internal IConnectionsClient? ConnectionsClient;
+    private string[]? requiredPermissions;
+    private List<string>? requestPermissions;
 
     internal class ConnectionLifecycleCallback : Android.Gms.Nearby.Connection.ConnectionLifecycleCallback
     {
@@ -50,10 +50,10 @@ public abstract class ConnectionsActivity : AppCompatActivity
             this.instance.IsConnecting = false;
             if (!result.Status.IsSuccess)
             {
-                Log.Warn($"Connection failed. Received status {this.instance.ToString(result.Status)}");
-                var a = this.instance.PendingConnections[endpointId];
+                Log.Warn($"Connection failed. Received status {ConnectionsActivity.ToString(result.Status)}");
+                EndPoint? failed = this.instance.PendingConnections[endpointId];
                 this.instance.PendingConnections.Remove(endpointId);
-                this.instance.OnConnectionFailed(a);
+                this.instance.OnConnectionFailed(failed);
                 return;
             }
             this.instance.ConnectedToEndpoint(new(this.instance.PendingConnections[endpointId]));
@@ -62,22 +62,18 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         public override void OnDisconnected(string endpointId)
         {
-            if (!this.instance.EstablishedConnections.ContainsKey(endpointId))
+            if (!this.instance.EstablishedConnections.TryGetValue(endpointId, out EndPoint? connection))
             {
                 Log.Warn("Unexpected disconnection from endpoint " + endpointId);
                 return;
             }
-            this.instance.DisconnectedFromEndpoint(this.instance.EstablishedConnections[endpointId]);
+            this.instance.DisconnectedFromEndpoint(connection);
         }
     }
 
-    internal class PayloadCallback : Android.Gms.Nearby.Connection.PayloadCallback
+    internal class PayloadCallback(ConnectionsActivity instance) : Android.Gms.Nearby.Connection.PayloadCallback()
     {
-        private ConnectionsActivity instance;
-        public PayloadCallback(ConnectionsActivity instance) : base()
-        {
-            this.instance = instance;
-        }
+        private readonly ConnectionsActivity instance = instance;
 
         public override void OnPayloadReceived(string endpointId, Payload payload)
         {
@@ -91,18 +87,14 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     };
 
-    internal class EndpointDiscoveryCallback : Android.Gms.Nearby.Connection.EndpointDiscoveryCallback
+    internal class EndpointDiscoveryCallback(ConnectionsActivity instance) : Android.Gms.Nearby.Connection.EndpointDiscoveryCallback()
     {
-        private ConnectionsActivity instance;
-        public EndpointDiscoveryCallback(ConnectionsActivity instance) : base()
-        {
-            this.instance = instance;
-        }
+        private readonly ConnectionsActivity instance = instance;
 
         public override void OnEndpointFound(string endpointId, DiscoveredEndpointInfo info)
         {
             Log.Debug($"OnEndpointFound(endpointId={endpointId}, serviceId={info.ServiceId}, endpointName={info.EndpointName})");
-            if (this.instance.GetServiceId().Equals(info.ServiceId))
+            if (this.instance.ServiceId.Equals(info.ServiceId))
             {
                 EndPoint endpoint = new EndPoint(endpointId, info.EndpointName);
                 this.instance.DiscoveredEndpoints.Add(endpointId, endpoint);
@@ -127,12 +119,12 @@ public abstract class ConnectionsActivity : AppCompatActivity
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        ConnectionsClient = NearbyClass.GetConnectionsClient(this);
-        ConnectionsClient.StopDiscovery();
-        ConnectionsClient.StopAdvertising();
-        ConnectionsClient.StopAllEndpoints();
-        requiredPermissions = GetRequiredPermissions();
-        requestPermissions = new List<string>();
+        this.ConnectionsClient = NearbyClass.GetConnectionsClient(this);
+        this.ConnectionsClient.StopDiscovery();
+        this.ConnectionsClient.StopAdvertising();
+        this.ConnectionsClient.StopAllEndpoints();
+        this.requiredPermissions = GetRequiredPermissions();
+        this.requestPermissions = new List<string>();
     }
 
     protected override void OnDestroy()
@@ -144,7 +136,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     protected override void OnStart()
     {
-        this.requiredPermissions = GetRequiredPermissions();
+        this.requiredPermissions = this.GetRequiredPermissions();
         if (this.HasPermissions())
         {
             base.OnStart();
@@ -154,10 +146,10 @@ public abstract class ConnectionsActivity : AppCompatActivity
         switch (Build.VERSION.SdkInt)
         {
             case < BuildVersionCodes.M:
-                ActivityCompat.RequestPermissions(this, requestPermissions.ToArray(), RequestCodeRequiredPermissions);
+                ActivityCompat.RequestPermissions(this, [.. requestPermissions!], RequestCodeRequiredPermissions);
                 break;
             default:
-                base.RequestPermissions(requiredPermissions.ToArray(), RequestCodeRequiredPermissions);
+                base.RequestPermissions([.. this.requiredPermissions], RequestCodeRequiredPermissions);
                 break;
         }
         base.OnStart();
@@ -168,11 +160,11 @@ public abstract class ConnectionsActivity : AppCompatActivity
     private bool HasPermissions()
     {
         bool returnValue = true;
-        foreach (string requiredPermission in this.requiredPermissions)
+        foreach (string requiredPermission in this.requiredPermissions!)
         {
             if (ContextCompat.CheckSelfPermission(this, requiredPermission) != Permission.Granted)
             {
-                requestPermissions.Add(requiredPermission);
+                this.requestPermissions!.Add(requiredPermission);
                 returnValue = false;
             }
         }
@@ -190,7 +182,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
                 if (grantResult == Permission.Denied)
                 {
                     Log.Warn("Failed to request the permission " + permissions[i]);
-                    Toast.MakeText(this, "string.error_missing_permissions", ToastLength.Long).Show();
+                    Toast.MakeText(this, "string.error_missing_permissions", ToastLength.Long)?.Show();
                     Finish();
                     return;
                 }
@@ -209,33 +201,33 @@ public abstract class ConnectionsActivity : AppCompatActivity
      */
     protected async void StartAdvertising()
     {
-        IsAdvertising = true;
-        string localEndpointName = GetName();
+        this.IsAdvertising = true;
+        string localEndpointName = Name;
 
         AdvertisingOptions.Builder advertisingOptions = new AdvertisingOptions.Builder();
-        advertisingOptions.SetStrategy(GetStrategy());
+        advertisingOptions.SetStrategy(this.Strategy);
 
-        var a = ConnectionsClient.StartAdvertisingAsync(localEndpointName, GetServiceId(),
-            new ConnectionLifecycleCallback(this), advertisingOptions.Build());
-        await a;
-        if (a.IsCompletedSuccessfully)
+        Task? advertising = this.ConnectionsClient!.StartAdvertisingAsync(localEndpointName, this.ServiceId, new ConnectionLifecycleCallback(this),
+            advertisingOptions.Build());
+        await advertising;
+        if (advertising.IsCompletedSuccessfully)
         {
             Log.Verbose("Now advertising endpoint " + localEndpointName);
-            OnAdvertisingStarted();
+            this.OnAdvertisingStarted();
         }
-        if (a.IsFaulted)
+        if (advertising.IsFaulted)
         {
-            IsAdvertising = false;
-            Log.Warn($"startAdvertising() failed. {a.Exception}");
-            OnAdvertisingFailed();
+            this.IsAdvertising = false;
+            Log.Warn($"startAdvertising() failed. {advertising.Exception}");
+            this.OnAdvertisingFailed();
         }
     }
 
     /** Stops advertising. */
     protected void StopAdvertising()
     {
-        IsAdvertising = false;
-        ConnectionsClient.StopAdvertising();
+        this.IsAdvertising = false;
+        this.ConnectionsClient!.StopAdvertising();
     }
 
     /** Called when advertising successfully starts. Override this method to act on the event. */
@@ -255,22 +247,22 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /** Accepts a connection request. */
     protected async void AcceptConnection(EndPoint endpoint)
     {
-        var a = ConnectionsClient.AcceptConnectionAsync(endpoint.id, new PayloadCallback(this));
-        await a;
-        if (a.IsFaulted)
+        Task? accept = this.ConnectionsClient!.AcceptConnectionAsync(endpoint.Id, new PayloadCallback(this));
+        await accept;
+        if (accept.IsFaulted)
         {
-            Log.Warn($"AcceptConnection() failed. {a.Exception}");
+            Log.Warn($"AcceptConnection() failed. {accept.Exception}");
         }
     }
 
     /** Rejects a connection request. */
     protected async void RejectConnection(EndPoint endpoint)
     {
-        var a = ConnectionsClient.RejectConnectionAsync(endpoint.id);
-        await a;
-        if (a.IsFaulted)
+        var reject = this.ConnectionsClient!.RejectConnectionAsync(endpoint.Id);
+        await reject;
+        if (reject.IsFaulted)
         {
-            Log.Warn($"RejectConnection() failed. {a.Exception}");
+            Log.Warn($"RejectConnection() failed. {reject.Exception}");
         }
     }
 
@@ -281,29 +273,28 @@ public abstract class ConnectionsActivity : AppCompatActivity
      */
     public async void StartDiscovering()
     {
-        IsDiscovering = true;
-        DiscoveredEndpoints.Clear();
-        DiscoveryOptions.Builder discoveryOptions = new DiscoveryOptions.Builder();
-        discoveryOptions.SetStrategy(GetStrategy());
-        var a = ConnectionsClient.StartDiscoveryAsync(GetServiceId(), new EndpointDiscoveryCallback(this), discoveryOptions.Build());
-        await a;
-        if (a.IsCompletedSuccessfully)
+        this.IsDiscovering = true;
+        this.DiscoveredEndpoints.Clear();
+        DiscoveryOptions.Builder discoveryOptions = new DiscoveryOptions.Builder().SetStrategy(this.Strategy);
+        Task? discovery = this.ConnectionsClient!.StartDiscoveryAsync(this.ServiceId, new EndpointDiscoveryCallback(this), discoveryOptions.Build());
+        await discovery;
+        if (discovery.IsCompletedSuccessfully)
         {
-            OnDiscoveryStarted();
+            this.OnDiscoveryStarted();
         }
-        if (a.IsFaulted)
+        if (discovery.IsFaulted)
         {
-            IsDiscovering = false;
-            Log.Warn($"startDiscovering() failed. {a.Exception}");
-            OnDiscoveryFailed();
+            this.IsDiscovering = false;
+            Log.Warn($"startDiscovering() failed. {discovery.Exception}");
+            this.OnDiscoveryFailed();
         }
     }
 
     /** Stops discovery. */
     protected void StopDiscovering()
     {
-        IsDiscovering = false;
-        ConnectionsClient.StopDiscovery();
+        this.IsDiscovering = false;
+        this.ConnectionsClient!.StopDiscovery();
     }
 
     /** Called when discovery successfully starts. Override this method to act on the event. */
@@ -321,30 +312,30 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /** Disconnects from the given endpoint. */
     protected void Disconnect(EndPoint endpoint)
     {
-        ConnectionsClient.DisconnectFromEndpoint(endpoint.id);
-        EstablishedConnections.Remove(endpoint.id);
+        this.ConnectionsClient!.DisconnectFromEndpoint(endpoint.Id);
+        this.EstablishedConnections.Remove(endpoint.Id);
     }
 
     /** Disconnects from all currently connected endpoints. */
     protected void DisconnectFromAllEndpoints()
     {
-        foreach (EndPoint endpoint in EstablishedConnections.Values)
+        foreach (EndPoint endpoint in this.EstablishedConnections.Values)
         {
-            ConnectionsClient.DisconnectFromEndpoint(endpoint.id);
+            this.ConnectionsClient!.DisconnectFromEndpoint(endpoint.Id);
         }
-        EstablishedConnections.Clear();
+        this.EstablishedConnections.Clear();
     }
 
     /** Resets and clears all state in Nearby Connections. */
     protected void StopAllEndpoints()
     {
-        this.ConnectionsClient.StopAllEndpoints();
-        IsAdvertising = false;
-        IsDiscovering = false;
-        IsConnecting = false;
-        DiscoveredEndpoints.Clear();
-        PendingConnections.Clear();
-        EstablishedConnections.Clear();
+        this.ConnectionsClient!.StopAllEndpoints();
+        this.IsAdvertising = false;
+        this.IsDiscovering = false;
+        this.IsConnecting = false;
+        this.DiscoveredEndpoints.Clear();
+        this.PendingConnections.Clear();
+        this.EstablishedConnections.Clear();
     }
 
     /**
@@ -354,18 +345,18 @@ public abstract class ConnectionsActivity : AppCompatActivity
      */
     protected async void ConnectToEndpoint(EndPoint endpoint)
     {
-        Log.Verbose("Sending a connection request to endpoint " + endpoint);
+        Log.Verbose($"Sending a connection request to endpoint {endpoint}");
         // Mark ourselves as connecting so we don't connect multiple times
-        IsConnecting = true;
+        this.IsConnecting = true;
 
         // Ask to connect
-        var a = ConnectionsClient.RequestConnectionAsync(GetName(), endpoint.id, new ConnectionLifecycleCallback(this));
-        await a;
-        if (a.IsFaulted)
+        Task? connection = this.ConnectionsClient!.RequestConnectionAsync(this.Name, endpoint.Id, new ConnectionLifecycleCallback(this));
+        await connection;
+        if (connection.IsFaulted)
         {
-            Log.Warn($"RequestConnection() failed. {a.Exception}");
-            IsConnecting = false;
-            OnConnectionFailed(endpoint);
+            Log.Warn($"RequestConnection() failed. {connection.Exception}");
+            this.IsConnecting = false;
+            this.OnConnectionFailed(endpoint);
             return;
         }
     }
@@ -373,15 +364,15 @@ public abstract class ConnectionsActivity : AppCompatActivity
     internal void ConnectedToEndpoint(EndPoint endpoint)
     {
         Log.Debug($"connectedToEndpoint(endpoint={endpoint})");
-        EstablishedConnections.Add(endpoint.id, endpoint);
-        OnEndpointConnected(endpoint);
+        this.EstablishedConnections.Add(endpoint.Id, endpoint);
+        this.OnEndpointConnected(endpoint);
     }
 
     internal void DisconnectedFromEndpoint(EndPoint endpoint)
     {
         Log.Debug($"disconnectedFromEndpoint(endpoint={endpoint})");
-        EstablishedConnections.Remove(endpoint.id);
-        OnEndpointDisconnected(endpoint);
+        this.EstablishedConnections.Remove(endpoint.Id);
+        this.OnEndpointDisconnected(endpoint);
     }
 
     /**
@@ -399,13 +390,13 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /** Returns a list of currently connected endpoints. */
     protected ValueSet GetDiscoveredEndpoints()
     {
-        return DiscoveredEndpoints.Values;
+        return this.DiscoveredEndpoints.Values;
     }
 
     /** Returns a list of currently connected endpoints. */
     protected ValueSet GetConnectedEndpoints()
     {
-        return EstablishedConnections.Values;
+        return this.EstablishedConnections.Values;
     }
 
     /**
@@ -415,17 +406,16 @@ public abstract class ConnectionsActivity : AppCompatActivity
      */
     protected void Send(Payload payload)
     {
-        Send(payload, EstablishedConnections.Keys);
+        this.Send(payload, this.EstablishedConnections.Keys);
     }
 
     private async void Send(Payload payload, KeySet endpoints)
     {
-        var a = ConnectionsClient
-                .SendPayloadAsync(new List<string>(endpoints), payload);
-        await a;
-        if (a.IsFaulted)
+        Task? sent = this.ConnectionsClient!.SendPayloadAsync(new List<string>(endpoints), payload);
+        await sent;
+        if (sent.IsFaulted)
         {
-            Log.Warn($"sendPayload() failed. {a.Exception}");
+            Log.Warn($"sendPayload() failed. {sent.Exception}");
         }
     }
 
@@ -443,6 +433,8 @@ public abstract class ConnectionsActivity : AppCompatActivity
      *
      * @return All permissions required for the app to properly function.
      */
+    [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility",
+        Justification = "Only when version is 33 or above")]
     protected virtual string[] GetRequiredPermissions()
     {
         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
@@ -487,20 +479,20 @@ public abstract class ConnectionsActivity : AppCompatActivity
     }
 
     /** Returns the client's name. Visible to others when connecting. */
-    protected abstract string GetName();
+    protected abstract string Name { get; }
 
     /**
      * Returns the service id. This represents the action this connection is for. When discovering,
      * we'll verify that the advertiser has the same service id before we consider connecting to them.
      */
-    protected abstract string GetServiceId();
+    protected abstract string ServiceId { get; }
 
     /**
      * Returns the strategy we use to connect to other devices. Only devices using the same strategy
      * and service id will appear when discovering. Stragies determine how many incoming and outgoing
      * connections are possible at the same time, as well as how much bandwidth is available for use.
      */
-    protected abstract Strategy GetStrategy();
+    protected abstract Strategy Strategy { get; }
 
     /**
      * Transforms a {@link Status} into a English-readable message for logging.
@@ -509,50 +501,51 @@ public abstract class ConnectionsActivity : AppCompatActivity
      * @return A readable String. eg. [404]File not found.
      */
 
-    private string ToString(Statuses status)
+    private static string ToString(Statuses status)
     {
-        return Java.Lang.String.Format(Locale.Us,
-            "[%d]%s",
-            status.StatusCode,
-            status.StatusMessage != null ? status.StatusMessage
-                : ConnectionsStatusCodes.GetStatusCodeString(status.StatusCode)).ToString();
+        string msg = (status.StatusMessage == null) switch
+        {
+            true => ConnectionsStatusCodes.GetStatusCodeString(status.StatusCode),
+            false => status.StatusMessage
+        };
+        return Java.Lang.String.Format(Locale.Us!, "[%d]%s", status.StatusCode, msg!).ToString();
     }
 
 }
 
 public class EndPoint
 {
-    public readonly string id;
-    public readonly string name;
+    public readonly string Id;
+    public readonly string Name;
 
     public EndPoint(string id, string name)
     {
-        this.id = id;
-        this.name = name;
-        Log.Debug($"Endpoint created: {this.ToString()}");
+        this.Id = id;
+        this.Name = name;
+        Log.Debug($"Endpoint created: {this}");
     }
 
     public EndPoint(EndPoint other)
     {
-        this.id = other.id;
-        this.name = other.name;
+        this.Id = other.Id;
+        this.Name = other.Name;
     }
 
     public override int GetHashCode()
     {
-        return this.id.GetHashCode();
+        return this.Id.GetHashCode();
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is EndPoint other)
-            return this.id.Equals(other);
+            return this.Id.Equals(other);
 
         return false;
     }
 
     public override string ToString()
     {
-        return $"{nameof(EndPoint)}{{id={id}, name={name}}}";
+        return $"{nameof(EndPoint)}{{id={this.Id}, name={this.Name}}}";
     }
 }

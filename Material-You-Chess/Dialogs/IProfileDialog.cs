@@ -9,7 +9,7 @@ public interface IProfileDialog : IMaterialDialog
 {
     public MainActivity App { get; set; }
     public Action UpdateInformation { get; set; }
-    public Action<object, EventArgs> OpenPhotoPicker { get; set; }
+    public Action<object?, EventArgs> OpenPhotoPicker { get; set; }
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; }
     public ShapeableImageView? DialogProfilePicture { get; set; }
     public Button? EditProfilePicture { get; set; }

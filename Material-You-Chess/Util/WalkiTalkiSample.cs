@@ -1,26 +1,25 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Android.App;
+using System.Diagnostics.CodeAnalysis;
 using Android.Gms.Nearby.Connection;
-using Android.OS;
 using Android.Text.Method;
 using Android.Views;
-using Android.Widget;
 using Chess;
 using Chess.Util.Logger;
 
-[Activity(Label = "@string/app_name", Theme = "@style/Theme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class MainActivity2 : ConnectionsActivity
 {
     private const bool DEBUG = true;
-    private static readonly Strategy Strategy = Strategy.P2pCluster;
-    private const string ServiceId = "com.google.location.nearby.apps.chess";
+    protected override Strategy Strategy => Strategy.P2pCluster;
+    protected override string Name => true switch
+    {
+        true => "Itai",
+        false => "Gila",
+    };
+    protected override string ServiceId => "com.google.location.nearby.apps.chess";
     private State state = State.Unknown;
-    private string mName;
-    private TextView mDebugLogView;
-    private TextView previousStateView;
-    private TextView currentStateView;
+    private TextView? mDebugLogView;
+    private TextView? previousStateView;
+    private TextView? currentStateView;
     //private System.Timers.Timer timer;
 
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -28,18 +27,21 @@ public class MainActivity2 : ConnectionsActivity
         base.OnCreate(savedInstanceState);
         base.SetContentView(Resource.Layout.nearby_template);
 
-        mDebugLogView = base.FindViewById<TextView>(Resource.Id.logView);
-        mDebugLogView.Visibility = DEBUG ? ViewStates.Visible : ViewStates.Gone;
-        mDebugLogView.MovementMethod = new ScrollingMovementMethod();
-        Log.LogView = mDebugLogView;
-        previousStateView = base.FindViewById<TextView>(Resource.Id.oldState);
-        currentStateView = base.FindViewById<TextView>(Resource.Id.newState);
+        this.mDebugLogView = base.FindViewById<TextView>(Resource.Id.logView);
+        this.previousStateView = base.FindViewById<TextView>(Resource.Id.oldState);
+        this.currentStateView = base.FindViewById<TextView>(Resource.Id.newState);
         //the username from firebase
-        mName = true ? "Itai" : "Gila";
 
-        //timer.AutoReset = false;
-        //timer = new Timer(new TimeSpan(0, 0, 15).TotalMilliseconds);
-        //timer.Elapsed += StopSearching;
+
+        /*
+        timer.AutoReset = false;
+        timer = new Timer(new TimeSpan(0, 0, 15).TotalMilliseconds);
+        timer.Elapsed += StopSearching;
+        */
+
+        this.mDebugLogView!.Visibility = DEBUG ? ViewStates.Visible : ViewStates.Gone;
+        this.mDebugLogView!.MovementMethod = new ScrollingMovementMethod();
+        Log.LogView = this.mDebugLogView;
     }
 
     //private void OnRefresh()
@@ -62,7 +64,7 @@ public class MainActivity2 : ConnectionsActivity
     protected override void OnStart()
     {
         base.OnStart();
-        SetState(State.Searching);
+        this.SetState(State.Searching);
     }
 
 
@@ -72,35 +74,36 @@ public class MainActivity2 : ConnectionsActivity
         if (this.state == State.Connected)
             return;
 
-        SetState(State.Unknown);
+        this.SetState(State.Unknown);
         base.OnStop();
     }
 
     public override void Finish()
     {
-        SetState(State.Unknown);
+        this.SetState(State.Unknown);
         base.Finish();
     }
 
 
-#pragma warning disable CS0672 // Member overrides obsolete member
+
+    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "<Pending>")]
     public override void OnBackPressed()
-#pragma warning restore CS0672 // Member overrides obsolete member
     {
-        if (state == State.Connected)
+        if (this.state == State.Connected)
         {
-            SetState(State.Searching);
+            this.SetState(State.Searching);
             return;
         }
+
         base.OnBackPressed();
     }
 
     protected override void OnEndpointDiscovered(EndPoint endpoint)
     {
         // We found an advertiser!
-        StopDiscovering();
+        this.StopDiscovering();
         Thread.Sleep(10);
-        ConnectToEndpoint(endpoint);
+        this.ConnectToEndpoint(endpoint);
     }
 
     protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
@@ -113,28 +116,28 @@ public class MainActivity2 : ConnectionsActivity
         //mConnectedColor = COLORS[connectionInfo.getAuthenticationToken().hashCode() % COLORS.length];
 
         // We accept the connection immediately.
-        AcceptConnection(endpoint);
+        this.AcceptConnection(endpoint);
     }
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.name}", ToastLength.Short).Show();
-        SetState(State.Connected);
+        Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.Name}", ToastLength.Short)?.Show();
+        this.SetState(State.Connected);
     }
 
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"Resource.String.toast_disconnected, {endpoint.name}", ToastLength.Short).Show();
-        SetState(State.Searching);
+        Toast.MakeText(this, $"Resource.String.toast_disconnected, {endpoint.Name}", ToastLength.Short)?.Show();
+        this.SetState(State.Searching);
     }
 
     protected override void OnConnectionFailed(EndPoint endpoint)
     {
         // Let's try someone else.
-        if (state == State.Searching)
+        if (this.state == State.Searching)
         {
-            StartDiscovering();
+            this.StartDiscovering();
         }
     }
 
@@ -147,14 +150,14 @@ public class MainActivity2 : ConnectionsActivity
     {
         if (this.state == state)
         {
-            Log.Warn("State set to " + state + " but already in that state");
+            Log.Warn($"State set to {state} but already in that state");
             return;
         }
 
-        Log.Debug("State set to " + state);
+        Log.Debug($"State set to {state}");
         State oldState = this.state;
         this.state = state;
-        OnStateChanged(oldState, state);
+        this.OnStateChanged(oldState, state);
     }
 
     /**
@@ -169,16 +172,16 @@ public class MainActivity2 : ConnectionsActivity
         switch (newState)
         {
             case State.Searching:
-                DisconnectFromAllEndpoints();
-                StartDiscovering();
-                StartAdvertising();
+                this.DisconnectFromAllEndpoints();
+                this.StartDiscovering();
+                this.StartAdvertising();
                 break;
             case State.Connected:
-                StopDiscovering();
-                StopAdvertising();
+                this.StopDiscovering();
+                this.StopAdvertising();
                 break;
             case State.Unknown:
-                StopAllEndpoints();
+                this.StopAllEndpoints();
                 break;
         }
 
@@ -210,8 +213,11 @@ public class MainActivity2 : ConnectionsActivity
     }
 
     /** Updates the {@link TextView} with the correct color/text for the given {@link State}. */
-    private void UpdateTextView(TextView textView, State state, string textViewName)
+    private static void UpdateTextView(TextView? textView, State state, string textViewName)
     {
+        if (textView == null)
+            return;
+
         switch (state)
         {
             case State.Searching:
@@ -240,21 +246,6 @@ public class MainActivity2 : ConnectionsActivity
         var newPerms = new List<string>();
         newPerms.AddRange(perms);
         return newPerms.ToArray();
-    }
-
-    protected override string GetName()
-    {
-        return mName;
-    }
-
-    protected override string GetServiceId()
-    {
-        return ServiceId;
-    }
-
-    protected override Strategy GetStrategy()
-    {
-        return Strategy;
     }
 }
 

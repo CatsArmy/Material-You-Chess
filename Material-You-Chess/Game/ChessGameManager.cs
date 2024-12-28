@@ -12,8 +12,8 @@ public interface IChessGame
     [IgnoreDataMember] public Dictionary<(string, int), IPiece> WhitePieces { get; }
     [IgnoreDataMember] public Dictionary<(string, int), IPiece> BlackPieces { get; }
     [IgnoreDataMember] public Dictionary<(char, int), ISpace> Board { get; }
-    [DataMember] public IPlayer Player1 { get; set; }
-    [DataMember] public IPlayer Player2 { get; set; }
+    [DataMember] public IPlayer? Player1 { get; set; }
+    [DataMember] public IPlayer? Player2 { get; set; }
 }
 
 public class ChessGame : IChessGame
@@ -23,8 +23,8 @@ public class ChessGame : IChessGame
     [IgnoreDataMember] public Dictionary<(string, int), IPiece> WhitePieces { get; } = new();
     [IgnoreDataMember] public Dictionary<(string, int), IPiece> BlackPieces { get; } = new();
     [IgnoreDataMember] public Dictionary<(char, int), ISpace> Board { get; } = new();
-    [DataMember] public IPlayer Player1 { get; set; }
-    [DataMember] public IPlayer Player2 { get; set; }
+    [DataMember] public IPlayer? Player1 { get; set; }
+    [DataMember] public IPlayer? Player2 { get; set; }
 }
 
 

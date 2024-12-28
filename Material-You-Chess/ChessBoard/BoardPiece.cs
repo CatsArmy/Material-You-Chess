@@ -8,27 +8,21 @@ namespace Chess.ChessBoard;
 [DataContract]
 public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space) : IPiece
 {
-    [IgnoreDataMember]
-    public ImageView? Piece { get; set; } = ChessActivity.Instance?.FindViewById<ImageView>(id);
+    [IgnoreDataMember] public ImageView? Piece { get; set; } = ChessActivity.Instance?.FindViewById<ImageView>(id);
 
-    [DataMember]
-    public ISpace Space { get; set; } = space;
+    [DataMember] public ISpace Space { get; set; } = space;
 
-    [DataMember]
-    public int Id { get; } = id;
+    [DataMember] public int Id { get; } = id;
 
-    [DataMember]
-    public bool IsWhite { get; } = isWhite;
+    [DataMember] public bool IsWhite { get; } = isWhite;
 
-    [IgnoreDataMember]
-    public (string, int) Index { get; } = index;
+    [DataMember] public (string, int) Index { get; } = index;
 
-    [IgnoreDataMember]
-    public char Abbreviation { get; set; } = abbreviation;
-
-    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
+    [DataMember] public char Abbreviation { get; set; } = abbreviation;
 
     public virtual void Update() { }
+
+    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
 
     public virtual void Move(ISpace destination)
     {
@@ -51,15 +45,6 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         @params.EndToEnd = destination.Id;
         this.Piece.LayoutParameters = @params;
         this.Piece.RequestLayout();
-    }
-
-    public (int, ImageView?) FakeMove(int spaceId, ImageView? spaceView)
-    {
-        var lastSpaceView = this.Space.Space;
-        var lastSpaceId = this.Space.Id;
-        this.Space.Space = spaceView;
-        this.Space.Id = spaceId;
-        return (lastSpaceId, lastSpaceView);
     }
 
     public void Capture(IPiece destination, Dictionary<(string, int), IPiece> pieces)

@@ -6,12 +6,14 @@ namespace Chess.ChessBoard;
 public class Pawn(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite: isWhite, space)
 {
     private const char _Abbreviation = 'P';
-    public bool HasMoved = false;
-    public bool EnPassantCapturable = false;
+    [DataMember] public bool HasMoved = false;
+
+    [DataMember] public bool EnPassantCapturable = false;
 
     public override void Update()
     {
         this.EnPassantCapturable = false;
+        base.Update();
     }
 
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)

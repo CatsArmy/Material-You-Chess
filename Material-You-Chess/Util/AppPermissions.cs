@@ -6,7 +6,6 @@ namespace Chess.Util;
 
 public class AppPermissions
 {
-    private const BuildVersionCodes UpsideDownCake = BuildVersionCodes.Tiramisu + 1;
     public Permission READ_MEDIA_VISUAL_USER_SELECTED;
     public Permission READ_MEDIA_IMAGES;
     public Permission READ_MEDIA_VIDEO;
@@ -57,7 +56,7 @@ public class AppPermissions
 
     public void HandlePermissionRequestsResults(AppCompatActivity app)
     {
-        if (Build.VERSION.SdkInt >= (UpsideDownCake)) // Partial access on Android 14 (API level 34) or higher
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake) // Partial access on Android 14 (API level 34) or higher
         {
             READ_MEDIA_VISUAL_USER_SELECTED = app.CheckSelfPermission(nameof(READ_MEDIA_VISUAL_USER_SELECTED));
             READ_MEDIA_IMAGES = app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES));
@@ -78,7 +77,7 @@ public class AppPermissions
 
     private (string[], int) PermissionRequestLogic()
     {
-        if (Build.VERSION.SdkInt >= (UpsideDownCake))
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake)
             return (new string[] { nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO), nameof(READ_MEDIA_VISUAL_USER_SELECTED) }, 3);
 
         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)

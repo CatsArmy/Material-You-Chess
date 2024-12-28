@@ -12,15 +12,15 @@ public partial class SignupDialog : ISignupDialog
     public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public bool WasShown { get; set; } = false;
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public TextInputEditText UsernameInput { get; set; }
-    public TextInputLayout UsernameLayout { get; set; }
-    public TextInputEditText EmailInput { get; set; }
-    public TextInputLayout EmailLayout { get; set; }
-    public TextInputLayout PasswordLayout { get; set; }
-    public TextInputEditText PasswordInput { get; set; }
+    public string? Username { get; set; }
+    public string? Email { get; set; }
+    public string? Password { get; set; }
+    public TextInputEditText? UsernameInput { get; set; }
+    public TextInputLayout? UsernameLayout { get; set; }
+    public TextInputEditText? EmailInput { get; set; }
+    public TextInputLayout? EmailLayout { get; set; }
+    public TextInputLayout? PasswordLayout { get; set; }
+    public TextInputEditText? PasswordInput { get; set; }
     public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
     private bool HasCaught { get; set; } = false;
@@ -28,14 +28,14 @@ public partial class SignupDialog : ISignupDialog
     public SignupDialog(MainActivity App, Action OnLoginSuccess)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App);
-        Builder.SetIcon(Resource.Drawable.outline_person_add);
-        Builder.SetTitle("Signup");
-        Builder.SetView(Resource.Layout.login_signup_dialog);
-        Builder.SetPositiveButton("Confirm", OnConfirm);
-        Builder.SetNegativeButton("Cancel", OnCancel);
-        Dialog = Builder.Create();
-        Dialog.ShowEvent += OnShow;
+        this.Builder = new MaterialAlertDialogBuilder(App);
+        this.Builder.SetIcon(Resource.Drawable.outline_person_add);
+        this.Builder.SetTitle("Signup");
+        this.Builder.SetView(Resource.Layout.login_signup_dialog);
+        this.Builder.SetPositiveButton("Confirm", OnConfirm);
+        this.Builder.SetNegativeButton("Cancel", OnCancel);
+        this.Dialog = Builder.Create();
+        this.Dialog.ShowEvent += OnShow;
         this.OnSuccess = OnLoginSuccess;
     }
 
@@ -47,70 +47,68 @@ public partial class SignupDialog : ISignupDialog
         this.EmailLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.DialogEmailLayout);
         this.PasswordLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.DialogPasswordLayout);
         this.PasswordInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.DialogPasswordInput);
-        if (!WasShown)
+        if (!this.WasShown)
         {
-            this.UsernameInput.TextChanged += (sender, args) => this.Username = this.UsernameInput.Text;
-            this.EmailInput.TextChanged += (sender, args) => this.Email = this.EmailInput.Text;
-            this.PasswordInput.TextChanged += (sender, args) => this.Password = this.PasswordInput.Text;
+            this.UsernameInput!.TextChanged += (sender, args) => this.Username = this.UsernameInput.Text;
+            this.EmailInput!.TextChanged += (sender, args) => this.Email = this.EmailInput.Text;
+            this.PasswordInput!.TextChanged += (sender, args) => this.Password = this.PasswordInput.Text;
             this.WasShown = true;
         }
-        UsernameLayout.Visibility = ViewStates.Visible;
+        this.UsernameLayout!.Visibility = ViewStates.Visible;
     }
 
     public async void OnConfirm(object? sender, DialogClickEventArgs args)
     {
-        if (Username == string.Empty)
+        if (this.Username == string.Empty)
         {
-            if (Dialog.IsShowing)
-                Dialog.Hide();
-            Dialog.Show();
-            UsernameLayout.Error = "Must fill username field";
-            Toast.MakeText(Dialog.Context, "Authentication Error, missing field: Username", ToastLength.Long).Show();
+            if (this.Dialog.IsShowing)
+                this.Dialog.Hide();
+            this.Dialog.Show();
+            this.UsernameLayout!.Error = "Must fill username field";
+            Toast.MakeText(this.Dialog.Context, "Authentication Error, missing field: Username", ToastLength.Long)?.Show();
             return;
         }
 
         try
         {
             this.HasCaught = false;
-            var result = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(Email, Password);
-
+            var result = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(this.Email!, this.Password!);
         }
         catch (Exception e)
         {
             this.HasCaught = true;
             Log.Debug("CatDebug", $"{e}");
-            if (Dialog.IsShowing)
-                Dialog.Hide();
-            Dialog.Show();
+            if (this.Dialog.IsShowing)
+                this.Dialog.Hide();
+            this.Dialog.Show();
             //thrown if the password is not strong enough
             if (e is FirebaseAuthWeakPasswordException)
             {
-                PasswordLayout.Error = "Password too weak";
-                Toast.MakeText(Dialog.Context, "Authentication Error", ToastLength.Long).Show();
+                this.PasswordLayout!.Error = "Password too weak";
+                Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
             }
             //thrown if the email address is malformed
             if (e is FirebaseAuthInvalidCredentialsException)
             {
-                EmailLayout.Error = "Email address is malformed";
-                Toast.MakeText(Dialog.Context, "Authentication Error", ToastLength.Long).Show();
+                this.EmailLayout!.Error = "Email address is malformed";
+                Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
                 return;
             }
             //thrown if there already exists an account with the given email address
             if (e is FirebaseAuthUserCollisionException)
             {
-                EmailLayout.Error = "Account with the given email address already exists";
+                this.EmailLayout!.Error = "Account with the given email address already exists";
             }
         }
         finally
         {
-            if (!HasCaught)
+            if (!this.HasCaught)
             {
-                UserProfileChangeRequest.Builder builder = new();
-                builder.SetDisplayName(Username);
-                App.StartProgressIndicator();
-                await FirebaseAuth.Instance?.CurrentUser?.UpdateProfileAsync(builder.Build());
-                await FirebaseAuth.Instance?.CurrentUser?.ReloadAsync();
-                App.StopProgressIndicator();
+                var builder = new UserProfileChangeRequest.Builder().SetDisplayName(this.Username);
+                this.App.StartProgressIndicator();
+                await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(builder.Build());
+                await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
+                this.App.StopProgressIndicator();
                 this.OnSuccess();
             }
         }
@@ -118,8 +116,8 @@ public partial class SignupDialog : ISignupDialog
 
     public void OnCancel(object? sender, DialogClickEventArgs args)
     {
-        this.EmailInput.Text = "";
-        this.PasswordInput.Text = "";
+        this.EmailInput!.Text = string.Empty;
+        this.PasswordInput!.Text = string.Empty;
     }
 }
 

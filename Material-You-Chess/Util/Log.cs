@@ -1,11 +1,8 @@
-﻿using System;
-using Android.Widget;
-
-namespace Chess.Util.Logger;
+﻿namespace Chess.Util.Logger;
 
 public static class Log
 {
-    public static TextView LogView;
+    public static TextView? LogView;
     private const string tag = "CatDebug";
     private static void AppendToLogs(string msg)
     {

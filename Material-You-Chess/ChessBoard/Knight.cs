@@ -34,6 +34,7 @@ public class Knight(int id, (string, int) index, bool isWhite, ISpace space) : B
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
+
         if (downLeft != null)
         {
             if (downLeft.Piece(pieces) is not IPiece piece)
@@ -50,6 +51,7 @@ public class Knight(int id, (string, int) index, bool isWhite, ISpace space) : B
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
+
         if (rightDown != null)
         {
             if (rightDown.Piece(pieces) is not IPiece piece)
@@ -66,6 +68,7 @@ public class Knight(int id, (string, int) index, bool isWhite, ISpace space) : B
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
+
         if (leftDown != null)
         {
             if (leftDown.Piece(pieces) is not IPiece piece)

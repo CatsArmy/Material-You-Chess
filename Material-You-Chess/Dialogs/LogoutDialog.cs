@@ -11,14 +11,14 @@ public class LogoutDialog : IMaterialDialog
     private Action OnConfirmation { get; set; }
     public LogoutDialog(MainActivity App, Action OnConfirmation)
     {
-        Builder = new MaterialAlertDialogBuilder(App);
-        Builder.SetIcon(Resource.Drawable.outline_person_remove);
-        Builder.SetTitle("Logout");
-        Builder.SetMessage("Are you sure you want to logout?");
-        Builder.SetPositiveButton("Confirm", OnConfirm);
-        Builder.SetNegativeButton("Cancel", OnCancel);
-        Dialog = Builder.Create();
-        Dialog.ShowEvent += OnShow;
+        this.Builder = new MaterialAlertDialogBuilder(App);
+        this.Builder.SetIcon(Resource.Drawable.outline_person_remove);
+        this.Builder.SetTitle("Logout");
+        this.Builder.SetMessage("Are you sure you want to logout?");
+        this.Builder.SetPositiveButton("Confirm", OnConfirm);
+        this.Builder.SetNegativeButton("Cancel", OnCancel);
+        this.Dialog = this.Builder.Create();
+        this.Dialog.ShowEvent += OnShow;
         this.OnConfirmation = OnConfirmation;
     }
 

@@ -11,27 +11,26 @@ public class LoginDialog : ILoginDialog
     public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public bool WasShown { get; set; } = false;
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public TextInputEditText EmailInput { get; set; }
-    public TextInputLayout EmailLayout { get; set; }
-    public TextInputLayout PasswordLayout { get; set; }
-    public TextInputEditText PasswordInput { get; set; }
+    public string? Email { get; set; }
+    public string? Password { get; set; }
+    public TextInputEditText? EmailInput { get; set; }
+    public TextInputLayout? EmailLayout { get; set; }
+    public TextInputLayout? PasswordLayout { get; set; }
+    public TextInputEditText? PasswordInput { get; set; }
     public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
     private bool HasCaught { get; set; } = false;
     public LoginDialog(MainActivity App, Action OnLoginSuccess)
     {
         this.App = App;
-        Builder = new MaterialAlertDialogBuilder(App//TODO, Resource.Style.ThemeOverlay_Catalog_MaterialAlertDialog_Centered_FullWidthButtons
-            );
-        Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person));
-        Builder.SetTitle("Login");
-        Builder.SetView(Resource.Layout.login_signup_dialog);
-        Builder.SetPositiveButton("Confirm", OnConfirm);
-        Builder.SetNegativeButton("Cancel", OnCancel);
-        Dialog = Builder.Create();
-        Dialog.ShowEvent += OnShow;
+        this.Builder = new MaterialAlertDialogBuilder(App);
+        this.Builder.SetIcon(App.GetDrawable(Resource.Drawable.outline_person));
+        this.Builder.SetTitle("Login");
+        this.Builder.SetView(Resource.Layout.login_signup_dialog);
+        this.Builder.SetPositiveButton("Confirm", OnConfirm);
+        this.Builder.SetNegativeButton("Cancel", OnCancel);
+        this.Dialog = Builder.Create();
+        this.Dialog.ShowEvent += OnShow;
         this.OnSuccess = OnLoginSuccess;
     }
 
@@ -41,10 +40,10 @@ public class LoginDialog : ILoginDialog
         this.EmailLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.DialogEmailLayout);
         this.PasswordLayout = this.Dialog.FindViewById<TextInputLayout>(Resource.Id.DialogPasswordLayout);
         this.PasswordInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.DialogPasswordInput);
-        if (!WasShown)
+        if (!this.WasShown)
         {
-            this.EmailInput.TextChanged += (sender, args) => this.Email = this.EmailInput.Text;
-            this.PasswordInput.TextChanged += (sender, args) => this.Password = this.PasswordInput.Text;
+            this.EmailInput!.TextChanged += (sender, args) => this.Email = this.EmailInput?.Text;
+            this.PasswordInput!.TextChanged += (sender, args) => this.Password = this.PasswordInput?.Text;
             this.WasShown = true;
         }
     }
@@ -54,21 +53,21 @@ public class LoginDialog : ILoginDialog
         try
         {
             this.HasCaught = false;
-            var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(Email, Password);
+            var result = await FirebaseAuth.Instance.SignInWithEmailAndPasswordAsync(this.Email!, this.Password!);
         }
         catch (Exception e)
         {
             this.HasCaught = true;
             Log.Debug("CatDebug", $"{e}");
-            if (Dialog.IsShowing)
-                Dialog.Hide();
-            Dialog.Show();
+            if (this.Dialog.IsShowing)
+                this.Dialog.Hide();
+            this.Dialog.Show();
 
             //thrown if the user account corresponding to email does not exist or has been disabled
             if (e is FirebaseAuthInvalidUserException)
             {
-                EmailLayout.Error = "The account corresponding to the email does not exist or has been disabled";
-                Toast.MakeText(Dialog.Context, "Authentication Error", ToastLength.Long).Show();
+                this.EmailLayout!.Error = "The account corresponding to the email does not exist or has been disabled";
+                Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
                 return;
             }
             //When Email Enumeration Protection is enabled
@@ -76,23 +75,23 @@ public class LoginDialog : ILoginDialog
             if (e is FirebaseAuthInvalidCredentialsException)
             {
                 const string error = "the email or password is invalid";
-                EmailLayout.Error = error;
-                PasswordLayout.Error = error;
+                this.EmailLayout!.Error = error;
+                this.PasswordLayout!.Error = error;
             }
         }
         finally
         {
-            if (!HasCaught)
+            if (!this.HasCaught)
                 this.OnSuccess();
-            App.StartProgressIndicator();
-            await FirebaseAuth.Instance?.CurrentUser?.ReloadAsync();
-            App.StopProgressIndicator();
+            this.App.StartProgressIndicator();
+            await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
+            this.App.StopProgressIndicator();
         }
     }
 
     public void OnCancel(object? sender, DialogClickEventArgs args)
     {
-        this.EmailInput.Text = "";
-        this.PasswordInput.Text = "";
+        this.EmailInput!.Text = string.Empty;
+        this.PasswordInput!.Text = string.Empty;
     }
 }

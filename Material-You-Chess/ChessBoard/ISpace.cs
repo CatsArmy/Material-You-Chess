@@ -1,16 +1,21 @@
-﻿namespace Chess.ChessBoard;
+﻿using System.Runtime.Serialization;
+
+namespace Chess.ChessBoard;
 
 public interface ISpace
 {
-    public ImageView? Space { get; set; }
-    public bool IsWhite { get; set; }
-    public int Id { get; set; }
-    public (char, int) Index { get; }
-    public char File { get; }
-    public int Rank { get; }
+    [IgnoreDataMember] public ImageView? Space { get; }
+    [DataMember] public bool IsWhite { get; }
+    [DataMember] public int Id { get; }
+    [DataMember] public (char, int) Index { get; }
+    [DataMember] public char File { get; }
+    [DataMember] public int Rank { get; }
+
+    [IgnoreDataMember] public const int Select = 1;
+    [IgnoreDataMember] public const int Unselect = 0;
+
     public void SelectSpace();
     public void UnselectSpace();
-    public ISpace? GetBoardSpace(Dictionary<(char, int), ISpace> board);
     public ISpace? DiagonalUp(Dictionary<(char, int), ISpace> board, bool isRight);
     public ISpace? DiagonalDown(Dictionary<(char, int), ISpace> board, bool isRight);
     public ISpace? Up(Dictionary<(char, int), ISpace> board);
@@ -20,5 +25,4 @@ public interface ISpace
     public ISpace? Forward(Dictionary<(char, int), ISpace> board, bool isWhite);
     public ISpace? Backward(Dictionary<(char, int), ISpace> board, bool isWhite);
     public IPiece? Piece(Dictionary<(string, int), IPiece> boardPieces);
-    public string ToString() => ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]!;
 }

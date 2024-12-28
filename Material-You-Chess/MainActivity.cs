@@ -70,11 +70,11 @@ public class MainActivity : AppCompatActivity
         this.loginDialog = new LoginDialog(this, UpdateUserState);
         this.signupDialog = new SignupDialog(this, UpdateUserState);
         this.profileDialog = new ProfileDialog(this, OpenPhotoPicker, UpdateUserState);
-        this.startGame.Click += StartGame_Click;
-        UpdateUserState();
+        this.startGame!.Click += StartGame_Click;
+        this.UpdateUserState();
     }
 
-    private async void SelectPhoto(Android.Net.Uri photo)
+    private void SelectPhoto(Android.Net.Uri photo)
     {
         Log.Debug("PhotoPicker", $"{photo}");
         if (FirebaseAuth.Instance.CurrentUser == null || photo == null)
@@ -98,42 +98,42 @@ public class MainActivity : AppCompatActivity
         switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:
-                this.profileAction1.Text = "Profile";
+                this.profileAction1!.Text = "Profile";
                 this.profileAction1.Click -= OpenLoginDialog;
                 this.profileAction1.Click += OpenProfileDialog;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
 
-                this.profileAction2.Text = "Log out";
+                this.profileAction2!.Text = "Log out";
                 this.profileAction2.Click -= OpenSignupDialog;
                 this.profileAction2.Click += OpenLogoutDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
 
-                this.mainUsername.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-                this.mainProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+                this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+                this.mainProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
                 this.mainProfilePicture.RequestLayout();
                 break;
 
             case false:
-                this.profileAction1.Text = "Login";
+                this.profileAction1!.Text = "Login";
                 this.profileAction1.Click -= OpenProfileDialog;
                 this.profileAction1.Click += OpenLoginDialog;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
 
-                this.profileAction2.Text = "Sign up";
+                this.profileAction2!.Text = "Sign up";
                 this.profileAction2.Click -= OpenLogoutDialog;
                 this.profileAction2.Click += OpenSignupDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
 
-                this.mainUsername.Text = "Guest";
-                this.mainProfilePicture.SetImageURI(null);
+                this.mainUsername!.Text = "Guest";
+                this.mainProfilePicture!.SetImageURI(null);
                 this.mainProfilePicture.RequestLayout();
                 break;
         }
     }
 
-    public void StartProgressIndicator() => UserProgressIndicator.Show();
+    public void StartProgressIndicator() => this.UserProgressIndicator?.Show();
 
-    public void StopProgressIndicator() => UserProgressIndicator.Hide();
+    public void StopProgressIndicator() => this.UserProgressIndicator?.Hide();
 
     private void StartGame_Click(object? sender, EventArgs e)
     {

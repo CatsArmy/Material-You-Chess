@@ -298,7 +298,7 @@ public class ChessActivity : AppCompatActivity
         {
             move.Destination.SelectSpace();
             this.highlighted?.Add(move.Destination);
-            if (move?.Origin?.Space?.Drawable?.Level == BoardSpace.Unselect)
+            if (move?.Origin?.Space?.Drawable?.Level == ISpace.Unselect)
             {
                 move.Origin.SelectSpace();
                 this.highlighted?.Add(move.Origin);
