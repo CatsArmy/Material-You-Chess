@@ -48,6 +48,8 @@ public class ChessActivity : AppCompatActivity
         //TODO Add Castling difficulty Medium
         //TODO Add Promotion difficulty Easy+ / Medium-
         //TODO More?
+
+        //FIX why are the captured pieces not captured??
         ChessGame game = new(this);
     }
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

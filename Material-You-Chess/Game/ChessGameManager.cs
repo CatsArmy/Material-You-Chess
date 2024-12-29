@@ -27,7 +27,8 @@ public interface IChessGame
 
 public class ChessGame : IChessGame
 {
-    private double Turn = 1;
+    private int Turn = 1;
+    private bool CurrentPlayerIsWhite = true;
     private readonly Activity app;
     /*[IgnoreDataMember]*/
     public Dictionary<(string, int), IPiece> AllPieces { get; } = [];
@@ -223,7 +224,7 @@ public class ChessGame : IChessGame
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
             return;
 
-        var player = (this.Turn % 2 != 0) switch
+        var player = this.CurrentPlayerIsWhite switch
         {
             true => this.Player1,
             false => this.Player2,
@@ -240,30 +241,33 @@ public class ChessGame : IChessGame
         //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
         {
-            sIndex = this.AllPieces[pIndex].Space.Index;
+            if (!this.AllPieces.TryGetValue(pIndex, out IPiece? value))
+                return;
 
-            IPiece? piece = null;
-            if (this.Selected == null || !player.Pieces.TryGetValue(pIndex, out piece))
+            sIndex = value.Space.Index;
+        }
+
+        if (player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
+        {
+            if (this.Selected == null)
             {
-                this.Selected = piece;
+                this.Selected = Piece;
                 return;
             }
 
-            if (this.Selected.IsWhite == piece.IsWhite)
+            if (this.Selected.IsWhite == Piece.IsWhite)
             {
-                if (this.Selected.Id != piece.Id)
+                if (this.Selected.Id != Piece.Id)
                 {
-                    this.Selected = piece;
+                    this.Selected = Piece;
                 }
                 return;
             }
         }
 
-        if (this.Selected == null)
+        if (!this.Board.TryGetValue(sIndex, out var space))
             return;
 
-
-        ISpace space = this.Board[sIndex];
         if (this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not IMove move)
         {
             this.Selected = null;
@@ -272,13 +276,18 @@ public class ChessGame : IChessGame
 
         if (this.Selected is Pawn pawn)
         {
-            if (move is Pawn.DoubleMove doubleMove)
-            {
-                doubleMove.Pawn.EnPassantCapturable = true;
-            }
             pawn.HasMoved = true;
         }
-        if (move is ICapture capture)
+
+        if (move is Pawn.DoubleMove doubleMove)
+        {
+            doubleMove.Pawn.EnPassantCapturable = true;
+        }
+        else if (move is Pawn.EnPassant enPassant)
+        {
+            this.Selected!.Capture(enPassant.Pawn, this.AllPieces);
+        }
+        else if (move is ICapture capture)
         {
             if (capture.Piece is King)
             {
@@ -286,24 +295,20 @@ public class ChessGame : IChessGame
                 foreach (var Space in this.Board.Values)
                     Space.Space!.Click -= this.OnClick;
 
-                foreach (var Piece in this.AllPieces.Values)
-                    Piece.Space.Space!.Click -= this.OnClick;
+                foreach (var piece in this.AllPieces.Values)
+                    piece.Space.Space!.Click -= this.OnClick;
             }
-            if (capture is Pawn.EnPassant enPassant)
-            {
-                this.Selected.Capture(enPassant.Pawn, this.AllPieces);
-            }
-            else
-            {
-                this.Selected.Capture(capture.Piece, this.AllPieces);
-            }
+
+            this.Selected!.Capture(capture.Piece, this.AllPieces);
         }
 
         this.app.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard)?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
 
-        this.Selected.Move(move.Destination);
+        this.Selected!.Move(move.Destination);
         this.Selected = null;
-        this.Turn += 0.5;
+        if (!this.CurrentPlayerIsWhite)
+            this.Turn += 1;
+        this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
     }
 }
 
