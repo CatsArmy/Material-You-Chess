@@ -2,8 +2,9 @@ using System.Diagnostics.CodeAnalysis;
 using Android.Gms.Nearby.Connection;
 using Android.Text.Method;
 using Android.Views;
-using Chess;
 using Chess.Util.Logger;
+
+namespace Chess.Util;
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class MainActivity2 : ConnectionsActivity
@@ -41,7 +42,7 @@ public class MainActivity2 : ConnectionsActivity
 
         this.mDebugLogView!.Visibility = DEBUG ? ViewStates.Visible : ViewStates.Gone;
         this.mDebugLogView!.MovementMethod = new ScrollingMovementMethod();
-        Log.LogView = this.mDebugLogView;
+        Log.SetLogView(this.mDebugLogView);
     }
 
     //private void OnRefresh()
@@ -245,7 +246,7 @@ public class MainActivity2 : ConnectionsActivity
         var perms = base.GetRequiredPermissions().ToList();
         var newPerms = new List<string>();
         newPerms.AddRange(perms);
-        return newPerms.ToArray();
+        return [.. newPerms];
     }
 }
 

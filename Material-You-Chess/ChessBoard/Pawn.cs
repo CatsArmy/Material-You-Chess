@@ -1,14 +1,14 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Chess.ChessBoard;
 
-namespace Chess.ChessBoard;
-
-[DataContract]
-public class Pawn(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite: isWhite, space)
+/*[DataContract]*/
+public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
 {
-    private const char _Abbreviation = 'P';
-    [DataMember] public bool HasMoved = false;
+    private const char abbreviation = 'P';
+    /*[DataMember]*/
+    public bool HasMoved = false;
 
-    [DataMember] public bool EnPassantCapturable = false;
+    /*[DataMember]*/
+    public bool EnPassantCapturable = false;
 
     public override void Update()
     {
@@ -72,32 +72,60 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space) : Boa
         //Open Promote dialog/popup thingy
         //add back the value but as a the selected piece(cant be king)
 
-        //update the abbriviation to match the new type;
+        //update the abbreviation to match the new type;
     }
 
     private interface ISpecialMoves : IMove
     {
+        /*[DataMember]*/
         public Pawn Pawn { get; }
+
+        public new void Select()
+        {
+            this.Destination.SelectSpace();
+            this.Origin.SelectSpace();
+            this.Pawn.Space.SelectSpace();
+        }
+
+        public new void Unselect()
+        {
+            this.Destination.UnselectSpace();
+            this.Origin.UnselectSpace();
+            this.Pawn.Space.SelectSpace();
+        }
     }
 
     public class EnPassant(IPiece origin, ISpace destination, Pawn captured) : ISpecialMoves, ICapture
     {
+        /*[DataMember]*/
         public ISpace Destination { get; set; } = destination;
+        /*[DataMember]*/
         public int DestinationId { get; set; } = destination.Id;
+        /*[DataMember]*/
         public ISpace Origin { get; set; } = origin.Space;
+        /*[DataMember]*/
         public IPiece OriginPiece { get; set; } = origin;
+        /*[DataMember]*/
         public int OriginId { get; set; } = origin.Id;
+        /*[DataMember]*/
         public Pawn Pawn { get; } = captured;
+        /*[DataMember]*/
         public IPiece Piece { get; } = captured;
     }
 
     public class DoubleMove(Pawn origin, ISpace destination) : ISpecialMoves
     {
+        /*[DataMember]*/
         public ISpace Destination { get; set; } = destination;
+        /*[DataMember]*/
         public int DestinationId { get; set; } = destination.Id;
+        /*[DataMember]*/
         public ISpace Origin { get; set; } = origin.Space;
+        /*[DataMember]*/
         public IPiece OriginPiece { get; set; } = origin;
+        /*[DataMember]*/
         public int OriginId { get; set; } = origin.Id;
+        /*[DataMember]*/
         public Pawn Pawn { get; } = origin;
     }
 }

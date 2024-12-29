@@ -5,7 +5,7 @@ using Android.Util;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Chess.Dialogs;
-using Chess.FirebaseApp;
+using Chess.Firebase;
 using Chess.Util;
 using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
@@ -19,7 +19,21 @@ namespace Chess;
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
-    private bool MaterialYouThemePreference = true;
+    public bool MaterialYouThemePreference
+    {
+        get; set
+        {
+            field = value;
+            if (value == true)
+            {
+                base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
+            }
+            if (value == false)
+            {
+                base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
+            }
+        }
+    } = true;
     private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
     private ActivityResultLauncher<Android.Net.Uri>? photoTaker;
     private AppPermissions? permissions;
@@ -39,7 +53,8 @@ public class MainActivity : AppCompatActivity
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        _ = this.GetMaterialYouThemePreference(out this.MaterialYouThemePreference);
+        _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
+        this.MaterialYouThemePreference = MaterialYouThemePreference;
         _ = new FirebaseSecrets();
 
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
@@ -48,12 +63,7 @@ public class MainActivity : AppCompatActivity
         this.photoTaker = base.RegisterForActivityResult(new TakePicture(),
             new ActivityResultCallback<Java.Lang.Boolean>(this.CapturePhoto)) as ActivityResultLauncher<Android.Net.Uri>;
 
-        //I: Android.Net.UriA, O: PickVisualMediaRequestA
-        //I: Android.Net.Uri, O: Java.Lang.Boolean
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
-
-        if (!this.MaterialYouThemePreference)
-            base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);

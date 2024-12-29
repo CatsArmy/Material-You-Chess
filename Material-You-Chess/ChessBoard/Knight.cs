@@ -2,10 +2,10 @@
 
 namespace Chess.ChessBoard;
 
-[DataContract]
-public class Knight(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
+/*[DataContract]*/
+public class Knight(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
 {
-    private const char _Abbreviation = 'N';
+    private const char abbreviation = 'N';
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
         List<IMove> moves = base.Moves(board, pieces);

@@ -4,15 +4,15 @@ namespace Chess.ChessBoard;
 
 public interface ISpace
 {
-    [IgnoreDataMember] public ImageView? Space { get; }
-    [DataMember] public bool IsWhite { get; }
-    [DataMember] public int Id { get; }
-    [DataMember] public (char, int) Index { get; }
-    [DataMember] public char File { get; }
-    [DataMember] public int Rank { get; }
+    /*[IgnoreDataMember]*/ public ImageView? Space { get; }
+    /*[DataMember]*/ public bool IsWhite { get; }
+    /*[DataMember]*/ public int Id { get; }
+    /*[DataMember]*/ public (char, int) Index { get; }
+    /*[DataMember]*/ public char File { get; }
+    /*[DataMember]*/ public int Rank { get; }
 
-    [IgnoreDataMember] public const int Select = 1;
-    [IgnoreDataMember] public const int Unselect = 0;
+    /*[IgnoreDataMember]*/ public const int Select = 1;
+    /*[IgnoreDataMember]*/ public const int Unselect = 0;
 
     public void SelectSpace();
     public void UnselectSpace();

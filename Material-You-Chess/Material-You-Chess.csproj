@@ -22,8 +22,8 @@
   </PropertyGroup>
 
 <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-  <RunAOTCompilation>true</RunAOTCompilation>
-  <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
+  <RunAOTCompilation>True</RunAOTCompilation>
+  <AndroidEnableProfiledAot>True</AndroidEnableProfiledAot>
   <DebugType>embedded</DebugType>
   <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
   <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>

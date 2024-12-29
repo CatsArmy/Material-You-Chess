@@ -2,16 +2,21 @@
 
 public static class Log
 {
-    public static TextView? LogView;
+    private static TextView? logView;
     private const string tag = "CatDebug";
+    public static void SetLogView(TextView? _logView)
+    {
+        logView = _logView;
+    }
+
     private static void AppendToLogs(string msg)
     {
-        if (LogView == null)
+        if (logView == null)
             return;
 
-        LogView.Append("\n");
-        LogView.Append(DateTime.Now.ToString("hh:mm"));
-        LogView.Append($" {msg}");
+        logView.Append("\n");
+        logView.Append(DateTime.Now.ToString("hh:mm"));
+        logView.Append($" {msg}");
     }
 
     //public static void Verbose(string message) { }

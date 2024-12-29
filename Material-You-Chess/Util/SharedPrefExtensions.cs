@@ -19,4 +19,17 @@ public static class SharedPrefExtensions
         editor?.Apply();
         return sharedPref;
     }
+    public static void Merge<TKey, TValue>(this Dictionary<TKey, TValue> to, params Dictionary<TKey, TValue>[] toBeMerged)
+    {
+        foreach (var dictionary in toBeMerged)
+        {
+            foreach (var kvp in dictionary)
+            {
+                if (!to.ContainsKey(kvp.Key))
+                {
+                    to[kvp.Key] = kvp.Value;
+                }
+            }
+        }
+    }
 }

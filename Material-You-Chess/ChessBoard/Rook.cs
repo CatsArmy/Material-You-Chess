@@ -2,11 +2,11 @@
 
 namespace Chess.ChessBoard;
 
-[DataContract]
-public class Rook(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
+/*[DataContract]*/
+public class Rook(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
 {
-    private const char _Abbreviation = 'R';
-    [DataMember] public bool HasMoved = false;
+    private const char abbreviation = 'R';
+    /*[DataMember]*/ public bool HasMoved = false;
 
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {

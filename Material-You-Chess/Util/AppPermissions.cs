@@ -78,11 +78,11 @@ public class AppPermissions
     private (string[], int) PermissionRequestLogic()
     {
         if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake)
-            return (new string[] { nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO), nameof(READ_MEDIA_VISUAL_USER_SELECTED) }, 3);
+            return ([nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO), nameof(READ_MEDIA_VISUAL_USER_SELECTED)], 3);
 
         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
-            return (new string[] { nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO) }, 2);
+            return ([nameof(READ_MEDIA_IMAGES), nameof(READ_MEDIA_VIDEO)], 2);
 
-        return (new string[] { nameof(READ_EXTERNAL_STORAGE) }, 1);
+        return ([nameof(READ_EXTERNAL_STORAGE)], 1);
     }
 }

@@ -61,18 +61,24 @@ public class ProfileDialog : IProfileDialog
         this.ThemeToggle = this.Dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
         this.EditProfileUsername = this.Dialog.FindViewById<TextView>(Resource.Id.UsernameText);
         this.EditUsername = this.Dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
-
+        this.ThemeToggle!.CheckedChange += this.ThemeChanged;
+        this.ThemeToggle!.Checked = this.App.MaterialYouThemePreference;
         if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
             Log.Debug("Display name is missing???");
 
         this.EditProfileUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        //this.DialogProfilePicture.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+        this.DialogProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
         if (!this.WasShown)
         {
             this.EditProfilePicture!.Click += this.App.OpenPhotoPicker;
             this.EditUsername!.Click += (sender, args) => this.UsernameDialog?.Dialog.Show();
             this.WasShown = true;
         }
+    }
+
+    private void ThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs e)
+    {
+        this.App.MaterialYouThemePreference = e.IsChecked;
     }
 
     public async void OnConfirm(object? sender, DialogClickEventArgs args)

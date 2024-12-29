@@ -4,5 +4,5 @@ namespace Chess.ChessBoard;
 
 public interface ICapture : IMove
 {
-    [DataMember] public IPiece Piece { get; }
+    /*[DataMember]*/ public IPiece Piece { get; }
 }

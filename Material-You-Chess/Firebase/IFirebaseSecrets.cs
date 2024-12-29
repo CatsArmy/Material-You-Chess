@@ -1,4 +1,4 @@
-﻿namespace Chess.FirebaseApp;
+﻿namespace Chess.Firebase;
 
 public interface IFirebaseSecrets
 {

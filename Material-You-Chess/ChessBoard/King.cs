@@ -1,12 +1,11 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Chess.ChessBoard;
 
-namespace Chess.ChessBoard;
-
-[DataContract]
-public class King(int id, (string, int) index, bool isWhite, ISpace space) : BoardPiece(id, index, _Abbreviation, isWhite, space)
+/*[DataContract]*/
+public class King(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
 {
-    private const char _Abbreviation = 'K';
-    [DataMember] public bool HasMoved = false;
+    private const char abbreviation = 'K';
+    /*[DataMember]*/
+    public bool HasMoved = false;
 
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
@@ -90,7 +89,7 @@ public class King(int id, (string, int) index, bool isWhite, ISpace space) : Boa
     public bool IsInCheck(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
     {
         char key = this.IsWhite ? 'b' : 'w';
-        List<IMove> moves = new List<IMove>();
+        List<IMove> moves = [];
         foreach (var piece in pieces)
         {
             if (!piece.Key.Item1.StartsWith(key))
@@ -98,7 +97,7 @@ public class King(int id, (string, int) index, bool isWhite, ISpace space) : Boa
 
             moves.AddRange(piece.Value.Moves(board, pieces));
         }
-        moves = moves.Where(move => move is ICapture).ToList();
+        moves = [.. moves.Where(move => move is ICapture)];
         return moves.FirstOrDefault(move => IsCheck(move, pieces)) != null;
     }
 

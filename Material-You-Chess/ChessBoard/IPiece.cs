@@ -4,22 +4,22 @@ namespace Chess.ChessBoard;
 
 public interface IPiece
 {
-    [DataMember]
+    /*[DataMember]*/
     public ISpace Space { get; set; }
 
-    [DataMember]
+    /*[DataMember]*/
     public ImageView? Piece { get; set; }
 
-    [DataMember]
+    /*[DataMember]*/
     public int Id { get; }
 
-    [DataMember]
+    /*[DataMember]*/
     public bool IsWhite { get; }
 
-    [DataMember]
+    /*[DataMember]*/
     public (string, int) Index { get; }
 
-    [DataMember]
+    /*[DataMember]*/
     public char Abbreviation { get; set; }
 
     public void Update();

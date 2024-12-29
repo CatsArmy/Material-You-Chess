@@ -4,22 +4,22 @@ namespace Chess.ChessBoard;
 
 public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {
-    [IgnoreDataMember]
+    /*[IgnoreDataMember]*/
     public ImageView? Space { get; } = Space;
 
-    [DataMember]
+    /*[DataMember]*/
     public bool IsWhite { get; } = IsWhite;
 
-    [DataMember]
+    /*[DataMember]*/
     public int Id { get; } = Id;
 
-    [DataMember]
+    /*[DataMember]*/
     public (char, int) Index { get; } = (file, rank);
 
-    [DataMember]
+    /*[DataMember]*/
     public char File { get; } = file;
 
-    [DataMember]
+    /*[DataMember]*/
     public int Rank { get; } = rank;
 
     public override string ToString() => $"{File}{Rank}";

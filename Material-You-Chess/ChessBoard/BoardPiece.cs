@@ -1,28 +1,33 @@
-﻿using System.Runtime.Serialization;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.Util.Logger;
 
 namespace Chess.ChessBoard;
 
-[DataContract]
-public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space) : IPiece
+/*[DataContract]*/
+public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, Activity App) : IPiece
 {
-    [IgnoreDataMember] public ImageView? Piece { get; set; } = ChessActivity.Instance?.FindViewById<ImageView>(id);
+    /*[IgnoreDataMember]*/
+    public ImageView? Piece { get; set; } = App.FindViewById<ImageView>(id);
 
-    [DataMember] public ISpace Space { get; set; } = space;
+    /*[DataMember]*/
+    public ISpace Space { get; set; } = space;
 
-    [DataMember] public int Id { get; } = id;
+    /*[DataMember]*/
+    public int Id { get; } = id;
 
-    [DataMember] public bool IsWhite { get; } = isWhite;
+    /*[DataMember]*/
+    public bool IsWhite { get; } = isWhite;
 
-    [DataMember] public (string, int) Index { get; } = index;
+    /*[DataMember]*/
+    public (string, int) Index { get; } = index;
 
-    [DataMember] public char Abbreviation { get; set; } = abbreviation;
+    /*[DataMember]*/
+    public char Abbreviation { get; set; } = abbreviation;
 
     public virtual void Update() { }
 
-    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => new();
+    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => [];
 
     public virtual void Move(ISpace destination)
     {
@@ -56,7 +61,8 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         destination.Piece!.Enabled = false;
         pieces.Remove(destination.Index);
         destination.Piece!.Clickable = false;
-        if (ChessActivity.Instance!.FindViewById(destination.Id) is View view)
+
+        if (destination.Piece is View view)
             if (view.Parent is ViewGroup parent)
                 parent.RemoveView(view);
 
@@ -234,8 +240,5 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         return (left.Up(board), left.Down(board));
     }
 
-    public override string? ToString()
-    {
-        return $"[{this.Space}], [{ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]}]";
-    }
+    //public override string? ToString() => $"[{this.Space}], [{ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]}]";
 }
