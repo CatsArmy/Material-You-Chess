@@ -1,11 +1,12 @@
 ﻿using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.Runtime;
 using Android.Util;
+using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using Chess.Dialogs;
-using Chess.Firebase;
 using Chess.Util;
 using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
@@ -14,7 +15,9 @@ using Google.Android.Material.ProgressIndicator;
 using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
+
 namespace Chess;
+
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
@@ -34,13 +37,15 @@ public class MainActivity : AppCompatActivity
             }
         }
     } = true;
-    private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
-    private ActivityResultLauncher<Android.Net.Uri>? photoTaker;
+    public ActivityResultLauncher//<Android.Net.Uri> or void if preview
+        ? PhotoTaker;
+    private ActivityResultLauncher//<PickVisualMediaRequest>
+        ? photoPicker;
     private AppPermissions? permissions;
     private Android.Net.Uri? selectedPhoto;
     private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
 
-    private ShapeableImageView? mainProfilePicture;
+    public ShapeableImageView? mainProfilePicture;
     private Button? startGame;
     private TextView? mainUsername;
     private CircularProgressIndicator? UserProgressIndicator;
@@ -51,17 +56,22 @@ public class MainActivity : AppCompatActivity
     private LoginDialog? loginDialog;
     private SignupDialog? signupDialog;
 
+    private Android.Net.Uri? Upload;
+
+
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
-        _ = new FirebaseSecrets();
+        _ = new FirebaseSecrets.FirebaseSecrets();
 
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto)) as ActivityResultLauncher<PickVisualMediaRequest>;
+            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto))// as ActivityResultLauncher<PickVisualMediaRequest>
+            ;
 
-        this.photoTaker = base.RegisterForActivityResult(new TakePicture(),
-            new ActivityResultCallback<Java.Lang.Boolean>(this.CapturePhoto)) as ActivityResultLauncher<Android.Net.Uri>;
+        this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
+            new ActivityResultCallback<Bitmap>(this.CapturePhoto))// as ActivityResultLauncher<Android.Net.Uri>
+            ;
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
 
@@ -90,6 +100,21 @@ public class MainActivity : AppCompatActivity
         this.UpdateUserState();
     }
 
+    public override void OnCreateContextMenu(IContextMenu? menu, View? v, IContextMenuContextMenuInfo? menuInfo)
+    {
+        base.OnCreateContextMenu(menu, v, menuInfo);
+        base.MenuInflater.Inflate(Resource.Menu.clear_pfp, menu);
+    }
+
+    public override bool OnContextItemSelected(IMenuItem item)
+    {
+        if (item.ItemId == Resource.Id.clear)
+        {
+            this.profileDialog?.ClearProfilePicture();
+        }
+        return base.OnContextItemSelected(item);
+    }
+
     private void SelectPhoto(Android.Net.Uri photo)
     {
         Log.Debug("PhotoPicker", $"{photo}");
@@ -101,24 +126,33 @@ public class MainActivity : AppCompatActivity
         this.profileDialog?.OnSelectPhoto(photo);
     }
 
+    private void CapturePhoto(Bitmap photo)
+    {
+        this.profileDialog?.OnCapturePhoto(photo);
+    }
+
     private void CapturePhoto(Java.Lang.Boolean hasCaptured)
     {
         Log.Debug("PhotoTaker", $"{hasCaptured}");
         if (FirebaseAuth.Instance.CurrentUser == null || hasCaptured == null)
             return;
 
-
         if (!hasCaptured.BooleanValue())
-        {
             return;
-        }
-        //todo inform the profile dialog of the new photo
 
-        //base.ContentResolver?.TakePersistableUriPermission(photo, ActivityFlags.GrantReadUriPermission);
-        //this.selectedPhoto = photo;
-        //this.profileDialog?.OnSelectPhoto(photo);
+        this.profileDialog?.OnCapturePhoto(this.Upload!);
     }
 
+    public void OpenPhotoTaker(object? sender, EventArgs args)
+    {
+        //var dir = new Java.IO.File(base.FilesDir, "temp");
+        //var Upload = new Java.IO.File(dir, "temp_file.png");
+        //if (Upload.Exists())
+        //    File.Create(Upload.Path);
+        //this.Upload = FileProvider.GetUriForFile(this, FileProvider.Authority, Upload);
+        this.PhotoTaker?.Launch(null//this.Upload!
+            );
+    }
     public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
     private void OpenLogoutDialog(object? sender, EventArgs args) => this.logoutDialog?.Dialog.Show();
     private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
@@ -142,8 +176,12 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
 
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-                this.mainProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
-                this.mainProfilePicture.RequestLayout();
+                try
+                {
+                    this.mainProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+                    this.mainProfilePicture.RequestLayout();
+                }
+                catch (Exception) { }
                 break;
 
             case false:

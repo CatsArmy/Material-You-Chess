@@ -1,6 +1,7 @@
 ﻿using Android.Content.PM;
 using Android.Runtime;
 using AndroidX.AppCompat.App;
+using AndroidX.ConstraintLayout.Widget;
 using Chess.Game;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
@@ -50,7 +51,7 @@ public class ChessActivity : AppCompatActivity
         //TODO More?
 
         //FIX why are the captured pieces not captured??
-        ChessGame game = new(this);
+        ChessGame game = new(base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard));
     }
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {

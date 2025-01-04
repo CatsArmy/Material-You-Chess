@@ -1,9 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
 /*[DataContract]*/
-public class Queen(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
+public class Queen(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayoyt) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayoyt)
 {
     private const char abbreviation = 'Q';
 

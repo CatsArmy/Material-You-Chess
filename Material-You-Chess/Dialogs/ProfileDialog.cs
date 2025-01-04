@@ -1,6 +1,10 @@
 ﻿using Android.Content;
+using Android.Gms.Extensions;
+using Android.Graphics;
+using Bumptech.Glide;
 using Chess.Util.Logger;
 using Firebase.Auth;
+using Firebase.Storage;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
@@ -24,10 +28,11 @@ public class ProfileDialog : IProfileDialog
     public bool WasShown { get; set; } = false;
 
     private Android.Net.Uri? PhotoUri = null;
-    public ProfileDialog(MainActivity App)
+    private Bitmap? PhotoBitmap = null;
+    public ProfileDialog(MainActivity app)
     {
-        this.App = App;
-        this.Builder = new MaterialAlertDialogBuilder(App);
+        this.App = app;
+        this.Builder = new MaterialAlertDialogBuilder(app);
         this.Builder.SetIcon(Resource.Drawable.outline_settings_account_box);
         this.Builder.SetTitle("Profile");
         this.Builder.SetView(Resource.Layout.profile_dialog);
@@ -35,8 +40,50 @@ public class ProfileDialog : IProfileDialog
         this.Builder.SetNegativeButton("Cancel", this.OnCancel);
         this.Dialog = this.Builder.Create();
         this.Dialog.ShowEvent += this.OnShow;
-        this.UsernameDialog = new UsernameDialog(App, this.OnUsernameChange);
+        this.UsernameDialog = new UsernameDialog(app, this.OnUsernameChange);
         this.UserProfileChangeRequest = new UserProfileChangeRequest.Builder();
+    }
+
+    public void OnShow(object? sender, EventArgs args)
+    {
+        this.DialogProfilePicture = this.Dialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
+        this.EditProfilePicture = this.Dialog.FindViewById<Button>(Resource.Id.editProfilePicture);
+        this.ThemeText = this.Dialog.FindViewById<TextView>(Resource.Id.ThemeText);
+        this.ThemeToggle = this.Dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
+        this.EditProfileUsername = this.Dialog.FindViewById<TextView>(Resource.Id.UsernameText);
+        this.EditUsername = this.Dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
+        this.ThemeToggle!.CheckedChange += this.ThemeChanged;
+        this.ThemeToggle!.Checked = this.App.MaterialYouThemePreference;
+        if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
+            Log.Debug("Display name is missing???");
+
+        this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
+        this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+
+        this.EditProfileUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        this.DialogProfilePicture!.SetImageURI(null);
+        if (!this.WasShown)
+        {
+            this.App.RegisterForContextMenu(this.DialogProfilePicture!);
+            this.App.RegisterForContextMenu(this.EditProfilePicture!);
+
+            this.DialogProfilePicture!.Click +=
+                this.App.OpenPhotoPicker;
+            this.DialogProfilePicture.Clickable = true;
+            this.EditProfilePicture!.Click +=
+            this.App.OpenPhotoTaker;
+            this.EditProfilePicture.Clickable = true;
+            this.EditUsername!.Click += (sender, args) => this.UsernameDialog?.Dialog.Show();
+            this.WasShown = true;
+        }
+    }
+
+    public void ClearProfilePicture()
+    {
+        this.PhotoUri = null;
+        this.UserProfileChangeRequest.SetPhotoUri(null);
+        this.DialogProfilePicture!.SetImageURI(null);
+        this.DialogProfilePicture?.RequestLayout();
     }
 
     public void OnUsernameChange(string username)
@@ -52,28 +99,19 @@ public class ProfileDialog : IProfileDialog
         this.DialogProfilePicture?.RequestLayout();
     }
 
-    public void OnShow(object? sender, EventArgs args)
+    public void OnCapturePhoto(Bitmap photo)
     {
-        this.UserProfileChangeRequest = new UserProfileChangeRequest.Builder();
-        this.DialogProfilePicture = this.Dialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
-        this.EditProfilePicture = this.Dialog.FindViewById<Button>(Resource.Id.editProfilePicture);
-        this.ThemeText = this.Dialog.FindViewById<TextView>(Resource.Id.ThemeText);
-        this.ThemeToggle = this.Dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
-        this.EditProfileUsername = this.Dialog.FindViewById<TextView>(Resource.Id.UsernameText);
-        this.EditUsername = this.Dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
-        this.ThemeToggle!.CheckedChange += this.ThemeChanged;
-        this.ThemeToggle!.Checked = this.App.MaterialYouThemePreference;
-        if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
-            Log.Debug("Display name is missing???");
+        this.PhotoBitmap = photo;
+        this.DialogProfilePicture?.SetImageBitmap(photo);
+        this.DialogProfilePicture?.RequestLayout();
+    }
 
-        this.EditProfileUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        this.DialogProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
-        if (!this.WasShown)
-        {
-            this.EditProfilePicture!.Click += this.App.OpenPhotoPicker;
-            this.EditUsername!.Click += (sender, args) => this.UsernameDialog?.Dialog.Show();
-            this.WasShown = true;
-        }
+    public void OnCapturePhoto(Android.Net.Uri uri)
+    {
+        this.PhotoUri = uri;
+        //Glide.With(Dialog.Context).Load(uri).Into(this.DialogProfilePicture!);
+        this.DialogProfilePicture?.SetImageURI(uri);
+        this.DialogProfilePicture?.RequestLayout();
     }
 
     private void ThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs e)
@@ -81,13 +119,77 @@ public class ProfileDialog : IProfileDialog
         this.App.MaterialYouThemePreference = e.IsChecked;
     }
 
+    Task<UploadTask.TaskSnapshot>? upload;
+
     public async void OnConfirm(object? sender, DialogClickEventArgs args)
     {
-        if (this.UserProfileChangeRequest.PhotoUri == null)
+        StorageReference path = FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png");
+        if (this.PhotoUri != null || this.PhotoBitmap != null)
         {
-            //TODO implement logic for clearing pfp
-            if (true)
-                this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+            if (this.PhotoBitmap != null)
+            {
+                using (var stream = new MemoryStream())
+                {
+                    if (await this.PhotoBitmap.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
+                    {
+                        var data = stream.ToArray();
+                        upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
+                    }
+                }
+            }
+            else if (this.PhotoUri != null)
+            {
+                upload = path.PutFile(this.PhotoUri!).AsAsync<UploadTask.TaskSnapshot>();
+            }
+            else
+            {
+                //temp so it would shut up
+                //upload = path.PutFile(this.PhotoUri!).AsAsync<UploadTask.TaskSnapshot>();
+                //Todo handle this bs
+                return;
+            }
+
+            var snapshot = await upload!;
+            if (upload.IsCompletedSuccessfully)
+            {
+                //var dir = new Java.IO.File(this.App.FilesDir, "profile");
+                //var Upload = Java.IO.File.CreateTempFile("picture", ".png", dir);
+                //var photoUrl = await path.GetDownloadUrlAsync();
+                //var photoTask = path.GetFile(photoUrl).AsAsync<FileDownloadTask.TaskSnapshot>();
+                //var result = await photoTask;
+                //if (photoTask.IsCompletedSuccessfully)
+                //{
+                //}
+                //this.UserProfileChangeRequest.SetPhotoUri(photoUrl);
+                //this.App.mainProfilePicture.SetImageURI(photoUrl);
+                //Glide.With(this.App!).Load(path).Into(this.App.mainProfilePicture!);
+                Glide.With(this.App).Load(path).Into(this.App.mainProfilePicture!);
+            }
+            else if (upload.IsFaulted)
+            {
+                //Todo handle upload failure
+            }
+            else if (upload.IsCanceled)
+            {
+                //Todo handle upload cancelation
+            }
+        }
+        else if (this.UserProfileChangeRequest.PhotoUri == null)
+        {
+            var delete = path.DeleteAsync();
+            await delete;
+            if (delete.IsCompletedSuccessfully)
+            {
+                //Todo handle delete success and inform user
+            }
+            else if (delete.IsFaulted)
+            {
+                //Todo handle delete failure
+            }
+            else if (delete.IsCanceled)
+            {
+                //Todo handle delete cancelation
+            }
         }
 
         if (this.UserProfileChangeRequest.DisplayName == null)

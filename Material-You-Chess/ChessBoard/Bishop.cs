@@ -1,7 +1,9 @@
-﻿namespace Chess.ChessBoard;
+﻿using AndroidX.ConstraintLayout.Widget;
+
+namespace Chess.ChessBoard;
 
 /*[DataContract]*/
-public class Bishop(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
+public class Bishop(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
     private const char abbreviation = 'B';
 

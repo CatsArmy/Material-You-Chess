@@ -1,6 +1,6 @@
 ﻿using Firebase;
 
-namespace Chess.Firebase;
+namespace Chess.FirebaseSecrets;
 
 public class FirebaseSecrets : IFirebaseSecrets
 {
@@ -20,7 +20,7 @@ public class FirebaseSecrets : IFirebaseSecrets
             this.app = Instance.app;
             return;
         }
-        app = global::Firebase.FirebaseApp.InitializeApp(Application.Context,
+        this.app = FirebaseApp.InitializeApp(Application.Context,
             new FirebaseOptions.Builder()
             .SetApplicationId(IFirebaseSecrets.ApplicationId)
             .SetStorageBucket(IFirebaseSecrets.StorageBucket)

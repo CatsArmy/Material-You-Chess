@@ -1,9 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.ChessBoard;
 
 /*[DataContract]*/
-public class Knight(int id, (string, int) index, bool isWhite, ISpace space, Activity app) : BoardPiece(id, index, abbreviation, isWhite, space, app)
+public class Knight(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
     private const char abbreviation = 'N';
     public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)

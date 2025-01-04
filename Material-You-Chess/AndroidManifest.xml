@@ -7,6 +7,8 @@
 			   android:roundIcon="@mipmap/ic_launcher_round"
 			   android:supportsRtl="true">
   </application>
+
+	<uses-permission android:name="android.permission.CAMERA" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<!-- Devices running Android 12L (API level 32) or lower -->

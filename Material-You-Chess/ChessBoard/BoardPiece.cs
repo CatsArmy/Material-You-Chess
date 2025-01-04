@@ -5,7 +5,7 @@ using Chess.Util.Logger;
 namespace Chess.ChessBoard;
 
 /*[DataContract]*/
-public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, Activity App) : IPiece
+public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, ConstraintLayout App) : IPiece
 {
     /*[IgnoreDataMember]*/
     public ImageView? Piece { get; set; } = App.FindViewById<ImageView>(id);
