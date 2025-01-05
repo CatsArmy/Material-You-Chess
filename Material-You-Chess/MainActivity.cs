@@ -145,7 +145,8 @@ public class MainActivity : AppCompatActivity
 
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
-                    Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.mainProfilePicture!);
+                    Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Error(Resource.Drawable.outline_account_circle_24)
+                        .Into(this.mainProfilePicture!);
                 break;
 
             case false:

@@ -83,8 +83,15 @@ public class ProfileDialog : IProfileDialog
 
     public async void OnConfirm(object? sender, DialogClickEventArgs args)
     {
-        await OnConfirmProfilePicture();
-        await OnConfirmProfileUsername();
+        if (this.UserProfileChangeRequest.DisplayName == null)
+        {
+            this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
+            return;
+            //username should never be null
+        }
+
+        if (await OnConfirmProfilePicture())
+            await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(this.UserProfileChangeRequest.Build());
     }
 
     public void OnCancel(object? sender, DialogClickEventArgs args)
@@ -96,15 +103,14 @@ public class ProfileDialog : IProfileDialog
     public void OnSelectPhoto(Bitmap photo)
     {
         this.PhotoBitmap = photo;
-        this.DialogProfilePicture?.SetImageBitmap(photo);
-        this.DialogProfilePicture?.RequestLayout();
+        Glide.With(this.Dialog.Context).Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
     }
 
     public void OnClearPhoto()
     {
         this.PhotoBitmap = null;
-        this.DialogProfilePicture!.SetImageURI(null);
-        this.DialogProfilePicture?.RequestLayout();
+        Glide.With(this.Dialog.Context).Clear(this.DialogProfilePicture!);
+        Glide.With(this.Dialog.Context).Load(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
     }
 
     public void OnUsernameChange(string username)
@@ -117,36 +123,36 @@ public class ProfileDialog : IProfileDialog
 
     public async Task<bool> OnConfirmProfilePicture()
     {
-        StorageReference path = FirebaseStorage.Instance.Reference.Child((FirebaseAuth.Instance!.CurrentUser!.PhotoUrl != null) switch
-        {
-            true => $"{FirebaseAuth.Instance!.CurrentUser!.PhotoUrl}",
-            false => $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png",
-        });
+        StorageReference path = FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png");
 
         if (this.PhotoBitmap == null)
         {
-            var delete = path.DeleteAsync();
-            await delete;
-            if (delete.IsCompletedSuccessfully)
+            try
             {
-                /* Todo handle delete success and inform user */
-                this.UserProfileChangeRequest.SetPhotoUri(null);
-                Glide.Get(this.App).ClearDiskCache();
-                return true;
+                var delete = path.DeleteAsync();
+                await delete;
+                if (delete.IsCompletedSuccessfully)
+                {
+                    /* Todo handle delete success and inform user */
+                    this.UserProfileChangeRequest.SetPhotoUri(null);
+                    Glide.Get(this.App).ClearDiskCache();
+                    return true;
+                }
+
+                else if (delete.IsFaulted)
+                { /* Todo handle delete failure */ }
+
+                else if (delete.IsCanceled)
+                { /* Todo handle delete cancelation */ }
+
             }
-
-            else if (delete.IsFaulted)
-            { /* Todo handle delete failure */ }
-
-            else if (delete.IsCanceled)
-            { /* Todo handle delete cancelation */ }
-
+            catch (Exception) { }
             return false;
         }
 
         Task<UploadTask.TaskSnapshot>? upload;
         using var stream = new MemoryStream();
-        if (await this.PhotoBitmap.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
+        if (await this.PhotoBitmap!.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
         {
             var data = stream.ToArray();
             upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
@@ -160,7 +166,6 @@ public class ProfileDialog : IProfileDialog
         if (upload.IsCompletedSuccessfully)
         {
             Glide.Get(this.App).ClearDiskCache();
-            Glide.With(this.App).Load(path).Into(this.App.mainProfilePicture!);
             return true;
         }
 
@@ -170,18 +175,5 @@ public class ProfileDialog : IProfileDialog
         else if (upload.IsCanceled)
         { /* Todo handle upload cancelation */ }
         return false;
-    }
-
-    public async Task<bool> OnConfirmProfileUsername()
-    {
-        if (this.UserProfileChangeRequest.DisplayName == null)
-        {
-            this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
-            return false;
-            //username should never be null
-        }
-
-        await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(this.UserProfileChangeRequest.Build());
-        return true;
     }
 }

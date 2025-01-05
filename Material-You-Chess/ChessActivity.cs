@@ -38,7 +38,8 @@ public class ChessActivity : AppCompatActivity
         //Run our logic
         this.p1MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
         if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
-            Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.p1MainProfileImageView!);
+            Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Error(Resource.Drawable.outline_account_circle_24)
+                .Into(this.p1MainProfileImageView!);
 
         this.p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
