@@ -42,6 +42,10 @@
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.21" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.10" />
+    <PackageReference Include="Xamarin.Android.Glide.Annotations" Version="4.16.0.10" />
+    <PackageReference Include="Xamarin.Android.Glide.DiskLruCache" Version="4.16.0.10" />
+    <PackageReference Include="Xamarin.Android.Glide.GifDecoder" Version="4.16.0.10" />
+    <PackageReference Include="Xamarin.Android.Glide.RecyclerViewIntegration" Version="4.16.0.10" />
     <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.1" />
     <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.1" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.4" />

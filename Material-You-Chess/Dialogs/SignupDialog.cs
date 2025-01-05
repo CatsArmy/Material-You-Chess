@@ -4,12 +4,13 @@ using Android.Views;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
 public partial class SignupDialog : ISignupDialog
 {
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public bool WasShown { get; set; } = false;
     public string? Username { get; set; }

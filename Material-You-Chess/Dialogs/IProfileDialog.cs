@@ -1,4 +1,5 @@
-﻿using Firebase.Auth;
+﻿using Android.Graphics;
+using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
@@ -16,7 +17,9 @@ public interface IProfileDialog : IMaterialDialog
     public TextView? EditProfileUsername { get; set; }
     public FloatingActionButton? EditUsername { get; set; }
     public UsernameDialog? UsernameDialog { get; set; }
+    public Bitmap? PhotoBitmap { get; set; }
     public bool WasShown { get; set; }
+
     public void OnUsernameChange(string username);
-    public void OnSelectPhoto(Android.Net.Uri photoUri);
+    public void OnSelectPhoto(Bitmap photo);
 }

@@ -11,21 +11,29 @@ using Java.IO;
 using Java.Lang;
 using Java.Nio.Charset;
 using Java.Security;
+using JavaString = Java.Lang.String;
 
 namespace Chess;
 
-public class MyAppGlideModule : AppGlideModule//, IGlideModule
+
+internal class RuntimeClass : InputStream
 {
-    private InputStream type { get; }
+    public RuntimeClass() : base() { }
+
+    public override int Read() => throw new NotImplementedException();
+}
+
+public class MyAppGlideModule : AppGlideModule
+{
     public override void RegisterComponents(Context context, Glide glide, Registry registry)
     {
         // Register FirebaseImageLoader to handle StorageReference
-        registry.Append(FirebaseStorage.Instance.Reference.Class, type.Class,
+        registry.Append(FirebaseStorage.Instance.Reference.Class, new RuntimeClass().Class,
                 new FirebaseImageLoader.Factory());
     }
 }
 
-public class FirebaseImageLoader/*<Model, Data>*/ : Java.Lang.Object, IModelLoader /*where Model : StorageReference where Data : InputStream*/
+public class FirebaseImageLoader : Java.Lang.Object, IModelLoader
 {
     private const string Tag = "FirebaseImageLoader";
 
@@ -39,28 +47,19 @@ public class FirebaseImageLoader/*<Model, Data>*/ : Java.Lang.Object, IModelLoad
         public void Teardown() { }
     }
 
-    public ModelLoaderLoadData BuildLoadData(Java.Lang.Object p0, int height, int width, Options options)
+    public ModelLoaderLoadData BuildLoadData(Java.Lang.Object _reference, int height, int width, Options options)
     {
-        var reference = p0 as StorageReference;
+        var reference = _reference as StorageReference;
         return new ModelLoaderLoadData(new FirebaseStorageKey(reference!), new FirebaseStorageFetcher(reference!));
     }
 
     public bool Handles(Java.Lang.Object reference) => true;
 
-    private class FirebaseStorageKey : Java.Lang.Object, Bumptech.Glide.Load.IKey
+    private class FirebaseStorageKey(StorageReference _ref) : Java.Lang.Object, Bumptech.Glide.Load.IKey
     {
+        private readonly StorageReference storageReference = _ref;
 
-        private StorageReference mRef;
-
-        public FirebaseStorageKey(StorageReference _ref)
-        {
-            mRef = _ref;
-        }
-
-        public void UpdateDiskCacheKey(MessageDigest digest)
-        {
-            digest.Update(new Java.Lang.String(mRef.Path).GetBytes(Charset.DefaultCharset()!)!);
-        }
+        public void UpdateDiskCacheKey(MessageDigest digest) => digest.Update(new JavaString(this.storageReference.Path).GetBytes(Charset.DefaultCharset()!)!);
 
         public override bool Equals(Java.Lang.Object? o)
         {
@@ -72,34 +71,35 @@ public class FirebaseImageLoader/*<Model, Data>*/ : Java.Lang.Object, IModelLoad
 
             FirebaseStorageKey key = (FirebaseStorageKey)o;
 
-            return mRef.Equals(key.mRef);
+            return this.storageReference.Equals(key.storageReference);
         }
 
         public override int GetHashCode()
         {
-            return mRef.GetHashCode();
+            return this.storageReference.GetHashCode();
         }
     }
 
     private class FirebaseStorageFetcher(StorageReference _ref) : Java.Lang.Object, IDataFetcher
     {
-        public Class DataClass => ((Android.Runtime.InputStreamInvoker)mInputStream).BaseInputStream.Class;
+        public Class DataClass => new RuntimeClass().Class;
         public DataSource DataSource => DataSource.Remote!;
 
-        private StorageReference mRef = _ref;
-        private StreamDownloadTask mStreamTask;
-        private Stream mInputStream;
+        private readonly StorageReference storageReference = _ref;
+        private StreamDownloadTask? streamTask;
+        private Stream? inputStream;
 
         public async void LoadData(Priority priority, IDataFetcherDataCallback callback)
         {
-            mStreamTask = mRef.Stream;
-            var task = mStreamTask.AsAsync<StreamDownloadTask.TaskSnapshot>();
+            this.streamTask = this.storageReference.Stream;
+            var task = this.streamTask.AsAsync<StreamDownloadTask.TaskSnapshot>();
             var snapshot = await task;
             if (task.IsCompletedSuccessfully) //OnSuccess
             {
-                mInputStream = snapshot.Stream;
-                callback.OnDataReady(((Android.Runtime.InputStreamInvoker)mInputStream).BaseInputStream);
+                this.inputStream = snapshot.Stream;
+                callback.OnDataReady(((Android.Runtime.InputStreamInvoker)this.inputStream).BaseInputStream);
             }
+
             if (task.IsFaulted) //OnFailure
             {
                 callback.OnLoadFailed(new Java.Lang.Exception(task.Exception!.ToString()));
@@ -108,24 +108,23 @@ public class FirebaseImageLoader/*<Model, Data>*/ : Java.Lang.Object, IModelLoad
 
         public void Cancel()
         {
-            // Close stream if possible
-            if (mInputStream != null)
+            if (this.inputStream == null)
             {
-                try
-                {
-                    mInputStream.Close();
-                    mInputStream = null;
-                }
-                catch (System.IO.IOException e)
-                {
-                    Log.Warn(Tag, "Could not close stream", e);
-                }
+                return;
+            }
+
+            // Close stream if possible     
+            try
+            {
+                this.inputStream.Close();
+                this.inputStream = null;
+            }
+            catch (System.IO.IOException e)
+            {
+                Log.Warn(Tag, "Could not close stream", e);
             }
         }
 
-        public void Cleanup()
-        {
-
-        }
+        public void Cleanup() { }
     }
 }

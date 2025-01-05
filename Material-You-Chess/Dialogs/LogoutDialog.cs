@@ -1,12 +1,13 @@
 ﻿using Android.Content;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
 public class LogoutDialog : IMaterialDialog
 {
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     private Action OnConfirmation { get; set; }
     public LogoutDialog(MainActivity App, Action OnConfirmation)

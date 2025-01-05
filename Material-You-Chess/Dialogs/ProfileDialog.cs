@@ -9,12 +9,13 @@ using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
 public class ProfileDialog : IProfileDialog
 {
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public MainActivity App { get; set; }
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; }
@@ -25,10 +26,9 @@ public class ProfileDialog : IProfileDialog
     public TextView? EditProfileUsername { get; set; }
     public FloatingActionButton? EditUsername { get; set; }
     public UsernameDialog? UsernameDialog { get; set; }
+    public Bitmap? PhotoBitmap { get; set; } = null;
     public bool WasShown { get; set; } = false;
 
-    private Android.Net.Uri? PhotoUri = null;
-    private Bitmap? PhotoBitmap = null;
     public ProfileDialog(MainActivity app)
     {
         this.App = app;
@@ -61,27 +61,48 @@ public class ProfileDialog : IProfileDialog
         this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
 
         this.EditProfileUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+
         this.DialogProfilePicture!.SetImageURI(null);
+        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
+            Glide.With(this.Dialog.Context).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.DialogProfilePicture!);
         if (!this.WasShown)
         {
             this.App.RegisterForContextMenu(this.DialogProfilePicture!);
             this.App.RegisterForContextMenu(this.EditProfilePicture!);
 
-            this.DialogProfilePicture!.Click +=
-                this.App.OpenPhotoPicker;
-            this.DialogProfilePicture.Clickable = true;
-            this.EditProfilePicture!.Click +=
-            this.App.OpenPhotoTaker;
-            this.EditProfilePicture.Clickable = true;
             this.EditUsername!.Click += (sender, args) => this.UsernameDialog?.Dialog.Show();
+            this.DialogProfilePicture!.Click += this.App.OpenPhotoPicker;
+            this.EditProfilePicture!.Click += this.App.OpenPhotoTaker;
+
+            this.EditUsername.Clickable = true;
+            this.DialogProfilePicture.Clickable = true;
+            this.EditProfilePicture.Clickable = true;
             this.WasShown = true;
         }
     }
 
-    public void ClearProfilePicture()
+    public async void OnConfirm(object? sender, DialogClickEventArgs args)
     {
-        this.PhotoUri = null;
-        this.UserProfileChangeRequest.SetPhotoUri(null);
+        await OnConfirmProfilePicture();
+        await OnConfirmProfileUsername();
+    }
+
+    public void OnCancel(object? sender, DialogClickEventArgs args)
+    {
+        this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
+        this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+    }
+
+    public void OnSelectPhoto(Bitmap photo)
+    {
+        this.PhotoBitmap = photo;
+        this.DialogProfilePicture?.SetImageBitmap(photo);
+        this.DialogProfilePicture?.RequestLayout();
+    }
+
+    public void OnClearPhoto()
+    {
+        this.PhotoBitmap = null;
         this.DialogProfilePicture!.SetImageURI(null);
         this.DialogProfilePicture?.RequestLayout();
     }
@@ -92,117 +113,75 @@ public class ProfileDialog : IProfileDialog
         this.EditProfileUsername!.Text = username;
     }
 
-    public void OnSelectPhoto(Android.Net.Uri photoUri)
-    {
-        this.PhotoUri = photoUri;
-        this.DialogProfilePicture?.SetImageURI(photoUri);
-        this.DialogProfilePicture?.RequestLayout();
-    }
+    private void ThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs e) => this.App.MaterialYouThemePreference = e.IsChecked;
 
-    public void OnCapturePhoto(Bitmap photo)
+    public async Task<bool> OnConfirmProfilePicture()
     {
-        this.PhotoBitmap = photo;
-        this.DialogProfilePicture?.SetImageBitmap(photo);
-        this.DialogProfilePicture?.RequestLayout();
-    }
-
-    public void OnCapturePhoto(Android.Net.Uri uri)
-    {
-        this.PhotoUri = uri;
-        //Glide.With(Dialog.Context).Load(uri).Into(this.DialogProfilePicture!);
-        this.DialogProfilePicture?.SetImageURI(uri);
-        this.DialogProfilePicture?.RequestLayout();
-    }
-
-    private void ThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs e)
-    {
-        this.App.MaterialYouThemePreference = e.IsChecked;
-    }
-
-    Task<UploadTask.TaskSnapshot>? upload;
-
-    public async void OnConfirm(object? sender, DialogClickEventArgs args)
-    {
-        StorageReference path = FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png");
-        if (this.PhotoUri != null || this.PhotoBitmap != null)
+        StorageReference path = FirebaseStorage.Instance.Reference.Child((FirebaseAuth.Instance!.CurrentUser!.PhotoUrl != null) switch
         {
-            if (this.PhotoBitmap != null)
-            {
-                using (var stream = new MemoryStream())
-                {
-                    if (await this.PhotoBitmap.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
-                    {
-                        var data = stream.ToArray();
-                        upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
-                    }
-                }
-            }
-            else if (this.PhotoUri != null)
-            {
-                upload = path.PutFile(this.PhotoUri!).AsAsync<UploadTask.TaskSnapshot>();
-            }
-            else
-            {
-                //temp so it would shut up
-                //upload = path.PutFile(this.PhotoUri!).AsAsync<UploadTask.TaskSnapshot>();
-                //Todo handle this bs
-                return;
-            }
+            true => $"{FirebaseAuth.Instance!.CurrentUser!.PhotoUrl}",
+            false => $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png",
+        });
 
-            var snapshot = await upload!;
-            if (upload.IsCompletedSuccessfully)
-            {
-                //var dir = new Java.IO.File(this.App.FilesDir, "profile");
-                //var Upload = Java.IO.File.CreateTempFile("picture", ".png", dir);
-                //var photoUrl = await path.GetDownloadUrlAsync();
-                //var photoTask = path.GetFile(photoUrl).AsAsync<FileDownloadTask.TaskSnapshot>();
-                //var result = await photoTask;
-                //if (photoTask.IsCompletedSuccessfully)
-                //{
-                //}
-                //this.UserProfileChangeRequest.SetPhotoUri(photoUrl);
-                //this.App.mainProfilePicture.SetImageURI(photoUrl);
-                //Glide.With(this.App!).Load(path).Into(this.App.mainProfilePicture!);
-                Glide.With(this.App).Load(path).Into(this.App.mainProfilePicture!);
-            }
-            else if (upload.IsFaulted)
-            {
-                //Todo handle upload failure
-            }
-            else if (upload.IsCanceled)
-            {
-                //Todo handle upload cancelation
-            }
-        }
-        else if (this.UserProfileChangeRequest.PhotoUri == null)
+        if (this.PhotoBitmap == null)
         {
             var delete = path.DeleteAsync();
             await delete;
             if (delete.IsCompletedSuccessfully)
             {
-                //Todo handle delete success and inform user
+                /* Todo handle delete success and inform user */
+                this.UserProfileChangeRequest.SetPhotoUri(null);
+                Glide.Get(this.App).ClearDiskCache();
+                return true;
             }
+
             else if (delete.IsFaulted)
-            {
-                //Todo handle delete failure
-            }
+            { /* Todo handle delete failure */ }
+
             else if (delete.IsCanceled)
-            {
-                //Todo handle delete cancelation
-            }
+            { /* Todo handle delete cancelation */ }
+
+            return false;
         }
 
+        Task<UploadTask.TaskSnapshot>? upload;
+        using var stream = new MemoryStream();
+        if (await this.PhotoBitmap.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
+        {
+            var data = stream.ToArray();
+            upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
+        }
+
+        /* Todo handle upload failure */
+        else
+            return false;
+
+        var snapshot = await upload!;
+        if (upload.IsCompletedSuccessfully)
+        {
+            Glide.Get(this.App).ClearDiskCache();
+            Glide.With(this.App).Load(path).Into(this.App.mainProfilePicture!);
+            return true;
+        }
+
+        else if (upload.IsFaulted)
+        { /* Todo handle upload failure */ }
+
+        else if (upload.IsCanceled)
+        { /* Todo handle upload cancelation */ }
+        return false;
+    }
+
+    public async Task<bool> OnConfirmProfileUsername()
+    {
         if (this.UserProfileChangeRequest.DisplayName == null)
         {
             this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
+            return false;
+            //username should never be null
         }
 
         await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(this.UserProfileChangeRequest.Build());
-    }
-
-    public void OnCancel(object? sender, DialogClickEventArgs args)
-    {
-        this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
-        this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+        return true;
     }
 }

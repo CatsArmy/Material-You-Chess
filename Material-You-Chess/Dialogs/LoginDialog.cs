@@ -3,12 +3,13 @@ using Android.Util;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
 public class LoginDialog : ILoginDialog
 {
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public bool WasShown { get; set; } = false;
     public string? Email { get; set; }
@@ -20,6 +21,7 @@ public class LoginDialog : ILoginDialog
     public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
     private bool HasCaught { get; set; } = false;
+
     public LoginDialog(MainActivity App, Action OnLoginSuccess)
     {
         this.App = App;

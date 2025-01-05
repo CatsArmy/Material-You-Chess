@@ -2,13 +2,15 @@
 using Android.Content.PM;
 using Android.Graphics;
 using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
+using Bumptech.Glide;
 using Chess.Dialogs;
+using Chess.FirebaseSecrets;
 using Chess.Util;
 using Firebase.Auth;
+using Firebase.Storage;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
@@ -37,12 +39,9 @@ public class MainActivity : AppCompatActivity
             }
         }
     } = true;
-    public ActivityResultLauncher//<Android.Net.Uri> or void if preview
-        ? PhotoTaker;
-    private ActivityResultLauncher//<PickVisualMediaRequest>
-        ? photoPicker;
-    private AppPermissions? permissions;
-    private Android.Net.Uri? selectedPhoto;
+
+    public ActivityResultLauncher? PhotoTaker;
+    private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
     private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
 
     public ShapeableImageView? mainProfilePicture;
@@ -56,34 +55,48 @@ public class MainActivity : AppCompatActivity
     private LoginDialog? loginDialog;
     private SignupDialog? signupDialog;
 
-    private Android.Net.Uri? Upload;
+    public void StartProgressIndicator() => this.UserProgressIndicator?.Show();
+    public void StopProgressIndicator() => this.UserProgressIndicator?.Hide();
+    public void OpenPhotoTaker(object? sender, EventArgs args) => this.PhotoTaker?.Launch(null);
+    public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
 
+    private void CapturePhoto(Bitmap photo) => this.profileDialog?.OnSelectPhoto(photo);
+    private void SelectPhoto(Android.Net.Uri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
+    private void StartGame(object? sender, EventArgs e)
+    {
+        Intent intent = new Intent(this, typeof(ChessActivity))
+        .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
+        base.StartActivity(intent);
+    }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
+        _ = new Secrets();
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
-        _ = new FirebaseSecrets.FirebaseSecrets();
 
-        this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto))// as ActivityResultLauncher<PickVisualMediaRequest>
-            ;
+        this.photoPicker = new(base.RegisterForActivityResult(new PickVisualMedia(),
+            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto)));
 
         this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
-            new ActivityResultCallback<Bitmap>(this.CapturePhoto))// as ActivityResultLauncher<Android.Net.Uri>
-            ;
+            new ActivityResultCallback<Bitmap>(this.CapturePhoto));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
+
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
+
         //base.StartActivity(new Intent(this, typeof(MainActivity2)));
         //return;
 
         // Permission request logic
-        this.permissions = new AppPermissions(this);
+        _ = new PermissionsRequester(this);
+
+        var glide = Glide.Get(this);
+        new MyAppGlideModule().RegisterComponents(this, glide, glide.Registry);
 
         //Run our logic
         this.startGame = base.FindViewById<Button>(Resource.Id.btnStartGame);
@@ -96,7 +109,7 @@ public class MainActivity : AppCompatActivity
         this.loginDialog = new LoginDialog(this, this.UpdateUserState);
         this.signupDialog = new SignupDialog(this, this.UpdateUserState);
         this.profileDialog = new ProfileDialog(this);
-        this.startGame!.Click += this.StartGame_Click;
+        this.startGame!.Click += this.StartGame;
         this.UpdateUserState();
     }
 
@@ -110,55 +123,10 @@ public class MainActivity : AppCompatActivity
     {
         if (item.ItemId == Resource.Id.clear)
         {
-            this.profileDialog?.ClearProfilePicture();
+            this.profileDialog?.OnClearPhoto();
         }
         return base.OnContextItemSelected(item);
     }
-
-    private void SelectPhoto(Android.Net.Uri photo)
-    {
-        Log.Debug("PhotoPicker", $"{photo}");
-        if (FirebaseAuth.Instance.CurrentUser == null || photo == null)
-            return;
-
-        base.ContentResolver?.TakePersistableUriPermission(photo, ActivityFlags.GrantReadUriPermission);
-        this.selectedPhoto = photo;
-        this.profileDialog?.OnSelectPhoto(photo);
-    }
-
-    private void CapturePhoto(Bitmap photo)
-    {
-        this.profileDialog?.OnCapturePhoto(photo);
-    }
-
-    private void CapturePhoto(Java.Lang.Boolean hasCaptured)
-    {
-        Log.Debug("PhotoTaker", $"{hasCaptured}");
-        if (FirebaseAuth.Instance.CurrentUser == null || hasCaptured == null)
-            return;
-
-        if (!hasCaptured.BooleanValue())
-            return;
-
-        this.profileDialog?.OnCapturePhoto(this.Upload!);
-    }
-
-    public void OpenPhotoTaker(object? sender, EventArgs args)
-    {
-        //var dir = new Java.IO.File(base.FilesDir, "temp");
-        //var Upload = new Java.IO.File(dir, "temp_file.png");
-        //if (Upload.Exists())
-        //    File.Create(Upload.Path);
-        //this.Upload = FileProvider.GetUriForFile(this, FileProvider.Authority, Upload);
-        this.PhotoTaker?.Launch(null//this.Upload!
-            );
-    }
-    public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
-    private void OpenLogoutDialog(object? sender, EventArgs args) => this.logoutDialog?.Dialog.Show();
-    private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
-    private void OpenLoginDialog(object? sender, EventArgs args) => this.loginDialog?.Dialog.Show();
-    private void OpenSignupDialog(object? sender, EventArgs args) => this.signupDialog?.Dialog.Show();
-
 
     private void UpdateUserState()
     {
@@ -176,12 +144,8 @@ public class MainActivity : AppCompatActivity
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
 
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-                try
-                {
-                    this.mainProfilePicture!.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
-                    this.mainProfilePicture.RequestLayout();
-                }
-                catch (Exception) { }
+                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
+                    Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.mainProfilePicture!);
                 break;
 
             case false:
@@ -202,16 +166,10 @@ public class MainActivity : AppCompatActivity
         }
     }
 
-    public void StartProgressIndicator() => this.UserProgressIndicator?.Show();
-
-    public void StopProgressIndicator() => this.UserProgressIndicator?.Hide();
-
-    private void StartGame_Click(object? sender, EventArgs e)
-    {
-        Intent intent = new Intent(this, typeof(ChessActivity))
-        .PutExtra(nameof(ChessActivity.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
-        base.StartActivity(intent);
-    }
+    private void OpenLogoutDialog(object? sender, EventArgs args) => this.logoutDialog?.Dialog.Show();
+    private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
+    private void OpenLoginDialog(object? sender, EventArgs args) => this.loginDialog?.Dialog.Show();
+    private void OpenSignupDialog(object? sender, EventArgs args) => this.signupDialog?.Dialog.Show();
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {

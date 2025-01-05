@@ -4,14 +4,14 @@ using AndroidX.AppCompat.App;
 
 namespace Chess.Util;
 
-public class AppPermissions
+public class PermissionsRequester
 {
     public Permission READ_MEDIA_VISUAL_USER_SELECTED;
     public Permission READ_MEDIA_IMAGES;
     public Permission READ_MEDIA_VIDEO;
     public Permission READ_EXTERNAL_STORAGE;
 
-    public AppPermissions(AppCompatActivity App)
+    public PermissionsRequester(AppCompatActivity App)
     {
         this.READ_MEDIA_VISUAL_USER_SELECTED = Permission.Denied;
         this.READ_MEDIA_IMAGES = Permission.Denied;

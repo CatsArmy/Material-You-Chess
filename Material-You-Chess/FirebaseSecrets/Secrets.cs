@@ -2,18 +2,18 @@
 
 namespace Chess.FirebaseSecrets;
 
-public class FirebaseSecrets : IFirebaseSecrets
+public class Secrets : IFirebaseSecrets
 {
 
     //"CreateUserWithEmailAndPassword auto signs in the user: auth.UpdateCurrentUser()"
     //"LogInUserWithEmailAndPassword auto signs in the user: auth.UpdateCurrentUser()"
     //No need to manually set the current user
 
-    public static FirebaseSecrets? Instance { get; private set; } = null;
+    public static Secrets? Instance { get; private set; } = null;
     public readonly FirebaseApp app;
     public readonly string TemplateEmail = IFirebaseSecrets.TemplateUserEmail;
     public readonly string TemplatePassword = IFirebaseSecrets.TemplateUserPassword;
-    public FirebaseSecrets()
+    public Secrets()
     {
         if (Instance != null)
         {

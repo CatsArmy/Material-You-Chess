@@ -1,11 +1,10 @@
 ﻿using Android.Content;
-using AndroidX.AppCompat.App;
 
 namespace Chess.Util;
 
 public static class SharedPrefExtensions
 {
-    public static ISharedPreferences? GetMaterialYouThemePreference(this AppCompatActivity app, out bool MaterialYouThemePreference)
+    public static ISharedPreferences? GetMaterialYouThemePreference(this Activity app, out bool MaterialYouThemePreference)
     {
         ISharedPreferences? sharedPref = app.GetPreferences(FileCreationMode.Private);
         MaterialYouThemePreference = true;
@@ -19,7 +18,9 @@ public static class SharedPrefExtensions
         editor?.Apply();
         return sharedPref;
     }
-    public static void Merge<TKey, TValue>(this Dictionary<TKey, TValue> to, params Dictionary<TKey, TValue>[] toBeMerged)
+
+    public static void Merge<TKey, TValue>(this Dictionary<TKey, TValue> to, params Dictionary<TKey, TValue>[] toBeMerged) where TKey : notnull
+        where TValue : notnull
     {
         foreach (var dictionary in toBeMerged)
         {

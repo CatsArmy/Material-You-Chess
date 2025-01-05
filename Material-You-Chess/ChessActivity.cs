@@ -2,8 +2,11 @@
 using Android.Runtime;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
+using Bumptech.Glide;
 using Chess.Game;
+using Chess.Util;
 using Firebase.Auth;
+using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -13,7 +16,6 @@ namespace Chess;
 public class ChessActivity : AppCompatActivity
 {
     public bool MaterialYouThemePreference;
-    //private AppPermissions? permissions;
     private ShapeableImageView? p1MainProfileImageView;
     private ShapeableImageView? p2MainProfileImageView;
     private TextView? p1MainUsername;
@@ -28,14 +30,16 @@ public class ChessActivity : AppCompatActivity
         Platform.Init(this, savedInstanceState);
 
         // Permission request logic
-        //this.permissions = new AppPermissions(this);
+        _ = new PermissionsRequester(this);
 
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
 
         //Run our logic
         this.p1MainProfileImageView = base.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        this.p1MainProfileImageView?.SetImageURI(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
+            Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.p1MainProfileImageView!);
+
         this.p1MainUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
 

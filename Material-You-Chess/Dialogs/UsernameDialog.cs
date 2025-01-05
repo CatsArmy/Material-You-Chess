@@ -3,12 +3,13 @@ using AndroidX.AppCompat.App;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
 public class UsernameDialog : IUsernameDialog
 {
-    public AndroidX.AppCompat.App.AlertDialog Dialog { get; set; }
+    public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public AppCompatActivity App { get; set; }
     public TextInputEditText? UsernameInput { get; set; }
