@@ -128,6 +128,15 @@ public class MainActivity : AppCompatActivity
         return base.OnContextItemSelected(item);
     }
 
+    internal void ClearCache()
+    {
+        var Thread = new Thread(() =>
+        {
+            Glide.Get(this).ClearDiskCache();
+        });
+        Thread.Start();
+    }
+
     private void UpdateUserState()
     {
         switch (FirebaseAuth.Instance.CurrentUser != null)

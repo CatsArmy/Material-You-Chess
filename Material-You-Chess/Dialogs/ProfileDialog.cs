@@ -81,7 +81,14 @@ public class ProfileDialog : IProfileDialog
         }
     }
 
-    public async void OnConfirm(object? sender, DialogClickEventArgs args)
+    public void OnConfirm(object? sender, DialogClickEventArgs args)
+    {
+        new Thread(async () =>
+        {
+            await this.OnConfirm();
+        }).Start();
+    }
+    public async Task OnConfirm()
     {
         if (this.UserProfileChangeRequest.DisplayName == null)
         {
@@ -90,7 +97,7 @@ public class ProfileDialog : IProfileDialog
             //username should never be null
         }
 
-        if (await OnConfirmProfilePicture())
+        if (await this.OnConfirmProfilePicture())
             await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(this.UserProfileChangeRequest.Build());
     }
 
@@ -135,7 +142,7 @@ public class ProfileDialog : IProfileDialog
                 {
                     /* Todo handle delete success and inform user */
                     this.UserProfileChangeRequest.SetPhotoUri(null);
-                    Glide.Get(this.App).ClearDiskCache();
+                    this.App.ClearCache();
                     return true;
                 }
 
@@ -165,7 +172,8 @@ public class ProfileDialog : IProfileDialog
         var snapshot = await upload!;
         if (upload.IsCompletedSuccessfully)
         {
-            Glide.Get(this.App).ClearDiskCache();
+            this.UserProfileChangeRequest.SetPhotoUri(await path.GetDownloadUrlAsync());
+            this.App.ClearCache();
             return true;
         }
 

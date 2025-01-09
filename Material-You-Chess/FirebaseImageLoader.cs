@@ -91,18 +91,25 @@ public class FirebaseImageLoader : Java.Lang.Object, IModelLoader
 
         public async void LoadData(Priority priority, IDataFetcherDataCallback callback)
         {
-            this.streamTask = this.storageReference.Stream;
-            var task = this.streamTask.AsAsync<StreamDownloadTask.TaskSnapshot>();
-            var snapshot = await task;
-            if (task.IsCompletedSuccessfully) //OnSuccess
+            try
             {
-                this.inputStream = snapshot.Stream;
-                callback.OnDataReady(((Android.Runtime.InputStreamInvoker)this.inputStream).BaseInputStream);
-            }
+                this.streamTask = this.storageReference.Stream;
+                var task = this.streamTask.AsAsync<StreamDownloadTask.TaskSnapshot>();
+                var snapshot = await task;
+                if (task.IsCompletedSuccessfully) //OnSuccess
+                {
+                    this.inputStream = snapshot.Stream;
+                    callback.OnDataReady(((Android.Runtime.InputStreamInvoker)this.inputStream).BaseInputStream);
+                }
 
-            if (task.IsFaulted) //OnFailure
+                if (task.IsFaulted) //OnFailure
+                {
+                    callback.OnLoadFailed(new Java.Lang.Exception(task.Exception!.ToString()));
+                }
+            }
+            catch (System.Exception e)
             {
-                callback.OnLoadFailed(new Java.Lang.Exception(task.Exception!.ToString()));
+                Chess.Util.Logger.Log.Error(e.ToString());
             }
         }
 
