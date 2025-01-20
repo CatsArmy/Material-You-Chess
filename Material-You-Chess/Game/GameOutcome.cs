@@ -1,17 +1,17 @@
 ﻿namespace Chess.Game;
 
-/*[DataContract]*/
+
 public enum GameOutcome
 {
-    /*[DataMember]*/
+    
     Draw,
-    /*[DataMember]*/
+    
     Resign,
-    /*[DataMember]*/
+    
     Win,
-    /*[DataMember]*/
+    
     Lose,
-    /*[DataMember]*/
+    
     Ongoing,
 }
 

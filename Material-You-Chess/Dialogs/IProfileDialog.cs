@@ -1,4 +1,5 @@
 ﻿using Android.Graphics;
+using Chess.App;
 using Firebase.Auth;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;

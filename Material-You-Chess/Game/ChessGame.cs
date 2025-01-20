@@ -1,22 +1,28 @@
+using System.Text;
 using Android.Animation;
+using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
-using Chess.ChessBoard;
-using Chess.Util;
+using Chess.App.Common;
+using Chess.Game.Board;
+using Chess.Game.Moves;
+using Chess.Game.Player;
+using Newtonsoft.Json;
 
 namespace Chess.Game;
 
 public class ChessGame : IChessGame
 {
     private int Turn = 1;
+    private bool? clientPlayerIsWhite;
     private bool CurrentPlayerIsWhite = true;
     private readonly ConstraintLayout BoardLayout;
-    /*[IgnoreDataMember]*/
+
     public Dictionary<(string, int), IPiece> AllPieces { get; } = [];
-    /*[IgnoreDataMember]*/
+
     public Dictionary<(char, int), ISpace> Board { get; } = [];
-    /*[DataMember]*/
+
     public IMove? LastMove { get; set; } = null;
-    /*[IgnoreDataMember]*/
+
     public List<IMove>? Moves
     {
         get; set
@@ -33,12 +39,30 @@ public class ChessGame : IChessGame
         }
     }
 
-    /*[DataMember]*/
-    public IPlayer? Player1 { get; set; }
-    /*[DataMember]*/
-    public IPlayer? Player2 { get; set; }
 
-    /*[DataMember]*/
+    public IPlayer? White { get; set; }
+
+    public IPlayer? Black { get; set; }
+    private IPlayer? player
+    {
+        get => this.CurrentPlayerIsWhite switch
+        {
+            true => this.White,
+            false => this.Black,
+        };
+    }
+
+    private IPlayer? enemy
+    {
+        get => !this.CurrentPlayerIsWhite switch
+        {
+            true => this.White,
+            false => this.Black
+        };
+    }
+
+    private Action<Payload>? send;
+
     public IPiece? Selected
     {
         get; set
@@ -52,12 +76,11 @@ public class ChessGame : IChessGame
         }
     }
 
-    public ChessGame(ConstraintLayout? boardLayout)
+    public ChessGame(ConstraintLayout boardLayout, bool? clientPlayerIsWhite, Action<Payload>? send)
     {
-        if (boardLayout == null)
-            return;
-
         this.BoardLayout = boardLayout;
+        this.clientPlayerIsWhite = clientPlayerIsWhite;
+        this.send = send;
 
         const string isWhite = "IsWhite";
         const string isBlack = "IsBlack";
@@ -172,10 +195,10 @@ public class ChessGame : IChessGame
             keyValuePair.Value.Space!.Clickable = true;
         }
 
-        this.Player1 = new White(this.Board, this.BoardLayout);
-        this.Player2 = new Black(this.Board, this.BoardLayout);
+        this.White = new White(this.Board, this.BoardLayout);
+        this.Black = new Black(this.Board, this.BoardLayout);
 
-        this.AllPieces.Merge(this.Player1.Pieces, this.Player2.Pieces);
+        this.AllPieces.Merge(this.White.Pieces, this.Black.Pieces);
 
         foreach (var keyValuePair in this.AllPieces)
         {
@@ -183,10 +206,20 @@ public class ChessGame : IChessGame
             keyValuePair.Value.Piece!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
             keyValuePair.Value.Piece!.Clickable = true;
         }
+
+        this.clientPlayerIsWhite = clientPlayerIsWhite;
     }
 
     private void OnClick(object? sender, EventArgs args)
     {
+        if (this.clientPlayerIsWhite != null)
+        {
+            if (this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
+            {
+                return;
+            }
+        }
+
         if (sender is not ImageView imageView)
             return;
 
@@ -203,12 +236,7 @@ public class ChessGame : IChessGame
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
             return;
 
-        var player = this.CurrentPlayerIsWhite switch
-        {
-            true => this.Player1,
-            false => this.Player2,
-        };
-        if (player == null)
+        if (this.player == null || this.enemy == null)
             return;
 
         foreach (var piece in player.Pieces.Values)
@@ -226,7 +254,7 @@ public class ChessGame : IChessGame
             sIndex = value.Space.Index;
         }
 
-        if (player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
+        if (this.player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
         {
             if (this.Selected == null)
             {
@@ -253,42 +281,80 @@ public class ChessGame : IChessGame
             return;
         }
 
-        if (this.Selected is Pawn pawn)
+        if (this.send != null)
         {
-            pawn.HasMoved = true;
-        }
-
-        if (move is Pawn.DoubleMove doubleMove)
-        {
-            doubleMove.Pawn.EnPassantCapturable = true;
-        }
-
-        else if (move is Pawn.EnPassant enPassant)
-        {
-            this.Selected!.Capture(enPassant.Pawn, this.AllPieces);
-        }
-
-        else if (move is ICapture capture)
-        {
-            if (capture.Piece is King)
+            var json = JsonConvert.SerializeObject(move, Formatting.Indented, new JsonSerializerSettings
             {
-                player.Outcome = GameOutcome.Win;
-                foreach (var Space in this.Board.Values)
-                    Space.Space!.Click -= this.OnClick;
-
-                foreach (var piece in this.AllPieces.Values)
-                    piece.Space.Space!.Click -= this.OnClick;
-            }
-
-            this.Selected!.Capture(capture.Piece, this.AllPieces);
+                TypeNameHandling = TypeNameHandling.All
+            });
+            var utf8 = UTF8Encoding.UTF8.GetBytes(json);
+            this.send(Payload.FromBytes(utf8));
         }
 
         this.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-
+        this.OnMove(move);
         this.Selected!.Move(move.Destination);
+        this.NextTurn();
+    }
+
+    public void NextTurn()
+    {
         this.Selected = null;
         if (!this.CurrentPlayerIsWhite)
             this.Turn += 1;
         this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
+    }
+
+    public void OnCapture(ICapture capture)
+    {
+        if (capture is EnPassant move)
+        {
+            this.Selected!.Capture(move.Pawn, this.AllPieces);
+            return;
+        }
+
+        if (capture.Piece is King)
+        {
+            this.OnCaptureKing();
+        }
+
+        this.Selected!.Capture(capture.Piece, this.AllPieces);
+    }
+
+    public void OnCaptureKing()
+    {
+        this.player!.Outcome = GameOutcome.Win;
+        this.enemy!.Outcome = GameOutcome.Lose;
+        foreach (var Space in this.Board.Values)
+            Space.Space!.Clickable = false;
+
+        foreach (var piece in this.AllPieces.Values)
+            piece.Space.Space!.Clickable = false;
+
+        //display and handle the end of the game
+        //Toast.MakeText()
+    }
+
+    public void OnMove(IMove move)
+    {
+        if (this.player == null || this.enemy == null)
+            return;
+
+        if (this.Selected is ISpecialBoardPiece piece)
+        {
+            piece.HasMoved = true;
+        }
+
+        if (move is DoubleMove pawn)
+        {
+            pawn.Pawn.EnPassantCapturable = true;
+        }
+
+        if (move is not ICapture capture)
+        {
+            return;
+        }
+
+        this.OnCapture(capture);
     }
 }

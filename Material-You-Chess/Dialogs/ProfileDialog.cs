@@ -2,7 +2,8 @@
 using Android.Gms.Extensions;
 using Android.Graphics;
 using Bumptech.Glide;
-using Chess.Util.Logger;
+using Chess.App;
+using Chess.App.Common;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Android.Material.Dialog;
@@ -55,7 +56,7 @@ public class ProfileDialog : IProfileDialog
         this.ThemeToggle!.CheckedChange += this.ThemeChanged;
         this.ThemeToggle!.Checked = this.App.MaterialYouThemePreference;
         if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
-            Log.Debug("Display name is missing???");
+            Logger.Debug("Display name is missing???");
 
         this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
         this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
@@ -63,8 +64,14 @@ public class ProfileDialog : IProfileDialog
         this.EditProfileUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
 
         this.DialogProfilePicture!.SetImageURI(null);
-        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is Android.Net.Uri PhotoUrl)
-            Glide.With(this.Dialog.Context).Load(FirebaseStorage.Instance.Reference.Child($"{PhotoUrl}")).Into(this.DialogProfilePicture!);
+        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+        {
+            //var load =
+            Glide.With(this.Dialog.Context).Load(FirebaseStorage.Instance.Reference
+            .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png")).Error(Resource.Drawable.outline_account_circle_24)
+            .Into(this.DialogProfilePicture!);
+            //new Thread((object? requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!); }).Start(load);
+        }
         if (!this.WasShown)
         {
             this.App.RegisterForContextMenu(this.DialogProfilePicture!);
@@ -87,6 +94,7 @@ public class ProfileDialog : IProfileDialog
         {
             await this.OnConfirm();
         }).Start();
+        this.App.UpdateUserState();
     }
     public async Task OnConfirm()
     {
@@ -98,7 +106,9 @@ public class ProfileDialog : IProfileDialog
         }
 
         if (await this.OnConfirmProfilePicture())
+        {
             await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(this.UserProfileChangeRequest.Build());
+        }
     }
 
     public void OnCancel(object? sender, DialogClickEventArgs args)
@@ -110,14 +120,21 @@ public class ProfileDialog : IProfileDialog
     public void OnSelectPhoto(Bitmap photo)
     {
         this.PhotoBitmap = photo;
+        //var load = 
         Glide.With(this.Dialog.Context).Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
+        //new Thread((object? requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!); }).Start(load);
     }
 
     public void OnClearPhoto()
     {
         this.PhotoBitmap = null;
         Glide.With(this.Dialog.Context).Clear(this.DialogProfilePicture!);
+        //var load = 
         Glide.With(this.Dialog.Context).Load(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
+        //new Thread((object? requestBuilder) =>
+        //{
+        //    (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!);
+        //}).Start(load);
     }
 
     public void OnUsernameChange(string username)
@@ -142,7 +159,7 @@ public class ProfileDialog : IProfileDialog
                 {
                     /* Todo handle delete success and inform user */
                     this.UserProfileChangeRequest.SetPhotoUri(null);
-                    this.App.ClearCache();
+                    Glide.Get(this.App).ClearDiskCache();
                     return true;
                 }
 
@@ -173,7 +190,7 @@ public class ProfileDialog : IProfileDialog
         if (upload.IsCompletedSuccessfully)
         {
             this.UserProfileChangeRequest.SetPhotoUri(await path.GetDownloadUrlAsync());
-            this.App.ClearCache();
+            Glide.Get(this.App).ClearDiskCache();
             return true;
         }
 

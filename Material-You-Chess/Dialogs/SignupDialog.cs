@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Util;
 using Android.Views;
+using Chess.App;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
@@ -22,11 +23,10 @@ public partial class SignupDialog : ISignupDialog
     public TextInputLayout? EmailLayout { get; set; }
     public TextInputLayout? PasswordLayout { get; set; }
     public TextInputEditText? PasswordInput { get; set; }
-    public Action OnSuccess { get; set; }
     private MainActivity App { get; set; }
     private bool HasCaught { get; set; } = false;
 
-    public SignupDialog(MainActivity App, Action OnLoginSuccess)
+    public SignupDialog(MainActivity App)
     {
         this.App = App;
         this.Builder = new MaterialAlertDialogBuilder(App);
@@ -37,7 +37,6 @@ public partial class SignupDialog : ISignupDialog
         this.Builder.SetNegativeButton("Cancel", OnCancel);
         this.Dialog = Builder.Create();
         this.Dialog.ShowEvent += OnShow;
-        this.OnSuccess = OnLoginSuccess;
     }
 
     public void OnShow(object? sender, EventArgs args)
@@ -110,7 +109,7 @@ public partial class SignupDialog : ISignupDialog
                 await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(builder.Build());
                 await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
                 this.App.StopProgressIndicator();
-                this.OnSuccess();
+                this.App.UpdateUserState();
             }
         }
     }

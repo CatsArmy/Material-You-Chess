@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Chess.App;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
@@ -9,9 +10,10 @@ public class LogoutDialog : IMaterialDialog
 {
     public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
-    private Action OnConfirmation { get; set; }
-    public LogoutDialog(MainActivity App, Action OnConfirmation)
+    public MainActivity App { get; set; }
+    public LogoutDialog(MainActivity App)
     {
+        this.App = App;
         this.Builder = new MaterialAlertDialogBuilder(App);
         this.Builder.SetIcon(Resource.Drawable.outline_person_remove);
         this.Builder.SetTitle("Logout");
@@ -20,14 +22,15 @@ public class LogoutDialog : IMaterialDialog
         this.Builder.SetNegativeButton("Cancel", OnCancel);
         this.Dialog = this.Builder.Create();
         this.Dialog.ShowEvent += OnShow;
-        this.OnConfirmation = OnConfirmation;
     }
 
     public void OnShow(object? sender, EventArgs args) { }
+
     public void OnConfirm(object? sender, DialogClickEventArgs args)
     {
         FirebaseAuth.Instance.SignOut();
-        this.OnConfirmation();
+        this.App.UpdateUserState();
     }
+
     public void OnCancel(object? sender, DialogClickEventArgs args) { }
 }

@@ -38,11 +38,12 @@
         style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@+id/guideline10"
-        app:layout_constraintEnd_toEndOf="@+id/displayEnd_MA"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/mTitlePart"
         app:layout_constraintStart_toStartOf="@+id/displayStart_MA"
         app:layout_constraintTop_toTopOf="@+id/displayTop_MA"
         app:strokeWidth="2dp">
@@ -179,15 +180,15 @@
         android:id="@+id/GameModeSelector"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="horizontal"
         android:weightSum="10"
-        app:layout_constraintBottom_toTopOf="@+id/displayBottom_MA"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline4"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/displayEnd_MA"
+        app:layout_constraintStart_toEndOf="@+id/mChessLogo"
+        app:layout_constraintTop_toTopOf="@+id/guideline14"
         app:selectionRequired="true"
         app:singleSelection="true">
 
@@ -224,16 +225,18 @@
 
     <Button
         android:id="@+id/btnStartGame"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="200dp"
+        android:layout_height="96dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:autoSizeTextType="uniform"
         android:text="Play"
         app:layout_constraintBottom_toTopOf="@+id/GameModeSelector"
-        app:layout_constraintEnd_toEndOf="@+id/mChessLogo"
-        app:layout_constraintStart_toStartOf="@+id/mChessLogo"
-        app:layout_constraintTop_toTopOf="@+id/guideline14" />
+        app:layout_constraintEnd_toStartOf="@+id/displayEnd_MA"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="@+id/displayStart_MA"
+        app:layout_constraintTop_toTopOf="@+id/displayTop_MA"
+        app:layout_constraintVertical_bias="0.4" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
@@ -249,21 +252,15 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="212dp" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.23" />
-
     <ImageView
         android:id="@+id/mChessLogo"
-        android:layout_width="196dp"
-        android:layout_height="196dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnStartGame"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/UserCardView"
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        app:layout_constraintBottom_toTopOf="@+id/displayBottom_MA"
+        app:layout_constraintEnd_toEndOf="@+id/mTitlePart"
+        app:layout_constraintStart_toStartOf="@+id/mTitlePart"
+        app:layout_constraintTop_toBottomOf="@+id/mTitlePart"
+        app:layout_constraintVertical_bias="0.25"
         app:srcCompat="@drawable/knight_black" />
 
     <TextView
@@ -273,10 +270,9 @@
         android:gravity="center"
         android:text="@string/app_title"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/mChessLogo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline10" />
+        app:layout_constraintTop_toTopOf="@+id/displayTop_MA" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

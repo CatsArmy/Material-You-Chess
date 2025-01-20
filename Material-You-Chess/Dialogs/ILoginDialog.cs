@@ -11,6 +11,4 @@ public interface ILoginDialog : IMaterialDialog
     public TextInputLayout? EmailLayout { get; set; }
     public TextInputLayout? PasswordLayout { get; set; }
     public TextInputEditText? PasswordInput { get; set; }
-    public Action OnSuccess { get; set; }
-
 }

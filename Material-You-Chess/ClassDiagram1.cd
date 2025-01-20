@@ -14,56 +14,56 @@
       <FileName>MainActivity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Bishop" Collapsed="true">
+  <Class Name="Chess.Game.Bishop" Collapsed="true">
     <Position X="7.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessBoard\Bishop.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.King" Collapsed="true">
+  <Class Name="Chess.Game.King" Collapsed="true">
     <Position X="9.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessBoard\King.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Knight" Collapsed="true">
+  <Class Name="Chess.Game.Knight" Collapsed="true">
     <Position X="0.5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessBoard\Knight.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Pawn" Collapsed="true">
+  <Class Name="Chess.Game.Pawn" Collapsed="true">
     <Position X="5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>ChessBoard\Pawn.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Piece" Collapsed="true">
+  <Class Name="Chess.Game.Piece" Collapsed="true">
     <Position X="6" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAgABAAAAAAAgA=</HashCode>
       <FileName>ChessBoard\Piece.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Queen" Collapsed="true">
+  <Class Name="Chess.Game.Queen" Collapsed="true">
     <Position X="11.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessBoard\Queen.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Rook" Collapsed="true">
+  <Class Name="Chess.Game.Rook" Collapsed="true">
     <Position X="2.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ChessBoard\Rook.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Chess.ChessBoard.Space" Collapsed="true">
+  <Class Name="Chess.Game.Space" Collapsed="true">
     <Position X="6" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAiAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

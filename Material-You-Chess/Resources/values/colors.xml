@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Light mode-->
-    <color name="white_space_color">?attr/colorSecondaryContainer</color>
-    <color name="black_space_color">?attr/colorOnSecondaryContainer</color>
+	<color name="Material_Title">?attr/colorTertiary</color>
+	<color name="You_Title">?attr/colorPrimary</color>
+	<color name="Chess_Title">?attr/colorSecondary</color>
 
-    <color name="white_space_overlay_color">?attr/colorTertiaryContainer</color>
-    <color name="black_space_overlay_color">?attr/colorOnTertiaryContainer</color>
+	<!--Light mode-->
+	<color name="white_space_color">?attr/colorSecondaryContainer</color>
+	<color name="black_space_color">?attr/colorOnSecondaryContainer</color>
 
-    <color name="white_piece_color">?attr/colorPrimaryContainer</color>
-    <color name="black_piece_color">?attr/colorOnPrimaryContainer</color>
+	<color name="white_space_overlay_color">?attr/colorTertiaryContainer</color>
+	<color name="black_space_overlay_color">?attr/colorOnTertiaryContainer</color>
 
-    <color name="theme_app_ring">@color/material_dynamic_primary70</color>
-    <color name="on_theme_app">@color/material_dynamic_primary30</color>
-    <color name="theme_app">@color/material_dynamic_primary90</color>
+	<color name="white_piece_color">?attr/colorPrimaryContainer</color>
+	<color name="black_piece_color">?attr/colorOnPrimaryContainer</color>
 
+	<color name="theme_app_ring">@color/material_dynamic_primary70</color>
+	<color name="on_theme_app">@color/material_dynamic_primary30</color>
+	<color name="theme_app">@color/material_dynamic_primary90</color>
 
-    <color name="theme_app_white_piece">@color/material_dynamic_primary90</color>
-    <color name="theme_app_black_piece">@color/material_dynamic_primary10</color>
-    <color name="theme_app_star">@color/material_dynamic_tertiary50</color>
-    <color name="theme_app_star_alt">@color/material_dynamic_tertiary20</color>
+	<color name="theme_app_white_piece">@color/material_dynamic_primary90</color>
+	<color name="theme_app_black_piece">@color/material_dynamic_primary10</color>
+	<color name="theme_app_star">@color/material_dynamic_tertiary50</color>
+	<color name="theme_app_star_alt">@color/material_dynamic_tertiary20</color>
 </resources>
