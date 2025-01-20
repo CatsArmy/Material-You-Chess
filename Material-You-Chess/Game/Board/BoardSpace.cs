@@ -2,21 +2,15 @@
 
 public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {
-
     public ImageView? Space { get; } = Space;
-
 
     public bool IsWhite { get; } = IsWhite;
 
-
     public int Id { get; } = Id;
-
 
     public (char, int) Index { get; } = (file, rank);
 
-
     public char File { get; } = file;
-
 
     public int Rank { get; } = rank;
 
