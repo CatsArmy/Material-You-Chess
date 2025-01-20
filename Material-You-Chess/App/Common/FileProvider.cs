@@ -5,7 +5,7 @@ using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
 namespace Chess.App.Common;
 
-[ContentProvider(new[] { "${applicationId}.fileProvider" },
+[ContentProvider(["${applicationId}.fileProvider"],
     Name = "com.catsarmy.chess.FileProvider",
     Exported = false,
     GrantUriPermissions = true)]

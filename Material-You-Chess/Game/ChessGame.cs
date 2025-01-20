@@ -43,7 +43,7 @@ public class ChessGame : IChessGame
     public IPlayer? White { get; set; }
 
     public IPlayer? Black { get; set; }
-    private IPlayer? player
+    private IPlayer? Player
     {
         get => this.CurrentPlayerIsWhite switch
         {
@@ -52,7 +52,7 @@ public class ChessGame : IChessGame
         };
     }
 
-    private IPlayer? enemy
+    private IPlayer? Enemy
     {
         get => !this.CurrentPlayerIsWhite switch
         {
@@ -236,10 +236,10 @@ public class ChessGame : IChessGame
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
             return;
 
-        if (this.player == null || this.enemy == null)
+        if (this.Player == null || this.Enemy == null)
             return;
 
-        foreach (var piece in player.Pieces.Values)
+        foreach (var piece in Player.Pieces.Values)
         {
             piece.Update();
         }
@@ -254,7 +254,7 @@ public class ChessGame : IChessGame
             sIndex = value.Space.Index;
         }
 
-        if (this.player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
+        if (this.Player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
         {
             if (this.Selected == null)
             {
@@ -323,8 +323,8 @@ public class ChessGame : IChessGame
 
     public void OnCaptureKing()
     {
-        this.player!.Outcome = GameOutcome.Win;
-        this.enemy!.Outcome = GameOutcome.Lose;
+        this.Player!.Outcome = GameOutcome.Win;
+        this.Enemy!.Outcome = GameOutcome.Lose;
         foreach (var Space in this.Board.Values)
             Space.Space!.Clickable = false;
 
@@ -337,7 +337,7 @@ public class ChessGame : IChessGame
 
     public void OnMove(IMove move)
     {
-        if (this.player == null || this.enemy == null)
+        if (this.Player == null || this.Enemy == null)
             return;
 
         if (this.Selected is ISpecialBoardPiece piece)

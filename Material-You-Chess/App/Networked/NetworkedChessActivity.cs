@@ -75,7 +75,7 @@ public class NetworkedChessActivity : ConnectionsActivity
         base.SetContentView(Resource.Layout.chess_activity);
 
         //Run our logic
-        this.p1MainProfileImageView = FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+        this.p1MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
         if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
         {
             var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
@@ -83,22 +83,18 @@ public class NetworkedChessActivity : ConnectionsActivity
             new Thread((requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.p1MainProfileImageView!); }).Start(load);
         }
 
-        this.p1MainUsername = FindViewById<TextView>(Resource.Id.p1MainUsername);
-        this.p2MainUsername = FindViewById<TextView>(Resource.Id.p2MainUsername);
+        this.p2MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+
+        this.p1MainUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        this.p2MainUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
 
         this.p1MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
         {
-            true => "Guest",
+            true => "Player",
             false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
         };
-
-        //TODO Add Castling difficulty Medium
-        //TODO Add Promotion difficulty Easy+ / Medium-
-        //TODO More?
-
-        //FIX why are the captured pieces not captured??
-        var board = FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.game = new ChessGame(board!, null, Send);
+        var board = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+        this.game = new ChessGame(board!, null, this.Send);
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
