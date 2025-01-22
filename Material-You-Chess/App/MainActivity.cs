@@ -9,10 +9,12 @@ using AndroidX.AppCompat.App;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
+using Chess.App.Networked;
 using Chess.Dialogs;
 using Chess.FirebaseSecrets;
 using Firebase.Auth;
 using Firebase.Storage;
+using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
@@ -64,7 +66,20 @@ public class MainActivity : AppCompatActivity
     private void SelectPhoto(Android.Net.Uri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
     private void StartGame(object? sender, EventArgs e)
     {
-        Intent intent = new Intent(this, typeof(ChessActivity))
+        var group = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
+        var online = this.FindViewById<Button>(Resource.Id.btnOnline);
+        var local = this.FindViewById<Button>(Resource.Id.btnLocal);
+
+        Intent intent;
+        if (FirebaseAuth.Instance.CurrentUser != null && group!.CheckedButtonId == online!.Id)
+        {
+            intent = new Intent(this, typeof(NetworkedChessActivity))
+               .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
+            base.StartActivity(intent);
+            return;
+        }
+
+        intent = new Intent(this, typeof(ChessActivity))
         .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
         base.StartActivity(intent);
     }
@@ -88,10 +103,6 @@ public class MainActivity : AppCompatActivity
 
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
-
-        //base.StartActivity(new Intent(this, typeof(MainActivity2)));
-        //return;
-
         // Permission request logic
         _ = new PermissionsRequester(this);
 
@@ -102,17 +113,17 @@ public class MainActivity : AppCompatActivity
 
         //FirebaseAuth.Instance.SignOut();
         //Run our logic
-        this.startGame = FindViewById<Button>(Resource.Id.btnStartGame);
-        this.UserProgressIndicator = FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
-        this.mainProfilePicture = FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
-        this.mainUsername = FindViewById<TextView>(Resource.Id.MainUsername);
-        this.profileAction1 = FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
-        this.profileAction2 = FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
+        this.startGame = this.FindViewById<Button>(Resource.Id.btnStartGame);
+        this.UserProgressIndicator = this.FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
+        this.mainProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
+        this.mainUsername = this.FindViewById<TextView>(Resource.Id.MainUsername);
+        this.profileAction1 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
+        this.profileAction2 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
         this.logoutDialog = new LogoutDialog(this);
         this.loginDialog = new LoginDialog(this);
         this.signupDialog = new SignupDialog(this);
         this.profileDialog = new ProfileDialog(this);
-        this.startGame!.Click += StartGame;
+        this.startGame!.Click += this.StartGame;
         this.UpdateUserState();
     }
 
@@ -134,23 +145,6 @@ public class MainActivity : AppCompatActivity
     [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "<Pending>")]
     public void UpdateUserState()
     {
-        //var title = base.FindViewById<TextView>(Resource.Id.mTitlePart);
-
-        //TypedValue typedValue;
-        //typedValue = new TypedValue();
-        //base.Theme!.ResolveAttribute(Resource.Attribute.colorTertiary, typedValue, true);
-        //int color = ContextCompat.GetColor(this, typedValue.ResourceId);
-
-        //var Material = Java.Lang.Integer.ToHexString(ContextCompat.GetColor(this, typedValue.ResourceId));
-        //typedValue = new TypedValue();
-        //base.Theme!.ResolveAttribute(Resource.Attribute.colorPrimary, typedValue, true);
-        //var You = Java.Lang.Integer.ToHexString(ContextCompat.GetColor(this, typedValue.ResourceId));
-        //typedValue = new TypedValue();
-        //base.Theme!.ResolveAttribute(Resource.Attribute.colorSecondary, typedValue, true);
-        //var Chess = Java.Lang.Integer.ToHexString(ContextCompat.GetColor(this, typedValue.ResourceId));
-        //var text = Html.FromHtml($"<font color=#{Material}>Material </font><font color=#{You}>You </font><font color=#{Chess}>Chess</font>");
-        ////var text = Html.FromHtml($"<font color=\"@color/Material_Title\">Material </font><font color=\"@color/You_Title\">\"You </font><font color=\"@color/Chess_Title\">Chess</font>");
-        //title?.SetText(text, TextView.BufferType.Spannable);
         switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:
@@ -167,16 +161,10 @@ public class MainActivity : AppCompatActivity
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
-                    //Java.Lang.IllegalArgumentException: 'Unhandled class: class java.io.File, try .as*(Class).transcode(ResourceTranscoder)'
-                    //var load = 
                     Glide.With(this).DownloadOnly().Load(FirebaseStorage.Instance.Reference
                     .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))//.Error(Resource.Drawable.outline_account_circle_24)
-                    //;
+
                     .Into(mainProfilePicture!);
-                    //new Thread((object? requestBuilder) =>
-                    //{
-                    //    (requestBuilder as RequestBuilder)?.Into(this.mainProfilePicture!);
-                    //});//.Start(load);
                 }
                 break;
 
