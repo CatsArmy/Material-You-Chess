@@ -1,7 +1,6 @@
-﻿using Android.Views;
-using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
@@ -55,19 +54,14 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
     public void Capture(IPiece destination, Dictionary<(string, int), IPiece> pieces)
     {
         Logger.Debug("Capture");
-        //logic
-        //check for if move would result in a check
-        destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
-        destination.Piece!.Enabled = false;
         pieces.Remove(destination.Index);
+        destination.Piece!.Enabled = false;
         destination.Piece!.Clickable = false;
+        destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
 
-        if (destination.Piece is View view)
-            if (view.Parent is ViewGroup parent)
-                parent.RemoveView(view);
-
-        //this.Move(destination.Space);
-        //add to the list of captured pieces
+        //if (destination.Piece is View view)
+        //    if (view.Parent is ViewGroup parent)
+        //        parent.RemoveView(view);
     }
 
     public void Diagonals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)

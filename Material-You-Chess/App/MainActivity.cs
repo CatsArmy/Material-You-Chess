@@ -18,6 +18,7 @@ using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
+using Java.IO;
 using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
@@ -45,7 +46,9 @@ public class MainActivity : AppCompatActivity
     public ActivityResultLauncher? PhotoTaker;
     private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
     private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
-
+    private MaterialButtonToggleGroup? GameModeSelector;
+    private Button? Online;
+    private Button? Local;
     public ShapeableImageView? mainProfilePicture;
     private Button? startGame;
     private TextView? mainUsername;
@@ -66,12 +69,8 @@ public class MainActivity : AppCompatActivity
     private void SelectPhoto(Android.Net.Uri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
     private void StartGame(object? sender, EventArgs e)
     {
-        var group = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
-        var online = this.FindViewById<Button>(Resource.Id.btnOnline);
-        var local = this.FindViewById<Button>(Resource.Id.btnLocal);
-
         Intent intent;
-        if (FirebaseAuth.Instance.CurrentUser != null && group!.CheckedButtonId == online!.Id)
+        if (this.GameModeSelector!.CheckedButtonId == this.Online!.Id)
         {
             intent = new Intent(this, typeof(NetworkedChessActivity))
                .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
@@ -108,11 +107,14 @@ public class MainActivity : AppCompatActivity
 
         using (var glide = Glide.Get(this))
         {
-            MyAppGlideModule.Register(glide);
-        };
+            glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)), Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
+        }
 
         //FirebaseAuth.Instance.SignOut();
         //Run our logic
+        this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
+        this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);
+        this.Local = this.FindViewById<Button>(Resource.Id.btnLocal);
         this.startGame = this.FindViewById<Button>(Resource.Id.btnStartGame);
         this.UserProgressIndicator = this.FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
         this.mainProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
@@ -127,9 +129,9 @@ public class MainActivity : AppCompatActivity
         this.UpdateUserState();
     }
 
-    public override void OnCreateContextMenu(IContextMenu? menu, View? v, IContextMenuContextMenuInfo? menuInfo)
+    public override void OnCreateContextMenu(IContextMenu? menu, View? view, IContextMenuContextMenuInfo? menuInfo)
     {
-        base.OnCreateContextMenu(menu, v, menuInfo);
+        base.OnCreateContextMenu(menu, view, menuInfo);
         base.MenuInflater.Inflate(Resource.Menu.clear_pfp, menu);
     }
 
@@ -148,6 +150,8 @@ public class MainActivity : AppCompatActivity
         switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:
+                this.Online!.Enabled = true;
+
                 this.profileAction1!.Text = "Profile";
                 this.profileAction1.Click -= OpenLoginDialog;
                 this.profileAction1.Click += OpenProfileDialog;
@@ -161,14 +165,19 @@ public class MainActivity : AppCompatActivity
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
-                    Glide.With(this).DownloadOnly().Load(FirebaseStorage.Instance.Reference
-                    .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))//.Error(Resource.Drawable.outline_account_circle_24)
-
-                    .Into(mainProfilePicture!);
+                    var path = $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png";
+                    //Potential fix? .AsBitmap()
+                    //Downside not sure if it will always download it
+                    var a = Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path))
+                        .Error(Resource.Drawable.outline_account_circle_24);
+                    //.Into(mainProfilePicture!);
                 }
                 break;
 
             case false:
+                this.Online!.Enabled = false;
+                this.GameModeSelector!.ClearChecked();
+
                 this.profileAction1!.Text = "Login";
                 this.profileAction1.Click -= OpenProfileDialog;
                 this.profileAction1.Click += OpenLoginDialog;

@@ -5,6 +5,7 @@ using Bumptech.Glide.Load;
 using Bumptech.Glide.Load.Data;
 using Bumptech.Glide.Load.Model;
 using Firebase.Storage;
+using Java.IO;
 using Java.Lang;
 using Java.Nio.Charset;
 using Java.Security;
@@ -12,30 +13,20 @@ using JavaString = Java.Lang.String;
 
 namespace Chess.App.Common;
 
-public static class MyAppGlideModule
-{
-    public static void Register(Glide glide)
-    {
-        // Register FirebaseImageLoader to handle StorageReference
-        glide.Registry.Prepend(modelClass: FirebaseStorage.Instance.Reference.Class, dataClass: Class.ForName("java.io.InputStream"),
-                factory: new FirebaseImageLoader());
-    }
-}
-
-public class FirebaseImageLoader : Java.Lang.Object, IModelLoader, IModelLoaderFactory
+public class FirebaseImageLoader : Java.Lang.Object, IModelLoader
 {
     private const string Tag = "FirebaseImageLoader";
-
-
-    public IModelLoader Build(MultiModelLoaderFactory factory)
+    public class Factory : Java.Lang.Object, IModelLoaderFactory
     {
-        return new FirebaseImageLoader();
+        public IModelLoader Build(MultiModelLoaderFactory factory)
+        {
+            return new FirebaseImageLoader();
+        }
+
+        public void Teardown() { }
     }
 
-    public void Teardown() { }
-
-
-    public ModelLoaderLoadData BuildLoadData(Java.Lang.Object _reference, int height, int width, Options options)
+    public ModelLoaderLoadData? BuildLoadData(Java.Lang.Object _reference, int height, int width, Options options)
     {
         var reference = _reference as StorageReference;
         return new ModelLoaderLoadData(new FirebaseStorageKey(reference!), new FirebaseStorageFetcher(reference!));
@@ -70,12 +61,13 @@ public class FirebaseImageLoader : Java.Lang.Object, IModelLoader, IModelLoaderF
 
     private class FirebaseStorageFetcher(StorageReference _ref) : Java.Lang.Object, IDataFetcher
     {
-        public Class DataClass => Class.ForName("java.io.InputStream");
+        public Class DataClass => Class.FromType(typeof(InputStream))!;
         public DataSource DataSource => DataSource.Remote!;
 
         private readonly StorageReference storageReference = _ref;
         private StreamDownloadTask? streamTask;
         private Stream? inputStream;
+
 
         public async void LoadData(Priority priority, IDataFetcherDataCallback callback)
         {
@@ -87,7 +79,7 @@ public class FirebaseImageLoader : Java.Lang.Object, IModelLoader, IModelLoaderF
                 if (task.IsCompletedSuccessfully) //OnSuccess
                 {
                     inputStream = snapshot.Stream;
-                    callback.OnDataReady(((Android.Runtime.InputStreamInvoker)inputStream).BaseInputStream);
+                    callback.OnDataReady((inputStream as Android.Runtime.InputStreamInvoker)?.BaseInputStream);
                 }
 
                 if (task.IsFaulted) //OnFailure
@@ -95,6 +87,7 @@ public class FirebaseImageLoader : Java.Lang.Object, IModelLoader, IModelLoaderF
                     callback.OnLoadFailed(new Java.Lang.Exception(task.Exception!.ToString()));
                 }
             }
+
             catch (System.Exception e)
             {
                 Logger.Error(e.ToString());
@@ -103,23 +96,29 @@ public class FirebaseImageLoader : Java.Lang.Object, IModelLoader, IModelLoaderF
 
         public void Cancel()
         {
-            if (inputStream == null)
-            {
+            if (streamTask == null)
                 return;
-            }
 
-            // Close stream if possible     
+            if (!streamTask.IsInProgress)
+                return;
+
+            streamTask.Cancel();
+        }
+
+        public void Cleanup()
+        {
+            if (inputStream == null)
+                return;
+
             try
             {
                 inputStream.Close();
                 inputStream = null;
             }
-            catch (IOException e)
+            catch (Java.IO.IOException e)
             {
                 Log.Warn(Tag, "Could not close stream", e);
             }
         }
-
-        public void Cleanup() { }
     }
 }
