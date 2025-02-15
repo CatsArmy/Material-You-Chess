@@ -70,7 +70,6 @@ public class ProfileDialog : IProfileDialog
             Glide.With(this.Dialog.Context).Load(FirebaseStorage.Instance.Reference
             .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png")).Error(Resource.Drawable.outline_account_circle_24)
             .Into(this.DialogProfilePicture!);
-            //new Thread((object? requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!); }).Start(load);
         }
         if (!this.WasShown)
         {
@@ -90,12 +89,10 @@ public class ProfileDialog : IProfileDialog
 
     public void OnConfirm(object? sender, DialogClickEventArgs args)
     {
-        new Thread(async () =>
-        {
-            await this.OnConfirm();
-        }).Start();
+        this.OnConfirm().Wait();
         this.App.UpdateUserState();
     }
+
     public async Task OnConfirm()
     {
         if (this.UserProfileChangeRequest.DisplayName == null)
@@ -120,21 +117,14 @@ public class ProfileDialog : IProfileDialog
     public void OnSelectPhoto(Bitmap photo)
     {
         this.PhotoBitmap = photo;
-        //var load = 
         Glide.With(this.Dialog.Context).Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
-        //new Thread((object? requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!); }).Start(load);
     }
 
     public void OnClearPhoto()
     {
         this.PhotoBitmap = null;
         Glide.With(this.Dialog.Context).Clear(this.DialogProfilePicture!);
-        //var load = 
         Glide.With(this.Dialog.Context).Load(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);
-        //new Thread((object? requestBuilder) =>
-        //{
-        //    (requestBuilder as RequestBuilder)?.Into(this.DialogProfilePicture!);
-        //}).Start(load);
     }
 
     public void OnUsernameChange(string username)
@@ -176,15 +166,14 @@ public class ProfileDialog : IProfileDialog
 
         Task<UploadTask.TaskSnapshot>? upload;
         using var stream = new MemoryStream();
-        if (await this.PhotoBitmap!.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
-        {
-            var data = stream.ToArray();
-            upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
-        }
 
         /* Todo handle upload failure */
-        else
+        if (!await this.PhotoBitmap!.CompressAsync(Bitmap.CompressFormat.Png!, 77, stream))
             return false;
+
+
+        var data = stream.ToArray();
+        upload = path.PutBytes(data).AsAsync<UploadTask.TaskSnapshot>();
 
         var snapshot = await upload!;
         if (upload.IsCompletedSuccessfully)

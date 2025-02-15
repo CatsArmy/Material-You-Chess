@@ -1,9 +1,8 @@
 ﻿using Chess.Game.Board;
-using Newtonsoft.Json;
 
 namespace Chess.Game.Moves;
 
-public class DoubleMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
+public class Promote(Pawn origin, ISpace destination) : IPromote
 {
     public ISpace Destination { get; set; } = destination;
 
@@ -17,11 +16,11 @@ public class DoubleMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
 
     public Pawn Pawn { get; } = origin;
 
-    public NetworkedDoubleMove ToNetworked() => new(this.Destination.Index, this.Origin.Index, this.OriginPiece.Index);
+    public NetworkedPromote ToNetworked() => new(this.Destination.Index, this.Origin.Index, this.OriginPiece.Index);
 }
 
-[JsonObject(MemberSerialization.OptOut)]
-public class NetworkedDoubleMove((char, int) destination, (char, int) origin, (string, int) originPiece) : Pawn.INetworkedSpecialMoves
+
+public class NetworkedPromote((char, int) destination, (char, int) origin, (string, int) originPiece) : INetworkedPromote
 {
     public (string, int) Pawn => originPiece;
     public (char, int) Destination { get; set; } = destination;
@@ -33,5 +32,5 @@ public class NetworkedDoubleMove((char, int) destination, (char, int) origin, (s
     // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
 #pragma warning restore CS9124 
 
-    public IMove FromNetworked(IChessGame game) => new DoubleMove((game.AllPieces[this.Pawn] as Pawn)!, game.Board[this.Destination]);
+    public IMove FromNetworked(IChessGame game) => new Promote((game.AllPieces[this.Pawn] as Pawn)!, game.Board[this.Destination]);
 }

@@ -1,4 +1,5 @@
-﻿using Chess.Game.Moves;
+﻿using System.Text.Json.Serialization;
+using Chess.Game.Moves;
 
 namespace Chess.Game;
 
@@ -6,6 +7,7 @@ public interface IPiece
 {
     public ISpace Space { get; set; }
 
+    [JsonIgnore]
     public ImageView? Piece { get; set; }
 
     public int Id { get; }

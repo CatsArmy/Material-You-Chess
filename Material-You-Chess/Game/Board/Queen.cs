@@ -3,7 +3,7 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Queen(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayoyt) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayoyt)
+public class Queen(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
     private const char abbreviation = 'Q';
 

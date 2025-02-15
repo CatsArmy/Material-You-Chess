@@ -1,4 +1,5 @@
-﻿using AndroidX.ConstraintLayout.Widget;
+﻿using System.Text.Json.Serialization;
+using AndroidX.ConstraintLayout.Widget;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
@@ -22,11 +23,19 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         List<IMove> moves = base.Moves(board, pieces);
         if (this.Space.Forward(board, this.IsWhite) is not ISpace forward)
             return moves;
-
+        int rank = this.IsWhite switch
+        {
+            true => 8,
+            false => 1
+        };
         var piece = forward.Piece(pieces);
         if (piece == null)
         {
-            moves.Add(new Move(this, forward));
+            moves.Add((forward.Rank == rank) switch
+            {
+                true => new Promote(this, forward),
+                false => new Move(this, forward)
+            });
             if (!this.HasMoved)
             {
                 var forwardX2 = forward.Forward(board, this.IsWhite);
@@ -40,7 +49,11 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
             if (left.Piece(pieces) is IPiece leftPiece)
             {
                 if (leftPiece?.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this, left));
+                    moves.Add((left.Rank == rank) switch
+                    {
+                        true => new PromoteAndCapture(this, leftPiece!),
+                        false => new Capture(this, leftPiece!)
+                    });
             }
             else if (left.Backward(board, isWhite) is ISpace EnPassantSpace)
             {
@@ -54,7 +67,11 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
             if (right.Piece(pieces) is IPiece rightPiece)
             {
                 if (rightPiece?.IsWhite != this.IsWhite)
-                    moves.Add(new Move(this, right));
+                    moves.Add((right.Rank == rank) switch
+                    {
+                        true => new PromoteAndCapture(this, rightPiece!),
+                        false => new Capture(this, rightPiece!)
+                    });
             }
             else if (right.Backward(board, isWhite) is ISpace EnPassantSpace)
             {
@@ -65,17 +82,12 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         return moves;
     }
 
-    public void Promote()
-    {
-        //Get name via id
-        //create a (string,int) key with the name
-        //remove the value from the dict with the key
-        //Open Promote dialog/popup thingy
-        //add back the value but as a the selected piece(cant be king)
-
-        //update the abbreviation to match the new type;
-    }
-
+    [JsonDerivedType(typeof(SpecialMove))]
+    [JsonDerivedType(typeof(INetworkedSpecialMove))]
+    [JsonDerivedType(typeof(DoubleMove))]
+    [JsonDerivedType(typeof(EnPassant))]
+    [JsonDerivedType(typeof(IPromote))]
+    [JsonPolymorphic(TypeDiscriminatorPropertyName = $"${nameof(ISpecialMove)}", UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     public interface ISpecialMove : IMove
     {
         public Pawn Pawn { get; }
@@ -95,8 +107,42 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         }
     }
 
-    public interface INetworkedSpecialMoves : INetworkedMove
+    //// [JsonDerivedType(typeof(NetworkedSpecialMove))]
+    public interface INetworkedSpecialMove : INetworkedMove
     {
         public (string, int) Pawn { get; }
+    }
+
+    public class SpecialMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
+    {
+        public ISpace Destination { get; set; } = destination;
+
+        public int DestinationId { get; set; } = destination.Id;
+
+        public ISpace Origin { get; set; } = origin.Space;
+
+        public IPiece OriginPiece { get; set; } = origin;
+
+        public int OriginId { get; set; } = origin.Id;
+
+        public Pawn Pawn { get; } = origin;
+
+        public NetworkedSpecialMove ToNetworked() => new(this.Destination.Index, this.Origin.Index, this.OriginPiece.Index);
+    }
+
+
+    public class NetworkedSpecialMove((char, int) destination, (char, int) origin, (string, int) originPiece) : Pawn.INetworkedSpecialMove
+    {
+        public (string, int) Pawn => originPiece;
+        public (char, int) Destination { get; set; } = destination;
+        public (char, int) Origin { get; set; } = origin;
+
+#pragma warning disable CS9124
+        // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
+        public (string, int) OriginPiece { get; set; } = originPiece;
+        // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
+#pragma warning restore CS9124
+
+        public IMove FromNetworked(IChessGame game) => new SpecialMove((game.AllPieces[this.Pawn] as Pawn)!, game.Board[this.Destination]);
     }
 }

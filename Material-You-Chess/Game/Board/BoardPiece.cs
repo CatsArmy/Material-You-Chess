@@ -1,13 +1,14 @@
-﻿using AndroidX.ConstraintLayout.Widget;
+﻿using System.Text.Json.Serialization;
+using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, ConstraintLayout App) : IPiece
+public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, ConstraintLayout boardLayout) : IPiece
 {
-
-    public ImageView? Piece { get; set; } = App.FindViewById<ImageView>(id);
+    [JsonIgnore]
+    public ImageView? Piece { get; set; } = boardLayout.FindViewById<ImageView>(id);
 
 
     public ISpace Space { get; set; } = space;

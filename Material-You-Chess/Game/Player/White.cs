@@ -5,7 +5,9 @@ namespace Chess.Game.Player;
 
 public class White : IPlayer
 {
-    public GameOutcome Outcome { get; set; } = GameOutcome.Ongoing;
+    public string Name { get; set; }
+
+    public GameOutcome Outcome { get; set; }
 
     public Dictionary<(string, int), IPiece> Pieces { get; set; } = [];
 
@@ -27,8 +29,9 @@ public class White : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public White(Dictionary<(char, int), ISpace> Board, ConstraintLayout app)
+    public White(string name, Dictionary<(char, int), ISpace> Board, ConstraintLayout app)
     {
+        this.Name = name;
         char file = 'A';
         const int rank = 1;
         this.Rook1 = new Rook(Resource.Id.gmp__wRook1, ("wRook", 1), true, Board[(file, rank)], app);

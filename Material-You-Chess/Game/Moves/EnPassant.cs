@@ -1,5 +1,4 @@
 ﻿using Chess.Game.Board;
-using Newtonsoft.Json;
 
 namespace Chess.Game.Moves;
 
@@ -23,8 +22,7 @@ public class EnPassant(IPiece origin, ISpace destination, Pawn captured) : Pawn.
 
 }
 
-[JsonObject(MemberSerialization.OptOut)]
-public class NetworkedEnPassant((string, int) originPiece, (char, int) origin, (string, int) captured, (char, int) destination) : Pawn.INetworkedSpecialMoves, INetworkedCapture
+public class NetworkedEnPassant((string, int) originPiece, (char, int) origin, (string, int) captured, (char, int) destination) : Pawn.INetworkedSpecialMove, INetworkedCapture
 {
     public (string, int) Pawn => captured;
     public (string, int) Piece => captured;

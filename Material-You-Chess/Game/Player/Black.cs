@@ -5,7 +5,9 @@ namespace Chess.Game.Player;
 
 public class Black : IPlayer
 {
-    public GameOutcome Outcome { get; set; } = GameOutcome.Ongoing;
+    public string Name { get; set; }
+
+    public GameOutcome Outcome { get; set; }
 
     public Dictionary<(string, int), IPiece> Pieces { get; set; } = [];
 
@@ -27,8 +29,9 @@ public class Black : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public Black(Dictionary<(char, int), ISpace> Board, ConstraintLayout boardLayout)
+    public Black(string name, Dictionary<(char, int), ISpace> Board, ConstraintLayout boardLayout)
     {
+        this.Name = name;
         char file = 'A';
         const int rank = 8;
         this.Rook1 = new Rook(Resource.Id.gmp__bRook1, ("bRook", 1), false, Board[(file, rank)], boardLayout);
@@ -68,10 +71,5 @@ public class Black : IPlayer
             this.Pawns[i] = new Pawn(Resource.Id.gmp__bPawn1 + i, ("bPawn", i + 1), false, Board[(file, rank - 1)], boardLayout);
             this.Pieces[("bPawn", i + 1)] = this.Pawns[i];
         }
-    }
-
-    public bool IsInCheck(IPlayer enemy)
-    {
-        throw new NotImplementedException();
     }
 }

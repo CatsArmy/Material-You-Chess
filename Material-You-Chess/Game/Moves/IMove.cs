@@ -1,8 +1,13 @@
-﻿using Chess.Game;
-using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
+using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
+[JsonPolymorphic(TypeDiscriminatorPropertyName = $"${nameof(IMove)}", UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
+[JsonDerivedType(typeof(Move))]
+// [JsonDerivedType(typeof(INetworkedMove))]
+[JsonDerivedType(typeof(ICapture))]
+[JsonDerivedType(typeof(Pawn.ISpecialMove))]
 public interface IMove
 {
     public ISpace Destination { get; set; }
@@ -28,7 +33,7 @@ public interface IMove
     }
 }
 
-[JsonObject(MemberSerialization.OptOut)]
+
 public interface INetworkedMove
 {
     public (char, int) Destination { get; set; }

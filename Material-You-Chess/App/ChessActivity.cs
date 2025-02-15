@@ -31,8 +31,8 @@ public class ChessActivity : AppCompatActivity
         this.FindViewById<TextView>(Resource.Id.p1MainUsername)!.Text = "Player 1";
         this.FindViewById<TextView>(Resource.Id.p2MainUsername)!.Text = "Player 2";
 
-        var board = FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        _ = new ChessGame(board!, null, null);
+        var board = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+        _ = new ChessGame(this, "Player 1", "Player 2", board!, new(this), new(this), null, null);
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

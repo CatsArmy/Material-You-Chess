@@ -1,21 +1,24 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Chess.Game;
 
 public interface ISpace
 {
-     public ImageView? Space { get; }
-     public bool IsWhite { get; }
-     public int Id { get; }
-     public (char, int) Index { get; }
-     public char File { get; }
-     public int Rank { get; }
+    [JsonIgnore]
+    public ImageView? Space { get; }
+    public (char, int) Index { get; }
+    public char File { get; }
+    public int Rank { get; }
+    public bool IsWhite { get; }
+    public int Id { get; }
 
-     public const int Select = 1;
-     public const int Unselect = 0;
+    public const int Select = 1;
+    public const int Unselect = 0;
 
     public void SelectSpace();
+
     public void UnselectSpace();
+
     public ISpace? DiagonalUp(Dictionary<(char, int), ISpace> board, bool isRight);
     public ISpace? DiagonalDown(Dictionary<(char, int), ISpace> board, bool isRight);
     public ISpace? Up(Dictionary<(char, int), ISpace> board);

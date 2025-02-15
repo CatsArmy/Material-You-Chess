@@ -35,7 +35,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
         {
             Logger.Debug($"OnConnectionInitiated({nameof(endpointId)}={endpointId}," +
                 $" {nameof(connectionInfo.EndpointName)}={connectionInfo.EndpointName})");
-            EndPoint endPoint = new(endpointId, connectionInfo.EndpointName);
+            var endPoint = new EndPoint(endpointId, connectionInfo.EndpointName);
             instance.PendingConnections.Add(endpointId, endPoint);
             instance.OnConnectionInitiated(endPoint, connectionInfo);
         }
@@ -120,8 +120,9 @@ public abstract class ConnectionsActivity : AppCompatActivity
         base.OnDestroy();
     }
 
-    /** Called when our Activity has been made visible to the user. */
-
+    /// <summary>
+    /// Called when our Activity has been made visible to the user.
+    /// </summary>
     protected override void OnStart()
     {
         this.requiredPermissions = this.GetRequiredPermissions();
@@ -143,8 +144,6 @@ public abstract class ConnectionsActivity : AppCompatActivity
         base.OnStart();
     }
 
-
-
     private bool HasPermissions()
     {
         bool returnValue = true;
@@ -159,7 +158,12 @@ public abstract class ConnectionsActivity : AppCompatActivity
         return returnValue;
     }
 
-    /** Called when the user has accepted (or denied) our permission request. */
+    /// <summary>
+    /// Called when the user has accepted (or denied) our permission request.
+    /// </summary>
+    /// <param name="requestCode"></param>
+    /// <param name="permissions"></param>
+    /// <param name="grantResults"></param>
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
     {
         if (requestCode == RequestCodeRequiredPermissions)
@@ -182,11 +186,11 @@ public abstract class ConnectionsActivity : AppCompatActivity
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    /**
-     * Sets the device to advertising mode. It will broadcast to other devices in discovery mode.
-     * Either {@link #onAdvertisingStarted()} or {@link #onAdvertisingFailed()} will be called once
-     * we've found out if we successfully entered this mode.
-     */
+    /// <summary>
+    /// Sets the device to advertising mode. It will broadcast to other devices in discovery mode.
+    /// Either <see cref="OnAdvertisingStarted()"/> or <see cref="OnAdvertisingFailed()"/> will be called once
+    /// we've found out if we successfully entered this mode.
+    /// </summary>
     protected async void StartAdvertising()
     {
         this.IsAdvertising = true;
@@ -211,28 +215,38 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     }
 
-    /** Stops advertising. */
+    /// <summary>
+    /// Stops advertising.
+    /// </summary>
     protected void StopAdvertising()
     {
         this.IsAdvertising = false;
         this.ConnectionsClient!.StopAdvertising();
     }
 
-    /** Called when advertising successfully starts. Override this method to act on the event. */
+    /// <summary>
+    /// Called when advertising successfully starts. Override this method to act on the event.
+    /// </summary>
     protected virtual void OnAdvertisingStarted() { }
 
-    /** Called when advertising fails to start. Override this method to act on the event. */
+    /// <summary>
+    /// Called when advertising fails to start. Override this method to act on the event.
+    /// </summary>
     protected virtual void OnAdvertisingFailed() { }
 
-    /**
-     * Called when a pending connection with a remote endpoint is created. Use {@link ConnectionInfo}
-     * for metadata about the connection (like incoming vs outgoing, or the authentication token). If
-     * we want to continue with the connection, call {@link #acceptConnection(Endpoint)}. Otherwise,
-     * call {@link #rejectConnection(Endpoint)}.
-     */
+    /// <summary>
+    /// Called when a pending connection with a remote endpoint is created. Use <see cref="ConnectionInfo"/>
+    /// for metadata about the connection (like incoming vs outgoing, or the authentication token). If
+    /// we want to continue with the connection, call <see cref="AcceptConnection(EndPoint)"/>. Otherwise,
+    /// call <see cref="RejectConnection(EndPoint)"/>.
+    /// </summary>
+
     protected abstract void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo);
 
-    /** Accepts a connection request. */
+    /// <summary>
+    /// Accepts a connection request.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected async void AcceptConnection(EndPoint endpoint)
     {
         Task? accept = this.ConnectionsClient!.AcceptConnectionAsync(endpoint.Id, new PayloadCallback(this));
@@ -243,7 +257,10 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     }
 
-    /** Rejects a connection request. */
+    /// <summary>
+    /// Rejects a connection request.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected async void RejectConnection(EndPoint endpoint)
     {
         var reject = this.ConnectionsClient!.RejectConnectionAsync(endpoint.Id);
@@ -254,11 +271,12 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     }
 
-    /**
-     * Sets the device to discovery mode. It will now listen for devices in advertising mode. Either
-     * {@link #onDiscoveryStarted()} or {@link #onDiscoveryFailed()} will be called once we've found
-     * out if we successfully entered this mode.
-     */
+    /// <summary>
+    /// Sets the device to discovery mode. It will now listen for devices in advertising mode.
+    /// Either <see cref="OnDiscoveryStarted()"/> or <see cref="OnDiscoveryFailed()"/> will be called once we've found
+    /// out if we successfully entered this mode.
+    /// </summary>
+
     public async void StartDiscovering()
     {
         this.IsDiscovering = true;
@@ -285,26 +303,34 @@ public abstract class ConnectionsActivity : AppCompatActivity
         this.ConnectionsClient!.StopDiscovery();
     }
 
-    /** Called when discovery successfully starts. Override this method to act on the event. */
+    /// <summary>
+    /// Called when discovery successfully starts. Override this method to act on the event.
+    /// </summary>
     protected virtual void OnDiscoveryStarted() { }
 
-    /** Called when discovery fails to start. Override this method to act on the event. */
+    /// <summary>
+    /// Called when discovery fails to start. Override this method to act on the event.
+    /// </summary>
     protected virtual void OnDiscoveryFailed() { }
 
-    /**
-     * Called when a remote endpoint is discovered. To connect to the device, call {@link
-     * #connectToEndpoint(Endpoint)}.
-     */
+    ///<summary>
+    ///Called when a remote endpoint is discovered. To connect to the device, call <see cref="ConnectToEndpoint(EndPoint)"/>.
+    ///</summary>
     protected abstract void OnEndpointDiscovered(EndPoint endpoint);
 
-    /** Disconnects from the given endpoint. */
+    /// <summary>
+    /// Disconnects from the given endpoint.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected void Disconnect(EndPoint endpoint)
     {
         this.ConnectionsClient!.DisconnectFromEndpoint(endpoint.Id);
         this.EstablishedConnections.Remove(endpoint.Id);
     }
 
-    /** Disconnects from all currently connected endpoints. */
+    /// <summary>
+    /// Disconnects from all currently connected endpoints.
+    /// </summary>
     protected void DisconnectFromAllEndpoints()
     {
         foreach (EndPoint endpoint in this.EstablishedConnections.Values)
@@ -314,7 +340,9 @@ public abstract class ConnectionsActivity : AppCompatActivity
         this.EstablishedConnections.Clear();
     }
 
-    /** Resets and clears all state in Nearby Connections. */
+    /// <summary>
+    /// Resets and clears all state in Nearby Connections.
+    /// </summary>
     protected void StopAllEndpoints()
     {
         this.ConnectionsClient!.StopAllEndpoints();
@@ -326,11 +354,12 @@ public abstract class ConnectionsActivity : AppCompatActivity
         this.EstablishedConnections.Clear();
     }
 
-    /**
-     * Sends a connection request to the endpoint. Either {@link #onConnectionInitiated(Endpoint,
-     * ConnectionInfo)} or {@link #onConnectionFailed(Endpoint)} will be called once we've found out
-     * if we successfully reached the device.
-     */
+
+    /// <summary>
+    /// Sends a connection request to the endpoint. Either <see cref="OnConnectionInitiated(EndPoint, ConnectionInfo)"/> or 
+    /// <see cref="OnConnectionFailed(EndPoint)"/> will be called once we've found out if we successfully reached the device.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected async void ConnectToEndpoint(EndPoint endpoint)
     {
         Logger.Verbose($"Sending a connection request to endpoint {endpoint}");
@@ -363,35 +392,49 @@ public abstract class ConnectionsActivity : AppCompatActivity
         this.OnEndpointDisconnected(endpoint);
     }
 
-    /**
-     * Called when a connection with this endpoint has failed. Override this method to act on the
-     * event.
-     */
+
+    /// <summary>
+    /// Called when a connection with this endpoint has failed. Override this method to act on the event.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected abstract void OnConnectionFailed(EndPoint endpoint);
 
-    /** Called when someone has connected to us. Override this method to act on the event. */
+    /// <summary>
+    /// Called when someone has connected to us. Override this method to act on the event.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected abstract void OnEndpointConnected(EndPoint endpoint);
 
-    /** Called when someone has disconnected. Override this method to act on the event. */
+    /// <summary>
+    /// Called when someone has disconnected. Override this method to act on the event.
+    /// </summary>
+    /// <param name="endpoint"></param>
     protected abstract void OnEndpointDisconnected(EndPoint endpoint);
 
-    /** Returns a list of currently connected endpoints. */
+    /// <summary>
+    /// Returns a list of currently connected endpoints.
+    /// </summary>
+    /// <returns></returns>
     protected ValueSet GetDiscoveredEndpoints()
     {
         return this.DiscoveredEndpoints.Values;
     }
 
-    /** Returns a list of currently connected endpoints. */
+    /// <summary>
+    /// Returns a list of currently connected endpoints.
+    /// </summary>
+    /// <returns></returns>
     protected ValueSet GetConnectedEndpoints()
     {
         return this.EstablishedConnections.Values;
     }
 
-    /**
-     * Sends a {@link Payload} to all currently connected endpoints.
-     *
-     * @param payload The data you want to send.
-     */
+
+    /// <summary>
+    /// Sends a <see cref="Payload"/> to all currently connected endpoints.
+    /// </summary>
+    /// <param name="payload">The data you want to send.</param>
+
     protected void Send(Payload payload)
     {
         this.Send(payload, this.EstablishedConnections.Keys);
@@ -407,22 +450,21 @@ public abstract class ConnectionsActivity : AppCompatActivity
         }
     }
 
-    /**
-     * Someone connected to us has sent us data. Override this method to act on the event.
-     *
-     * @param endpoint The sender.
-     * @param payload The data.
-     */
+
+    /// <summary>
+    ///Someone connected to us has sent us data. Override this method to act on the event.
+    /// </summary>
+    /// <param name="endpoint">endpoint The sender.</param>
+    /// <param name="payload">payload The data.</param>
     protected abstract void OnReceive(EndPoint endpoint, Payload payload);
 
-    /**
-     * An optional hook to pool any permissions the app needs with the permissions ConnectionsActivity
-     * will request.
-     *
-     * @return All permissions required for the app to properly function.
-     */
+
+    /// <summary>
+    /// An optional hook to pool any permissions the app needs with the permissions ConnectionsActivity will request.
+    /// </summary>
+    /// <returns> All permissions required for the app to properly function.</returns>
     [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility",
-        Justification = "Only when version is 33 or above")]
+       Justification = "Only when version is 33 or above")]
     protected virtual string[] GetRequiredPermissions()
     {
         if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
@@ -466,28 +508,33 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     }
 
-    /** Returns the client's name. Visible to others when connecting. */
+    /// <summary>
+    /// Returns the client's name. Visible to others when connecting.
+    /// </summary>
     protected abstract string Name { get; }
 
-    /**
-     * Returns the service id. This represents the action this connection is for. When discovering,
-     * we'll verify that the advertiser has the same service id before we consider connecting to them.
-     */
+    /// <summary>
+    /// Returns the service id. This represents the action this connection is for. When discovering,
+    /// we'll verify that the advertiser has the same service id before we consider connecting to them.
+    /// </summary>
     protected abstract string ServiceId { get; }
 
-    /**
-     * Returns the strategy we use to connect to other devices. Only devices using the same strategy
-     * and service id will appear when discovering. Strategies determine how many incoming and outgoing
-     * connections are possible at the same time, as well as how much bandwidth is available for use.
-     */
+
+    /// <summary>
+    /// Returns the strategy we use to connect to other devices. 
+    /// Only devices using the same strategy and service id will appear when discovering. 
+    /// Strategies determine how many incoming and outgoing connections are possible at the same time,
+    /// as well as how much bandwidth is available for use.
+    /// </summary>
+
     protected abstract Strategy Strategy { get; }
 
-    /**
-     * Transforms a {@link Status} into a English-readable message for logging.
-     *
-     * @param status The current status
-     * @return A readable String. eg. [404]File not found.
-     */
+
+    /// <summary>
+    /// Transforms a <see cref="Statuses"/> into a English-readable message for logging.
+    /// </summary>
+    /// <param name="status">The current status</param>
+    /// <returns> A readable String.eg. [404] File not found.</returns>
 
     private static string ToString(Statuses status)
     {

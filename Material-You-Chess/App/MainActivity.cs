@@ -89,10 +89,10 @@ public class MainActivity : AppCompatActivity
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
 
-        this.photoPicker = new(this.RegisterForActivityResult(new PickVisualMedia(),
+        this.photoPicker = new(base.RegisterForActivityResult(new PickVisualMedia(),
             new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto)));
 
-        this.PhotoTaker = RegisterForActivityResult(new TakePicturePreview(),
+        this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
             new ActivityResultCallback<Bitmap>(this.CapturePhoto));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
@@ -115,6 +115,7 @@ public class MainActivity : AppCompatActivity
         this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
         this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);
         this.Local = this.FindViewById<Button>(Resource.Id.btnLocal);
+        this.GameModeSelector!.Check(this.Local!.Id);
         this.startGame = this.FindViewById<Button>(Resource.Id.btnStartGame);
         this.UserProgressIndicator = this.FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
         this.mainProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);

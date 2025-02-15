@@ -1,27 +1,37 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Text.Json;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using Android.Runtime;
 using AndroidX.ConstraintLayout.Widget;
-using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Game;
 using Chess.Game.Moves;
 using Firebase.Auth;
-using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
-using Newtonsoft.Json;
 
 namespace Chess.App.Networked;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", ScreenOrientation = ScreenOrientation.Locked)]
 public class NetworkedChessActivity : ConnectionsActivity
 {
     protected override Strategy Strategy => Strategy.P2pStar;
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
     protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
+
+    /// <summary>
+    /// if true => white player / p1
+    /// if false => black player / p2
+    /// </summary>
+    private bool isConnectionInitiator = false;
+    private ShapeableImageView? p1MainProfileImageView;
+    private ShapeableImageView? p2MainProfileImageView;
+    private TextView? p1MainUsername;
+    private TextView? p2MainUsername;
+    private ChessGame? game;
 
     private State State
     {
@@ -43,8 +53,12 @@ public class NetworkedChessActivity : ConnectionsActivity
                     this.StartAdvertising();
                     break;
                 case State.Connected:
+                    //Thread.Sleep(TimeSpan.FromMilliseconds(0.1));
                     this.StopDiscovering();
                     this.StopAdvertising();
+                    break;
+                case State.Connecting:
+                    //this.StopAdvertising();
                     break;
                 case State.Unknown:
                     this.StopAllEndpoints();
@@ -52,12 +66,6 @@ public class NetworkedChessActivity : ConnectionsActivity
             }
         }
     } = State.Unknown;
-
-    private ShapeableImageView? p1MainProfileImageView;
-    private ShapeableImageView? p2MainProfileImageView;
-    private TextView? p1MainUsername;
-    private TextView? p2MainUsername;
-    private ChessGame? game;
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -76,25 +84,13 @@ public class NetworkedChessActivity : ConnectionsActivity
 
         //Run our logic
         this.p1MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-        {
-            var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png")).Error(Resource.Drawable.outline_account_circle_24);
-            new Thread((requestBuilder) => { (requestBuilder as RequestBuilder)?.Into(this.p1MainProfileImageView!); }).Start(load);
-        }
 
-        this.p2MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+
+        this.p2MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
 
         this.p1MainUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
-
-        this.p1MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
-        {
-            true => "Player",
-            false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
-        };
-        var board = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.game = new ChessGame(board!, null, this.Send);
+        //set game view to waiting for opponent 
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
@@ -128,10 +124,11 @@ public class NetworkedChessActivity : ConnectionsActivity
 
     protected override void OnEndpointDiscovered(EndPoint endpoint)
     {
-        // We found an advertiser!
-        this.StopDiscovering();
-        Thread.Sleep(10);
-        this.ConnectToEndpoint(endpoint);
+        //We found an advertiser!
+        //this.StopDiscovering();
+        //Thread.Sleep(10);
+        //this.isConnectionInitiator = true;
+        //this.ConnectToEndpoint(endpoint);
     }
 
     protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
@@ -146,25 +143,83 @@ public class NetworkedChessActivity : ConnectionsActivity
             return;
         }
         this.State = State.Connecting;
+        //this.isConnectionInitiator = false;
         this.AcceptConnection(endpoint);
     }
 
+    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "<Pending>")]
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"Resource.String.toast_connected, {endpoint.Name}", ToastLength.Short)?.Show();
+        Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
         this.State = State.Connected;
+        var board = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
+        //var stream = new MemoryStream();
+        switch (this.isConnectionInitiator)
+        {
+            case true:
+                Logger.Error("isConnection Initiator true");
+                this.p1MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
+                {
+                    true => "Player",
+                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
+                };
+                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                //{
+                //    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                //        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                //        .Error(Resource.Drawable.outline_account_circle_24)
+                //        .Into(this.p1MainProfileImageView!);
+                //}
+                this.p2MainUsername!.Text = endpoint.Name;
+                this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
+            new(this), new(this), true, this.Send);
+                if (this.p1MainProfileImageView == null)
+                    return;
+
+                //if (!(this.p1MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                //    return;
+                break;
+
+            case false:
+                Logger.Error("isConnection Initiator false");
+                this.p2MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
+                {
+                    true => "Player",
+                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
+                };
+                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                //{
+                //    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                //        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                //        .Error(Resource.Drawable.outline_account_circle_24)
+                //        .Into(this.p2MainProfileImageView!);
+                //}
+                this.p1MainUsername!.Text = endpoint.Name;
+                this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
+            new(this), new(this), false, this.Send);
+                if (this.p2MainProfileImageView == null)
+                    return;
+
+                //if (!(this.p2MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                //    return;
+                break;
+        }
+
+        //this.Send(Payload.FromStream(stream));
     }
 
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"Resource.String.toast_disconnected, {endpoint.Name}", ToastLength.Short)?.Show();
-        this.State = State.Searching;
+        Toast.MakeText(this, $"Error, {endpoint.Name} disconnected", ToastLength.Short)?.Show();
+        this.State = State.Unknown;
     }
 
     protected override void OnConnectionFailed(EndPoint endpoint)
     {
+        this.State = State.Unknown;
         this.State = State.Searching;
+        //this.isConnectionInitiator = null;
         this.StartDiscovering();
     }
 
@@ -177,12 +232,30 @@ public class NetworkedChessActivity : ConnectionsActivity
     {
         if (payload.PayloadType == Payload.Type.Bytes)
         {
-            var move = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(payload.AsBytes()!), new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto
-            }) as IMove;
+            var json = Encoding.UTF8.GetString(payload.AsBytes()!);
+            Logger.Error(json);
+            var move = JsonSerializer.Deserialize<IMove>(json);
             this.game?.OnMove(move!);
         }
+
+        //if (payload.PayloadType == Payload.Type.Stream)
+        //{
+        //    var stream = new MemoryStream();
+        //    payload.AsStream()!.AsInputStream().CopyToAsync(stream).Wait();
+
+        //    var pfp = ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(stream.ToArray()));
+        //    switch (this.isConnectionInitiator!.Value)
+        //    {
+        //        case true:
+        //            Glide.With(this).Load(pfp).Into(this.p2MainProfileImageView!);
+        //            break;
+
+        //        case false:
+        //            Glide.With(this).Load(pfp).Into(this.p1MainProfileImageView!);
+        //            break;
+        //    }
+
+        //}
     }
 
     protected override string[] GetRequiredPermissions()

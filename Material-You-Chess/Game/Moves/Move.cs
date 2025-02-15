@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Chess.Game.Moves;
 
 public class Move(IPiece origin, ISpace destination) : IMove
@@ -17,7 +15,7 @@ public class Move(IPiece origin, ISpace destination) : IMove
     public NetworkedMove ToNetworked() => new(Destination.Index, Origin.Index, OriginPiece.Index);
 }
 
-[JsonObject(MemberSerialization.OptOut)]
+
 public class NetworkedMove((char, int) destination, (char, int) origin, (string, int) originPiece) : INetworkedMove
 {
     public (char, int) Destination { get; set; } = destination;

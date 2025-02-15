@@ -4,6 +4,8 @@ namespace Chess.Game.Player;
 
 public interface IPlayer
 {
+    public string Name { get; set; }
+
     public GameOutcome Outcome { get; set; }
 
     public Dictionary<(string, int), IPiece> Pieces { get; set; }
