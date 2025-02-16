@@ -3,13 +3,17 @@ using System.Text;
 using System.Text.Json;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.Runtime;
 using AndroidX.ConstraintLayout.Widget;
+using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Game;
 using Chess.Game.Moves;
 using Firebase.Auth;
+using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -49,7 +53,6 @@ public class NetworkedChessActivity : ConnectionsActivity
             {
                 case State.Searching:
                     this.DisconnectFromAllEndpoints();
-                    this.StartDiscovering();
                     this.StartAdvertising();
                     break;
                 case State.Connected:
@@ -66,6 +69,13 @@ public class NetworkedChessActivity : ConnectionsActivity
             }
         }
     } = State.Unknown;
+
+    protected override async Task OnAdvertisingStartedAsync()
+    {
+        await base.OnAdvertisingStartedAsync();
+        await Task.Delay(TimeSpan.FromSeconds(3));
+        this.StartDiscovering();
+    }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -122,13 +132,17 @@ public class NetworkedChessActivity : ConnectionsActivity
         base.Finish();
     }
 
-    protected override void OnEndpointDiscovered(EndPoint endpoint)
+    protected override async Task OnEndpointDiscoveredAsync(EndPoint endpoint)
     {
         //We found an advertiser!
-        //this.StopDiscovering();
-        //Thread.Sleep(10);
-        //this.isConnectionInitiator = true;
-        //this.ConnectToEndpoint(endpoint);
+        this.StopDiscovering();
+        await Task.Delay(10);
+        if (base.IsConnecting)
+        {
+            return;
+        }
+        this.isConnectionInitiator = true;
+        this.ConnectToEndpoint(endpoint);
     }
 
     protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
@@ -143,7 +157,7 @@ public class NetworkedChessActivity : ConnectionsActivity
             return;
         }
         this.State = State.Connecting;
-        //this.isConnectionInitiator = false;
+        this.isConnectionInitiator = false;
         this.AcceptConnection(endpoint);
     }
 
@@ -153,7 +167,7 @@ public class NetworkedChessActivity : ConnectionsActivity
         Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
         this.State = State.Connected;
         var board = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        //var stream = new MemoryStream();
+        var stream = new MemoryStream();
         switch (this.isConnectionInitiator)
         {
             case true:
@@ -163,21 +177,21 @@ public class NetworkedChessActivity : ConnectionsActivity
                     true => "Player",
                     false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
                 };
-                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-                //{
-                //    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                //        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                //        .Error(Resource.Drawable.outline_account_circle_24)
-                //        .Into(this.p1MainProfileImageView!);
-                //}
+                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                {
+                    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                        .Error(Resource.Drawable.outline_account_circle_24)
+                        .Into(this.p1MainProfileImageView!);
+                }
                 this.p2MainUsername!.Text = endpoint.Name;
                 this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
             new(this), new(this), true, this.Send);
                 if (this.p1MainProfileImageView == null)
                     return;
 
-                //if (!(this.p1MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
-                //    return;
+                if (!(this.p1MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                    return;
                 break;
 
             case false:
@@ -187,25 +201,25 @@ public class NetworkedChessActivity : ConnectionsActivity
                     true => "Player",
                     false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
                 };
-                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-                //{
-                //    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                //        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                //        .Error(Resource.Drawable.outline_account_circle_24)
-                //        .Into(this.p2MainProfileImageView!);
-                //}
+                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                {
+                    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                        .Error(Resource.Drawable.outline_account_circle_24)
+                        .Into(this.p2MainProfileImageView!);
+                }
                 this.p1MainUsername!.Text = endpoint.Name;
                 this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
             new(this), new(this), false, this.Send);
                 if (this.p2MainProfileImageView == null)
                     return;
 
-                //if (!(this.p2MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
-                //    return;
+                if (!(this.p2MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                    return;
                 break;
         }
 
-        //this.Send(Payload.FromStream(stream));
+        this.Send(Payload.FromStream(stream));
     }
 
 
@@ -267,24 +281,24 @@ public class NetworkedChessActivity : ConnectionsActivity
             this.game?.OnMove(move!);
         }
 
-        //if (payload.PayloadType == Payload.Type.Stream)
-        //{
-        //    var stream = new MemoryStream();
-        //    payload.AsStream()!.AsInputStream().CopyToAsync(stream).Wait();
+        if (payload.PayloadType == Payload.Type.Stream)
+        {
+            var stream = new MemoryStream();
+            payload.AsStream()!.AsInputStream().CopyToAsync(stream).Wait();
 
-        //    var pfp = ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(stream.ToArray()));
-        //    switch (this.isConnectionInitiator!.Value)
-        //    {
-        //        case true:
-        //            Glide.With(this).Load(pfp).Into(this.p2MainProfileImageView!);
-        //            break;
+            var pfp = ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(stream.ToArray()));
+            switch (this.isConnectionInitiator)
+            {
+                case true:
+                    Glide.With(this).Load(pfp).Into(this.p2MainProfileImageView!);
+                    break;
 
-        //        case false:
-        //            Glide.With(this).Load(pfp).Into(this.p1MainProfileImageView!);
-        //            break;
-        //    }
+                case false:
+                    Glide.With(this).Load(pfp).Into(this.p1MainProfileImageView!);
+                    break;
+            }
 
-        //}
+        }
     }
 
     protected override string[] GetRequiredPermissions()

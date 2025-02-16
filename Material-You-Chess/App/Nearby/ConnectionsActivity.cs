@@ -95,6 +95,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
                 EndPoint endpoint = new(endpointId, info.EndpointName);
                 this.instance.DiscoveredEndpoints.Add(endpointId, endpoint);
                 this.instance.OnEndpointDiscovered(endpoint);
+                this.instance.OnEndpointDiscoveredAsync(endpoint).Wait();
             }
         }
 
@@ -206,6 +207,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
         {
             Logger.Verbose("Now advertising endpoint " + localEndpointName);
             this.OnAdvertisingStarted();
+            await this.OnAdvertisingStartedAsync();
         }
         if (advertising.IsFaulted)
         {
@@ -228,11 +230,19 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /// Called when advertising successfully starts. Override this method to act on the event.
     /// </summary>
     protected virtual void OnAdvertisingStarted() { }
+    /// <summary>
+    /// Called when advertising successfully starts. Override this method to act on the event.
+    /// </summary>
+    protected virtual async Task OnAdvertisingStartedAsync() { }
 
     /// <summary>
     /// Called when advertising fails to start. Override this method to act on the event.
     /// </summary>
     protected virtual void OnAdvertisingFailed() { }
+    /// <summary>
+    /// Called when advertising fails to start. Override this method to act on the event.
+    /// </summary>
+    protected virtual async Task OnAdvertisingFailedAsync() { }
 
     /// <summary>
     /// Called when a pending connection with a remote endpoint is created. Use <see cref="ConnectionInfo"/>
@@ -287,12 +297,14 @@ public abstract class ConnectionsActivity : AppCompatActivity
         if (discovery.IsCompletedSuccessfully)
         {
             this.OnDiscoveryStarted();
+            await this.OnDiscoveryStartedAsync();
         }
         if (discovery.IsFaulted)
         {
             this.IsDiscovering = false;
             Logger.Warn($"{this.StartDiscovering}() failed. {discovery.Exception}");
             this.OnDiscoveryFailed();
+            await this.OnDiscoveryFailedAsync();
         }
     }
 
@@ -312,11 +324,21 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /// Called when discovery fails to start. Override this method to act on the event.
     /// </summary>
     protected virtual void OnDiscoveryFailed() { }
+    /// <summary>
+    /// Called when discovery successfully starts. Override this method to act on the event.
+    /// </summary>
+    protected virtual async Task OnDiscoveryStartedAsync() { }
+
+    /// <summary>
+    /// Called when discovery fails to start. Override this method to act on the event.
+    /// </summary>
+    protected virtual async Task OnDiscoveryFailedAsync() { }
 
     ///<summary>
     ///Called when a remote endpoint is discovered. To connect to the device, call <see cref="ConnectToEndpoint(EndPoint)"/>.
     ///</summary>
-    protected abstract void OnEndpointDiscovered(EndPoint endpoint);
+    protected virtual void OnEndpointDiscovered(EndPoint endpoint) { }
+    protected abstract Task OnEndpointDiscoveredAsync(EndPoint endpoint);
 
     /// <summary>
     /// Disconnects from the given endpoint.

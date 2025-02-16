@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json;
 using Android.Animation;
 using Android.Content;
@@ -305,8 +304,7 @@ public class ChessGame : IChessGame
 
         if (this.send != null)
         {
-            var serializedMove = JsonSerializer.Serialize(move);
-            var encodedMove = UTF8Encoding.UTF8.GetBytes(serializedMove);
+            var encodedMove = JsonSerializer.SerializeToUtf8Bytes(move);
             this.send(Payload.FromBytes(encodedMove));
         }
         this.OnMove(move);
