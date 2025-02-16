@@ -2,6 +2,7 @@ namespace Chess.Game.Moves;
 
 public class Move(IPiece origin, ISpace destination) : IMove
 {
+    public string Type { get; } = nameof(Move);
     public ISpace Destination { get; set; } = destination;
 
     public int DestinationId { get; set; } = destination.Id;

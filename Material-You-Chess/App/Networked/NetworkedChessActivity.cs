@@ -233,8 +233,37 @@ public class NetworkedChessActivity : ConnectionsActivity
         if (payload.PayloadType == Payload.Type.Bytes)
         {
             var json = Encoding.UTF8.GetString(payload.AsBytes()!);
+            IMove move;
+            if (json.Contains(nameof(PromoteBishop)))
+                move = JsonSerializer.Deserialize<PromoteBishop>(json);
+            else if (json.Contains(nameof(PromoteBishopAndCapture)))
+                move = JsonSerializer.Deserialize<PromoteBishopAndCapture>(json);
+            else if (json.Contains(nameof(PromoteQueen)))
+                move = JsonSerializer.Deserialize<PromoteQueen>(json);
+            else if (json.Contains(nameof(PromoteQueenAndCapture)))
+                move = JsonSerializer.Deserialize<PromoteQueenAndCapture>(json);
+            else if (json.Contains(nameof(PromoteRook)))
+                move = JsonSerializer.Deserialize<PromoteRook>(json);
+            else if (json.Contains(nameof(PromoteRookAndCapture)))
+                move = JsonSerializer.Deserialize<PromoteRookAndCapture>(json);
+            else if (json.Contains(nameof(PromoteKnight)))
+                move = JsonSerializer.Deserialize<PromoteKnight>(json);
+            else if (json.Contains(nameof(PromoteKnightAndCapture)))
+                move = JsonSerializer.Deserialize<PromoteKnightAndCapture>(json);
+            else if (json.Contains(nameof(Capture)))
+                move = JsonSerializer.Deserialize<Capture>(json);
+            else if (json.Contains(nameof(DoubleMove)))
+                move = JsonSerializer.Deserialize<DoubleMove>(json);
+            else if (json.Contains(nameof(EnPassant)))
+                move = JsonSerializer.Deserialize<EnPassant>(json);
+            //else if (json.Contains(nameof(KingSideCastle)))
+            //{ /*move = JsonSerializer.Deserialize<KingSideCastle>(json);*/}
+            //else if (json.Contains(nameof(QueenSideCastle)))
+            //{  /*move = JsonSerializer.Deserialize<QueenSideCastle>(json);*/}
+            else
+                return;
             Logger.Error(json);
-            var move = JsonSerializer.Deserialize<IMove>(json);
+
             this.game?.OnMove(move!);
         }
 

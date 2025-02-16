@@ -5,6 +5,7 @@ namespace Chess.Game.Moves;
 
 public class PromoteQueenAndCapture(Pawn origin, IPiece destination) : IPromoteAndCapture
 {
+    public string Type { get; } = nameof(PromoteQueenAndCapture);
     public ISpace Destination { get; set; } = destination.Space;
 
     public int DestinationId { get; set; } = destination.Id;

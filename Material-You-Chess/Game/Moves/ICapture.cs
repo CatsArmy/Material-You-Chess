@@ -2,11 +2,6 @@
 
 namespace Chess.Game.Moves;
 
-[JsonDerivedType(typeof(IPromoteAndCapture))]
-[JsonDerivedType(typeof(EnPassant))]
-[JsonDerivedType(typeof(Capture))]
-[JsonPolymorphic(TypeDiscriminatorPropertyName = $"${nameof(ICapture)}",
-    UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
 public interface ICapture : IMove
 {
     public IPiece Piece { get; }

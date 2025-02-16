@@ -3,13 +3,9 @@ using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = $"${nameof(IMove)}", UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
-[JsonDerivedType(typeof(Move))]
-// [JsonDerivedType(typeof(INetworkedMove))]
-[JsonDerivedType(typeof(ICapture))]
-[JsonDerivedType(typeof(Pawn.ISpecialMove))]
 public interface IMove
 {
+    public string Type { get; }
     public ISpace Destination { get; set; }
 
     public int DestinationId { get; set; }

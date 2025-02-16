@@ -82,12 +82,6 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         return moves;
     }
 
-    [JsonDerivedType(typeof(SpecialMove))]
-    [JsonDerivedType(typeof(INetworkedSpecialMove))]
-    [JsonDerivedType(typeof(DoubleMove))]
-    [JsonDerivedType(typeof(EnPassant))]
-    [JsonDerivedType(typeof(IPromote))]
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = $"${nameof(ISpecialMove)}", UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FallBackToNearestAncestor)]
     public interface ISpecialMove : IMove
     {
         public Pawn Pawn { get; }
@@ -107,7 +101,6 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         }
     }
 
-    //// [JsonDerivedType(typeof(NetworkedSpecialMove))]
     public interface INetworkedSpecialMove : INetworkedMove
     {
         public (string, int) Pawn { get; }
@@ -115,6 +108,7 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
 
     public class SpecialMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
     {
+        public string Type { get; } = nameof(SpecialMove);
         public ISpace Destination { get; set; } = destination;
 
         public int DestinationId { get; set; } = destination.Id;
@@ -126,6 +120,7 @@ public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, Const
         public int OriginId { get; set; } = origin.Id;
 
         public Pawn Pawn { get; } = origin;
+
 
         public NetworkedSpecialMove ToNetworked() => new(this.Destination.Index, this.Origin.Index, this.OriginPiece.Index);
     }

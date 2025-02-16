@@ -4,6 +4,7 @@ namespace Chess.Game.Moves;
 
 public class EnPassant(IPiece origin, ISpace destination, Pawn captured) : Pawn.ISpecialMove, ICapture
 {
+    public string Type { get; } = nameof(EnPassant);
     public ISpace Destination { get; set; } = destination;
 
     public int DestinationId { get; set; } = destination.Id;

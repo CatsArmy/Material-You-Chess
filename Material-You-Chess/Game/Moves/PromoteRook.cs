@@ -4,6 +4,7 @@ namespace Chess.Game.Moves;
 
 public class PromoteRook(Pawn origin, ISpace destination) : IPromote
 {
+    public string Type { get; } = nameof(PromoteRook);
     public ISpace Destination { get; set; } = destination;
 
     public int DestinationId { get; set; } = destination.Id;

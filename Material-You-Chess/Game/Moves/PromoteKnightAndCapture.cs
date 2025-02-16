@@ -4,6 +4,7 @@ namespace Chess.Game.Moves;
 
 public class PromoteKnightAndCapture(Pawn origin, IPiece destination) : IPromoteAndCapture
 {
+    public string Type { get; } = nameof(PromoteKnightAndCapture);
     public ISpace Destination { get; set; } = destination.Space;
 
     public int DestinationId { get; set; } = destination.Id;

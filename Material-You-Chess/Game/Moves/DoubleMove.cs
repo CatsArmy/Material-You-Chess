@@ -4,6 +4,7 @@ namespace Chess.Game.Moves;
 
 public class DoubleMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
 {
+    public string Type { get; } = nameof(DoubleMove);
     public ISpace Destination { get; set; } = destination;
 
     public int DestinationId { get; set; } = destination.Id;
