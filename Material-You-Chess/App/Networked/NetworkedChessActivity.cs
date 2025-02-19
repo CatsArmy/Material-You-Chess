@@ -6,6 +6,7 @@ using Android.Gms.Nearby.Connection;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Runtime;
+using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
@@ -14,12 +15,14 @@ using Chess.Game;
 using Chess.Game.Moves;
 using Firebase.Auth;
 using Firebase.Storage;
+using Google.Android.Material.BottomSheet;
 using Google.Android.Material.ImageView;
+using Google.Android.Material.MaterialSwitch;
 using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Networked;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", ScreenOrientation = ScreenOrientation.Locked)]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class NetworkedChessActivity : ConnectionsActivity
 {
     protected override Strategy Strategy => Strategy.P2pStar;
@@ -31,6 +34,7 @@ public class NetworkedChessActivity : ConnectionsActivity
     /// if false => black player / p2
     /// </summary>
     private bool isConnectionInitiator = false;
+    private LobbyWaitingRoomBottomSheet? LobbyWaitingRoom;
     private ShapeableImageView? p1MainProfileImageView;
     private ShapeableImageView? p2MainProfileImageView;
     private TextView? p1MainUsername;
@@ -70,12 +74,63 @@ public class NetworkedChessActivity : ConnectionsActivity
         }
     } = State.Unknown;
 
-    protected override async Task OnAdvertisingStartedAsync()
+    public class LobbyWaitingRoomBottomSheet(NetworkedChessActivity activity) : BottomSheetDialogFragment
     {
-        await base.OnAdvertisingStartedAsync();
-        await Task.Delay(TimeSpan.FromSeconds(3));
-        this.StartDiscovering();
+        public TextView? SearchingText { get; set; }
+        public View? SearchingIndicator { get; set; }
+        public MaterialSwitch? IsHost { get; set; }
+        public override Dialog OnCreateDialog(Bundle? savedInstanceState)
+        {
+            base.OnCreateDialog(savedInstanceState);
+            var bottomSheetDialog = new BottomSheetDialog(this.Context!);
+            bottomSheetDialog.Behavior.Draggable = false;
+            bottomSheetDialog.Behavior.Hideable = false;
+            this.ShowsDialog = true;
+            bottomSheetDialog.SetContentView(Resource.Layout.select_device_dialog);
+            return bottomSheetDialog;
+        }
+        public override void Show(AndroidX.Fragment.App.FragmentManager manager, string? tag)
+        {
+            base.Show(manager, tag);
+
+            this.SearchingText = this.Dialog?.FindViewById<TextView>(Resource.Id.bsSearching);
+            this.SearchingIndicator = this.Dialog?.FindViewById(Resource.Id.mliSearching);
+            this.IsHost = this.Dialog?.FindViewById<MaterialSwitch>(Resource.Id.msIsHost);
+            this.IsHost!.CheckedChange += this.IsHost_CheckedChange;
+            this.IsHost!.CheckedChange += activity.IsHost_CheckedChange;
+        }
+        private void IsHost_CheckedChange(object? sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            this.SearchingText!.Text = e.IsChecked switch
+            {
+                true => "Searching for players",
+                false => "Waiting for players"
+            };
+        }
     }
+
+    private void IsHost_CheckedChange(object? sender, CompoundButton.CheckedChangeEventArgs e)
+    {
+        this.isConnectionInitiator = e.IsChecked;
+        switch (e.IsChecked)
+        {
+            case true:
+                this.StopAdvertising();
+                this.StartDiscovering();
+                break;
+
+            case false:
+                this.StartAdvertising();
+                this.StopDiscovering();
+                break;
+        }
+    }
+    //protected override async Task OnAdvertisingStartedAsync()
+    //{
+    //    await base.OnAdvertisingStartedAsync();
+    //    await Task.Delay(TimeSpan.FromSeconds(3));
+    //    this.StartDiscovering();
+    //}
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -94,8 +149,6 @@ public class NetworkedChessActivity : ConnectionsActivity
 
         //Run our logic
         this.p1MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-
-
         this.p2MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
 
         this.p1MainUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
@@ -114,6 +167,17 @@ public class NetworkedChessActivity : ConnectionsActivity
     {
         base.OnStart();
         this.State = State.Searching;
+        this.LobbyWaitingRoom = new LobbyWaitingRoomBottomSheet(this);
+        this.LobbyWaitingRoom.Show(this.SupportFragmentManager, "Lobby Waiting Room");
+    }
+
+    public override ScreenOrientation RequestedOrientation
+    {
+        get => base.RequestedOrientation; set
+        {
+            base.RequestedOrientation = value;
+            this.game?.RedrawGame();
+        }
     }
 
     protected override void OnStop()

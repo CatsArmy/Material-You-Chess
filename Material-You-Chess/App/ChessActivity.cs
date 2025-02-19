@@ -11,6 +11,7 @@ namespace Chess.App;
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class ChessActivity : AppCompatActivity
 {
+    private ChessGame? game;
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         bool hasValue = bool.TryParse(base.Intent?.GetStringExtra("MaterialYouThemePreference"), out var MaterialYouThemePreference);
@@ -32,7 +33,7 @@ public class ChessActivity : AppCompatActivity
         this.FindViewById<TextView>(Resource.Id.p2MainUsername)!.Text = "Player 2";
 
         var board = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        _ = new ChessGame(this, "Player 1", "Player 2", board!, new(this), new(this), null, null);
+        this.game = new(this, "Player 1", "Player 2", board!, new(this), new(this), null, null);
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
@@ -40,5 +41,13 @@ public class ChessActivity : AppCompatActivity
         Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         // Handle permission requests results
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+    public override ScreenOrientation RequestedOrientation
+    {
+        get => base.RequestedOrientation; set
+        {
+            base.RequestedOrientation = value;
+            this.game?.RedrawGame();
+        }
     }
 }

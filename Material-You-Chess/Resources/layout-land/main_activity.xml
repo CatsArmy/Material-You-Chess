@@ -217,6 +217,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="Local"
+            
             android:textAlignment="textStart"
             android:textSize="20sp"
             app:icon="@drawable/rounded_smartphone_24"

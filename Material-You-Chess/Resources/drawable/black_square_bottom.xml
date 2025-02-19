@@ -1,24 +1,14 @@
 <level-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:maxLevel="0">
-        <vector
-            android:width="32dp"
-            android:height="32dp"
-            android:viewportWidth="34"
-            android:viewportHeight="34">
-            <path
-                android:fillColor="@color/black_space_color"
-                android:pathData="M34,0H0V23.8127C0,29.439 4.561,34 10.1873,34H34V0Z" />
-        </vector>
+        <shape>
+            <corners android:bottomLeftRadius="10dp" />
+            <solid android:color="@color/black_space_color" />
+        </shape>
     </item>
     <item android:maxLevel="1">
-        <vector
-            android:width="32dp"
-            android:height="32dp"
-            android:viewportWidth="34"
-            android:viewportHeight="34">
-            <path
-                android:fillColor="@color/black_space_color"
-                android:pathData="M34,0H0V23.8127C0,29.439 4.561,34 10.1873,34H34V0Z" />
-        </vector>
+        <shape>
+            <corners android:bottomLeftRadius="10dp" />
+            <solid android:color="@color/black_space_overlay_color" />
+        </shape>
     </item>
 </level-list>

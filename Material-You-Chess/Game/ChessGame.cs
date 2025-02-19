@@ -26,7 +26,7 @@ public class ChessGame : IChessGame
 
     public Dictionary<(char, int), ISpace> Board { get; } = [];
 
-    public IMove? LastMove { get; set; } = null;
+    public IMove? LastMove { get; set; }
 
     public IPlayer? White { get; set; }
 
@@ -317,6 +317,7 @@ public class ChessGame : IChessGame
         if (this.Player == null || this.Enemy == null)
             return;
         this.boardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        this.LastMove = move;
 
         if (this.Selected is ISpecialBoardPiece piece)
         {
@@ -454,4 +455,16 @@ public class ChessGame : IChessGame
 
         return false;
     }
+
+    public void RedrawGame()
+    {
+        this.boardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
+        foreach (var piece in this.AllPieces.Values)
+            piece.Move(piece);
+        this.LastMove?.Select();
+        this.Selected?.Space?.SelectSpace();
+        this.boardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+    }
 }
+
+
