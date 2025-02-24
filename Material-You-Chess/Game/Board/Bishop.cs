@@ -3,15 +3,15 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Bishop(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout)
+public class Bishop(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
     : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
     private const char abbreviation = 'B';
 
-    public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
+    public override List<Move> Moves(ChessGame game)
     {
-        List<IMove> moves = base.Moves(board, pieces);
-        this.Diagonals(board, pieces, ref moves);
+        List<Move> moves = base.Moves(game);
+        this.Diagonals(game.Board, game.AllPieces, ref moves);
         return moves;
     }
 }

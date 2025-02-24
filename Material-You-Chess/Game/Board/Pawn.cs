@@ -1,143 +1,152 @@
-﻿using System.Text.Json.Serialization;
-using AndroidX.ConstraintLayout.Widget;
+﻿using AndroidX.ConstraintLayout.Widget;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Pawn(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout)
-    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout), ISpecialBoardPiece
+public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
+    : SpecialPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
-    public bool HasMoved { get; set; } = false;
     public bool EnPassantCapturable = false;
 
     private const char abbreviation = 'P';
 
-    public override void Update()
+    public override void Update(bool IsUpdatingPlayer = false)
     {
+        base.Update(IsUpdatingPlayer);
         this.EnPassantCapturable = false;
-        base.Update();
     }
 
-    public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
+    public override void Move(Move move, ChessGame game)
     {
-        List<IMove> moves = base.Moves(board, pieces);
-        if (this.Space.Forward(board, this.IsWhite) is not ISpace forward)
+        this.Update();
+        if (move is EnPassant enPassant)
+        {
+            game.Selected!.Capture(enPassant.Pawn, game);
+            this.Move(move);
+            game.NextTurn(move);
+            return;
+        }
+
+        if (move is DoubleMove)
+        {
+            this.EnPassantCapturable = true;
+        }
+
+        if (move is Promotion promotion && promotion.PromoteTo != null)
+        {
+            var Piece = game.Player!.Pieces[move.OriginPiece.Index];
+            if (promotion.PromoteTo?.Type == $"{typeof(Queen)}")
+            {
+                Piece = new Queen(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece.Piece!.SetImageResource(Piece.IsWhite switch
+                {
+                    true => Resource.Drawable.queen_white,
+                    false => Resource.Drawable.queen_black
+                });
+            }
+
+            else if (promotion.PromoteTo?.Type == $"{typeof(Knight)}")
+            {
+                Piece = new Knight(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece.Piece!.SetImageResource(Piece.IsWhite switch
+                {
+                    true => Resource.Drawable.knight_white,
+                    false => Resource.Drawable.knight_black
+                });
+            }
+
+            else if (promotion.PromoteTo?.Type == $"{typeof(Rook)}")
+            {
+                Piece = new Rook(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece.Piece!.SetImageResource(Piece.IsWhite switch
+                {
+                    true => Resource.Drawable.rook_white,
+                    false => Resource.Drawable.rook_black
+                });
+            }
+
+            else if (promotion.PromoteTo?.Type == $"{typeof(Bishop)}")
+            {
+                Piece = new Bishop(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece.Piece!.SetImageResource(Piece.IsWhite switch
+                {
+                    true => Resource.Drawable.bishop_white,
+                    false => Resource.Drawable.bishop_black
+                });
+            }
+
+            game.Player!.Pieces[move.OriginPiece.Index] = Piece;
+            game.AllPieces![move.OriginPiece.Index] = Piece;
+            if (move is PromotionCapture capture)
+                Piece.Capture(capture.Piece, game);
+        }
+
+        this.Move(move);
+        game.NextTurn(move);
+    }
+
+    public override List<Move> Moves(ChessGame game)
+    {
+        List<Move> moves = base.Moves(game);
+        if (this.Space.Forward(game.Board, this.IsWhite) is not BoardSpace forward)
             return moves;
         int rank = this.IsWhite switch
         {
             true => 8,
             false => 1
         };
-        var piece = forward.Piece(pieces);
+        var piece = forward.Piece(game.AllPieces);
         if (piece == null)
         {
             moves.Add((forward.Rank == rank) switch
             {
-                true => new Promote(this, forward),
-                false => new Move(this, forward)
+                true => new Promotion(this, forward),
+                false => new MoveOnly(this, forward)
             });
             if (!this.HasMoved)
             {
-                var forwardX2 = forward.Forward(board, this.IsWhite);
-                if (forwardX2?.Piece(pieces) == null)
+                var forwardX2 = forward.Forward(game.Board, this.IsWhite);
+                if (forwardX2?.Piece(game.AllPieces) == null)
                     moves.Add(new DoubleMove(this, forwardX2!));
             }
         }
 
-        if (forward.Left(board) is ISpace left)
+        if (forward.Left(game.Board) is BoardSpace left)
         {
-            if (left.Piece(pieces) is IPiece leftPiece)
+            if (left.Piece(game.AllPieces) is BoardPiece leftPiece)
             {
                 if (leftPiece?.IsWhite != this.IsWhite)
                     moves.Add((left.Rank == rank) switch
                     {
-                        true => new PromoteAndCapture(this, leftPiece!),
+                        true => new PromotionCapture(this, leftPiece!),
                         false => new Capture(this, leftPiece!)
                     });
             }
-            else if (left.Backward(board, isWhite) is ISpace EnPassantSpace)
+            else if (left.Backward(game.Board, isWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(pieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, left, captured));
             }
         }
 
-        if (forward.Right(board) is ISpace right)
+        if (forward.Right(game.Board) is BoardSpace right)
         {
-            if (right.Piece(pieces) is IPiece rightPiece)
+            if (right.Piece(game.AllPieces) is BoardPiece rightPiece)
             {
                 if (rightPiece?.IsWhite != this.IsWhite)
                     moves.Add((right.Rank == rank) switch
                     {
-                        true => new PromoteAndCapture(this, rightPiece!),
+                        true => new PromotionCapture(this, rightPiece!),
                         false => new Capture(this, rightPiece!)
                     });
             }
-            else if (right.Backward(board, isWhite) is ISpace EnPassantSpace)
+            else if (right.Backward(game.Board, isWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(pieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, right, captured));
             }
         }
+
         return moves;
-    }
-
-    public interface ISpecialMove : IMove
-    {
-        public Pawn Pawn { get; }
-
-        public new void Select()
-        {
-            this.Destination.SelectSpace();
-            this.Origin.SelectSpace();
-            this.Pawn.Space.SelectSpace();
-        }
-
-        public new void Unselect()
-        {
-            this.Destination.UnselectSpace();
-            this.Origin.UnselectSpace();
-            this.Pawn.Space.SelectSpace();
-        }
-    }
-
-    public interface INetworkedSpecialMove : INetworkedMove
-    {
-        public (string, int) Pawn { get; }
-    }
-
-    public class SpecialMove(Pawn origin, ISpace destination) : Pawn.ISpecialMove
-    {
-        public string Type { get; } = nameof(SpecialMove);
-        public ISpace Destination { get; set; } = destination;
-
-        public int DestinationId { get; set; } = destination.Id;
-
-        public ISpace Origin { get; set; } = origin.Space;
-
-        public IPiece OriginPiece { get; set; } = origin;
-
-        public int OriginId { get; set; } = origin.Id;
-
-        public Pawn Pawn { get; } = origin;
-
-
-        public NetworkedSpecialMove ToNetworked() => new(this.Destination.Index, this.Origin.Index, this.OriginPiece.Index);
-    }
-
-
-    public class NetworkedSpecialMove((char, int) destination, (char, int) origin, (string, int) originPiece) : Pawn.INetworkedSpecialMove
-    {
-        public (string, int) Pawn => originPiece;
-        public (char, int) Destination { get; set; } = destination;
-        public (char, int) Origin { get; set; } = origin;
-
-#pragma warning disable CS9124
-        // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
-        public (string, int) OriginPiece { get; set; } = originPiece;
-        // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
-#pragma warning restore CS9124
-
-        public IMove FromNetworked(IChessGame game) => new SpecialMove((game.AllPieces[this.Pawn] as Pawn)!, game.Board[this.Destination]);
     }
 }

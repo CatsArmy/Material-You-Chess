@@ -1,8 +1,10 @@
-﻿namespace Chess.Game.Board;
+﻿using System.Text.Json.Serialization;
+
+namespace Chess.Game.Board;
 
 public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
 {
-    public ImageView? Space { get; } = Space;
+    [JsonIgnore] public ImageView? Space { get; } = Space;
 
     public bool IsWhite { get; } = IsWhite;
 
@@ -14,105 +16,108 @@ public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int
 
     public int Rank { get; } = rank;
 
+    private const int select = 1;
+    public virtual void Select() => this.Space?.SetImageLevel(select);
+
+    private const int unselect = 0;
+    public virtual void Unselect() => this.Space?.SetImageLevel(unselect);
+
     public override string ToString() => $"{File}{Rank}";
 
-    public void SelectSpace() => this.Space?.SetImageLevel(ISpace.Select);
-
-    public void UnselectSpace() => this.Space?.SetImageLevel(ISpace.Unselect);
-
-    public ISpace? DiagonalUp(Dictionary<(char, int), ISpace> board, bool isRight)
+    public BoardSpace? DiagonalUp(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        ISpace? up = this.Up(board);
+        var up = this.Up(board);
         if (up == null)
             return null;
 
         if (isRight)
         {
-            ISpace? right = up.Right(board);
+            var right = up.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        ISpace? left = up.Left(board);
+        var left = up.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public ISpace? DiagonalDown(Dictionary<(char, int), ISpace> board, bool isRight)
+    public BoardSpace? DiagonalDown(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {
-        ISpace? down = Down(board);
+        var down = Down(board);
         if (down == null)
             return null;
 
         if (isRight)
         {
-            ISpace? right = down.Right(board);
+            var right = down.Right(board);
             if (right == null)
                 return null;
 
             return right;
         }
 
-        ISpace? left = down.Left(board);
+        var left = down.Left(board);
         if (left == null)
             return null;
 
         return left;
     }
 
-    public ISpace? Up(Dictionary<(char, int), ISpace> board)
+    public BoardSpace? Up(Dictionary<(char, int), BoardSpace> board)
     {
         var Rank = this.Rank;
-        if (!board.TryGetValue((File, ++Rank), out ISpace? value))
+        if (!board.TryGetValue((File, ++Rank), out var value))
             return null;
 
         return value;
     }
 
-    public ISpace? Down(Dictionary<(char, int), ISpace> board)
+    public BoardSpace? Down(Dictionary<(char, int), BoardSpace> board)
     {
         var Rank = this.Rank;
-        if (!board.TryGetValue((File, --Rank), out ISpace? value))
+        if (!board.TryGetValue((File, --Rank), out var value))
             return null;
 
         return value;
     }
 
-    public ISpace? Right(Dictionary<(char, int), ISpace> board)
+    public BoardSpace? Right(Dictionary<(char, int), BoardSpace> board)
     {
         var File = this.File;
-        if (!board.TryGetValue((++File, Rank), out ISpace? value))
+        if (!board.TryGetValue((++File, Rank), out var value))
             return null;
 
         return value;
     }
 
-    public ISpace? Left(Dictionary<(char, int), ISpace> board)
+    public BoardSpace? Left(Dictionary<(char, int), BoardSpace> board)
     {
         var File = this.File;
-        if (!board.TryGetValue((--File, Rank), out ISpace? value))
+        if (!board.TryGetValue((--File, Rank), out var value))
             return null;
 
         return value;
     }
 
-    public ISpace? Forward(Dictionary<(char, int), ISpace> board, bool isWhite)
+    public BoardSpace? Forward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Down(board);
         return this.Up(board);
     }
 
-    public ISpace? Backward(Dictionary<(char, int), ISpace> board, bool isWhite)
+    public BoardSpace? Backward(Dictionary<(char, int), BoardSpace> board, bool isWhite)
     {
         if (!isWhite)
             return this.Up(board);
         return this.Down(board);
     }
 
-    public IPiece? Piece(Dictionary<(string, int), IPiece> boardPieces) => boardPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
+    public BoardPiece? Piece(Dictionary<(string, int), BoardPiece> boardPieces)
+        => boardPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
 }

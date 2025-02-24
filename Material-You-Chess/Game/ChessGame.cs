@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
+using Chess.App.Networked;
 using Chess.Dialogs;
 using Chess.Game.Board;
 using Chess.Game.Moves;
@@ -13,26 +14,29 @@ namespace Chess.Game;
 
 public class ChessGame : IChessGame
 {
+    public static ChessGame? Instance { get; set; }
+
     private int Turn = 1;
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? clientPlayerIsWhite;
     private WhitePromotionDialog WhitePromotionDialog { get; set; }
     private BlackPromotionDialog BlackPromotionDialog { get; set; }
-    private readonly ConstraintLayout boardLayout;
     private readonly Action<Payload>? send;
     private readonly Context context;
 
-    public Dictionary<(string, int), IPiece> AllPieces { get; } = [];
+    public readonly ConstraintLayout BoardLayout;
 
-    public Dictionary<(char, int), ISpace> Board { get; } = [];
+    public Dictionary<(string, int), BoardPiece> AllPieces { get; } = [];
 
-    public IMove? LastMove { get; set; }
+    public Dictionary<(char, int), BoardSpace> Board { get; } = [];
+
+    public Move? LastMove { get; set; }
 
     public IPlayer? White { get; set; }
 
     public IPlayer? Black { get; set; }
 
-    public IPiece? Selected
+    public BoardPiece? Selected
     {
         get; set
         {
@@ -41,11 +45,11 @@ public class ChessGame : IChessGame
                 this.Moves = null;
 
             if (value is not null)
-                this.Moves = value.Moves(this.Board, this.AllPieces);
+                this.Moves = value.Moves(this);
         }
     }
 
-    public List<IMove>? Moves
+    public List<Move>? Moves
     {
         get; set
         {
@@ -60,6 +64,30 @@ public class ChessGame : IChessGame
                 move.Select();
         }
     }
+
+    public Toast WinnerToast
+    {
+        get => Toast.MakeText(context, $"{Player!.Name} wins", ToastLength.Long)!;
+    }
+
+    public IPlayer? Player
+    {
+        get => this.CurrentPlayerIsWhite switch
+        {
+            true => this.White,
+            false => this.Black,
+        };
+    }
+
+    public IPlayer? Enemy
+    {
+        get => !this.CurrentPlayerIsWhite switch
+        {
+            true => this.White,
+            false => this.Black
+        };
+    }
+
     private IPromotionDialog PromotionDialog
     {
         get => this.CurrentPlayerIsWhite switch
@@ -69,29 +97,17 @@ public class ChessGame : IChessGame
         };
     }
 
-    private IPlayer? Player
-    {
-        get => this.CurrentPlayerIsWhite switch
-        {
-            true => this.White,
-            false => this.Black,
-        };
-    }
-
-    private IPlayer? Enemy
-    {
-        get => !this.CurrentPlayerIsWhite switch
-        {
-            true => this.White,
-            false => this.Black
-        };
-    }
-
     public ChessGame(Context context, string whiteName, string blackName, ConstraintLayout boardLayout,
         WhitePromotionDialog whitePromotionDialog, BlackPromotionDialog blackPromotionDialog, bool? clientPlayerIsWhite, Action<Payload>? send)
     {
+        Instance = this;
+        //SourceJsonGenerationContext.Default.BoardPiece.OnDeserialized = obj =>
+        //{
+        //    //(obj as BoardPiece).Id =;
+        //};
+
         this.context = context;
-        this.boardLayout = boardLayout;
+        this.BoardLayout = boardLayout;
         this.WhitePromotionDialog = whitePromotionDialog;
         this.BlackPromotionDialog = blackPromotionDialog;
         this.clientPlayerIsWhite = clientPlayerIsWhite;
@@ -210,8 +226,8 @@ public class ChessGame : IChessGame
             keyValuePair.Value.Space!.Clickable = true;
         }
 
-        this.White = new White(whiteName, this.Board, this.boardLayout);
-        this.Black = new Black(blackName, this.Board, this.boardLayout);
+        this.White = new White(whiteName, this.Board, this.BoardLayout);
+        this.Black = new Black(blackName, this.Board, this.BoardLayout);
 
         this.AllPieces.Merge(this.White.Pieces, this.Black.Pieces);
 
@@ -225,51 +241,60 @@ public class ChessGame : IChessGame
         this.clientPlayerIsWhite = clientPlayerIsWhite;
     }
 
-    private void OnClick(object? sender, EventArgs args)
+    public void NextTurn(Move move)
     {
-        if (this.clientPlayerIsWhite != null)
+        this.Selected = null;
+        if (!this.CurrentPlayerIsWhite)
+            this.Turn += 1;
+        foreach (var piece in this.Player!.Pieces.Values)
         {
-            if (this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
-            {
-                return;
-            }
+            piece.Update(true);
         }
 
+        this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
+    }
+
+    /// <returns> true if an enemy piece can capture the given piece</returns>
+    public bool IsInCheck(BoardPiece Piece)
+        => this.Player!.Pieces.Values.FirstOrDefault(p => Piece.IsWhite == p.IsWhite) != null
+        ? this.IsInCheck(Piece.Space)
+        : false;
+
+    /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
+    public bool IsInCheck(BoardSpace Space)
+    {
+        List<Move> moves = [];
+        foreach (var piece in this.Enemy!.Pieces.Values)
+            moves.AddRange(piece.Moves(this));
+
+        moves = [.. moves.Where(move => move is not MoveOnly)];
+        return moves.FirstOrDefault(move => move.Destination == Space) != null;
+    }
+
+    public void RedrawGame()
+    {
+        this.BoardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
+        foreach (var piece in this.AllPieces.Values)
+            piece.Move(new(piece, piece.Space), this);
+        this.LastMove?.Select();
+        this.Selected?.Space?.Select();
+        this.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+    }
+
+    private void OnClick(object? sender, EventArgs args)
+    {
         if (sender is not ImageView imageView)
             return;
 
         if (imageView?.Tag is not Java.Lang.String javaString)
             return;
 
-        string tag = javaString.ToString();
-        var sIndex = (tag[0], int.Parse($"{tag[^1]}"));
-        var pIndex = (tag[0..^1], int.Parse($"{tag[^1]}"));
-        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
-        //----------+-----------+-----------+-----------+-----------+-----------
-        //lowercase &   len <= 2|   unknown |   unknown | uppercase &   len > 2 
-
-        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
+        if (this.clientPlayerIsWhite != null && this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
             return;
 
-        if (this.Player == null || this.Enemy == null)
-            return;
+        this.Validate(javaString, out var pIndex, out var sIndex);
 
-        foreach (var piece in Player.Pieces.Values)
-        {
-            piece.Update();
-        }
-
-        //----------+-----------+-----------+-----------+-----------+-----------
-        //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
-        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
-        {
-            if (!this.AllPieces.TryGetValue(pIndex, out IPiece? value))
-                return;
-
-            sIndex = value.Space.Index;
-        }
-
-        if (this.Player.Pieces.TryGetValue(pIndex, out IPiece? Piece))
+        if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
         {
             if (this.Selected == null)
             {
@@ -290,181 +315,54 @@ public class ChessGame : IChessGame
         if (!this.Board.TryGetValue(sIndex, out var space))
             return;
 
-        if (this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not IMove move)
+        if (this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not Move move)
         {
             this.Selected = null;
             return;
         }
 
-        if (move is Promote || move is PromoteAndCapture)
+        //Prevent promoting to an unknown type of piece
+        if (move is Promotion promotion && promotion.PromoteTo is null)
         {
-            this.PromotionDialog.Show(this, (move as IPromote)!);
+            this.PromotionDialog.Show(this, promotion);
             return;
         }
+        var jsonType = SourceJsonGenerationContext.Default.GetTypeInfo(move.GetType())!;
+        var options = SourceJsonGenerationContext.Default;
+        this.send?.Invoke(Payload.FromBytes(
+        JsonSerializer.SerializeToUtf8Bytes<Move>(value: move, options: jsonType.Options)
+        //JsonSerializer.SerializeToUtf8Bytes(move, SourceJsonGenerationContext.Default.GetTypeInfo(move.GetType())!)
+            ));
 
-        if (this.send != null)
-        {
-            var encodedMove = JsonSerializer.SerializeToUtf8Bytes(move);
-            this.send(Payload.FromBytes(encodedMove));
-        }
-        this.OnMove(move);
-        this.Selected!.Move(move.Destination);
-        this.NextTurn();
+        //this.Selected!.Move(move, this);
     }
 
-    public void OnMove(IMove move)
+    private bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)
     {
+        string tag = Tag.ToString();
+        sIndex = (tag[0], int.Parse($"{tag[^1]}"));
+        pIndex = (tag[0..^1], int.Parse($"{tag[^1]}"));
+        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
+        //----------+-----------+-----------+-----------+-----------+-----------
+        //lowercase &   len <= 2|   unknown |   unknown | uppercase &   len > 2 
+
+        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
+            return false;
+
         if (this.Player == null || this.Enemy == null)
-            return;
-        this.boardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-        this.LastMove = move;
+            return false;
 
-        if (this.Selected is ISpecialBoardPiece piece)
+
+        //----------+-----------+-----------+-----------+-----------+-----------
+        //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
+        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
         {
-            piece.HasMoved = true;
+            if (!this.AllPieces.TryGetValue(pIndex, out BoardPiece? value))
+                return false;
+
+            sIndex = value.Space.Index;
         }
 
-        if (move is DoubleMove pawn)
-        {
-            pawn.Pawn.EnPassantCapturable = true;
-        }
-
-        if (move is IPromote)
-        {
-            var Piece = this.Player.Pieces[move.OriginPiece.Index];
-            if (move is PromoteQueen || move is PromoteQueenAndCapture)
-            {
-                Piece = new Queen(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, this.boardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.queen_white,
-                    false => Resource.Drawable.queen_black
-                });
-            }
-
-            else if (move is PromoteKnight || move is NetworkedPromoteKnightAndCapture)
-            {
-                Piece = new Knight(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, this.boardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.knight_white,
-                    false => Resource.Drawable.knight_black
-                });
-            }
-
-            else if (move is PromoteRook || move is PromoteRookAndCapture)
-            {
-                Piece = new Rook(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, this.boardLayout!) { HasMoved = true };
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.rook_white,
-                    false => Resource.Drawable.rook_black
-                });
-            }
-
-            else if (move is PromoteBishop || move is PromoteBishopAndCapture)
-            {
-                Piece = new Bishop(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, this.boardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.bishop_white,
-                    false => Resource.Drawable.bishop_black
-                });
-            }
-
-            this.Player.Pieces[move.OriginPiece.Index] = Piece;
-            this.AllPieces[move.OriginPiece.Index] = Piece;
-        }
-
-        if (move is not ICapture capture)
-        {
-            return;
-        }
-
-        this.OnCapture(capture);
-    }
-    public void NextTurn()
-    {
-        this.Selected = null;
-        if (!this.CurrentPlayerIsWhite)
-            this.Turn += 1;
-        this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
-    }
-
-    public void OnCapture(ICapture capture)
-    {
-        if (capture is EnPassant move)
-        {
-            this.Selected!.Capture(move.Pawn, this.AllPieces);
-            return;
-        }
-
-        if (capture.Piece is King)
-        {
-            this.OnCaptureKing();
-        }
-
-        this.Selected!.Capture(capture.Piece, this.AllPieces);
-    }
-
-    public void OnCaptureKing()
-    {
-        this.Player!.Outcome = GameOutcome.Win;
-        this.Enemy!.Outcome = GameOutcome.Lose;
-        foreach (var Space in this.Board.Values)
-            Space.Space!.Clickable = false;
-
-        foreach (var piece in this.AllPieces.Values)
-            piece.Space.Space!.Clickable = false;
-
-        //display and handle the end of the game
-        Toast.MakeText(context, $"{Player.Name} wins", ToastLength.Long);
-    }
-
-    /// <returns> true if an enemy piece can capture the given piece</returns>
-    public bool IsInCheck(IPiece Piece)
-    {
-        foreach (var piece in this.Enemy!.Pieces.Values)
-        {
-            foreach (var move in piece.Moves(this.Board, this.AllPieces))
-            {
-                if (move.Destination == Piece.Space)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
-    public bool IsInCheck(ISpace Space)
-    {
-        foreach (var piece in this.Enemy!.Pieces.Values)
-        {
-            foreach (var move in piece.Moves(this.Board, this.AllPieces))
-            {
-                if (move is Pawn.SpecialMove)
-                    continue;
-
-                if (move.Destination == Space)
-                    return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void RedrawGame()
-    {
-        this.boardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
-        foreach (var piece in this.AllPieces.Values)
-            piece.Move(piece);
-        this.LastMove?.Select();
-        this.Selected?.Space?.SelectSpace();
-        this.boardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        return true;
     }
 }
-
-

@@ -6,7 +6,6 @@ using Android.Gms.Nearby.Connection;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Runtime;
-using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
@@ -15,9 +14,7 @@ using Chess.Game;
 using Chess.Game.Moves;
 using Firebase.Auth;
 using Firebase.Storage;
-using Google.Android.Material.BottomSheet;
 using Google.Android.Material.ImageView;
-using Google.Android.Material.MaterialSwitch;
 using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Networked;
@@ -74,42 +71,7 @@ public class NetworkedChessActivity : ConnectionsActivity
         }
     } = State.Unknown;
 
-    public class LobbyWaitingRoomBottomSheet(NetworkedChessActivity activity) : BottomSheetDialogFragment
-    {
-        public TextView? SearchingText { get; set; }
-        public View? SearchingIndicator { get; set; }
-        public MaterialSwitch? IsHost { get; set; }
-        public override Dialog OnCreateDialog(Bundle? savedInstanceState)
-        {
-            base.OnCreateDialog(savedInstanceState);
-            var bottomSheetDialog = new BottomSheetDialog(this.Context!);
-            bottomSheetDialog.Behavior.Draggable = false;
-            bottomSheetDialog.Behavior.Hideable = false;
-            this.ShowsDialog = true;
-            bottomSheetDialog.SetContentView(Resource.Layout.select_device_dialog);
-            return bottomSheetDialog;
-        }
-        public override void Show(AndroidX.Fragment.App.FragmentManager manager, string? tag)
-        {
-            base.Show(manager, tag);
-
-            this.SearchingText = this.Dialog?.FindViewById<TextView>(Resource.Id.bsSearching);
-            this.SearchingIndicator = this.Dialog?.FindViewById(Resource.Id.mliSearching);
-            this.IsHost = this.Dialog?.FindViewById<MaterialSwitch>(Resource.Id.msIsHost);
-            this.IsHost!.CheckedChange += this.IsHost_CheckedChange;
-            this.IsHost!.CheckedChange += activity.IsHost_CheckedChange;
-        }
-        private void IsHost_CheckedChange(object? sender, CompoundButton.CheckedChangeEventArgs e)
-        {
-            this.SearchingText!.Text = e.IsChecked switch
-            {
-                true => "Searching for players",
-                false => "Waiting for players"
-            };
-        }
-    }
-
-    private void IsHost_CheckedChange(object? sender, CompoundButton.CheckedChangeEventArgs e)
+    public void IsHost_CheckedChange(object? sender, CompoundButton.CheckedChangeEventArgs e)
     {
         this.isConnectionInitiator = e.IsChecked;
         switch (e.IsChecked)
@@ -125,6 +87,7 @@ public class NetworkedChessActivity : ConnectionsActivity
                 break;
         }
     }
+
     //protected override async Task OnAdvertisingStartedAsync()
     //{
     //    await base.OnAdvertisingStartedAsync();
@@ -153,6 +116,7 @@ public class NetworkedChessActivity : ConnectionsActivity
 
         this.p1MainUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.p2MainUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
+
         //set game view to waiting for opponent 
     }
 
@@ -167,8 +131,12 @@ public class NetworkedChessActivity : ConnectionsActivity
     {
         base.OnStart();
         this.State = State.Searching;
+
+        Logger.Debug($"::new {nameof(LobbyWaitingRoomBottomSheet)}()::");
         this.LobbyWaitingRoom = new LobbyWaitingRoomBottomSheet(this);
+        Logger.Debug($"::show {nameof(LobbyWaitingRoomBottomSheet)}()::");
         this.LobbyWaitingRoom.Show(this.SupportFragmentManager, "Lobby Waiting Room");
+        Logger.Debug($"::showing {nameof(LobbyWaitingRoomBottomSheet)}()::");
     }
 
     public override ScreenOrientation RequestedOrientation
@@ -306,43 +274,17 @@ public class NetworkedChessActivity : ConnectionsActivity
     /// </summary>
     /// <param name="endpoint">The client who is sending the <paramref name="payload"/> to us </param>
     /// <param name="payload">The <see cref="Payload"/> containing all the data for us to handle the event</param>
+    [SuppressMessage("Trimming", "IL2057:Unrecognized value passed to the parameter of method. It's not possible to guarantee the availability of the target type.", Justification = "<Pending>")]
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
         if (payload.PayloadType == Payload.Type.Bytes)
         {
             var json = Encoding.UTF8.GetString(payload.AsBytes()!);
-            IMove move;
-            if (json.Contains(nameof(PromoteBishop)))
-                move = JsonSerializer.Deserialize<PromoteBishop>(json);
-            else if (json.Contains(nameof(PromoteBishopAndCapture)))
-                move = JsonSerializer.Deserialize<PromoteBishopAndCapture>(json);
-            else if (json.Contains(nameof(PromoteQueen)))
-                move = JsonSerializer.Deserialize<PromoteQueen>(json);
-            else if (json.Contains(nameof(PromoteQueenAndCapture)))
-                move = JsonSerializer.Deserialize<PromoteQueenAndCapture>(json);
-            else if (json.Contains(nameof(PromoteRook)))
-                move = JsonSerializer.Deserialize<PromoteRook>(json);
-            else if (json.Contains(nameof(PromoteRookAndCapture)))
-                move = JsonSerializer.Deserialize<PromoteRookAndCapture>(json);
-            else if (json.Contains(nameof(PromoteKnight)))
-                move = JsonSerializer.Deserialize<PromoteKnight>(json);
-            else if (json.Contains(nameof(PromoteKnightAndCapture)))
-                move = JsonSerializer.Deserialize<PromoteKnightAndCapture>(json);
-            else if (json.Contains(nameof(Capture)))
-                move = JsonSerializer.Deserialize<Capture>(json);
-            else if (json.Contains(nameof(DoubleMove)))
-                move = JsonSerializer.Deserialize<DoubleMove>(json);
-            else if (json.Contains(nameof(EnPassant)))
-                move = JsonSerializer.Deserialize<EnPassant>(json);
-            //else if (json.Contains(nameof(KingSideCastle)))
-            //{ /*move = JsonSerializer.Deserialize<KingSideCastle>(json);*/}
-            //else if (json.Contains(nameof(QueenSideCastle)))
-            //{  /*move = JsonSerializer.Deserialize<QueenSideCastle>(json);*/}
-            else
-                return;
-            Logger.Error(json);
-
-            this.game?.OnMove(move!);
+            var DOM = JsonDocument.Parse(json)!;
+            string typeDiscriminator = DOM.RootElement.GetProperty("$type").GetString()!;
+            var JsonTypeInfo = SourceJsonGenerationContext.Default.GetTypeInfo(Type.GetType(typeDiscriminator)!);
+            Move? move = JsonSerializer.Deserialize(DOM, JsonTypeInfo!) as Move;
+            move!.OriginPiece.Move(move, this.game!);
         }
 
         if (payload.PayloadType == Payload.Type.Stream)
@@ -373,4 +315,3 @@ public class NetworkedChessActivity : ConnectionsActivity
         return [.. newPerms];
     }
 }
-

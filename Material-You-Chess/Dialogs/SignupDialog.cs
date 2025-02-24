@@ -2,6 +2,7 @@
 using Android.Util;
 using Android.Views;
 using Chess.App;
+using Chess.App.Common;
 using Firebase.Auth;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.TextField;
@@ -24,7 +25,6 @@ public partial class SignupDialog : ISignupDialog
     public TextInputLayout? PasswordLayout { get; set; }
     public TextInputEditText? PasswordInput { get; set; }
     private MainActivity App { get; set; }
-    private bool HasCaught { get; set; } = false;
 
     public SignupDialog(MainActivity App)
     {
@@ -69,49 +69,46 @@ public partial class SignupDialog : ISignupDialog
             return;
         }
 
+        Logger.Debug(this.Username is null ? "Username is null" : $"{this.Username}");
+
         try
         {
-            this.HasCaught = false;
             var result = await FirebaseAuth.Instance.CreateUserWithEmailAndPasswordAsync(this.Email!, this.Password!);
         }
         catch (Exception e)
         {
-            this.HasCaught = true;
             Log.Debug("CatDebug", $"{e}");
             if (this.Dialog.IsShowing)
                 this.Dialog.Hide();
             this.Dialog.Show();
+            Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
             //thrown if the password is not strong enough
             if (e is FirebaseAuthWeakPasswordException)
             {
                 this.PasswordLayout!.Error = "Password too weak";
-                Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
             }
+
             //thrown if the email address is malformed
-            if (e is FirebaseAuthInvalidCredentialsException)
+            else if (e is FirebaseAuthInvalidCredentialsException)
             {
                 this.EmailLayout!.Error = "Email address is malformed";
-                Toast.MakeText(this.Dialog.Context, "Authentication Error", ToastLength.Long)?.Show();
-                return;
             }
+
             //thrown if there already exists an account with the given email address
-            if (e is FirebaseAuthUserCollisionException)
+            else if (e is FirebaseAuthUserCollisionException)
             {
                 this.EmailLayout!.Error = "Account with the given email address already exists";
             }
+
+            return;
         }
-        finally
-        {
-            if (!this.HasCaught)
-            {
-                var builder = new UserProfileChangeRequest.Builder().SetDisplayName(this.Username);
-                this.App.StartProgressIndicator();
-                await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(builder.Build());
-                await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
-                this.App.StopProgressIndicator();
-                this.App.UpdateUserState();
-            }
-        }
+
+        var builder = new UserProfileChangeRequest.Builder().SetDisplayName(this.Username);
+        this.App.StartProgressIndicator();
+        await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(builder.Build());
+        await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
+        this.App.StopProgressIndicator();
+        this.App.UpdateUserState();
     }
 
     public void OnCancel(object? sender, DialogClickEventArgs args)

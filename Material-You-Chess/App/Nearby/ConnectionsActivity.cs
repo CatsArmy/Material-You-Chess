@@ -6,9 +6,9 @@ using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
 using Android.Runtime;
-using AndroidX.AppCompat.App;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using AndroidX.Fragment.App;
 using Chess.App.Common;
 using Java.Util;
 using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Nearby.EndPoint>.KeyCollection;
@@ -16,7 +16,7 @@ using ValueSet = System.Collections.Generic.Dictionary<string, Chess.App.Nearby.
 
 namespace Chess.App.Nearby;
 
-public abstract class ConnectionsActivity : AppCompatActivity
+public abstract class ConnectionsActivity : FragmentActivity
 {
     public bool IsConnecting { get; private set; } = false;
     public bool IsDiscovering { get; private set; } = false;

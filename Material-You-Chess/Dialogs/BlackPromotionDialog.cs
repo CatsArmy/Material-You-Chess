@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Chess.Game;
+using Chess.Game.Board;
 using Chess.Game.Moves;
 using Google.Android.Material.Dialog;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
@@ -10,72 +11,52 @@ public class BlackPromotionDialog : IPromotionDialog
 {
     public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
-    public IPromote? Move { get; set; }
+    public Promotion? Move { get; set; }
+
     private ChessGame? game;
+
+    public List<int> Id => [Resource.Id.blackPromoteQueen, Resource.Id.blackPromoteKnight, Resource.Id.blackPromoteRook,
+        Resource.Id.blackPromoteBishop];
+
     public BlackPromotionDialog(Context app)
     {
         this.Builder = new MaterialAlertDialogBuilder(app);
-        this.Builder.SetTitle(nameof(Promote));
+        this.Builder.SetTitle(nameof(Promotion));
         this.Builder.SetView(Resource.Layout.black_promotion_dialog);
         this.Dialog = this.Builder.Create();
         this.Dialog.ShowEvent += this.OnShow;
     }
 
-    public void Show(ChessGame game, IPromote Move)
+    public void Show(ChessGame game, Promotion move)
     {
         this.game = game;
-        this.Move = Move;
+        this.Move = move;
         this.Dialog.Show();
     }
 
     public void OnShow(object? sender, EventArgs args)
     {
-        this.Dialog.FindViewById<ImageView>(Resource.Id.blackPromoteQueen)!.Click += (s, e) =>
-        {
-            this.Move = (this.Move is IPromoteAndCapture) switch
-            {
-                true => new PromoteQueenAndCapture((this.Move as IPromoteAndCapture)!.Pawn, (this.Move as IPromoteAndCapture)!.Piece),
-                false => new PromoteQueen(this.Move!.Pawn, this.Move.Destination)
-            };
-            this.OnConfirm(s, e);
-        };
-
-        this.Dialog.FindViewById<ImageView>(Resource.Id.blackPromoteKnight)!.Click += (s, e) =>
-        {
-            this.Move = (this.Move is IPromoteAndCapture) switch
-            {
-                true => new PromoteKnightAndCapture((this.Move as IPromoteAndCapture)!.Pawn, (this.Move as IPromoteAndCapture)!.Piece),
-                false => new PromoteKnight(this.Move!.Pawn, this.Move.Destination)
-            };
-            this.OnConfirm(s, e);
-        };
-
-        this.Dialog.FindViewById<ImageView>(Resource.Id.blackPromoteRook)!.Click += (s, e) =>
-        {
-            this.Move = (this.Move is IPromoteAndCapture) switch
-            {
-                true => new PromoteRookAndCapture((this.Move as IPromoteAndCapture)!.Pawn, (this.Move as IPromoteAndCapture)!.Piece),
-                false => new PromoteRook(this.Move!.Pawn, this.Move.Destination)
-            };
-            this.OnConfirm(s, e);
-        };
-
-        this.Dialog.FindViewById<ImageView>(Resource.Id.blackPromoteBishop)!.Click += (s, e) =>
-        {
-            this.Move = (this.Move is IPromoteAndCapture) switch
-            {
-                true => new PromoteBishopAndCapture((this.Move as IPromoteAndCapture)!.Pawn, (this.Move as IPromoteAndCapture)!.Piece),
-                false => new PromoteBishop(this.Move!.Pawn, this.Move.Destination)
-            };
-            this.OnConfirm(s, e);
-        };
+        foreach (var id in this.Id)
+            this.Dialog.FindViewById<ImageView>(id)!.Click += this.OnConfirm;
     }
 
     public void OnConfirm(object? sender, EventArgs args)
     {
         this.Dialog.Dismiss();
-        this.game!.OnMove(this.Move!);
-        this.game.Selected!.Move(this.Move!.Destination);
-        this.game.NextTurn();
+        var type = (sender as ImageView)!.Id switch
+        {
+            Resource.Id.blackPromoteQueen => typeof(Queen),
+            Resource.Id.blackPromoteKnight => typeof(Knight),
+            Resource.Id.blackPromoteRook => typeof(Rook),
+            Resource.Id.blackPromoteBishop => typeof(Bishop),
+            _ => null
+        };
+
+        if (type is null)
+            return;
+
+        this.Move!.PromoteTo = new(type);
+
+        this.game!.Selected!.Move(this.Move, game);
     }
 }

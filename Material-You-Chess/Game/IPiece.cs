@@ -1,14 +1,14 @@
 ﻿using System.Text.Json.Serialization;
+using Chess.Game.Board;
 using Chess.Game.Moves;
 
 namespace Chess.Game;
 
 public interface IPiece
 {
-    public ISpace Space { get; set; }
+    [JsonIgnore] public ImageView? Piece { get; set; }
 
-    [JsonIgnore]
-    public ImageView? Piece { get; set; }
+    public BoardSpace Space { get; set; }
 
     public int Id { get; }
 
@@ -16,24 +16,8 @@ public interface IPiece
 
     public (string, int) Index { get; }
 
-    public char Abbreviation { get; set; }
+    public char Abbreviation { get; }
 
-    public void Update();
-    public List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces);
-    public void Move(IPiece destination) => this.Move(destination.Space);
-    public void Move(ISpace destination);
-    public void Capture(IPiece destination, Dictionary<(string, int), IPiece> pieces);
-    public void Diagonals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void DiagonalsUpRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void DiagonalsUpLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void DiagonalsDownRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void DiagonalsDownLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isRight, ref List<IMove> moves);
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves);
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isUp, ref List<IMove> moves);
-    public (ISpace?, ISpace?) DiagonalMovesUp(Dictionary<(char, int), ISpace> board);
-    public (ISpace?, ISpace?) DiagonalMovesDown(Dictionary<(char, int), ISpace> board);
-    public (ISpace?, ISpace?) DiagonalMovesRight(Dictionary<(char, int), ISpace> board);
-    public (ISpace?, ISpace?) DiagonalMovesLeft(Dictionary<(char, int), ISpace> board);
+    public void Update(bool IsUpdatingPlayer = false);
+    public void Move(Move destination, ChessGame game);
 }

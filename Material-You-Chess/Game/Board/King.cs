@@ -2,112 +2,109 @@
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
-public class King(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout)
-    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout), ISpecialBoardPiece
+public class King(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
+    : SpecialPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
-    public bool HasMoved { get; set; } = false;
-
     private const char abbreviation = 'K';
 
-    public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
+    public override void Move(Move move, ChessGame game)
     {
-        List<IMove> moves = base.Moves(board, pieces);
+        base.Move(move, game);
+        this.Move(move);
+        game.NextTurn(move);
+    }
 
-        ISpace? up = this.Space?.Up(board);
+    public override void Capture(BoardPiece destination, ChessGame game)
+    {
+        base.Capture(destination, game);
+        game.Player!.Outcome = GameOutcome.Win;
+        game.Enemy!.Outcome = GameOutcome.Lose;
+        foreach (var Space in game.Board.Values)
+            Space.Space!.Clickable = false;
+
+        foreach (var piece in game.AllPieces.Values)
+            piece.Space.Space!.Clickable = false;
+
+        //display and handle the end of the game
+        game.WinnerToast.Show();
+    }
+
+    public override List<Move> Moves(ChessGame game)
+    {
+        List<Move> moves = base.Moves(game);
+
+        var up = this.Space?.Up(game.Board);
         if (up != null)
         {
-            if (up.Piece(pieces) is not IPiece piece)
+            if (up.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, up));
-            else if (up.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (up.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? down = this.Space?.Down(board);
+        var down = this.Space?.Down(game.Board);
         if (down != null)
         {
-            if (down.Piece(pieces) is not IPiece piece)
+            if (down.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, down));
-            else if (down.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (down.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? left = this.Space?.Left(board);
+        var left = this.Space?.Left(game.Board);
         if (left != null)
         {
-            if (left.Piece(pieces) is not IPiece piece)
+            if (left.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, left));
-            else if (left.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (left.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? right = this.Space?.Right(board);
+        var right = this.Space?.Right(game.Board);
         if (right != null)
         {
-            if (right.Piece(pieces) is not IPiece piece)
+            if (right.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, right));
-            else if (right.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (right.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? topLeft = this.Space?.DiagonalUp(board, false);
+        var topLeft = this.Space?.DiagonalUp(game.Board, false);
         if (topLeft != null)
         {
-            if (topLeft.Piece(pieces) is not IPiece piece)
+            if (topLeft.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, topLeft));
-            else if (topLeft.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (topLeft.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? topRight = this.Space?.DiagonalUp(board, true);
+        var topRight = this.Space?.DiagonalUp(game.Board, true);
         if (topRight != null)
         {
-            if (topRight.Piece(pieces) is not IPiece piece)
+            if (topRight.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, topRight));
-            else if (topRight.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (topRight.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? bottomLeft = this.Space?.DiagonalDown(board, false);
+        var bottomLeft = this.Space?.DiagonalDown(game.Board, false);
         if (bottomLeft != null)
         {
-            if (bottomLeft.Piece(pieces) is not IPiece piece)
+            if (bottomLeft.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, bottomLeft));
-            else if (bottomLeft.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (bottomLeft.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        ISpace? bottomRight = this.Space?.DiagonalDown(board, true);
+        var bottomRight = this.Space?.DiagonalDown(game.Board, true);
         if (bottomRight != null)
         {
-            if (bottomRight.Piece(pieces) is not IPiece piece)
+            if (bottomRight.Piece(game.AllPieces) is not BoardPiece piece)
                 moves.Add(new Move(this, bottomRight));
-            else if (bottomRight.Piece(pieces)?.IsWhite != this.IsWhite)
+            else if (bottomRight.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
         return moves;
-    }
-
-    public bool IsInCheck(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
-    {
-        char key = this.IsWhite ? 'b' : 'w';
-        List<IMove> moves = [];
-        foreach (var piece in pieces)
-        {
-            if (!piece.Key.Item1.StartsWith(key))
-                continue;
-
-            moves.AddRange(piece.Value.Moves(board, pieces));
-        }
-        moves = [.. moves.Where(move => move is ICapture)];
-        return moves.FirstOrDefault(move => IsCheck(move, pieces)) != null;
-    }
-
-    public bool IsCheck(IMove move, Dictionary<(string, int), IPiece> pieces)
-    {
-        var piece = move.Destination.Piece(pieces);
-        if (piece == null)
-            return false;
-        return piece == this;
     }
 }

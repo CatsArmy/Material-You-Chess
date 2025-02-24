@@ -3,16 +3,17 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Queen(int id, (string, int) index, bool isWhite, ISpace space, ConstraintLayout boardLayout) : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class Queen(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
+    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
 {
     private const char abbreviation = 'Q';
 
-    public override List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces)
+    public override List<Move> Moves(ChessGame game)
     {
-        List<IMove> moves = base.Moves(board, pieces);
-        this.Horizontals(board, pieces, ref moves);
-        this.Verticals(board, pieces, ref moves);
-        this.Diagonals(board, pieces, ref moves);
+        List<Move> moves = base.Moves(game);
+        this.Horizontals(game.Board, game.AllPieces, ref moves);
+        this.Verticals(game.Board, game.AllPieces, ref moves);
+        this.Diagonals(game.Board, game.AllPieces, ref moves);
         return moves;
     }
 }

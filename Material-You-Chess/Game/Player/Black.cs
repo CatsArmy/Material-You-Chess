@@ -9,7 +9,7 @@ public class Black : IPlayer
 
     public GameOutcome Outcome { get; set; }
 
-    public Dictionary<(string, int), IPiece> Pieces { get; set; } = [];
+    public Dictionary<(string, int), BoardPiece> Pieces { get; set; } = [];
 
     public Pawn[] Pawns { get; set; } = new Pawn[8];
 
@@ -29,7 +29,7 @@ public class Black : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public Black(string name, Dictionary<(char, int), ISpace> Board, ConstraintLayout boardLayout)
+    public Black(string name, Dictionary<(char, int), BoardSpace> Board, ConstraintLayout boardLayout)
     {
         this.Name = name;
         char file = 'A';

@@ -1,71 +1,93 @@
 ﻿using System.Text.Json.Serialization;
+using Android.Animation;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, ISpace space, ConstraintLayout boardLayout) : IPiece
+[JsonPolymorphic()]
+[JsonDerivedType(typeof(King), nameof(King))]
+[JsonDerivedType(typeof(Pawn), nameof(Pawn))]
+[JsonDerivedType(typeof(Rook), nameof(Rook))]
+[JsonDerivedType(typeof(Queen), nameof(Queen))]
+[JsonDerivedType(typeof(Knight), nameof(Knight))]
+[JsonDerivedType(typeof(Bishop), nameof(Bishop))]
+[JsonDerivedType(typeof(SpecialPiece), nameof(SpecialPiece))]
+[JsonDerivedType(typeof(BoardPiece), nameof(BoardPiece))]
+public class BoardPiece(int id, (string, int) index, char abbreviation, bool isWhite, BoardSpace space, ConstraintLayout boardLayout) : IPiece
 {
-    [JsonIgnore]
-    public ImageView? Piece { get; set; } = boardLayout.FindViewById<ImageView>(id);
+    [JsonIgnore] public ImageView? Piece { get; set; } = boardLayout.FindViewById<ImageView>(id);
 
-
-    public ISpace Space { get; set; } = space;
-
+    public BoardSpace Space { get; set; } = space;
 
     public int Id { get; } = id;
 
-
     public bool IsWhite { get; } = isWhite;
-
 
     public (string, int) Index { get; } = index;
 
+    public char Abbreviation { get; } = abbreviation;
 
-    public char Abbreviation { get; set; } = abbreviation;
+    public virtual void Update(bool IsUpdatingPlayer = false) { return; }
 
-    public virtual void Update() { }
+    public virtual List<Move> Moves(ChessGame game) => [];
 
-    public virtual List<IMove> Moves(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces) => [];
-
-    public virtual void Move(ISpace destination)
+    public virtual void Move(Move move, ChessGame game)
     {
-        this.Space = destination;
+        if (game.Player == null || game.Enemy == null)
+            return;
+
+        game.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+
+        if (move is Capture capture)
+        {
+            this.Capture(capture.Piece, game);
+        }
+        this.Move(move);
+        game.NextTurn(move);
+    }
+
+    internal void Move(Move move)
+    {
+        this.Space = move.Destination;
         if (this.Piece?.LayoutParameters is not ConstraintLayout.LayoutParams @params)
         {
             Logger.Warn("Piece layout params are not the correct type");
             return;
         }
-        const float Half = 0.5f;
-        @params.VerticalBias = Half;
-        @params.HorizontalBias = Half;
+
+        const float Center = 0.5f;
+        @params.VerticalBias = Center;
+        @params.HorizontalBias = Center;
         @params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
         @params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
         @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
         @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
-        @params.TopToTop = destination.Id;
-        @params.BottomToBottom = destination.Id;
-        @params.StartToStart = destination.Id;
-        @params.EndToEnd = destination.Id;
+        @params.TopToTop = this.Space.Id;
+        @params.BottomToBottom = this.Space.Id;
+        @params.StartToStart = this.Space.Id;
+        @params.EndToEnd = this.Space.Id;
         this.Piece.LayoutParameters = @params;
         this.Piece.RequestLayout();
     }
 
-    public void Capture(IPiece destination, Dictionary<(string, int), IPiece> pieces)
+    public virtual void Capture(BoardPiece destination, ChessGame game)
     {
         Logger.Debug("Capture");
-        pieces.Remove(destination.Index);
+        var player = (destination.IsWhite) switch
+        {
+            true => game.White,
+            false => game.Black
+        };
+        game.AllPieces.Remove(destination.Index);
+        player!.Pieces.Remove(destination.Index);
         destination.Piece!.Enabled = false;
         destination.Piece!.Clickable = false;
         destination.Piece!.Visibility = Android.Views.ViewStates.Gone;
-
-        //if (destination.Piece is View view)
-        //    if (view.Parent is ViewGroup parent)
-        //        parent.RemoveView(view);
     }
 
-    public void Diagonals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void Diagonals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
         this.DiagonalsUpRight(board, pieces, ref moves);
         this.DiagonalsUpLeft(board, pieces, ref moves);
@@ -73,13 +95,13 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
 
-    public void DiagonalsUpRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void DiagonalsUpRight(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
-        for (ISpace? diagonal = this.Space.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
+        for (var diagonal = this.Space.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
             if (diagonal == null)
                 break;
-            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
+            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -90,13 +112,13 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public void DiagonalsUpLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void DiagonalsUpLeft(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
-        for (ISpace? diagonal = this.Space.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
+        for (var diagonal = this.Space.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
         {
             if (diagonal == null)
                 break;
-            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
+            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -107,13 +129,13 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public void DiagonalsDownRight(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void DiagonalsDownRight(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
-        for (ISpace? diagonal = this.Space.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
+        for (var diagonal = this.Space.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
         {
             if (diagonal == null)
                 break;
-            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
+            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -124,13 +146,13 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public void DiagonalsDownLeft(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void DiagonalsDownLeft(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
-        for (ISpace? diagonal = this.Space.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
+        for (var diagonal = this.Space.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
         {
             if (diagonal == null)
                 break;
-            if (diagonal.Piece(pieces) is IPiece diagonalPiece)
+            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -141,21 +163,21 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void Horizontals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
         this.Horizontals(board, pieces, true, ref moves);
         this.Horizontals(board, pieces, false, ref moves);
     }
 
-    public void Horizontals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isRight, ref List<IMove> moves)
+    public void Horizontals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, bool isRight, ref List<Move> moves)
     {
-        Func<Dictionary<(char, int), ISpace>, ISpace?> iterator = isRight ? this.Space.Right : this.Space.Left;
-        for (ISpace? horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
+        Func<Dictionary<(char, int), BoardSpace>, BoardSpace?> iterator = isRight ? this.Space.Right : this.Space.Left;
+        for (var horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
             : horizontal.Left, horizontal = iterator(board))
         {
             if (horizontal == null)
                 break;
-            if (horizontal.Piece(pieces) is IPiece horizontalPiece)
+            if (horizontal.Piece(pieces) is BoardPiece horizontalPiece)
             {
                 if (horizontalPiece is not null && horizontalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, horizontalPiece));
@@ -166,21 +188,21 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, ref List<IMove> moves)
+    public void Verticals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
     {
         this.Verticals(board, pieces, true, ref moves);
         this.Verticals(board, pieces, false, ref moves);
     }
 
-    public void Verticals(Dictionary<(char, int), ISpace> board, Dictionary<(string, int), IPiece> pieces, bool isUp, ref List<IMove> moves)
+    public void Verticals(Dictionary<(char, int), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, bool isUp, ref List<Move> moves)
     {
-        Func<Dictionary<(char, int), ISpace>, ISpace?> iterator = isUp ? this.Space.Up : this.Space.Down;
-        for (ISpace? vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
+        Func<Dictionary<(char, int), BoardSpace>, BoardSpace?> iterator = isUp ? this.Space.Up : this.Space.Down;
+        for (var vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
             : vertical.Down, vertical = iterator(board))
         {
             if (vertical == null)
                 break;
-            if (vertical.Piece(pieces) is IPiece verticalPiece)
+            if (vertical.Piece(pieces) is BoardPiece verticalPiece)
             {
                 if (verticalPiece is not null && verticalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, verticalPiece));
@@ -191,7 +213,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         }
     }
 
-    public (ISpace?, ISpace?) DiagonalMovesUp(Dictionary<(char, int), ISpace> board)
+    public (BoardSpace?, BoardSpace?) DiagonalMovesUp(Dictionary<(char, int), BoardSpace> board)
     {
         var up = this.Space.Up(board);
         if (up == null)
@@ -202,7 +224,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         return (up.Right(board), up.Left(board));
     }
 
-    public (ISpace?, ISpace?) DiagonalMovesDown(Dictionary<(char, int), ISpace> board)
+    public (BoardSpace?, BoardSpace?) DiagonalMovesDown(Dictionary<(char, int), BoardSpace> board)
     {
         var down = this.Space.Down(board);
         if (down == null)
@@ -213,7 +235,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         return (down.Right(board), down.Left(board));
     }
 
-    public (ISpace?, ISpace?) DiagonalMovesRight(Dictionary<(char, int), ISpace> board)
+    public (BoardSpace?, BoardSpace?) DiagonalMovesRight(Dictionary<(char, int), BoardSpace> board)
     {
         var right = this.Space.Right(board);
         if (right == null)
@@ -224,7 +246,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         return (right.Up(board), right.Down(board));
     }
 
-    public (ISpace?, ISpace?) DiagonalMovesLeft(Dictionary<(char, int), ISpace> board)
+    public (BoardSpace?, BoardSpace?) DiagonalMovesLeft(Dictionary<(char, int), BoardSpace> board)
     {
         var left = this.Space.Left(board);
         if (left == null)
@@ -234,6 +256,4 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
             return (null, null);
         return (left.Up(board), left.Down(board));
     }
-
-    //public override string? ToString() => $"[{this.Space}], [{ChessActivity.Instance?.Resources?.GetResourceName(this.Id)?.Split("__")[1]}]";
 }

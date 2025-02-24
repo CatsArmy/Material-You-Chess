@@ -1,4 +1,5 @@
-﻿using Chess.Game.Moves;
+﻿using Chess.Game.Board;
+using Chess.Game.Moves;
 using Chess.Game.Player;
 
 namespace Chess.Game;
@@ -7,17 +8,17 @@ namespace Chess.Game;
 
 public interface IChessGame
 {
-    public Dictionary<(string, int), IPiece> AllPieces { get; }
+    public Dictionary<(string, int), BoardPiece> AllPieces { get; }
 
-    public Dictionary<(char, int), ISpace> Board { get; }
+    public Dictionary<(char, int), BoardSpace> Board { get; }
 
-    public List<IMove>? Moves { get; set; }
+    public List<Move>? Moves { get; set; }
 
     public IPlayer? White { get; set; }
 
     public IPlayer? Black { get; set; }
 
-    public IMove? LastMove { get; set; }
+    public Move? LastMove { get; set; }
 
-    public IPiece? Selected { get; set; }
+    public BoardPiece? Selected { get; set; }
 }

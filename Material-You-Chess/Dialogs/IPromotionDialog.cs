@@ -9,9 +9,9 @@ public interface IPromotionDialog
 {
     public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
-    public IPromote? Move { get; set; }
-
-    public void Show(ChessGame game, IPromote Move);
+    public Promotion? Move { get; set; }
+    public List<int> Id { get; }
+    public void Show(ChessGame game, Promotion Move);
     public void OnShow(object? sender, EventArgs args);
     public void OnConfirm(object? sender, EventArgs args);
 }

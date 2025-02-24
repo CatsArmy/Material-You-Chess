@@ -1,28 +1,41 @@
+using System.Text.Json.Serialization;
+using Chess.Game.Board;
+
 namespace Chess.Game.Moves;
 
-public class Move(IPiece origin, ISpace destination) : IMove
-{
-    public string Type { get; } = nameof(Move);
+[JsonPolymorphic()]
+[JsonDerivedType(typeof(Move), nameof(Move))]
 
-    public ISpace Destination { get; set; } = destination;
+[JsonDerivedType(typeof(Capture), nameof(Capture))]
+[JsonDerivedType(typeof(MoveOnly), nameof(MoveOnly))]
+[JsonDerivedType(typeof(EnPassant), nameof(EnPassant))]
+[JsonDerivedType(typeof(Promotion), nameof(Promotion))]
+
+[JsonDerivedType(typeof(KingSideCastle), nameof(KingSideCastle))]
+[JsonDerivedType(typeof(QueenSideCastle), nameof(QueenSideCastle))]
+[JsonDerivedType(typeof(DoubleMove), nameof(DoubleMove))]
+[JsonDerivedType(typeof(PromotionCapture), nameof(PromotionCapture))]
+public class Move(BoardPiece origin, BoardSpace destination) : IMove
+{
+    public BoardSpace Destination { get; set; } = destination;
 
     public int DestinationId { get; set; } = destination.Id;
 
-    public ISpace Origin { get; set; } = origin.Space;
+    public BoardSpace Origin { get; set; } = origin.Space;
 
-    public IPiece OriginPiece { get; set; } = origin;
+    public BoardPiece OriginPiece { get; set; } = origin;
 
     public int OriginId { get; set; } = origin.Id;
 
-    public NetworkedMove ToNetworked() => new(Destination.Index, Origin.Index, OriginPiece.Index);
-}
+    public virtual void Select()
+    {
+        this.Destination.Select();
+        this.Origin.Select();
+    }
 
-
-public class NetworkedMove((char, int) destination, (char, int) origin, (string, int) originPiece) : INetworkedMove
-{
-    public (char, int) Destination { get; set; } = destination;
-    public (char, int) Origin { get; set; } = origin;
-    public (string, int) OriginPiece { get; set; } = originPiece;
-
-    public IMove FromNetworked(IChessGame game) => new Move(game.AllPieces[OriginPiece], game.Board[Destination]);
+    public virtual void Unselect()
+    {
+        this.Destination.Unselect();
+        this.Origin.Unselect();
+    }
 }
