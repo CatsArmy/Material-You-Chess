@@ -34,6 +34,7 @@ public class LoginDialog : ILoginDialog
         this.Dialog = Builder.Create();
         this.Dialog.ShowEvent += OnShow;
     }
+    public void Show(object? sender, EventArgs args) => this.Dialog?.Show();
 
     public void OnShow(object? sender, EventArgs args)
     {
@@ -84,9 +85,10 @@ public class LoginDialog : ILoginDialog
         {
             if (!this.HasCaught)
                 this.App.UpdateUserState();
-            this.App.StartProgressIndicator();
+
+            this.App.UserProgressIndicator?.Show();
             await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
-            this.App.StopProgressIndicator();
+            this.App.UserProgressIndicator?.Hide();
         }
     }
 

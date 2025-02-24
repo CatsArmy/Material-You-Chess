@@ -39,6 +39,8 @@ public partial class SignupDialog : ISignupDialog
         this.Dialog.ShowEvent += OnShow;
     }
 
+    public void Show(object? sender, EventArgs args) => this.Dialog?.Show();
+
     public void OnShow(object? sender, EventArgs args)
     {
         this.UsernameInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.DialogUsernameInput);
@@ -104,10 +106,10 @@ public partial class SignupDialog : ISignupDialog
         }
 
         var builder = new UserProfileChangeRequest.Builder().SetDisplayName(this.Username);
-        this.App.StartProgressIndicator();
+        this.App.UserProgressIndicator?.Show();
         await FirebaseAuth.Instance!.CurrentUser!.UpdateProfileAsync(builder.Build());
         await FirebaseAuth.Instance!.CurrentUser!.ReloadAsync();
-        this.App.StopProgressIndicator();
+        this.App.UserProgressIndicator?.Hide();
         this.App.UpdateUserState();
     }
 

@@ -1,8 +1,7 @@
 using System.Text.Json;
 using Android.Animation;
-using Android.Content;
 using Android.Gms.Nearby.Connection;
-using AndroidX.ConstraintLayout.Widget;
+using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;
 using Chess.Dialogs;
@@ -19,18 +18,13 @@ public class ChessGame : IChessGame
     private int Turn = 1;
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? clientPlayerIsWhite;
-    private WhitePromotionDialog WhitePromotionDialog { get; set; }
-    private BlackPromotionDialog BlackPromotionDialog { get; set; }
-    private readonly Action<Payload>? send;
-    private readonly Context context;
-
-    public readonly ConstraintLayout BoardLayout;
 
     public Dictionary<(string, int), BoardPiece> AllPieces { get; } = [];
-
     public Dictionary<(char, int), BoardSpace> Board { get; } = [];
 
     public Move? LastMove { get; set; }
+
+    public IChessActivity Activity;
 
     public IPlayer? White { get; set; }
 
@@ -65,10 +59,7 @@ public class ChessGame : IChessGame
         }
     }
 
-    public Toast WinnerToast
-    {
-        get => Toast.MakeText(context, $"{Player!.Name} wins", ToastLength.Long)!;
-    }
+    public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{Player!.Name} wins", ToastLength.Long)!;
 
     public IPlayer? Player
     {
@@ -92,142 +83,130 @@ public class ChessGame : IChessGame
     {
         get => this.CurrentPlayerIsWhite switch
         {
-            true => this.WhitePromotionDialog,
-            false => this.BlackPromotionDialog
+            true => this.Activity.PromotionDialogs.White,
+            false => this.Activity.PromotionDialogs.Black
         };
     }
 
-    public ChessGame(Context context, string whiteName, string blackName, ConstraintLayout boardLayout,
-        WhitePromotionDialog whitePromotionDialog, BlackPromotionDialog blackPromotionDialog, bool? clientPlayerIsWhite, Action<Payload>? send)
+    public ChessGame(IChessActivity activity, bool? clientPlayerIsWhite)
     {
         Instance = this;
-        //SourceJsonGenerationContext.Default.BoardPiece.OnDeserialized = obj =>
-        //{
-        //    //(obj as BoardPiece).Id =;
-        //};
-
-        this.context = context;
-        this.BoardLayout = boardLayout;
-        this.WhitePromotionDialog = whitePromotionDialog;
-        this.BlackPromotionDialog = blackPromotionDialog;
-        this.clientPlayerIsWhite = clientPlayerIsWhite;
-        this.send = send;
-
+        this.Activity = activity;
         const string isWhite = "IsWhite";
         const string isBlack = "IsBlack";
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //B
 
         for (int id = Resource.Id.gmb__B1, rank = 1; id <= Resource.Id.gmb__B8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++;  //C
 
         for (int id = Resource.Id.gmb__C1, rank = 1; id <= Resource.Id.gmb__C8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //D
 
         for (int id = Resource.Id.gmb__D1, rank = 1; id <= Resource.Id.gmb__D8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //E
 
         for (int id = Resource.Id.gmb__E1, rank = 1; id <= Resource.Id.gmb__E8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //F
 
         for (int id = Resource.Id.gmb__F1, rank = 1; id <= Resource.Id.gmb__F8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //G
 
         for (int id = Resource.Id.gmb__G1, rank = 1; id <= Resource.Id.gmb__G8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
         file++; //H
 
         for (int id = Resource.Id.gmb__H1, rank = 1; id <= Resource.Id.gmb__H8; id++, rank++)
         {
-            var space = boardLayout.FindViewById<ImageView>(id);
+            var space = activity.BoardLayout!.FindViewById<ImageView>(id);
             string? tag = (space?.Tag as Java.Lang.String)?.ToString();
             this.Board[(file, rank)] = new BoardSpace(space, file, rank, tag switch
             {
                 isWhite => true,
                 isBlack => false,
-                _ => throw new Exception($"{boardLayout.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+                _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
             }, id);
         }
 
         foreach (var keyValuePair in this.Board)
         {
-            keyValuePair.Value.Space!.Click += OnClick;
-            keyValuePair.Value.Space!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
-            keyValuePair.Value.Space!.Clickable = true;
+            keyValuePair.Value.SpaceView!.Click += OnClick;
+            keyValuePair.Value.SpaceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
+            keyValuePair.Value.SpaceView!.Clickable = true;
         }
 
-        this.White = new White(whiteName, this.Board, this.BoardLayout);
-        this.Black = new Black(blackName, this.Board, this.BoardLayout);
+        this.White = new White(activity.Player1Name!, this.Board, this.Activity.BoardLayout!);
+        this.Black = new Black(activity.Player2Name!, this.Board, this.Activity.BoardLayout!);
 
         this.AllPieces.Merge(this.White.Pieces, this.Black.Pieces);
 
@@ -273,12 +252,12 @@ public class ChessGame : IChessGame
 
     public void RedrawGame()
     {
-        this.BoardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
+        this.Activity.BoardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
         foreach (var piece in this.AllPieces.Values)
             piece.Move(new(piece, piece.Space), this);
         this.LastMove?.Select();
         this.Selected?.Space?.Select();
-        this.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
     }
 
     private void OnClick(object? sender, EventArgs args)
@@ -327,10 +306,9 @@ public class ChessGame : IChessGame
             this.PromotionDialog.Show(this, promotion);
             return;
         }
-        var jsonType = SourceJsonGenerationContext.Default.GetTypeInfo(move.GetType())!;
-        var options = SourceJsonGenerationContext.Default;
-        this.send?.Invoke(Payload.FromBytes(
-        JsonSerializer.SerializeToUtf8Bytes<Move>(value: move, options: jsonType.Options)
+
+        this.Activity.Send(Payload.FromBytes(
+        JsonSerializer.SerializeToUtf8Bytes<Move>(value: move, SourceJsonGenerationContext.Default.Move)
         //JsonSerializer.SerializeToUtf8Bytes(move, SourceJsonGenerationContext.Default.GetTypeInfo(move.GetType())!)
             ));
 

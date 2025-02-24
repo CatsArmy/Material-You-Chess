@@ -8,6 +8,8 @@ public interface IMaterialDialog
 {
     public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
+
+    public void Show(object? sender, EventArgs args);
     public void OnShow(object? sender, EventArgs args);
     public void OnConfirm(object? sender, DialogClickEventArgs args);
     public void OnCancel(object? sender, DialogClickEventArgs args);

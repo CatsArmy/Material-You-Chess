@@ -456,13 +456,12 @@ public abstract class ConnectionsActivity : FragmentActivity
     /// Sends a <see cref="Payload"/> to all currently connected endpoints.
     /// </summary>
     /// <param name="payload">The data you want to send.</param>
-
-    protected void Send(Payload payload)
+    public virtual void Send(Payload payload)
     {
         this.Send(payload, this.EstablishedConnections.Keys);
     }
 
-    private async void Send(Payload payload, KeySet endpoints)
+    protected async void Send(Payload payload, KeySet endpoints)
     {
         Task? sent = this.ConnectionsClient!.SendPayloadAsync([.. endpoints], payload);
         await sent;
@@ -471,7 +470,6 @@ public abstract class ConnectionsActivity : FragmentActivity
             Logger.Warn($"sendPayload() failed. {sent.Exception}");
         }
     }
-
 
     /// <summary>
     ///Someone connected to us has sent us data. Override this method to act on the event.

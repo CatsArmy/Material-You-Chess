@@ -28,6 +28,8 @@ public class UsernameDialog : IUsernameDialog
         this.OnConfirmation = OnConfirmation;
     }
 
+    public void Show(object? sender, EventArgs args) => this.Dialog?.Show();
+
     public void OnShow(object? sender, EventArgs args)
     {
         this.UsernameInput = this.Dialog.FindViewById<TextInputEditText>(Resource.Id.MainUsernameInput);

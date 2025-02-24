@@ -21,7 +21,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
 
     public BoardSpace Space { get; set; } = space;
 
-    public int Id { get; } = id;
+    [JsonIgnore] public int Id { get; } = id;
 
     public bool IsWhite { get; } = isWhite;
 
@@ -38,7 +38,7 @@ public class BoardPiece(int id, (string, int) index, char abbreviation, bool isW
         if (game.Player == null || game.Enemy == null)
             return;
 
-        game.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
 
         if (move is Capture capture)
         {

@@ -21,6 +21,7 @@ using Google.Android.Material.ProgressIndicator;
 using Java.IO;
 using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;
 
@@ -43,16 +44,16 @@ public class MainActivity : AppCompatActivity
         }
     } = true;
 
+    public CircularProgressIndicator? UserProgressIndicator;
+    public ShapeableImageView? mainProfilePicture;
     public ActivityResultLauncher? PhotoTaker;
     private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
     private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
     private MaterialButtonToggleGroup? GameModeSelector;
     private Button? Online;
     private Button? Local;
-    public ShapeableImageView? mainProfilePicture;
     private Button? startGame;
     private TextView? mainUsername;
-    private CircularProgressIndicator? UserProgressIndicator;
     private ExtendedFloatingActionButton? profileAction1;
     private ExtendedFloatingActionButton? profileAction2;
     private ProfileDialog? profileDialog;
@@ -60,13 +61,11 @@ public class MainActivity : AppCompatActivity
     private LoginDialog? loginDialog;
     private SignupDialog? signupDialog;
 
-    public void StartProgressIndicator() => this.UserProgressIndicator?.Show();
-    public void StopProgressIndicator() => this.UserProgressIndicator?.Hide();
-    public void OpenPhotoTaker(object? sender, EventArgs args) => PhotoTaker?.Launch(null);
+    public void OpenPhotoTaker(object? sender, EventArgs args) => this.PhotoTaker?.Launch(null);
     public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
 
     private void CapturePhoto(Bitmap photo) => this.profileDialog?.OnSelectPhoto(photo);
-    private void SelectPhoto(Android.Net.Uri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
+    private void SelectPhoto(AndroidUri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
     private void StartGame(object? sender, EventArgs e)
     {
         Intent intent;
@@ -90,7 +89,7 @@ public class MainActivity : AppCompatActivity
         this.MaterialYouThemePreference = MaterialYouThemePreference;
 
         this.photoPicker = new(base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<Android.Net.Uri>(this.SelectPhoto)));
+            new ActivityResultCallback<AndroidUri>(this.SelectPhoto)));
 
         this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
             new ActivityResultCallback<Bitmap>(this.CapturePhoto));
@@ -145,33 +144,32 @@ public class MainActivity : AppCompatActivity
         return base.OnContextItemSelected(item);
     }
 
-    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "<Pending>")]
+    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
     public void UpdateUserState()
     {
         switch (FirebaseAuth.Instance.CurrentUser != null)
         {
             case true:
                 this.Online!.Enabled = true;
-
+                this.UserProgressIndicator?.Show();
+                this.UserProgressIndicator?.Hide();
                 this.profileAction1!.Text = "Profile";
-                this.profileAction1.Click -= OpenLoginDialog;
-                this.profileAction1.Click += OpenProfileDialog;
+                this.profileAction1.Click -= this.loginDialog!.Show;
+                this.profileAction1.Click += this.profileDialog!.Show;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
 
                 this.profileAction2!.Text = "Log out";
-                this.profileAction2.Click -= OpenSignupDialog;
-                this.profileAction2.Click += OpenLogoutDialog;
+                this.profileAction2.Click -= this.signupDialog!.Show;
+                this.profileAction2.Click += this.logoutDialog!.Show;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
 
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
                     var path = $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png";
-                    //Potential fix? .AsBitmap()
-                    //Downside not sure if it will always download it
-                    var a = Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path))
-                        .Error(Resource.Drawable.outline_account_circle_24);
-                    //.Into(mainProfilePicture!);
+                    //Potential fix? .AsBitmap(), Downside not sure if it will always download it
+                    Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path)).Error(Resource.Drawable.outline_account_circle_24)
+                        .Into(this.mainProfilePicture!);
                 }
                 break;
 
@@ -180,18 +178,17 @@ public class MainActivity : AppCompatActivity
                 this.GameModeSelector!.ClearChecked();
 
                 this.profileAction1!.Text = "Login";
-                this.profileAction1.Click -= OpenProfileDialog;
-                this.profileAction1.Click += OpenLoginDialog;
+                this.profileAction1.Click -= this.OpenProfileDialog;
+                this.profileAction1.Click += this.OpenLoginDialog;
                 this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
 
                 this.profileAction2!.Text = "Sign up";
-                this.profileAction2.Click -= OpenLogoutDialog;
-                this.profileAction2.Click += OpenSignupDialog;
+                this.profileAction2.Click -= this.OpenLogoutDialog;
+                this.profileAction2.Click += this.OpenSignupDialog;
                 this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
 
                 this.mainUsername!.Text = "Guest";
-                var unload = Glide.With(this);
-                new Thread((requestBuilder) => { (requestBuilder as RequestManager)?.Clear(this.mainProfilePicture!); }).Start(unload);
+                Glide.With(this).Clear(this.mainProfilePicture!);
                 this.mainProfilePicture!.SetImageURI(null);
                 this.mainProfilePicture.RequestLayout();
                 break;

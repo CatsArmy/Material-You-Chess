@@ -17,25 +17,18 @@ namespace Chess.Game.Moves;
 [JsonDerivedType(typeof(PromotionCapture), nameof(PromotionCapture))]
 public class Move(BoardPiece origin, BoardSpace destination) : IMove
 {
+    public BoardPiece Origin { get; set; } = origin;
     public BoardSpace Destination { get; set; } = destination;
-
-    public int DestinationId { get; set; } = destination.Id;
-
-    public BoardSpace Origin { get; set; } = origin.Space;
-
-    public BoardPiece OriginPiece { get; set; } = origin;
-
-    public int OriginId { get; set; } = origin.Id;
 
     public virtual void Select()
     {
         this.Destination.Select();
-        this.Origin.Select();
+        this.Origin.Space.Select();
     }
 
     public virtual void Unselect()
     {
         this.Destination.Unselect();
-        this.Origin.Unselect();
+        this.Origin.Space.Unselect();
     }
 }

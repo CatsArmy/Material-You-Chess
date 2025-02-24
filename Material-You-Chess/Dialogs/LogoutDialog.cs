@@ -24,6 +24,8 @@ public class LogoutDialog : IMaterialDialog
         this.Dialog.ShowEvent += OnShow;
     }
 
+    public void Show(object? sender, EventArgs args) => this.Dialog?.Show();
+
     public void OnShow(object? sender, EventArgs args) { }
 
     public void OnConfirm(object? sender, DialogClickEventArgs args)

@@ -2,27 +2,38 @@
 
 namespace Chess.Game.Board;
 
-public class BoardSpace(ImageView? Space, char file, int rank, bool IsWhite, int Id) : ISpace
+public class BoardSpace : ISpace
 {
-    [JsonIgnore] public ImageView? Space { get; } = Space;
-
-    public bool IsWhite { get; } = IsWhite;
-
-    public int Id { get; } = Id;
-
-    public (char, int) Index { get; } = (file, rank);
-
-    public char File { get; } = file;
-
-    public int Rank { get; } = rank;
+    [JsonIgnore] public ImageView? SpaceView { get; internal set; }
+    [JsonIgnore] public (char, int) Index => (this.File, this.Rank);
+    [JsonIgnore] public int Id { get; protected set; }
+    public bool IsWhite { get; protected set; }
+    public char File { get; protected set; }
+    public int Rank { get; protected set; }
 
     private const int select = 1;
-    public virtual void Select() => this.Space?.SetImageLevel(select);
-
+    public virtual void Select() => this.SpaceView?.SetImageLevel(select);
+    public virtual void Unselect() => this.SpaceView?.SetImageLevel(unselect);
     private const int unselect = 0;
-    public virtual void Unselect() => this.Space?.SetImageLevel(unselect);
 
-    public override string ToString() => $"{File}{Rank}";
+
+    public BoardSpace(ImageView? Space, char File, int Rank, bool IsWhite, int Id)
+    {
+        this.Id = Id;
+        this.SpaceView = Space;
+        this.IsWhite = IsWhite;
+        this.File = File;
+        this.Rank = Rank;
+    }
+
+    public BoardSpace(ChessGame game, bool IsWhite, char File, int Rank, int Id)
+    {
+        this.Id = Id;
+        this.SpaceView = game.Activity.BoardLayout!.FindViewById<ImageView>(Id);
+        this.IsWhite = IsWhite;
+        this.File = File;
+        this.Rank = Rank;
+    }
 
     public BoardSpace? DiagonalUp(Dictionary<(char, int), BoardSpace> board, bool isRight)
     {

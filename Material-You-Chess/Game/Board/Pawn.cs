@@ -34,10 +34,10 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
 
         if (move is Promotion promotion && promotion.PromoteTo != null)
         {
-            var Piece = game.Player!.Pieces[move.OriginPiece.Index];
+            var Piece = game.Player!.Pieces[move.Origin.Index];
             if (promotion.PromoteTo?.Type == $"{typeof(Queen)}")
             {
-                Piece = new Queen(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece = new Queen(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
                 Piece.Piece!.SetImageResource(Piece.IsWhite switch
                 {
                     true => Resource.Drawable.queen_white,
@@ -47,7 +47,7 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
 
             else if (promotion.PromoteTo?.Type == $"{typeof(Knight)}")
             {
-                Piece = new Knight(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece = new Knight(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
                 Piece.Piece!.SetImageResource(Piece.IsWhite switch
                 {
                     true => Resource.Drawable.knight_white,
@@ -57,7 +57,7 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
 
             else if (promotion.PromoteTo?.Type == $"{typeof(Rook)}")
             {
-                Piece = new Rook(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece = new Rook(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
                 Piece.Piece!.SetImageResource(Piece.IsWhite switch
                 {
                     true => Resource.Drawable.rook_white,
@@ -67,7 +67,7 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
 
             else if (promotion.PromoteTo?.Type == $"{typeof(Bishop)}")
             {
-                Piece = new Bishop(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.BoardLayout!);
+                Piece = new Bishop(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
                 Piece.Piece!.SetImageResource(Piece.IsWhite switch
                 {
                     true => Resource.Drawable.bishop_white,
@@ -75,8 +75,8 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
                 });
             }
 
-            game.Player!.Pieces[move.OriginPiece.Index] = Piece;
-            game.AllPieces![move.OriginPiece.Index] = Piece;
+            game.Player!.Pieces[move.Origin.Index] = Piece;
+            game.AllPieces![move.Origin.Index] = Piece;
             if (move is PromotionCapture capture)
                 Piece.Capture(capture.Piece, game);
         }

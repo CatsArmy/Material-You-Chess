@@ -1,41 +1,56 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
     <TargetFramework>net9.0-android35.0</TargetFramework>
     <RootNamespace>Chess</RootNamespace>
     <OutputType>Exe</OutputType>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationId>com.catsarmy.chess</ApplicationId>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+    <EnableNetNativeDeveloperExperienceMode>True</EnableNetNativeDeveloperExperienceMode>
+    <DebuggerSupport>True</DebuggerSupport>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <WarningLevel>9999</WarningLevel>
+    <SignAssembly>False</SignAssembly>
+    <AndroidKeyStore>True</AndroidKeyStore>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AndroidEnableProfiler>False</AndroidEnableProfiler>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <EnableLLVM>False</EnableLLVM>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+    <RunAOTCompilation>False</RunAOTCompilation>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        
     <!--
       Enables trim analyzers and full trimming during Release mode.
       To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
     -->
-    <TrimMode>full</TrimMode>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
-    <LangVersion>preview</LangVersion>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <AnalysisLevel>preview</AnalysisLevel>
-    <SignAssembly>False</SignAssembly>
-  </PropertyGroup>
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <TrimMode>full</TrimMode>
+  <IsAotCompatible>True</IsAotCompatible>
   <RunAOTCompilation>True</RunAOTCompilation>
-  <AndroidEnableProfiledAot>True</AndroidEnableProfiledAot>
-  <DebugType>embedded</DebugType>
-  <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-  <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
-</PropertyGroup>
-
-<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
   <DebugType>portable</DebugType>
-  <RunAOTCompilation>true</RunAOTCompilation>
-  <AndroidEnableProfiledAot>true</AndroidEnableProfiledAot>
-  <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-</PropertyGroup>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectNullableAnnotationsDefault" Value="true" />
+    <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectRequiredConstructorParametersDefault" Value="true" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.40" />
@@ -69,13 +84,6 @@
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectNullableAnnotationsDefault" Value="true" />
-  </ItemGroup>
+  <!--<Import Project="$(SolutionDir)Directory.Build.props" />-->
 
-<!--  <ItemGroup>
-    <AndroidResource Include="Resources\**\*">
-        <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
-  </ItemGroup>-->
 </Project>

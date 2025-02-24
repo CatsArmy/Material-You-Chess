@@ -14,7 +14,7 @@ public class SpecialPiece(int id, (string, int) index, char abbreviation, bool i
         if (game.Player == null || game.Enemy == null)
             return;
 
-        game.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
         game.LastMove = move;
 
         if (move is Capture capture)

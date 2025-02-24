@@ -20,10 +20,10 @@ public class King(int id, (string, int) index, bool isWhite, BoardSpace space, C
         game.Player!.Outcome = GameOutcome.Win;
         game.Enemy!.Outcome = GameOutcome.Lose;
         foreach (var Space in game.Board.Values)
-            Space.Space!.Clickable = false;
+            Space.SpaceView!.Clickable = false;
 
         foreach (var piece in game.AllPieces.Values)
-            piece.Space.Space!.Clickable = false;
+            piece.Space.SpaceView!.Clickable = false;
 
         //display and handle the end of the game
         game.WinnerToast.Show();

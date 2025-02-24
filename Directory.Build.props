@@ -1,0 +1,9 @@
+<Project>
+    <!-- Build configurations -->
+    <PropertyGroup>
+        <AndroidSigningKeyStore>com.catsarmy.chess.keystore</AndroidSigningKeyStore>
+        <AndroidSigningKeyAlias>com.catsarmy.chess</AndroidSigningKeyAlias>
+        <AndroidSigningKeyPass>gilaoded</AndroidSigningKeyPass>
+        <AndroidSigningStorePass>gilaoded</AndroidSigningStorePass>
+    </PropertyGroup>
+</Project>

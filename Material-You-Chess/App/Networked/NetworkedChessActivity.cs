@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
+using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using Android.Graphics;
@@ -10,8 +11,10 @@ using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Nearby;
+using Chess.Dialogs;
 using Chess.Game;
 using Chess.Game.Moves;
+using Chess.Game.Player;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Android.Material.ImageView;
@@ -20,28 +23,37 @@ using Microsoft.Maui.ApplicationModel;
 namespace Chess.App.Networked;
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
-public class NetworkedChessActivity : ConnectionsActivity
+public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
 {
-    protected override Strategy Strategy => Strategy.P2pStar;
-    protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
-
     /// <summary>
-    /// if true => white player / p1
-    /// if false => black player / p2
+    /// <see langword="if" /> <see cref="isConnectionInitiator" /> <see langword="is" /> <see langword="true" />:
+    /// Player1 <see langword="is"/> <see cref="White"/>
+    /// <br />
+    /// <see langword="if" /> <see cref="isConnectionInitiator" /> <see langword="is" /> <see langword="false" />:
+    /// Player2 <see langword="is"/> <see cref="Black"/>
     /// </summary>
     private bool isConnectionInitiator = false;
     private LobbyWaitingRoomBottomSheet? LobbyWaitingRoom;
-    private ShapeableImageView? p1MainProfileImageView;
-    private ShapeableImageView? p2MainProfileImageView;
-    private TextView? p1MainUsername;
-    private TextView? p2MainUsername;
-    private ChessGame? game;
 
-    private State State
+    public ChessGame? Game { get; set; }
+    public Context? Context { get; set; }
+    public ConstraintLayout? BoardLayout { get; set; }
+    public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
+    public ShapeableImageView? Player1ShapeableImageView { get; set; }
+    public ShapeableImageView? Player2ShapeableImageView { get; set; }
+    public TextView? Profile1Username { get; set; }
+    public TextView? Profile2Username { get; set; }
+
+    public string Player1Name { get; private set; } = string.Empty;
+    public string Player2Name { get; private set; } = string.Empty;
+
+    protected override string ServiceId => "com.google.location.nearby.apps.chess";
+    protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
+    protected override Strategy Strategy => Strategy.P2pStar;
+
+    protected State State
     {
-        get => field;
-        set
+        get; set
         {
             if (field == value)
             {
@@ -111,13 +123,13 @@ public class NetworkedChessActivity : ConnectionsActivity
         base.SetContentView(Resource.Layout.chess_activity);
 
         //Run our logic
-        this.p1MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        this.p2MainProfileImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
+        this.Player1ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+        this.Player2ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
 
-        this.p1MainUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
-        this.p2MainUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
-
-        //set game view to waiting for opponent 
+        this.Profile1Username = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        this.Profile2Username = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        this.PromotionDialogs = (new(this), new(this));
+        this.BoardLayout = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
     }
 
     public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
@@ -132,6 +144,7 @@ public class NetworkedChessActivity : ConnectionsActivity
         base.OnStart();
         this.State = State.Searching;
 
+        //set game view to waiting for opponent 
         Logger.Debug($"::new {nameof(LobbyWaitingRoomBottomSheet)}()::");
         this.LobbyWaitingRoom = new LobbyWaitingRoomBottomSheet(this);
         Logger.Debug($"::show {nameof(LobbyWaitingRoomBottomSheet)}()::");
@@ -144,7 +157,7 @@ public class NetworkedChessActivity : ConnectionsActivity
         get => base.RequestedOrientation; set
         {
             base.RequestedOrientation = value;
-            this.game?.RedrawGame();
+            this.Game?.RedrawGame();
         }
     }
 
@@ -162,6 +175,11 @@ public class NetworkedChessActivity : ConnectionsActivity
     {
         this.State = State.Unknown;
         base.Finish();
+    }
+
+    public override void Send(Payload payload)
+    {
+        base.Send(payload);
     }
 
     protected override async Task OnEndpointDiscoveredAsync(EndPoint endpoint)
@@ -193,67 +211,71 @@ public class NetworkedChessActivity : ConnectionsActivity
         this.AcceptConnection(endpoint);
     }
 
-    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility", Justification = "<Pending>")]
+    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
         this.State = State.Connected;
-        var board = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         var stream = new MemoryStream();
         switch (this.isConnectionInitiator)
         {
             case true:
                 Logger.Error("isConnection Initiator true");
-                this.p1MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
+                this.Profile1Username!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
                 {
                     true => "Player",
                     false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
                 };
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
-                    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                        .Error(Resource.Drawable.outline_account_circle_24)
-                        .Into(this.p1MainProfileImageView!);
+                    //var load =
+                    Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                    .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                    .Error(Resource.Drawable.outline_account_circle_24)
+                    .Into(this.Player1ShapeableImageView!);
                 }
-                this.p2MainUsername!.Text = endpoint.Name;
-                this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
-            new(this), new(this), true, this.Send);
-                if (this.p1MainProfileImageView == null)
+                this.Profile2Username!.Text = endpoint.Name;
+                this.Player2Name = endpoint.Name;
+                this.Player1Name = FirebaseAuth.Instance?.CurrentUser?.DisplayName!;
+                this.Game = new ChessGame(this, true);
+                if (this.Player1ShapeableImageView == null)
                     return;
 
-                if (!(this.p1MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                if (!(this.Player1ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
                     return;
                 break;
 
             case false:
                 Logger.Error("isConnection Initiator false");
-                this.p2MainUsername!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
+                this.Player2Name = (FirebaseAuth.Instance?.CurrentUser == null) switch
                 {
                     true => "Player",
-                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
+                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName!,
                 };
+
+                this.Profile2Username!.Text = this.Player2Name;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
-                    var load = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                        .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                        .Error(Resource.Drawable.outline_account_circle_24)
-                        .Into(this.p2MainProfileImageView!);
+                    //var load = 
+                    Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                    .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                    .Error(Resource.Drawable.outline_account_circle_24)
+                    .Into(this.Player2ShapeableImageView!);
                 }
-                this.p1MainUsername!.Text = endpoint.Name;
-                this.game = new ChessGame(this, FirebaseAuth.Instance?.CurrentUser?.DisplayName!, endpoint.Name, board!,
-            new(this), new(this), false, this.Send);
-                if (this.p2MainProfileImageView == null)
+                this.Player1Name = endpoint.Name;
+                this.Profile1Username!.Text = this.Player1Name;
+
+                this.Game = new ChessGame(this, false);
+                if (this.Player2ShapeableImageView == null)
                     return;
 
-                if (!(this.p2MainProfileImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                if (!(this.Player2ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
                     return;
                 break;
         }
 
         this.Send(Payload.FromStream(stream));
     }
-
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
     {
@@ -265,7 +287,7 @@ public class NetworkedChessActivity : ConnectionsActivity
     {
         this.State = State.Unknown;
         this.State = State.Searching;
-        //this.isConnectionInitiator = null;
+        this.isConnectionInitiator = false;
         this.StartDiscovering();
     }
 
@@ -274,7 +296,8 @@ public class NetworkedChessActivity : ConnectionsActivity
     /// </summary>
     /// <param name="endpoint">The client who is sending the <paramref name="payload"/> to us </param>
     /// <param name="payload">The <see cref="Payload"/> containing all the data for us to handle the event</param>
-    [SuppressMessage("Trimming", "IL2057:Unrecognized value passed to the parameter of method. It's not possible to guarantee the availability of the target type.", Justification = "<Pending>")]
+    [SuppressMessage("Trimming",
+        "IL2057:Unrecognized value passed to the parameter of method. It's not possible to guarantee the availability of the target type.")]
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
         if (payload.PayloadType == Payload.Type.Bytes)
@@ -284,7 +307,7 @@ public class NetworkedChessActivity : ConnectionsActivity
             string typeDiscriminator = DOM.RootElement.GetProperty("$type").GetString()!;
             var JsonTypeInfo = SourceJsonGenerationContext.Default.GetTypeInfo(Type.GetType(typeDiscriminator)!);
             Move? move = JsonSerializer.Deserialize(DOM, JsonTypeInfo!) as Move;
-            move!.OriginPiece.Move(move, this.game!);
+            move!.Origin.Move(move, this.Game!);
         }
 
         if (payload.PayloadType == Payload.Type.Stream)
@@ -296,11 +319,11 @@ public class NetworkedChessActivity : ConnectionsActivity
             switch (this.isConnectionInitiator)
             {
                 case true:
-                    Glide.With(this).Load(pfp).Into(this.p2MainProfileImageView!);
+                    Glide.With(this).Load(pfp).Into(this.Player2ShapeableImageView!);
                     break;
 
                 case false:
-                    Glide.With(this).Load(pfp).Into(this.p1MainProfileImageView!);
+                    Glide.With(this).Load(pfp).Into(this.Player1ShapeableImageView!);
                     break;
             }
 

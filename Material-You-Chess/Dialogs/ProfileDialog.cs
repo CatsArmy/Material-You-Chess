@@ -44,6 +44,7 @@ public class ProfileDialog : IProfileDialog
         this.UsernameDialog = new UsernameDialog(app, this.OnUsernameChange);
         this.UserProfileChangeRequest = new UserProfileChangeRequest.Builder();
     }
+    public void Show(object? sender, EventArgs args) => this.Dialog?.Show();
 
     public void OnShow(object? sender, EventArgs args)
     {
