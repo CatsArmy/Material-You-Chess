@@ -20,8 +20,14 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>preview</AnalysisLevel>
     <WarningLevel>9999</WarningLevel>
-    <SignAssembly>False</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+    <SignAssembly>True</SignAssembly>
     <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>$(SolutionDir)catsarmy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>file:$(SolutionDir)AndroidSigningPassword.txt</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>file:$(SolutionDir)AndroidSigningPassword.txt</AndroidSigningStorePass>
   </PropertyGroup>
 
   <PropertyGroup>
