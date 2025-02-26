@@ -6,6 +6,7 @@ using Android.Runtime;
 using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
+using AndroidX.Credentials;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
@@ -60,8 +61,15 @@ public class MainActivity : AppCompatActivity
     private LogoutDialog? logoutDialog;
     private LoginDialog? loginDialog;
     private SignupDialog? signupDialog;
+    private PermissionsRequester? permissionsHandler;
 
-    public void OpenPhotoTaker(object? sender, EventArgs args) => this.PhotoTaker?.Launch(null);
+    public void OpenPhotoTaker(object? sender, EventArgs args)
+    {
+        //this.permissionsHandler!.RequestPermissions(this);
+
+        this.PhotoTaker?.Launch(null);
+    }
+
     public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
 
     private void CapturePhoto(Bitmap photo) => this.profileDialog?.OnSelectPhoto(photo);
@@ -102,7 +110,7 @@ public class MainActivity : AppCompatActivity
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
         // Permission request logic
-        _ = new PermissionsRequester(this);
+        this.permissionsHandler = new PermissionsRequester(this);
 
         using (var glide = Glide.Get(this))
         {
@@ -127,6 +135,11 @@ public class MainActivity : AppCompatActivity
         this.profileDialog = new ProfileDialog(this);
         this.startGame!.Click += this.StartGame;
         this.UpdateUserState();
+
+        // Use your app or activity context to instantiate a client instance of
+        // CredentialManager.
+        var credentialManager = CredentialManager.Create(this.ApplicationContext!);
+
     }
 
     public override void OnCreateContextMenu(IContextMenu? menu, View? view, IContextMenuContextMenuInfo? menuInfo)

@@ -3,10 +3,30 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Rook(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : SpecialPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class WhiteRook(int id, int count, BoardSpace space) : Rook(id, space)
 {
-    private const char abbreviation = 'R';
+    public WhiteRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"w{nameof(Rook)}";
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => true;
+}
+
+public class BlackRook(int id, int count, BoardSpace space) : Rook(id, space)
+{
+    public BlackRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"b{nameof(Rook)}";
+
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => false;
+}
+
+public class Rook(int id, BoardSpace space) : SpecialPiece(id, space)
+{
+    public override char Abbreviation => 'R';
 
     public override void Move(Move move, ChessGame game)
     {

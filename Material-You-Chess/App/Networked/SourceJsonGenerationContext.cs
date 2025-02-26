@@ -8,6 +8,7 @@ namespace Chess.App.Networked;
 [JsonSerializable(typeof(BoardSpace))]
 [JsonSerializable(typeof(BoardPiece))]
 [JsonSerializable(typeof(SerializedType))]
-[JsonSourceGenerationOptions(IncludeFields = true, WriteIndented = true, PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate
-    , AllowOutOfOrderMetadataProperties = true, DefaultIgnoreCondition = JsonIgnoreCondition.Never)]
+[JsonSourceGenerationOptions(IncludeFields = true, WriteIndented = true,
+    PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate
+    )]
 internal partial class SourceJsonGenerationContext : JsonSerializerContext;

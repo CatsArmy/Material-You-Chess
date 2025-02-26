@@ -3,10 +3,31 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Queen(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class WhiteQueen(int id, int count, BoardSpace space) : Queen(id, space)
 {
-    private const char abbreviation = 'Q';
+    public WhiteQueen(string prefix, int id, int count, BoardSpace space)
+        : this(id, count, space) => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"w{nameof(Queen)}";
+
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => true;
+}
+
+public class BlackQueen(int id, int count, BoardSpace space) : Queen(id, space)
+{
+    public BlackQueen(string prefix, int id, int count, BoardSpace space)
+    : this(id, count, space) => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"b{nameof(Queen)}";
+
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => false;
+}
+
+public class Queen(int id, BoardSpace space) : BoardPiece(id, space)
+{
+    public override char Abbreviation => 'Q';
 
     public override List<Move> Moves(ChessGame game)
     {

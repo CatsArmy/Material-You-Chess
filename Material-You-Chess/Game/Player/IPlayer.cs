@@ -8,9 +8,9 @@ public interface IPlayer
 
     public GameOutcome Outcome { get; set; }
 
-    public Dictionary<(string, int), BoardPiece> Pieces { get; set; }
+    public Dictionary<(string, int), BoardPiece> Pieces { get; }
 
-    public Pawn[] Pawns { get; set; }
+    public List<Pawn> Pawns { get; }
 
     public Rook? Rook1 { get; set; }
 

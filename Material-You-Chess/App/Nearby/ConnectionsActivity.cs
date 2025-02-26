@@ -233,7 +233,9 @@ public abstract class ConnectionsActivity : FragmentActivity
     /// <summary>
     /// Called when advertising successfully starts. Override this method to act on the event.
     /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected virtual async Task OnAdvertisingStartedAsync() { }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
     /// <summary>
     /// Called when advertising fails to start. Override this method to act on the event.
@@ -242,7 +244,9 @@ public abstract class ConnectionsActivity : FragmentActivity
     /// <summary>
     /// Called when advertising fails to start. Override this method to act on the event.
     /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected virtual async Task OnAdvertisingFailedAsync() { }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
     /// <summary>
     /// Called when a pending connection with a remote endpoint is created. Use <see cref="ConnectionInfo"/>
@@ -327,12 +331,16 @@ public abstract class ConnectionsActivity : FragmentActivity
     /// <summary>
     /// Called when discovery successfully starts. Override this method to act on the event.
     /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected virtual async Task OnDiscoveryStartedAsync() { }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
     /// <summary>
     /// Called when discovery fails to start. Override this method to act on the event.
     /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     protected virtual async Task OnDiscoveryFailedAsync() { }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
     ///<summary>
     ///Called when a remote endpoint is discovered. To connect to the device, call <see cref="ConnectToEndpoint(EndPoint)"/>.

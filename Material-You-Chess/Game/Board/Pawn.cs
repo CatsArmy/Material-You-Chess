@@ -1,20 +1,120 @@
-﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : SpecialPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 {
-    public bool EnPassantCapturable = false;
+    public override (string prefix, int count) Index => ($"w{nameof(Pawn)}", count);
+    public override bool IsWhite => true;
 
-    private const char abbreviation = 'P';
-
-    public override void Update(bool IsUpdatingPlayer = false)
+    public override List<Move> Moves(ChessGame game)
     {
-        base.Update(IsUpdatingPlayer);
-        this.EnPassantCapturable = false;
+        var moves = base.Moves(game);
+        if (this.Space.Forward(game.Board, this.IsWhite) is not BoardSpace forward)
+            return moves;
+
+        const int maxRank = 8;
+        var piece = forward.Piece(game.AllPieces);
+        if (piece == null)
+        {
+            moves.Add((forward.Rank == maxRank) switch
+            {
+                true => new Promotion(this, forward),
+                false => new MoveOnly(this, forward)
+            });
+
+            if (!this.HasMoved)
+            {
+                var doubleMove = forward.Forward(game.Board, this.IsWhite);
+                if (doubleMove?.Piece(game.AllPieces) == null)
+                    moves.Add(new DoubleMove(this, doubleMove!));
+            }
+        }
+
+        if (forward.Left(game.Board) is BoardSpace left)
+        {
+            if (left.Piece(game.AllPieces) is BoardPiece leftPiece)
+            {
+                if (!leftPiece.IsWhite)
+                    moves.Add((left.Rank == maxRank) switch
+                    {
+                        true => new PromotionCapture(this, leftPiece),
+                        false => new Capture(this, leftPiece)
+                    });
+            }
+            else if (left.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            {
+                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                    moves.Add(new EnPassant(this, left, captured));
+            }
+        }
+
+        if (forward.Right(game.Board) is BoardSpace right)
+        {
+            if (right.Piece(game.AllPieces) is BoardPiece rightPiece)
+            {
+                if (!rightPiece.IsWhite)
+                    moves.Add((right.Rank == maxRank) switch
+                    {
+                        true => new PromotionCapture(this, rightPiece),
+                        false => new Capture(this, rightPiece)
+                    });
+            }
+            else if (right.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            {
+                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                    moves.Add(new EnPassant(this, right, captured));
+            }
+        }
+
+        return moves;
     }
+
+    public override void Promote(ChessGame game, Promotion move)
+    {
+        if (move.PromoteTo is not SerializedType promoteTo)
+            throw new Exception("Failed to promote to type");
+
+        BoardPiece Piece;
+        if (promoteTo == typeof(WhiteQueen))
+        {
+            Piece = new WhiteQueen(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.queen_white);
+        }
+
+        else if (promoteTo == typeof(WhiteKnight))
+        {
+            Piece = new WhiteKnight(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.knight_white);
+        }
+
+        else if (promoteTo == typeof(WhiteBishop))
+        {
+            Piece = new WhiteBishop(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.bishop_white);
+        }
+
+        else if (promoteTo == typeof(WhiteRook))
+        {
+            Piece = new WhiteRook(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.rook_white);
+        }
+
+        else
+            throw new Exception("Failed to promote to type");
+
+        game.Player!.Pieces[this.Index] = Piece;
+        game.AllPieces![this.Index] = Piece;
+        base.Promote(game, move);
+        if (move is PromotionCapture capture)
+            Piece.Capture(capture.Piece, game);
+    }
+}
+
+public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
+{
+    public override (string prefix, int count) Index => ($"b{nameof(Pawn)}", count);
+    public override bool IsWhite => false;
 
     public override void Move(Move move, ChessGame game)
     {
@@ -32,54 +132,8 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
             this.EnPassantCapturable = true;
         }
 
-        if (move is Promotion promotion && promotion.PromoteTo != null)
-        {
-            var Piece = game.Player!.Pieces[move.Origin.Index];
-            if (promotion.PromoteTo?.Type == $"{typeof(Queen)}")
-            {
-                Piece = new Queen(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.queen_white,
-                    false => Resource.Drawable.queen_black
-                });
-            }
-
-            else if (promotion.PromoteTo?.Type == $"{typeof(Knight)}")
-            {
-                Piece = new Knight(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.knight_white,
-                    false => Resource.Drawable.knight_black
-                });
-            }
-
-            else if (promotion.PromoteTo?.Type == $"{typeof(Rook)}")
-            {
-                Piece = new Rook(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.rook_white,
-                    false => Resource.Drawable.rook_black
-                });
-            }
-
-            else if (promotion.PromoteTo?.Type == $"{typeof(Bishop)}")
-            {
-                Piece = new Bishop(Piece.Id, Piece.Index, Piece.IsWhite, move.Destination, game.Activity.BoardLayout!);
-                Piece.Piece!.SetImageResource(Piece.IsWhite switch
-                {
-                    true => Resource.Drawable.bishop_white,
-                    false => Resource.Drawable.bishop_black
-                });
-            }
-
-            game.Player!.Pieces[move.Origin.Index] = Piece;
-            game.AllPieces![move.Origin.Index] = Piece;
-            if (move is PromotionCapture capture)
-                Piece.Capture(capture.Piece, game);
-        }
+        if (move is Promotion promotion)
+            this.Promote(game, promotion);
 
         this.Move(move);
         game.NextTurn(move);
@@ -87,27 +141,25 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
 
     public override List<Move> Moves(ChessGame game)
     {
-        List<Move> moves = base.Moves(game);
+        var moves = base.Moves(game);
         if (this.Space.Forward(game.Board, this.IsWhite) is not BoardSpace forward)
             return moves;
-        int rank = this.IsWhite switch
-        {
-            true => 8,
-            false => 1
-        };
+
+        const int maxRank = 1;
         var piece = forward.Piece(game.AllPieces);
         if (piece == null)
         {
-            moves.Add((forward.Rank == rank) switch
+            moves.Add((forward.Rank == maxRank) switch
             {
                 true => new Promotion(this, forward),
                 false => new MoveOnly(this, forward)
             });
+
             if (!this.HasMoved)
             {
-                var forwardX2 = forward.Forward(game.Board, this.IsWhite);
-                if (forwardX2?.Piece(game.AllPieces) == null)
-                    moves.Add(new DoubleMove(this, forwardX2!));
+                var doubleMove = forward.Forward(game.Board, this.IsWhite);
+                if (doubleMove?.Piece(game.AllPieces) == null)
+                    moves.Add(new DoubleMove(this, doubleMove!));
             }
         }
 
@@ -115,14 +167,14 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
         {
             if (left.Piece(game.AllPieces) is BoardPiece leftPiece)
             {
-                if (leftPiece?.IsWhite != this.IsWhite)
-                    moves.Add((left.Rank == rank) switch
+                if (leftPiece.IsWhite)
+                    moves.Add((left.Rank == maxRank) switch
                     {
-                        true => new PromotionCapture(this, leftPiece!),
-                        false => new Capture(this, leftPiece!)
+                        true => new PromotionCapture(this, leftPiece),
+                        false => new Capture(this, leftPiece)
                     });
             }
-            else if (left.Backward(game.Board, isWhite) is BoardSpace EnPassantSpace)
+            else if (left.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
             {
                 if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, left, captured));
@@ -133,14 +185,14 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
         {
             if (right.Piece(game.AllPieces) is BoardPiece rightPiece)
             {
-                if (rightPiece?.IsWhite != this.IsWhite)
-                    moves.Add((right.Rank == rank) switch
+                if (rightPiece.IsWhite)
+                    moves.Add((right.Rank == maxRank) switch
                     {
-                        true => new PromotionCapture(this, rightPiece!),
-                        false => new Capture(this, rightPiece!)
+                        true => new PromotionCapture(this, rightPiece),
+                        false => new Capture(this, rightPiece)
                     });
             }
-            else if (right.Backward(game.Board, isWhite) is BoardSpace EnPassantSpace)
+            else if (right.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
             {
                 if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, right, captured));
@@ -148,5 +200,84 @@ public class Pawn(int id, (string, int) index, bool isWhite, BoardSpace space, C
         }
 
         return moves;
+    }
+
+    public override void Promote(ChessGame game, Promotion move)
+    {
+        if (move.PromoteTo is not SerializedType promoteTo)
+            throw new Exception("Failed to promote to type");
+
+        BoardPiece Piece;
+        if (promoteTo == typeof(BlackQueen))
+        {
+            Piece = new BlackQueen(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.queen_black);
+        }
+
+        else if (promoteTo == typeof(BlackKnight))
+        {
+            Piece = new BlackKnight(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.knight_black);
+        }
+
+        else if (promoteTo == typeof(BlackBishop))
+        {
+            Piece = new BlackBishop(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.bishop_black);
+        }
+
+        else if (promoteTo == typeof(BlackRook))
+        {
+            Piece = new BlackRook(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece.PieceView!.SetImageResource(Resource.Drawable.rook_black);
+        }
+
+        else
+            throw new Exception("Failed to promote to type");
+
+        game.Player!.Pieces[this.Index] = Piece;
+        game.AllPieces![this.Index] = Piece;
+        base.Promote(game, move);
+        if (move is PromotionCapture capture)
+            Piece.Capture(capture.Piece, game);
+    }
+}
+
+public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
+{
+    public bool EnPassantCapturable = false;
+
+    public override char Abbreviation => 'P';
+    public override void Move(Move move, ChessGame game)
+    {
+        this.Update();
+        if (move is EnPassant enPassant)
+        {
+            game.Selected!.Capture(enPassant.Pawn, game);
+            this.Move(move);
+            game.NextTurn(move);
+            return;
+        }
+
+        if (move is DoubleMove)
+        {
+            this.EnPassantCapturable = true;
+        }
+
+        if (move is Promotion promotion)
+        {
+            this.Promote(game, promotion);
+        }
+
+        this.Move(move);
+        game.NextTurn(move);
+    }
+
+    public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);
+
+    public override void Update(bool IsUpdatingPlayer = false)
+    {
+        base.Update(IsUpdatingPlayer);
+        this.EnPassantCapturable = false;
     }
 }

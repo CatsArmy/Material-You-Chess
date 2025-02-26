@@ -1,11 +1,9 @@
 ﻿using Android.Animation;
-using AndroidX.ConstraintLayout.Widget;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class SpecialPiece(int id, (string, int) index, char abbreviation, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class SpecialPiece(int id, BoardSpace space) : BoardPiece(id, space)
 {
     public bool HasMoved { get; set; } = false;
 

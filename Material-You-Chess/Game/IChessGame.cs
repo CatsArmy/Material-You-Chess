@@ -10,13 +10,13 @@ public interface IChessGame
 {
     public Dictionary<(string, int), BoardPiece> AllPieces { get; }
 
-    public Dictionary<(char, int), BoardSpace> Board { get; }
+    public Dictionary<(char file, int rank), BoardSpace> Board { get; }
 
     public List<Move>? Moves { get; set; }
 
-    public IPlayer? White { get; set; }
+    public White? Player1 { get; set; }
 
-    public IPlayer? Black { get; set; }
+    public Black? Player2 { get; set; }
 
     public Move? LastMove { get; set; }
 

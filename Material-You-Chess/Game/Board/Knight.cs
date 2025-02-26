@@ -1,12 +1,31 @@
-﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
-public class Knight(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : BoardPiece(id, index, abbreviation, isWhite, space, boardLayout)
+public class WhiteKnight(int id, int count, BoardSpace space) : Knight(id, space)
 {
-    private const char abbreviation = 'N';
+    public WhiteKnight(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"w{nameof(Knight)}";
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => true;
+}
+
+public class BlackKnight(int id, int count, BoardSpace space) : Knight(id, space)
+{
+    public BlackKnight(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.Prefix = prefix;
+
+    private string Prefix { get; set; } = $"b{nameof(Knight)}";
+    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override bool IsWhite => false;
+}
+
+public class Knight(int id, BoardSpace space) : BoardPiece(id, space)
+{
+    public override char Abbreviation => 'N';
+
     public override List<Move> Moves(ChessGame game)
     {
         List<Move> moves = base.Moves(game);

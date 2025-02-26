@@ -1,10 +1,11 @@
 <Project>
     <!-- Build configurations -->
-    <!--<PropertyGroup>
-        <AssemblyOriginatorKeyFile>E:\Source\repos\School\Android\Material-You-Chess\com.catsarmy.chess.keystore</AssemblyOriginatorKeyFile>
-        <AndroidSigningKeyStore>com.catsarmy.chess.keystore</AndroidSigningKeyStore>
-        <AndroidSigningKeyAlias>com.catsarmy.chess</AndroidSigningKeyAlias>
-        <AndroidSigningKeyPass>gilaoded</AndroidSigningKeyPass>
-        <AndroidSigningStorePass>gilaoded</AndroidSigningStorePass>
-    </PropertyGroup>-->
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+    <SignAssembly>True</SignAssembly>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>$(AndroidSigningPassFile)</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>$(AndroidSigningPassFile)</AndroidSigningStorePass>
+  </PropertyGroup>
 </Project>

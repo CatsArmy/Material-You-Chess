@@ -66,33 +66,33 @@ public class PermissionsRequester
         var (permissions, requestCode) = PermissionRequestLogic();
         app.RequestPermissions(permissions, requestCode);
 
-        /*
-        var requestPermissions = RegisterForActivityResult(new RequestMultiplePermissions(),
-           new ActivityResultCallback<Java.Lang.Object>(results =>
-           {
-               // Handle permission requests results
-               if (Build.VERSION.SdkInt >= (UpsideDownCake)
-                   && app.CheckSelfPermission(nameof(READ_MEDIA_VISUAL_USER_SELECTED)) == Permission.Granted)
-               {
-                   // Partial access on Android 14 (API level 34) or higher
-                   READ_MEDIA_VISUAL_USER_SELECTED = Permission.Granted;
-                   READ_MEDIA_IMAGES = app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES));
-                   READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
-               }
-               else if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu && app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES)) == Permission.Granted)
-               {
-                   // Full access on Android 13 (API level 33) or higher
-                   READ_MEDIA_IMAGES = Permission.Granted;
-                   READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
-               }
-               else if (app.CheckSelfPermission(nameof(READ_EXTERNAL_STORAGE)) == Permission.Granted)
-               {
-                   // Full access up to Android 12 (API level 32)
-                   READ_EXTERNAL_STORAGE = Permission.Granted;
-               }
-               Log.Debug("CatsArmy", $"{results}");
-           }));
-        */
+        ///*
+        //var requestPermissions = app.RegisterForActivityResult(),
+        //   new ActivityResultCallback<Java.Lang.Object>(results =>
+        //   {
+        //       // Handle permission requests results
+        //       if (Build.VERSION.SdkInt >= (UpsideDownCake)
+        //           && app.CheckSelfPermission(nameof(READ_MEDIA_VISUAL_USER_SELECTED)) == Permission.Granted)
+        //       {
+        //           // Partial access on Android 14 (API level 34) or higher
+        //           READ_MEDIA_VISUAL_USER_SELECTED = Permission.Granted;
+        //           READ_MEDIA_IMAGES = app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES));
+        //           READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
+        //       }
+        //       else if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu && app.CheckSelfPermission(nameof(READ_MEDIA_IMAGES)) == Permission.Granted)
+        //       {
+        //           // Full access on Android 13 (API level 33) or higher
+        //           READ_MEDIA_IMAGES = Permission.Granted;
+        //           READ_MEDIA_VIDEO = app.CheckSelfPermission(nameof(READ_MEDIA_VIDEO));
+        //       }
+        //       else if (app.CheckSelfPermission(nameof(READ_EXTERNAL_STORAGE)) == Permission.Granted)
+        //       {
+        //           // Full access up to Android 12 (API level 32)
+        //           READ_EXTERNAL_STORAGE = Permission.Granted;
+        //       }
+        //       Log.Debug("CatsArmy", $"{results}");
+        //   }));
+        //*/
     }
 
     public void HandlePermissionRequestsResults(AppCompatActivity app)

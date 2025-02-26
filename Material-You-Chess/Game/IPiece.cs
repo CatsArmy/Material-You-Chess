@@ -6,7 +6,7 @@ namespace Chess.Game;
 
 public interface IPiece
 {
-    [JsonIgnore] public ImageView? Piece { get; set; }
+    [JsonIgnore] public ImageView? PieceView { get; set; }
 
     public BoardSpace Space { get; set; }
 
@@ -14,7 +14,7 @@ public interface IPiece
 
     public bool IsWhite { get; }
 
-    public (string, int) Index { get; }
+    public (string prefix, int count) Index { get; }
 
     public char Abbreviation { get; }
 

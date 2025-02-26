@@ -1,11 +1,22 @@
-﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
-public class King(int id, (string, int) index, bool isWhite, BoardSpace space, ConstraintLayout boardLayout)
-    : SpecialPiece(id, index, abbreviation, isWhite, space, boardLayout)
+
+public class WhiteKing(int id, int count, BoardSpace space) : King(id, space)
 {
-    private const char abbreviation = 'K';
+    public override (string prefix, int count) Index => ($"w{nameof(King)}", count);
+    public override bool IsWhite => true;
+}
+
+public class BlackKing(int id, int count, BoardSpace space) : King(id, space)
+{
+    public override (string prefix, int count) Index => ($"b{nameof(King)}", count);
+    public override bool IsWhite => false;
+}
+
+public class King(int id, BoardSpace space) : SpecialPiece(id, space)
+{
+    public override char Abbreviation => 'K';
 
     public override void Move(Move move, ChessGame game)
     {

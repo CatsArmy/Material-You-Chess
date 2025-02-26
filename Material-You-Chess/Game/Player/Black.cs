@@ -11,7 +11,7 @@ public class Black : IPlayer
 
     public Dictionary<(string, int), BoardPiece> Pieces { get; set; } = [];
 
-    public Pawn[] Pawns { get; set; } = new Pawn[8];
+    public List<Pawn> Pawns { get; set; } = [];
 
     public Rook? Rook1 { get; set; }
 
@@ -29,47 +29,48 @@ public class Black : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public Black(string name, Dictionary<(char, int), BoardSpace> Board, ConstraintLayout boardLayout)
+    public Black(string name, Dictionary<(char file, int rank), BoardSpace> Board, ConstraintLayout boardLayout)
     {
         this.Name = name;
         char file = 'A';
         const int rank = 8;
-        this.Rook1 = new Rook(Resource.Id.gmp__bRook1, ("bRook", 1), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bRook", 1)] = this.Rook1;
+        this.Rook1 = new BlackRook(Resource.Id.gmp__bRook1, count: 1, Board[(file, rank)]);
+        this.Pieces[this.Rook1.Index] = this.Rook1;
         file++;//B
 
-        this.Knight1 = new Knight(Resource.Id.gmp__bKnight1, ("bKnight", 1), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bKnight", 1)] = this.Knight1;
+        this.Knight1 = new BlackKnight(Resource.Id.gmp__bKnight1, count: 1, Board[(file, rank)]);
+        this.Pieces[this.Knight1.Index] = this.Knight1;
         file++;//C
 
-        this.Bishop1 = new Bishop(Resource.Id.gmp__bBishop1, ("bBishop", 1), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bBishop", 1)] = this.Bishop1;
+        this.Bishop1 = new BlackBishop(Resource.Id.gmp__bBishop1, 1, Board[(file, rank)]);
+        this.Pieces[this.Bishop1.Index] = this.Bishop1;
         file++;//D
 
-        this.Queen = new Queen(Resource.Id.gmp__bQueen1, ("bQueen", 1), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bQueen", 1)] = this.Queen;
+        this.Queen = new BlackQueen(Resource.Id.gmp__bQueen1, 1, Board[(file, rank)]);
+        this.Pieces[this.Queen.Index] = this.Queen;
         file++;//E
 
-        this.King = new King(Resource.Id.gmp__bKing1, ("bKing", 1), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bKing", 1)] = this.King;
+        this.King = new BlackKing(Resource.Id.gmp__bKing1, 1, Board[(file, rank)]);
+        this.Pieces[this.King.Index] = this.King;
         file++;//F
 
-        this.Bishop2 = new Bishop(Resource.Id.gmp__bBishop2, ("bBishop", 2), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bBishop", 2)] = this.Bishop2;
+        this.Bishop2 = new BlackBishop(Resource.Id.gmp__bBishop2, 2, Board[(file, rank)]);
+        this.Pieces[this.Bishop2.Index] = this.Bishop2;
         file++;//G
 
-        this.Knight2 = new Knight(Resource.Id.gmp__bKnight2, ("bKnight", 2), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bKnight", 2)] = this.Knight2;
+        this.Knight2 = new BlackKnight(Resource.Id.gmp__bKnight2, 2, Board[(file, rank)]);
+        this.Pieces[this.Knight2.Index] = this.Knight2;
         file++;//H
 
-        this.Rook2 = new Rook(Resource.Id.gmp__bRook2, ("bRook", 2), false, Board[(file, rank)], boardLayout);
-        this.Pieces[("bRook", 2)] = this.Rook2;
+        this.Rook2 = new BlackRook(Resource.Id.gmp__bRook2, 2, Board[(file, rank)]);
+        this.Pieces[this.Rook2.Index] = this.Rook2;
 
         file = 'A';
-        for (int i = 0; i < 8; i++, file++)
+        for (int i = 0; i < 8; i++)
         {
-            this.Pawns[i] = new Pawn(Resource.Id.gmp__bPawn1 + i, ("bPawn", i + 1), false, Board[(file, rank - 1)], boardLayout);
-            this.Pieces[("bPawn", i + 1)] = this.Pawns[i];
+            this.Pawns[i] = new BlackPawn(Resource.Id.gmp__bPawn1 + i, i + 1, Board[(file, rank + 1)]);
+            this.Pieces[this.Pawns[i].Index] = this.Pawns[i];
+            file++;
         }
     }
 }
