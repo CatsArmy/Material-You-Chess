@@ -5,21 +5,23 @@ namespace Chess.Game.Board;
 public class WhiteBishop(int id, int count, BoardSpace space) : Bishop(id, space)
 {
     public WhiteBishop(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"w{nameof(Bishop)}";
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override string Prefix => this.prefix;
+    public override int Count => count;
     public override bool IsWhite => true;
+    private string prefix { get; set; } = $"w{nameof(Bishop)}";
 }
 
 public class BlackBishop(int id, int count, BoardSpace space) : Bishop(id, space)
 {
     public BlackBishop(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"b{nameof(Bishop)}";
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override string Prefix => this.prefix;
+    public override int Count => count;
     public override bool IsWhite => false;
+    private string prefix { get; set; } = $"b{nameof(Bishop)}";
 }
 
 public class Bishop(int id, BoardSpace space) : BoardPiece(id, space)

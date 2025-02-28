@@ -67,7 +67,7 @@ public class ChessActivity : AppCompatActivity, IChessActivity
             var json = Encoding.UTF8.GetString(payload.AsBytes()!);
             Logger.Error(json);
             Move? move = JsonSerializer.Deserialize<Move>(json, SourceJsonGenerationContext.Default.Move);
-            move!.Origin.Move(move, this.Game!);
+            //move!.Origin.Move(move, this.Game!);
         }
     }
 

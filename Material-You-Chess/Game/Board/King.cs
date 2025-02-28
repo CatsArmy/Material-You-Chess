@@ -4,13 +4,15 @@ namespace Chess.Game.Board;
 
 public class WhiteKing(int id, int count, BoardSpace space) : King(id, space)
 {
-    public override (string prefix, int count) Index => ($"w{nameof(King)}", count);
+    public override int Count => count;
+    public override string Prefix => $"w{nameof(King)}";
     public override bool IsWhite => true;
 }
 
 public class BlackKing(int id, int count, BoardSpace space) : King(id, space)
 {
-    public override (string prefix, int count) Index => ($"b{nameof(King)}", count);
+    public override int Count => count;
+    public override string Prefix => $"b{nameof(King)}";
     public override bool IsWhite => false;
 }
 
@@ -18,16 +20,9 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 {
     public override char Abbreviation => 'K';
 
-    public override void Move(Move move, ChessGame game)
+    public override void Capture(ChessGame game)
     {
-        base.Move(move, game);
-        this.Move(move);
-        game.NextTurn(move);
-    }
-
-    public override void Capture(BoardPiece destination, ChessGame game)
-    {
-        base.Capture(destination, game);
+        base.Capture(game);
         game.Player!.Outcome = GameOutcome.Win;
         game.Enemy!.Outcome = GameOutcome.Lose;
         foreach (var Space in game.Board.Values)

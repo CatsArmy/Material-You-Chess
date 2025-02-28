@@ -5,7 +5,7 @@ namespace Chess.Game.Board;
 public class BoardSpace : ISpace
 {
     [JsonIgnore] public ImageView? SpaceView { get; }
-    public (char file, int rank) Index => (this.File, this.Rank);
+    [JsonIgnore] public (char file, int rank) Index => (this.File, this.Rank);
     public bool IsWhite { get; protected set; }
     public char File { get; protected set; }
     public int Rank { get; protected set; }
@@ -26,6 +26,8 @@ public class BoardSpace : ISpace
         this.Id = this.SpaceView.Id;
     }
 
+    [JsonConstructor]
+    public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
     public BoardSpace(char File, int Rank, bool IsWhite, int Id)
     {
         this.SpaceView = ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(Id);

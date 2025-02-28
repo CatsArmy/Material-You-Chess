@@ -4,7 +4,8 @@ namespace Chess.Game.Board;
 
 public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 {
-    public override (string prefix, int count) Index => ($"w{nameof(Pawn)}", count);
+    public override string Prefix => $"w{nameof(Pawn)}";
+    public override int Count => count;
     public override bool IsWhite => true;
 
     public override List<Move> Moves(ChessGame game)
@@ -113,31 +114,9 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
 public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
 {
-    public override (string prefix, int count) Index => ($"b{nameof(Pawn)}", count);
+    public override string Prefix => $"b{nameof(Pawn)}";
+    public override int Count => count;
     public override bool IsWhite => false;
-
-    public override void Move(Move move, ChessGame game)
-    {
-        this.Update();
-        if (move is EnPassant enPassant)
-        {
-            game.Selected!.Capture(enPassant.Pawn, game);
-            this.Move(move);
-            game.NextTurn(move);
-            return;
-        }
-
-        if (move is DoubleMove)
-        {
-            this.EnPassantCapturable = true;
-        }
-
-        if (move is Promotion promotion)
-            this.Promote(game, promotion);
-
-        this.Move(move);
-        game.NextTurn(move);
-    }
 
     public override List<Move> Moves(ChessGame game)
     {
@@ -250,27 +229,39 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
     public override char Abbreviation => 'P';
     public override void Move(Move move, ChessGame game)
     {
-        this.Update();
         if (move is EnPassant enPassant)
         {
-            game.Selected!.Capture(enPassant.Pawn, game);
-            this.Move(move);
-            game.NextTurn(move);
-            return;
+            this.Capture(enPassant.Pawn, game);
         }
 
-        if (move is DoubleMove)
+        else if (move is DoubleMove)
         {
             this.EnPassantCapturable = true;
         }
 
-        if (move is Promotion promotion)
+        else if (move is Promotion promotion)
         {
+            if (promotion.PromoteTo is null)
+            {
+                game.Player!.PromotionDialog.Show(game, promotion);
+                return;
+            }
+
+            if (promotion is PromotionCapture capture)
+            {
+                this.Capture(capture.Piece, game);
+            }
+
             this.Promote(game, promotion);
         }
 
-        this.Move(move);
-        game.NextTurn(move);
+        base.Move(move, game);
+    }
+
+    public override void Capture(ChessGame game)
+    {
+        base.Capture(game);
+        game.Enemy!.Pawns.Remove(this);
     }
 
     public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);

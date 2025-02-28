@@ -1,0 +1,13 @@
+<Project>
+    <!-- Build configurations -->
+    <!-- Remove the .Template extenstion from this file when using template -->
+  <PropertyGroup>
+	<AndroidSigningPassFile></AndroidSigningPassFile>
+	<GoogleServicesJsonFile>Properties\google-services.json</GoogleServicesJsonFile>
+  </PropertyGroup>
+	
+  <Target Name="SetGlobalProperties" DependsOnTargets="BeforeBuild">
+	<SetEnvironmentVariable EnvKey="AndroidSigningPassFile" EnvValue="$(AndroidSigningPassFile)" />
+	<SetEnvironmentVariable EnvKey="GoogleServicesJsonFile" EnvValue="$(GoogleServicesJsonFile)" />
+  </Target>
+</Project>

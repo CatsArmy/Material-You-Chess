@@ -6,13 +6,11 @@ using Android.Runtime;
 using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
-using AndroidX.Credentials;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Networked;
 using Chess.Dialogs;
-using Chess.FirebaseSecrets;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Android.Material.Button;
@@ -48,8 +46,12 @@ public class MainActivity : AppCompatActivity
     public CircularProgressIndicator? UserProgressIndicator;
     public ShapeableImageView? mainProfilePicture;
     public ActivityResultLauncher? PhotoTaker;
-    private ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
-    private PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
+    public ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
+    public PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
+    public ProfileDialog? profileDialog;
+    private LogoutDialog? logoutDialog;
+    private LoginDialog? loginDialog;
+    private SignupDialog? signupDialog;
     private MaterialButtonToggleGroup? GameModeSelector;
     private Button? Online;
     private Button? Local;
@@ -57,31 +59,47 @@ public class MainActivity : AppCompatActivity
     private TextView? mainUsername;
     private ExtendedFloatingActionButton? profileAction1;
     private ExtendedFloatingActionButton? profileAction2;
-    private ProfileDialog? profileDialog;
-    private LogoutDialog? logoutDialog;
-    private LoginDialog? loginDialog;
-    private SignupDialog? signupDialog;
     private PermissionsRequester? permissionsHandler;
 
     public void OpenPhotoTaker(object? sender, EventArgs args)
     {
-        //this.permissionsHandler!.RequestPermissions(this);
+        if (this.permissionsHandler?.Camera == Permission.Granted)
+        {
+            this.PhotoTaker?.Launch(null);
+            return;
+        }
 
-        this.PhotoTaker?.Launch(null);
+        this.permissionsHandler?.RequestCamaraAccess();
     }
 
-    public void OpenPhotoPicker(object? sender, EventArgs args) => this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+    public void OpenPhotoPicker(object? sender, EventArgs args)
+    {
+        if (this.permissionsHandler!.HasMediaAccess())
+        {
+            this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+            return;
+        }
+
+        this.permissionsHandler.RequestMediaAccess();
+    }
 
     private void CapturePhoto(Bitmap photo) => this.profileDialog?.OnSelectPhoto(photo);
+
     private void SelectPhoto(AndroidUri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
+
     private void StartGame(object? sender, EventArgs e)
     {
         Intent intent;
         if (this.GameModeSelector!.CheckedButtonId == this.Online!.Id)
         {
-            intent = new Intent(this, typeof(NetworkedChessActivity))
+            if (this.permissionsHandler!.HasNearbyAccess())
+            {
+                intent = new Intent(this, typeof(NetworkedChessActivity))
                .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
-            base.StartActivity(intent);
+                base.StartActivity(intent);
+                return;
+            }
+            this.permissionsHandler!.RequestNearbyConnectionsAccess();
             return;
         }
 
@@ -92,7 +110,6 @@ public class MainActivity : AppCompatActivity
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        _ = new Secrets();
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
 
@@ -109,15 +126,15 @@ public class MainActivity : AppCompatActivity
 
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
-        // Permission request logic
-        this.permissionsHandler = new PermissionsRequester(this);
 
-        using (var glide = Glide.Get(this))
+        using var glide = Glide.Get(this);
         {
-            glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)), Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
+            glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)),
+            Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
         }
 
-        //FirebaseAuth.Instance.SignOut();
+
+        //FirebaseAuth.Instance.SignOut();s
         //Run our logic
         this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
         this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);
@@ -129,17 +146,31 @@ public class MainActivity : AppCompatActivity
         this.mainUsername = this.FindViewById<TextView>(Resource.Id.MainUsername);
         this.profileAction1 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
+        this.startGame!.Click += this.StartGame;
+
+        // Use your app or activity context to instantiate a client instance of
+        // CredentialManager.
+        //var credentialManager = CredentialManager.Create(this.ApplicationContext!);
+
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        this.permissionsHandler = new PermissionsRequester(this);
         this.logoutDialog = new LogoutDialog(this);
         this.loginDialog = new LoginDialog(this);
         this.signupDialog = new SignupDialog(this);
         this.profileDialog = new ProfileDialog(this);
-        this.startGame!.Click += this.StartGame;
         this.UpdateUserState();
+    }
 
-        // Use your app or activity context to instantiate a client instance of
-        // CredentialManager.
-        var credentialManager = CredentialManager.Create(this.ApplicationContext!);
-
+    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
+    {
+        // Handle permission requests results
+        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        this.permissionsHandler?.OnRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public override void OnCreateContextMenu(IContextMenu? menu, View? view, IContextMenuContextMenuInfo? menuInfo)
@@ -212,11 +243,4 @@ public class MainActivity : AppCompatActivity
     private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
     private void OpenLoginDialog(object? sender, EventArgs args) => this.loginDialog?.Dialog.Show();
     private void OpenSignupDialog(object? sender, EventArgs args) => this.signupDialog?.Dialog.Show();
-
-    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-    {
-        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Handle permission requests results
-        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 }

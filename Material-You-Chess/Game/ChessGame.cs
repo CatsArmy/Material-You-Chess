@@ -4,7 +4,6 @@ using Android.Gms.Nearby.Connection;
 using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;
-using Chess.Dialogs;
 using Chess.Game.Board;
 using Chess.Game.Moves;
 using Chess.Game.Player;
@@ -79,14 +78,6 @@ public class ChessGame : IChessGame
         };
     }
 
-    private IPromotionDialog PromotionDialog
-    {
-        get => this.CurrentPlayerIsWhite switch
-        {
-            true => this.Activity.PromotionDialogs.White,
-            false => this.Activity.PromotionDialogs.Black
-        };
-    }
     public BoardSpace BindSpace(int id, int rank, char file)
     {
         const string isWhite = "IsWhite";
@@ -142,12 +133,12 @@ public class ChessGame : IChessGame
         foreach (var keyValuePair in this.Board)
         {
             keyValuePair.Value.SpaceView!.Click += OnClick;
-            keyValuePair.Value.SpaceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
+            keyValuePair.Value.SpaceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.file}{keyValuePair.Key.rank}");
             keyValuePair.Value.SpaceView!.Clickable = true;
         }
 
-        this.Player1 = new White(activity.Player1Name!, this.Board, this.Activity.BoardLayout!);
-        this.Player2 = new Black(activity.Player2Name!, this.Board, this.Activity.BoardLayout!);
+        this.Player1 = new White(activity.Player1Name!, this.Board, activity.PromotionDialogs.White);
+        this.Player2 = new Black(activity.Player2Name!, this.Board, activity.PromotionDialogs.Black);
 
         this.AllPieces.Merge(this.Player1.Pieces, this.Player2.Pieces);
 
@@ -241,20 +232,8 @@ public class ChessGame : IChessGame
             return;
         }
 
-        //Prevent promoting to an unknown type of piece
-        if (move is Promotion promotion && promotion.PromoteTo is null)
-        {
-            this.PromotionDialog.Show(this, promotion);
-            return;
-        }
-
-        this.Activity.Send(Payload.FromBytes(
-        JsonSerializer.SerializeToUtf8Bytes<Move>(value: move, SourceJsonGenerationContext.Default.Move)
-        //JsonSerializer.SerializeToUtf8Bytes(move, SourceJsonGenerationContext.Default.GetTypeInfo(move.GetType())!)
-            ));
-
-        //this.LastMove = move;
-        //this.Selected!.Move(move, this);
+        this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
+        this.Selected!.Move(move, this);
     }
 
     private bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)

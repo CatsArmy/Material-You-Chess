@@ -8,8 +8,6 @@
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
-    <EnableNetNativeDeveloperExperienceMode>True</EnableNetNativeDeveloperExperienceMode>
-    <DebuggerSupport>True</DebuggerSupport>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,17 +19,39 @@
     <AnalysisLevel>preview</AnalysisLevel>
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
+  
+  <Import Project="Properties\Material-You-Chess.Build.props.user" />
+  
+  <ItemGroup>
+    <None Remove="Properties\Material-You-Chess.Build.props.user.template" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <GoogleServicesJson Include="$(GoogleServicesJsonFile)" />
+  </ItemGroup>
 
   <PropertyGroup>
-    <AndroidEnableProfiler>False</AndroidEnableProfiler>
-    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
-    <EnableLLVM>False</EnableLLVM>
+    <!--<AndroidEnableProfiler>False</AndroidEnableProfiler>-->
+    <!--<AndroidEnableMultiDex>False</AndroidEnableMultiDex>-->
+    <!--<AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>-->
+    <!--<EnableLLVM>False</EnableLLVM>-->
+    <SignAssembly>True</SignAssembly>
+    <AndroidUseApkSigner>true</AndroidUseApkSigner>
+    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyPass>$(AndroidSigningPassFile)</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>$(AndroidSigningPassFile)</AndroidSigningStorePass>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
     <DebugType>embedded</DebugType>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+    <Optimize>false</Optimize>
     <RunAOTCompilation>False</RunAOTCompilation>
+    <PublishTrimmed>False</PublishTrimmed>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        
@@ -44,7 +64,11 @@
   <RunAOTCompilation>True</RunAOTCompilation>
   <DebugType>portable</DebugType>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <None Include="Properties\Material-You-Chess.Build.props.user" />
+  </ItemGroup>
+ 
   <ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectNullableAnnotationsDefault" Value="true" />
     <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectRequiredConstructorParametersDefault" Value="true" />
@@ -67,7 +91,7 @@
     <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Material3" Version="1.3.1.2" />
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.0.2" />
-    <PackageReference Include="Xamarin.Firebase.Auth" Version="123.1.0.2" />
+    <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
     <PackageReference Include="Xamarin.AndroidX.Media" Version="1.7.0.9" />
     <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.8.0.1" />
@@ -76,12 +100,20 @@
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.12.0.2" />
     <PackageReference Include="Xamarin.Google.Android.Play.Core.Common" Version="2.0.4.4" />
     <PackageReference Include="Xamarin.Google.Android.Play.Integrity" Version="1.4.0.3" />
-    <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.6.1.2" />
+    <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0" />
     <PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.36.0.1" />
     <PackageReference Include="Xamarin.Google.Guava.ListenableFuture" Version="1.0.0.26" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
   </ItemGroup>
 
-  <!--<Import Project="$(SolutionDir)Directory.Build.props" />-->
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="echo Pre: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Pre: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
+    <Warning Text="echo Pre: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Pre: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
+  </Target>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo Post: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Post: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
+    <Warning Text="echo Post: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Post: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
+  </Target>
 </Project>

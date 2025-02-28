@@ -1,5 +1,4 @@
-﻿using Android.Animation;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
@@ -9,16 +8,8 @@ public class SpecialPiece(int id, BoardSpace space) : BoardPiece(id, space)
 
     public override void Move(Move move, ChessGame game)
     {
-        if (game.Player == null || game.Enemy == null)
-            return;
-
-        game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-        game.LastMove = move;
-
-        if (move is Capture capture)
-        {
-            this.Capture(capture.Piece, game);
-        }
+        this.Update();
+        base.Move(move, game);
     }
 
     public override void Update(bool IsUpdatingPlayer = false)

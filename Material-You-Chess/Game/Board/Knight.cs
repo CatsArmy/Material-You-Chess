@@ -5,21 +5,23 @@ namespace Chess.Game.Board;
 public class WhiteKnight(int id, int count, BoardSpace space) : Knight(id, space)
 {
     public WhiteKnight(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"w{nameof(Knight)}";
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    public override string Prefix => this.prefix;
     public override bool IsWhite => true;
+    private string prefix { get; set; } = $"w{nameof(Knight)}";
 }
 
 public class BlackKnight(int id, int count, BoardSpace space) : Knight(id, space)
 {
     public BlackKnight(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"b{nameof(Knight)}";
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    public override string Prefix => this.prefix;
     public override bool IsWhite => false;
+    private string prefix { get; set; } = $"b{nameof(Knight)}";
 }
 
 public class Knight(int id, BoardSpace space) : BoardPiece(id, space)

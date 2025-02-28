@@ -1,39 +1,32 @@
-﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
 public class WhiteRook(int id, int count, BoardSpace space) : Rook(id, space)
 {
     public WhiteRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"w{nameof(Rook)}";
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    public override string Prefix => this.prefix;
     public override bool IsWhite => true;
+    private string prefix { get; set; } = $"w{nameof(Rook)}";
 }
 
 public class BlackRook(int id, int count, BoardSpace space) : Rook(id, space)
 {
     public BlackRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.Prefix = prefix;
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"b{nameof(Rook)}";
-
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    public override string Prefix => this.prefix;
     public override bool IsWhite => false;
+    private string prefix { get; set; } = $"b{nameof(Rook)}";
 }
 
 public class Rook(int id, BoardSpace space) : SpecialPiece(id, space)
 {
     public override char Abbreviation => 'R';
-
-    public override void Move(Move move, ChessGame game)
-    {
-        base.Move(move, game);
-        this.Move(move);
-        game.NextTurn(move);
-    }
 
     public override List<Move> Moves(ChessGame game)
     {

@@ -30,22 +30,20 @@ namespace Chess.Game.Board;
 [JsonDerivedType(typeof(SpecialPiece), nameof(SpecialPiece))]
 [JsonDerivedType(typeof(BoardPiece), nameof(BoardPiece))]
 [JsonPolymorphic()]
-public class BoardPiece(int id, BoardSpace space) : IPiece
+public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
 {
-    public int Id { get; } = id;
-
-    [JsonIgnore]
-    public ImageView? PieceView { get; set; } = ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(id);
-
-    public BoardSpace Space { get; set; } = space;
-
-    public virtual (string prefix, int count) Index { get; }
-
+    public (string prefix, int count) Index { get => (this.Prefix, this.Count); }
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public virtual string Prefix { get; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    public virtual int Count { get; }
     public virtual char Abbreviation { get; }
-
+    [JsonIgnore] public ImageView? PieceView { get; set; } = PieceView;
+    public int Id { get; } = PieceView.Id;
+    public BoardSpace Space { get; set; } = space;
     public virtual bool IsWhite { get; }
 
-    public BoardPiece(ImageView PieceView, BoardSpace space) : this(PieceView.Id, space) => this.PieceView = PieceView;
+    public BoardPiece(int id, BoardSpace space) : this(ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(id)!, space) { }
 
     public virtual void Update(bool IsUpdatingPlayer = false) { return; }
 
@@ -57,6 +55,7 @@ public class BoardPiece(int id, BoardSpace space) : IPiece
             return;
 
         game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        game.LastMove = move;
 
         if (move is Capture capture)
         {
@@ -90,17 +89,25 @@ public class BoardPiece(int id, BoardSpace space) : IPiece
         this.PieceView.RequestLayout();
     }
 
+    /// <summary>
+    /// This BoardPiece is the destination
+    /// </summary>
+    /// <param name="game"></param>
+    public virtual void Capture(ChessGame game)
+    {
+        game.AllPieces.Remove(this.Index);
+        game.Player!.Pieces.Remove(this.Index);
+        this.PieceView!.Enabled = false;
+        this.PieceView!.Clickable = false;
+        this.PieceView!.Visibility = Android.Views.ViewStates.Gone;
+    }
+
+    /// <summary>This BoardPiece is the origin</summary>
+    /// <param name="destination"></param>
+    /// <param name="game"></param>
     public virtual void Capture(BoardPiece destination, ChessGame game)
     {
-        game.AllPieces.Remove(destination.Index);
-        game.Player!.Pieces.Remove(destination.Index);
-        if (destination is Pawn pawn)
-        {
-            game.Enemy!.Pawns.Remove(pawn);
-        }
-        destination.PieceView!.Enabled = false;
-        destination.PieceView!.Clickable = false;
-        destination.PieceView!.Visibility = Android.Views.ViewStates.Gone;
+        destination.Capture(game);
     }
 
     public void Diagonals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)

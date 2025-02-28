@@ -1,4 +1,4 @@
-﻿using AndroidX.ConstraintLayout.Widget;
+﻿using Chess.Dialogs;
 using Chess.Game.Board;
 
 namespace Chess.Game.Player;
@@ -6,7 +6,7 @@ namespace Chess.Game.Player;
 public class White : IPlayer
 {
     public string Name { get; set; }
-
+    public IPromotionDialog PromotionDialog { get; set; }
     public GameOutcome Outcome { get; set; }
 
     public Dictionary<(string, int), BoardPiece> Pieces { get; } = [];
@@ -29,9 +29,10 @@ public class White : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public White(string name, Dictionary<(char file, int rank), BoardSpace> Board, ConstraintLayout boardLayout)
+    public White(string name, Dictionary<(char file, int rank), BoardSpace> Board, WhitePromotionDialog promotionDialog)
     {
         this.Name = name;
+        this.PromotionDialog = promotionDialog;
         char file = 'A';
         const int rank = 1;
         this.Rook1 = new WhiteRook(Resource.Id.gmp__wRook1, count: 1, Board[(file, rank)]);
@@ -68,7 +69,7 @@ public class White : IPlayer
         file = 'A';
         for (int i = 0; i < 8; i++)
         {
-            this.Pawns[i] = new WhitePawn(Resource.Id.gmp__wPawn1 + i, i + 1, Board[(file, rank + 1)]);
+            this.Pawns.Add(new WhitePawn(Resource.Id.gmp__wPawn1 + i, i + 1, Board[(file, rank + 1)]));
             this.Pieces[this.Pawns[i].Index] = this.Pawns[i];
             file++;
         }

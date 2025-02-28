@@ -1,12 +1,13 @@
-﻿using Chess.Game.Board;
+﻿using Chess.Dialogs;
+using Chess.Game.Board;
 
 namespace Chess.Game.Player;
 
 public interface IPlayer
 {
     public string Name { get; set; }
-
     public GameOutcome Outcome { get; set; }
+    public IPromotionDialog PromotionDialog { get; set; }
 
     public Dictionary<(string, int), BoardPiece> Pieces { get; }
 

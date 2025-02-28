@@ -1,5 +1,4 @@
 * Add Castling difficulty Medium
-* Add Promotion difficulty Easy+ / Medium-
-* Fix captured pieces not captured being captured??
 * More?
-* Fix promotion dialog spacing of options to be constant distance and not % based
+* Fix RTL being able to change how the layout looks
+* Change the spacing in the Profile Action buttons in the main activity -> Android Studio Task

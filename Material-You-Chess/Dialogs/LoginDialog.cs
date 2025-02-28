@@ -73,7 +73,7 @@ public class LoginDialog : ILoginDialog
                 return;
             }
             //When Email Enumeration Protection is enabled
-            //throwns if the email or password is invalid.
+            //throws if the email or password is invalid.
             if (e is FirebaseAuthInvalidCredentialsException)
             {
                 const string error = "the email or password is invalid";

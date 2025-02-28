@@ -1,28 +1,29 @@
-﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
 public class WhiteQueen(int id, int count, BoardSpace space) : Queen(id, space)
 {
-    public WhiteQueen(string prefix, int id, int count, BoardSpace space)
-        : this(id, count, space) => this.Prefix = prefix;
+    public WhiteQueen(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"w{nameof(Queen)}";
-
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    public override string Prefix => this.prefix;
     public override bool IsWhite => true;
+    private string prefix { get; set; } = $"w{nameof(Queen)}";
 }
 
 public class BlackQueen(int id, int count, BoardSpace space) : Queen(id, space)
 {
-    public BlackQueen(string prefix, int id, int count, BoardSpace space)
-    : this(id, count, space) => this.Prefix = prefix;
+    public BlackQueen(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
+        => this.prefix = prefix;
 
-    private string Prefix { get; set; } = $"b{nameof(Queen)}";
-
-    public override (string prefix, int count) Index => (this.Prefix, count);
+    public override int Count => count;
+    //[JsonPropertyOrder(-1)]
+    public override string Prefix => this.prefix;
     public override bool IsWhite => false;
+
+    private string prefix { get; set; } = $"b{nameof(Queen)}";
 }
 
 public class Queen(int id, BoardSpace space) : BoardPiece(id, space)
