@@ -92,15 +92,15 @@ public class MainActivity : AppCompatActivity
         Intent intent;
         if (this.GameModeSelector!.CheckedButtonId == this.Online!.Id)
         {
-            if (this.permissionsHandler!.HasNearbyAccess())
-            {
-                intent = new Intent(this, typeof(NetworkedChessActivity))
-               .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
-                base.StartActivity(intent);
-                return;
-            }
-            this.permissionsHandler!.RequestNearbyConnectionsAccess();
+            //if (this.permissionsHandler!.HasNearbyAccess())
+            //{
+            intent = new Intent(this, typeof(NetworkedChessActivity))
+           .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
+            base.StartActivity(intent);
             return;
+            //}
+            //this.permissionsHandler!.RequestNearbyConnectionsAccess();
+            //return;
         }
 
         intent = new Intent(this, typeof(ChessActivity))

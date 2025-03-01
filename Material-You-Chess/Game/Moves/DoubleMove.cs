@@ -5,6 +5,8 @@ namespace Chess.Game.Moves;
 
 public class DoubleMove : MoveOnly
 {
-    [JsonConstructor]
     public DoubleMove(Pawn origin, BoardSpace destination) : base(origin, destination) { }
+
+    [JsonConstructor]
+    public DoubleMove(BoardPiece origin, BoardSpace destination) : base(origin, destination) { }
 }

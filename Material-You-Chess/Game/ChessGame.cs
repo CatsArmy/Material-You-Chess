@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Chess.App;
 using Chess.App.Common;
@@ -20,11 +19,9 @@ public class ChessGame : IChessGame
 
     public Dictionary<(string, int), BoardPiece> AllPieces { get; } = [];
     public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
-
-    public Move? LastMove { get; set; }
+    public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{this.Player!.Name} wins", ToastLength.Long)!;
 
     public IChessActivity Activity;
-
     public White? Player1 { get; set; }
 
     public Black? Player2 { get; set; }
@@ -57,8 +54,21 @@ public class ChessGame : IChessGame
                 move.Select();
         }
     }
+    public Move? LastMove
+    {
+        get; set
+        {
+            field?.Unselect();
+            field = value;
 
-    public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{this.Player!.Name} wins", ToastLength.Long)!;
+            foreach (var space in this.Board.Values)
+            {
+                space.Unselect();
+            }
+
+            value?.Select();
+        }
+    }
 
     public IPlayer? Player
     {
@@ -97,6 +107,7 @@ public class ChessGame : IChessGame
     {
         Instance = this;
         this.Activity = activity;
+        this.clientPlayerIsWhite = clientPlayerIsWhite;
 
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
@@ -148,8 +159,6 @@ public class ChessGame : IChessGame
             keyValuePair.Value.PieceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
             keyValuePair.Value.PieceView!.Clickable = true;
         }
-
-        this.clientPlayerIsWhite = clientPlayerIsWhite;
     }
 
     public void NextTurn(Move move)
@@ -157,6 +166,8 @@ public class ChessGame : IChessGame
         this.Selected = null;
         if (!this.CurrentPlayerIsWhite)
             this.Turn += 1;
+
+        this.LastMove = move;
         foreach (var piece in this.Player!.Pieces.Values)
         {
             piece.Update(true);
@@ -182,16 +193,6 @@ public class ChessGame : IChessGame
         return moves.FirstOrDefault(move => move.Destination == Space) != null;
     }
 
-    public void RedrawGame()
-    {
-        this.Activity.BoardLayout?.LayoutTransition?.DisableTransitionType(LayoutTransitionType.Changing);
-        foreach (var piece in this.AllPieces.Values)
-            piece.Move(new(piece, piece.Space), this);
-        this.LastMove?.Select();
-        this.Selected?.Space?.Select();
-        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-    }
-
     private void OnClick(object? sender, EventArgs args)
     {
         if (sender is not ImageView imageView)
@@ -200,8 +201,8 @@ public class ChessGame : IChessGame
         if (imageView?.Tag is not Java.Lang.String javaString)
             return;
 
-        if (this.clientPlayerIsWhite != null && this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
-            return;
+        //if (this.clientPlayerIsWhite != null && this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
+        //    return;
 
         this.Validate(javaString, out var pIndex, out var sIndex);
 

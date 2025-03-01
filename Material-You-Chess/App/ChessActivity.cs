@@ -3,7 +3,6 @@ using System.Text.Json;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
-using Android.Runtime;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
@@ -16,7 +15,8 @@ using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = ScreenOrientation.Locked)]
 public class ChessActivity : AppCompatActivity, IChessActivity
 {
     public ChessGame? Game { get; set; }
@@ -27,7 +27,6 @@ public class ChessActivity : AppCompatActivity, IChessActivity
     public ShapeableImageView? Player2ShapeableImageView { get; set; }
     public TextView? Profile1Username { get; set; }
     public TextView? Profile2Username { get; set; }
-
     public string? Player1Name => "Player 1";
     public string? Player2Name => "Player 2";
 
@@ -40,9 +39,6 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
         this.Context = this;
-
-        // Permission request logic
-        _ = new PermissionsRequester(this);
 
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
@@ -57,7 +53,7 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         this.Profile2Username!.Text = this.Player2Name;
 
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.Game = new(this, true);
+        this.Game = new(this);
     }
 
     public void Send(Payload payload)
@@ -66,31 +62,7 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         {
             var json = Encoding.UTF8.GetString(payload.AsBytes()!);
             Logger.Error(json);
-            Move? move = JsonSerializer.Deserialize<Move>(json, SourceJsonGenerationContext.Default.Move);
-            //move!.Origin.Move(move, this.Game!);
-        }
-    }
-
-    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-    {
-        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Handle permission requests results
-        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-
-    public override void Finish()
-    {
-        ChessGame.Instance = null;
-        base.Finish();
-    }
-
-    public override ScreenOrientation RequestedOrientation
-    {
-        get => base.RequestedOrientation; set
-        {
-            base.RequestedOrientation = value;
-            this.Game?.RedrawGame();
+            Move? move = JsonSerializer.Deserialize(json, SourceJsonGenerationContext.Default.Move);
         }
     }
 }

@@ -2,26 +2,18 @@
 
 namespace Chess.Game.Board;
 
-public class WhiteRook(int id, int count, BoardSpace space) : Rook(id, space)
+public class WhiteRook(int id, int count, BoardSpace space, string prefix = $"w{nameof(Rook)}") : Rook(id, space)
 {
-    public WhiteRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.prefix = prefix;
-
     public override int Count => count;
-    public override string Prefix => this.prefix;
+    public override string Prefix => prefix;
     public override bool IsWhite => true;
-    private string prefix { get; set; } = $"w{nameof(Rook)}";
 }
 
-public class BlackRook(int id, int count, BoardSpace space) : Rook(id, space)
+public class BlackRook(int id, int count, BoardSpace space, string prefix = $"b{nameof(Rook)}") : Rook(id, space)
 {
-    public BlackRook(string prefix, int id, int count, BoardSpace space) : this(id, count, space)
-        => this.prefix = prefix;
-
     public override int Count => count;
-    public override string Prefix => this.prefix;
+    public override string Prefix => prefix;
     public override bool IsWhite => false;
-    private string prefix { get; set; } = $"b{nameof(Rook)}";
 }
 
 public class Rook(int id, BoardSpace space) : SpecialPiece(id, space)

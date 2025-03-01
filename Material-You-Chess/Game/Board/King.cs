@@ -33,6 +33,8 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 
         //display and handle the end of the game
         game.WinnerToast.Show();
+
+        ChessGame.Instance = null;
     }
 
     public override List<Move> Moves(ChessGame game)

@@ -2,7 +2,4 @@
 
 namespace Chess.Game.Moves;
 
-public class EnPassant(BoardPiece origin, BoardSpace destination, Pawn captured) : Move(origin, destination)
-{
-    public Pawn Pawn { get; } = captured;
-}
+public class EnPassant(Pawn origin, BoardSpace destination, Pawn Piece) : Capture(origin, destination, Piece);

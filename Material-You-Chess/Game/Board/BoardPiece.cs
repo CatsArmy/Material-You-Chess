@@ -55,14 +55,13 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
             return;
 
         game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-        game.LastMove = move;
 
         if (move is Capture capture)
         {
             this.Capture(capture.Piece, game);
         }
-        this.Move(move);
         game.NextTurn(move);
+        this.Move(move);
     }
 
     internal void Move(Move move)

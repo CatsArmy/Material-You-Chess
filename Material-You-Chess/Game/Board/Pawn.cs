@@ -79,25 +79,25 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
         BoardPiece Piece;
         if (promoteTo == typeof(WhiteQueen))
         {
-            Piece = new WhiteQueen(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new WhiteQueen(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.queen_white);
         }
 
         else if (promoteTo == typeof(WhiteKnight))
         {
-            Piece = new WhiteKnight(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new WhiteKnight(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.knight_white);
         }
 
         else if (promoteTo == typeof(WhiteBishop))
         {
-            Piece = new WhiteBishop(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new WhiteBishop(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.bishop_white);
         }
 
         else if (promoteTo == typeof(WhiteRook))
         {
-            Piece = new WhiteRook(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new WhiteRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.rook_white);
         }
 
@@ -189,25 +189,25 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
         BoardPiece Piece;
         if (promoteTo == typeof(BlackQueen))
         {
-            Piece = new BlackQueen(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new BlackQueen(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.queen_black);
         }
 
         else if (promoteTo == typeof(BlackKnight))
         {
-            Piece = new BlackKnight(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new BlackKnight(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.knight_black);
         }
 
         else if (promoteTo == typeof(BlackBishop))
         {
-            Piece = new BlackBishop(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new BlackBishop(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.bishop_black);
         }
 
         else if (promoteTo == typeof(BlackRook))
         {
-            Piece = new BlackRook(this.Index.prefix, this.Id, this.Index.count, move.Destination);
+            Piece = new BlackRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.rook_black);
         }
 
@@ -216,25 +216,21 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
         game.Player!.Pieces[this.Index] = Piece;
         game.AllPieces![this.Index] = Piece;
-        base.Promote(game, move);
         if (move is PromotionCapture capture)
             Piece.Capture(capture.Piece, game);
+
+        base.Promote(game, move);
     }
 }
 
 public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
 {
-    public bool EnPassantCapturable = false;
 
+    public bool EnPassantCapturable = false;
     public override char Abbreviation => 'P';
     public override void Move(Move move, ChessGame game)
     {
-        if (move is EnPassant enPassant)
-        {
-            this.Capture(enPassant.Pawn, game);
-        }
-
-        else if (move is DoubleMove)
+        if (move is DoubleMove)
         {
             this.EnPassantCapturable = true;
         }
@@ -243,13 +239,8 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
         {
             if (promotion.PromoteTo is null)
             {
-                game.Player!.PromotionDialog.Show(game, promotion);
+                game.Player!.PromotionDialog.Show(game, this, promotion);
                 return;
-            }
-
-            if (promotion is PromotionCapture capture)
-            {
-                this.Capture(capture.Piece, game);
             }
 
             this.Promote(game, promotion);

@@ -12,6 +12,7 @@ public class WhitePromotionDialog : IPromotionDialog
     public AlertDialog Dialog { get; set; }
     public MaterialAlertDialogBuilder Builder { get; set; }
     public Promotion? Move { get; set; }
+    public Pawn? Caller { get; set; }
 
     private ChessGame? game;
 
@@ -27,9 +28,10 @@ public class WhitePromotionDialog : IPromotionDialog
         this.Dialog.ShowEvent += this.OnShow;
     }
 
-    public void Show(ChessGame game, Promotion move)
+    public void Show(ChessGame game, Pawn pawn, Promotion move)
     {
         this.game = game;
+        this.Caller = pawn;
         this.Move = move;
         this.Dialog.Show();
     }
@@ -56,7 +58,6 @@ public class WhitePromotionDialog : IPromotionDialog
             return;
 
         this.Move!.PromoteTo = new(type);
-
-        this.game!.Selected!.Move(this.Move, this.game);
+        this.Caller?.Move(this.Move, this.game!);
     }
 }

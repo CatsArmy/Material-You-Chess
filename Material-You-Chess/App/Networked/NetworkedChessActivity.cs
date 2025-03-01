@@ -5,8 +5,6 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using Android.Graphics;
-using Android.Graphics.Drawables;
-using Android.Runtime;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
@@ -16,13 +14,13 @@ using Chess.Game;
 using Chess.Game.Moves;
 using Chess.Game.Player;
 using Firebase.Auth;
-using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Networked;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = ScreenOrientation.Locked)]
 public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
 {
     /// <summary>
@@ -32,6 +30,7 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
     /// <see langword="if" /> <see cref="isConnectionInitiator" /> <see langword="is" /> <see langword="false" />:
     /// Player2 <see langword="is"/> <see cref="Black"/>
     /// </summary>
+
     private bool isConnectionInitiator = false;
     private LobbyWaitingRoomBottomSheet? LobbyWaitingRoom;
 
@@ -100,13 +99,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         }
     }
 
-    //protected override async Task OnAdvertisingStartedAsync()
-    //{
-    //    await base.OnAdvertisingStartedAsync();
-    //    await Task.Delay(TimeSpan.FromSeconds(3));
-    //    this.StartDiscovering();
-    //}
-
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         bool hasValue = bool.TryParse(base.Intent?.GetStringExtra("MaterialYouThemePreference"), out var MaterialYouThemePreference);
@@ -115,9 +107,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-
-        // Permission request logic
-        _ = new PermissionsRequester(this);
 
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
@@ -132,13 +121,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         this.BoardLayout = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
     }
 
-    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-    {
-        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        // Handle permission requests results
-        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     protected override void OnStart()
     {
         base.OnStart();
@@ -150,15 +132,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         Logger.Debug($"::show {nameof(LobbyWaitingRoomBottomSheet)}()::");
         this.LobbyWaitingRoom.Show(this.SupportFragmentManager, "Lobby Waiting Room");
         Logger.Debug($"::showing {nameof(LobbyWaitingRoomBottomSheet)}()::");
-    }
-
-    public override ScreenOrientation RequestedOrientation
-    {
-        get => base.RequestedOrientation; set
-        {
-            base.RequestedOrientation = value;
-            this.Game?.RedrawGame();
-        }
     }
 
     protected override void OnStop()
@@ -177,10 +150,7 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         base.Finish();
     }
 
-    public override void Send(Payload payload)
-    {
-        base.Send(payload);
-    }
+    public override void Send(Payload payload) => base.Send(payload);
 
     protected override async Task OnEndpointDiscoveredAsync(EndPoint endpoint)
     {
@@ -229,10 +199,10 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
                     //var load =
-                    Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                    .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                    .Error(Resource.Drawable.outline_account_circle_24)
-                    .Into(this.Player1ShapeableImageView!);
+                    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                    //.Error(Resource.Drawable.outline_account_circle_24)
+                    //.Into(this.Player1ShapeableImageView!);
                 }
                 this.Profile2Username!.Text = endpoint.Name;
                 this.Player2Name = endpoint.Name;
@@ -241,8 +211,8 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                 if (this.Player1ShapeableImageView == null)
                     return;
 
-                if (!(this.Player1ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
-                    return;
+                //if (!(this.Player1ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                //    return;
                 break;
 
             case false:
@@ -257,10 +227,10 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
                     //var load = 
-                    Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                    .Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                    .Error(Resource.Drawable.outline_account_circle_24)
-                    .Into(this.Player2ShapeableImageView!);
+                    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                    //.Error(Resource.Drawable.outline_account_circle_24)
+                    //.Into(this.Player2ShapeableImageView!);
                 }
                 this.Player1Name = endpoint.Name;
                 this.Profile1Username!.Text = this.Player1Name;
@@ -269,12 +239,12 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                 if (this.Player2ShapeableImageView == null)
                     return;
 
-                if (!(this.Player2ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
-                    return;
+                //if (!(this.Player2ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+                //    return;
                 break;
         }
 
-        this.Send(Payload.FromStream(stream));
+        //this.Send(Payload.FromStream(stream));
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
@@ -303,10 +273,7 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         if (payload.PayloadType == Payload.Type.Bytes)
         {
             var json = Encoding.UTF8.GetString(payload.AsBytes()!);
-            var DOM = JsonDocument.Parse(json)!;
-            string typeDiscriminator = DOM.RootElement.GetProperty("$type").GetString()!;
-            var JsonTypeInfo = SourceJsonGenerationContext.Default.GetTypeInfo(Type.GetType(typeDiscriminator)!);
-            Move? move = JsonSerializer.Deserialize(DOM, JsonTypeInfo!) as Move;
+            Move? move = JsonSerializer.Deserialize(json, SourceJsonGenerationContext.Default.Move);
             move!.Origin.Move(move, this.Game!);
         }
 
