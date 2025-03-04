@@ -6,30 +6,27 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
+[JsonPolymorphic()]
+[JsonDerivedType(typeof(BoardPiece), nameof(BoardPiece))]
+[JsonDerivedType(typeof(SpecialPiece), nameof(SpecialPiece))]
+[JsonDerivedType(typeof(Knight), nameof(Knight))]
+[JsonDerivedType(typeof(Bishop), nameof(Bishop))]
+[JsonDerivedType(typeof(Queen), nameof(Queen))]
 [JsonDerivedType(typeof(King), nameof(King))]
 [JsonDerivedType(typeof(Pawn), nameof(Pawn))]
 [JsonDerivedType(typeof(Rook), nameof(Rook))]
-[JsonDerivedType(typeof(Queen), nameof(Queen))]
-[JsonDerivedType(typeof(Bishop), nameof(Bishop))]
-[JsonDerivedType(typeof(Knight), nameof(Knight))]
-
 [JsonDerivedType(typeof(WhiteKing), nameof(WhiteKing))]
 [JsonDerivedType(typeof(WhitePawn), nameof(WhitePawn))]
 [JsonDerivedType(typeof(WhiteRook), nameof(WhiteRook))]
 [JsonDerivedType(typeof(WhiteQueen), nameof(WhiteQueen))]
 [JsonDerivedType(typeof(WhiteBishop), nameof(WhiteBishop))]
 [JsonDerivedType(typeof(WhiteKnight), nameof(WhiteKnight))]
-
+[JsonDerivedType(typeof(BlackKnight), nameof(BlackKnight))]
+[JsonDerivedType(typeof(BlackBishop), nameof(BlackBishop))]
+[JsonDerivedType(typeof(BlackQueen), nameof(BlackQueen))]
 [JsonDerivedType(typeof(BlackKing), nameof(BlackKing))]
 [JsonDerivedType(typeof(BlackPawn), nameof(BlackPawn))]
 [JsonDerivedType(typeof(BlackRook), nameof(BlackRook))]
-[JsonDerivedType(typeof(BlackQueen), nameof(BlackQueen))]
-[JsonDerivedType(typeof(BlackBishop), nameof(BlackBishop))]
-[JsonDerivedType(typeof(BlackKnight), nameof(BlackKnight))]
-
-[JsonDerivedType(typeof(SpecialPiece), nameof(SpecialPiece))]
-[JsonDerivedType(typeof(BoardPiece), nameof(BoardPiece))]
-[JsonPolymorphic()]
 public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
 {
     public (string prefix, int count) Index { get => (this.Prefix, this.Count); }
@@ -37,11 +34,12 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
     public virtual string Prefix { get; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public virtual int Count { get; }
+    public virtual bool IsWhite { get; }
     public virtual char Abbreviation { get; }
+    [JsonIgnore] public BoardSpace? LastSpace { get; set; }
     [JsonIgnore] public ImageView? PieceView { get; set; } = PieceView;
     public int Id { get; } = PieceView.Id;
     public BoardSpace Space { get; set; } = space;
-    public virtual bool IsWhite { get; }
 
     public BoardPiece(int id, BoardSpace space) : this(ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(id)!, space) { }
 
@@ -66,6 +64,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
 
     internal void Move(Move move)
     {
+        this.LastSpace = this.Space;
         this.Space = move.Destination;
         if (this.PieceView?.LayoutParameters is not ConstraintLayout.LayoutParams @params)
         {

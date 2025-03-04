@@ -133,9 +133,6 @@ public class MainActivity : AppCompatActivity
             Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
         }
 
-
-        //FirebaseAuth.Instance.SignOut();s
-        //Run our logic
         this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
         this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);
         this.Local = this.FindViewById<Button>(Resource.Id.btnLocal);
@@ -148,8 +145,7 @@ public class MainActivity : AppCompatActivity
         this.profileAction2 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
         this.startGame!.Click += this.StartGame;
 
-        // Use your app or activity context to instantiate a client instance of
-        // CredentialManager.
+        // Use your app or activity context to instantiate a client instance of CredentialManager.
         //var credentialManager = CredentialManager.Create(this.ApplicationContext!);
 
     }
@@ -170,7 +166,11 @@ public class MainActivity : AppCompatActivity
         // Handle permission requests results
         Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        this.permissionsHandler?.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        try
+        {
+            this.permissionsHandler?.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        catch (Exception) { }
     }
 
     public override void OnCreateContextMenu(IContextMenu? menu, View? view, IContextMenuContextMenuInfo? menuInfo)
@@ -210,10 +210,10 @@ public class MainActivity : AppCompatActivity
                 this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
                 if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
                 {
-                    var path = $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png";
+                    //var path = $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png";
                     //Potential fix? .AsBitmap(), Downside not sure if it will always download it
-                    Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path)).Error(Resource.Drawable.outline_account_circle_24)
-                        .Into(this.mainProfilePicture!);
+                    //Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path)).Error(Resource.Drawable.outline_account_circle_24)
+                    //    .Into(this.mainProfilePicture!);
                 }
                 break;
 

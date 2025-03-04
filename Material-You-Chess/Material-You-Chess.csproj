@@ -1,40 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
-    <TargetFramework>net9.0-android35.0</TargetFramework>
-    <RootNamespace>Chess</RootNamespace>
     <OutputType>Exe</OutputType>
-    <ApplicationId>com.catsarmy.chess</ApplicationId>
-    <ApplicationVersion>1</ApplicationVersion>
-    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <RootNamespace>Chess</RootNamespace>
+    <TargetFramework>net9.0-android35.0</TargetFramework>
+    <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationId>com.catsarmy.chess</ApplicationId>
+    
+    <!--<ApplicationDisplayVersion>$(Major).$(Minor).$(Patch)</ApplicationDisplayVersion>
+    <ApplicationVersion>$(Major)</ApplicationVersion>
+    <ApplicationId>com.catsarmy.chess</ApplicationId>
+    <Version>$(ApplicationDisplayVersion).$(Build)</Version>
+    <Major>1</Major>
+    <Minor>0</Minor>
+    <Patch>0</Patch>
+    <Build>0</Build>-->
   </PropertyGroup>
 
   <PropertyGroup>
     <Nullable>enable</Nullable>
     <LangVersion>preview</LangVersion>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <WarningLevel>9999</WarningLevel>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <AnalysisLevel>preview</AnalysisLevel>
-    <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
   
   <Import Project="Properties\Material-You-Chess.Build.props.user" />
   
   <ItemGroup>
-    <None Remove="Properties\Material-You-Chess.Build.props.user.template" />
-  </ItemGroup>
-
-  <ItemGroup>
     <GoogleServicesJson Include="$(GoogleServicesJsonFile)" />
+    <None Include="Properties\Material-You-Chess.Build.props.user" />
+    <None Include="Properties\Material-You-Chess.Build.props.user.template" />
   </ItemGroup>
 
   <PropertyGroup>
-    <!--<AndroidEnableProfiler>False</AndroidEnableProfiler>-->
-    <!--<AndroidEnableMultiDex>False</AndroidEnableMultiDex>-->
-    <!--<AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>-->
-    <!--<EnableLLVM>False</EnableLLVM>-->
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableProfiler>False</AndroidEnableProfiler>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <!--<AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
+    <AndroidGenerateJniMarshalMethods>True</AndroidGenerateJniMarshalMethods>
+    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
+    <AndroidFragmentType>AndroidX.Fragment.App</AndroidFragmentType>
+    <AndroidLintEnabled>True</AndroidLintEnabled>-->
+  </PropertyGroup>
+
+  <PropertyGroup>
     <SignAssembly>True</SignAssembly>
     <AndroidUseApkSigner>true</AndroidUseApkSigner>
     <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
@@ -47,32 +62,30 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <DebugType>embedded</DebugType>
+    <AndroidManagedSymbols>True</AndroidManagedSymbols>
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
+    <StripSymbols>False</StripSymbols>
     <RunAOTCompilation>False</RunAOTCompilation>
     <PublishTrimmed>False</PublishTrimmed>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        
+  <RunAOTCompilation>True</RunAOTCompilation>
+  <IsAotCompatible>True</IsAotCompatible>
+  <DebugType>portable</DebugType>
     <!--
       Enables trim analyzers and full trimming during Release mode.
       To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
     -->
   <TrimMode>full</TrimMode>
-  <IsAotCompatible>True</IsAotCompatible>
-  <RunAOTCompilation>True</RunAOTCompilation>
-  <DebugType>portable</DebugType>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="Properties\Material-You-Chess.Build.props.user" />
-  </ItemGroup>
  
-  <ItemGroup>
+  <!--<ItemGroup>
     <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectNullableAnnotationsDefault" Value="true" />
     <RuntimeHostConfigurationOption Include="System.Text.Json.Serialization.RespectRequiredConstructorParametersDefault" Value="true" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.40" />
@@ -91,6 +104,9 @@
     <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Material3" Version="1.3.1.2" />
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.3.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.3.0.2" />
+    <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
     <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
     <PackageReference Include="Xamarin.AndroidX.Media" Version="1.7.0.9" />
     <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding" Version="1.7.6.1" />
@@ -106,14 +122,4 @@
     <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
   </ItemGroup>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="echo Pre: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Pre: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
-    <Warning Text="echo Pre: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Pre: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
-  </Target>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="echo Post: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Post: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
-    <Warning Text="echo Post: AndroidSigningPassFile: $(AndroidSigningPassFile)&#xD;&#xA;echo Post: GoogleServicesJsonFile: $(GoogleServicesJsonFile)&#xD;&#xA;" />
-  </Target>
 </Project>

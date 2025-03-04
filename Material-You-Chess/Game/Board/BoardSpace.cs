@@ -11,10 +11,65 @@ public class BoardSpace : ISpace
     public int Rank { get; protected set; }
     public int Id { get; }
 
-    private const int select = 1;
-    public virtual void Select() => this.SpaceView?.SetImageLevel(select);
-    public virtual void Unselect() => this.SpaceView?.SetImageLevel(unselect);
-    private const int unselect = 0;
+    //Normal state: 0..1
+    //Normal Move indicator state: 1
+    //Selected state: 2..3
+    //Selected Move indicator state: 3
+    const int UnselectSpace = 0;
+    const int UnselectMove = 1;
+    const int SelectSpace = 2;
+    const int SelectMove = 3;
+
+    public void Select()
+    {
+        if (this.IsSelectedMove() || this.IsUnselectedMove())
+        {
+            this.SpaceView?.SetImageLevel(SelectMove);
+            return;
+        }
+
+        this.SpaceView?.SetImageLevel(SelectSpace);
+    }
+
+    public void Unselect()
+    {
+        if (this.IsUnselectedMove() || this.IsSelectedMove())
+        {
+            this.SpaceView?.SetImageLevel(UnselectMove);
+            return;
+        }
+
+        this.SpaceView?.SetImageLevel(UnselectSpace);
+    }
+
+
+    public void IndicateMoveable()
+    {
+        if (this.IsUnselected() || this.IsUnselectedMove())
+        {
+            this.SpaceView?.SetImageLevel(UnselectMove);
+            return;
+        }
+
+        this.SpaceView?.SetImageLevel(SelectMove);
+    }
+
+    public void IndicateUnmovable()
+    {
+        if (this.IsUnselected() || this.IsUnselectedMove())
+        {
+            this.SpaceView?.SetImageLevel(UnselectSpace);
+            return;
+        }
+
+        this.SpaceView?.SetImageLevel(SelectSpace);
+
+    }
+
+    public bool IsSelectedMove() => this.SpaceView?.Drawable?.Level == SelectMove;
+    public bool IsUnselectedMove() => this.SpaceView?.Drawable?.Level == UnselectMove;
+    public bool IsUnselected() => this.SpaceView?.Drawable?.Level == UnselectSpace;
+    public bool IsSelected() => this.SpaceView?.Drawable?.Level == SelectSpace;
 
 
     public BoardSpace(char File, int Rank, bool IsWhite, ImageView Space)

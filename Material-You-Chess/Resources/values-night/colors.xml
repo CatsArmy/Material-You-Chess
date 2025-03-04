@@ -7,6 +7,9 @@
     <color name="white_space_overlay_color">?attr/colorOnTertiaryContainer</color>
     <color name="black_space_overlay_color">?attr/colorTertiaryContainer</color>
 
+    <color name="black_move_overlay_color">?attr/colorTertiaryFixedDim</color>
+    <color name="white_move_overlay_color">?attr/colorOnTertiary</color>
+
     <color name="white_piece_color">?attr/colorOnPrimaryContainer</color>
     <color name="black_piece_color">?attr/colorPrimaryContainer</color>
 

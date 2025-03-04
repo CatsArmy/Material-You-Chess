@@ -8,7 +8,7 @@ public interface IMove
 
     public BoardSpace Destination { get; set; }
 
-    public void Select();
+    public void IndicateMoveable();
 
-    public void Unselect();
+    public void IndicateUnmovable();
 }

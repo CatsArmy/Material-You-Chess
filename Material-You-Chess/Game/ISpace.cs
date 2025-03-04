@@ -12,8 +12,9 @@ public interface ISpace
     public int Rank { get; }
     public int Id { get; }
 
-    public void Select();
-    public void Unselect();
+    //public void Select(bool inherit = false, bool hasMoves = false);
+    //public void Unselect(bool inherit = false, bool hasMoves = false);
+
 
     public BoardPiece? Piece(Dictionary<(string, int), BoardPiece> boardPieces);
 }

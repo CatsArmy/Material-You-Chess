@@ -30,9 +30,11 @@ public class ChessGame : IChessGame
     {
         get; set
         {
-            field = value;
             if (value is null)
+            {
                 this.Moves = null;
+            }
+            field = value;
 
             if (value is not null)
                 this.Moves = value.Moves(this);
@@ -45,13 +47,13 @@ public class ChessGame : IChessGame
         {
             if (field is not null)
                 foreach (var move in field)
-                    move.Unselect();
+                    move.IndicateUnmovable();
             field = value;
             if (value is null)
                 return;
 
             foreach (var move in value)
-                move.Select();
+                move.IndicateMoveable();
         }
     }
     public Move? LastMove
@@ -59,13 +61,15 @@ public class ChessGame : IChessGame
         get; set
         {
             field?.Unselect();
+            field?.IndicateUnmovable();
             field = value;
 
-            foreach (var space in this.Board.Values)
-            {
-                space.Unselect();
-            }
+            //foreach (var space in this.Board.Values)
+            //{
+            //    space.Unselect();
+            //}
 
+            value?.IndicateUnmovable();
             value?.Select();
         }
     }
@@ -103,7 +107,7 @@ public class ChessGame : IChessGame
         }, space!);
     }
 
-    public ChessGame(IChessActivity activity, bool? clientPlayerIsWhite)
+    public ChessGame(IChessActivity activity, bool? clientPlayerIsWhite = null)
     {
         Instance = this;
         this.Activity = activity;
@@ -201,8 +205,9 @@ public class ChessGame : IChessGame
         if (imageView?.Tag is not Java.Lang.String javaString)
             return;
 
-        //if (this.clientPlayerIsWhite != null && this.CurrentPlayerIsWhite != this.clientPlayerIsWhite)
-        //    return;
+        if (this.clientPlayerIsWhite != null)
+            if (this.clientPlayerIsWhite != this.CurrentPlayerIsWhite)
+                return;
 
         this.Validate(javaString, out var pIndex, out var sIndex);
 

@@ -1,12 +1,21 @@
 <level-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:maxLevel="0">
-        <shape>
-            <solid android:color="@color/black_space_color" />
-        </shape>
-    </item>
-    <item android:maxLevel="1">
-        <shape>
-            <solid android:color="@color/black_space_overlay_color" />
-        </shape>
-    </item>
+    <!-- Normal state -->
+    <item
+        android:drawable="@drawable/black_space"
+        android:maxLevel="0" />
+    <!-- Normal Move indicator state -->
+    <item
+        android:drawable="@drawable/black_space_move"
+        android:maxLevel="1"
+        android:minLevel="1" />
+    <!-- Selected state -->
+    <item
+        android:drawable="@drawable/black_space_overlay"
+        android:maxLevel="2"
+        android:minLevel="2" />
+    <!-- Selected Move indicator state -->
+    <item
+        android:drawable="@drawable/black_space_move_overlay"
+        android:maxLevel="3"
+        android:minLevel="3" />
 </level-list>

@@ -18,6 +18,18 @@ public class Capture : Move
         this.Piece = Piece;
     }
 
+    public override void IndicateMoveable()
+    {
+        base.IndicateMoveable();
+        this.Piece.Space.IndicateMoveable();
+    }
+
+    public override void IndicateUnmovable()
+    {
+        base.IndicateUnmovable();
+        this.Piece.Space.IndicateUnmovable();
+    }
+
     public override void Select()
     {
         base.Select();

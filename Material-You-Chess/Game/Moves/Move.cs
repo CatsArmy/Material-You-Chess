@@ -20,6 +20,19 @@ public class Move(BoardPiece origin, BoardSpace destination) : IMove
     public BoardPiece Origin { get; set; } = origin;
     public BoardSpace Destination { get; set; } = destination;
 
+    public virtual void IndicateMoveable()
+    {
+        this.Destination.IndicateMoveable();
+        this.Origin.Space.IndicateMoveable();
+    }
+
+    public virtual void IndicateUnmovable()
+    {
+        this.Destination.IndicateUnmovable();
+        this.Origin.Space.IndicateUnmovable();
+        this.Origin.LastSpace?.IndicateUnmovable();
+    }
+
     public virtual void Select()
     {
         this.Destination.Select();
@@ -30,5 +43,6 @@ public class Move(BoardPiece origin, BoardSpace destination) : IMove
     {
         this.Destination.Unselect();
         this.Origin.Space.Unselect();
+        this.Origin.LastSpace?.Unselect();
     }
 }

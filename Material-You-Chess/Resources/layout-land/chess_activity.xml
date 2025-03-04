@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayBottom_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_end="48dp" />
 
-	<com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/WhitePlayerCard"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
@@ -23,11 +23,11 @@
         app:layout_constraintStart_toStartOf="@+id/displayStart_CA"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-			<androidx.recyclerview.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/capturedBlackPieces"
                 android:layout_width="0dp"
                 android:layout_height="28dp"
@@ -41,7 +41,7 @@
                 app:layout_constraintVertical_bias="0.25"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-			<com.google.android.material.imageview.ShapeableImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/p1MainProfileImageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
@@ -55,7 +55,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/outline_account_circle_24" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/whitePlayerIndicator"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -68,7 +68,7 @@
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/king_white" />
 
-			<TextView
+            <TextView
                 android:id="@+id/p1MainUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -83,7 +83,7 @@
                 app:layout_constraintStart_toEndOf="@+id/p1MainProfileImageView"
                 app:layout_constraintTop_toTopOf="@+id/p1MainProfileImageView" />
 
-			<Button
+            <Button
                 android:id="@+id/whiteSurrenderBtn"
                 style="?attr/materialIconButtonFilledTonalStyle"
                 android:layout_width="48dp"
@@ -97,11 +97,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/p1MainUsername"
                 app:layout_constraintVertical_bias="0.6"
                 tools:ignore="SpeakableTextPresentCheck" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-	</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
-	<com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/BlackPlayerCard"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
@@ -112,11 +112,11 @@
         app:layout_constraintStart_toEndOf="@+id/materialCardView"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-			<androidx.recyclerview.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/capturedWhitePieces"
                 android:layout_width="0dp"
                 android:layout_height="28dp"
@@ -130,7 +130,7 @@
                 app:layout_constraintVertical_bias="0.25"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-			<com.google.android.material.imageview.ShapeableImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/p2MainProfileImageView"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
@@ -144,7 +144,7 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/outline_account_circle_24" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/blackPlayerIndicator"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -157,7 +157,7 @@
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/king_black" />
 
-			<TextView
+            <TextView
                 android:id="@+id/p2MainUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -172,7 +172,7 @@
                 app:layout_constraintStart_toEndOf="@+id/p2MainProfileImageView"
                 app:layout_constraintTop_toTopOf="@+id/p2MainProfileImageView" />
 
-			<Button
+            <Button
                 android:id="@+id/blackSurrenderBtn"
                 style="?attr/materialIconButtonFilledTonalStyle"
                 android:layout_width="48dp"
@@ -187,10 +187,10 @@
                 app:layout_constraintVertical_bias="0.6"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-		</androidx.constraintlayout.widget.ConstraintLayout>
-	</com.google.android.material.card.MaterialCardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-	<com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="368dp"
@@ -201,20 +201,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ChessBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true">
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterH"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="8dp"  />
+                app:layout_constraintGuide_begin="8dp" />
 
-			<androidx.constraintlayout.widget.Guideline
+            <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -222,7 +222,7 @@
                 app:layout_constraintGuide_percent="0.035" />
 
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -237,7 +237,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -253,7 +253,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7" />
 
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -268,7 +268,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A6" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -283,7 +283,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A5" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -298,7 +298,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A4" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -313,7 +313,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A3" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -328,7 +328,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -343,7 +343,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -358,7 +358,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___B"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -373,7 +373,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -388,7 +388,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -403,7 +403,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___E"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -418,7 +418,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___F"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -433,7 +433,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___G"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -448,7 +448,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<TextView
+            <TextView
                 android:id="@+id/gmb___H"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -463,7 +463,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H1"
                 app:layout_constraintVertical_bias="0.05" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -473,7 +473,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A8"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -483,7 +483,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A6"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -493,7 +493,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A4"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -501,9 +501,10 @@
                 android:tag="IsBlack"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A2"
-                app:srcCompat="@drawable/black_square_bottom" />
+                app:shapeAppearanceOverlay="@style/BottomBlack"
+                app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -512,7 +513,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -521,7 +522,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B7"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -531,7 +532,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B5"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -540,7 +541,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B3"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -549,7 +550,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C8"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -558,7 +559,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -567,7 +568,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D8"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -576,7 +577,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D7"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -585,7 +586,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D6"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -594,7 +595,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D5"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -602,9 +603,10 @@
                 android:tag="IsWhite"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
-                app:srcCompat="@drawable/white_square_top" />
+                app:shapeAppearanceOverlay="@style/TopWhite"
+                app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -614,7 +616,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A7"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -624,7 +626,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A5"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__A2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -634,7 +636,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -643,7 +645,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -652,7 +654,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B6"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -661,7 +663,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B4"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__B1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -670,7 +672,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -679,7 +681,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -688,7 +690,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D2"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -697,7 +699,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C7"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -706,7 +708,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C5"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -715,7 +717,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D4"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__D2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -724,7 +726,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -733,7 +735,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C6"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -742,7 +744,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C4"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -751,7 +753,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C3"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__C1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -760,7 +762,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C2"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -769,7 +771,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -778,7 +780,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E8"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -787,7 +789,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E7"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -796,7 +798,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E6"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -805,7 +807,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E5"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -814,7 +816,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E4"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -823,7 +825,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E3"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__E1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -832,7 +834,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E2"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -841,7 +843,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -850,7 +852,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F8"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -859,7 +861,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F7"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -868,7 +870,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F6"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -879,7 +881,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F5"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -888,7 +890,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F4"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -897,7 +899,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F3"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__F1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -906,7 +908,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F2"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -915,7 +917,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -924,7 +926,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G8"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -933,7 +935,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G7"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -942,7 +944,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G6"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -951,7 +953,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G5"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -960,7 +962,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G4"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -969,7 +971,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G3"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__G1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -978,16 +980,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G2"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H8"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
-                app:srcCompat="@drawable/black_square_top" />
+                app:shapeAppearanceOverlay="@style/TopBlack"
+                app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H7"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -996,7 +999,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H8"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H6"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -1005,7 +1008,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H7"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H5"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -1014,7 +1017,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H6"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H4"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -1023,7 +1026,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H5"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H3"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -1032,7 +1035,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H4"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmb__H2"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
@@ -1041,16 +1044,17 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H3"
                 app:srcCompat="@drawable/black_square" />
 
-			<ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H1"
                 android:layout_width="44dp"
                 android:layout_height="32dp"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H2"
-                app:srcCompat="@drawable/white_square_bottom" />
+                app:shapeAppearanceOverlay="@style/BottomWhite"
+                app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bRook1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1061,7 +1065,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8"
                 app:srcCompat="@drawable/rook_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bKnight1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1072,7 +1076,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__B8"
                 app:srcCompat="@drawable/knight_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bBishop1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1083,7 +1087,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__C8"
                 app:srcCompat="@drawable/bishop_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bQueen1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1094,7 +1098,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__D8"
                 app:srcCompat="@drawable/queen_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bKing1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1105,7 +1109,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__E8"
                 app:srcCompat="@drawable/king_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bBishop2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1116,7 +1120,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__F8"
                 app:srcCompat="@drawable/bishop_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bKnight2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1127,7 +1131,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__G8"
                 app:srcCompat="@drawable/knight_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bRook2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1138,7 +1142,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__H8"
                 app:srcCompat="@drawable/rook_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1149,7 +1153,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1160,7 +1164,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__B7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn3"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1171,7 +1175,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__C7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn4"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1182,7 +1186,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__D7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn5"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1193,7 +1197,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__E7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn6"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1204,7 +1208,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__F7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn7"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1215,7 +1219,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__G7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__bPawn8"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1226,7 +1230,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__H7"
                 app:srcCompat="@drawable/pawn_black" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wRook1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1237,7 +1241,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1"
                 app:srcCompat="@drawable/rook_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wKnight1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1248,7 +1252,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__B1"
                 app:srcCompat="@drawable/knight_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wBishop1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1259,7 +1263,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__C1"
                 app:srcCompat="@drawable/bishop_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wQueen1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1270,7 +1274,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__D1"
                 app:srcCompat="@drawable/queen_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wKing1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1281,7 +1285,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__E1"
                 app:srcCompat="@drawable/king_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wBishop2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1292,7 +1296,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__F1"
                 app:srcCompat="@drawable/bishop_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wKnight2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1303,7 +1307,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__G1"
                 app:srcCompat="@drawable/knight_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wRook2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1314,7 +1318,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__H1"
                 app:srcCompat="@drawable/rook_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn1"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1325,7 +1329,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn2"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1336,7 +1340,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__B2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn3"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1347,7 +1351,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__C2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn4"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1358,7 +1362,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__D2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn5"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1369,7 +1373,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__E2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn6"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1380,7 +1384,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__F2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn7"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1391,7 +1395,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__G2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<ImageView
+            <ImageView
                 android:id="@+id/gmp__wPawn8"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -1402,137 +1406,137 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__H2"
                 app:srcCompat="@drawable/pawn_white" />
 
-			<!--            <com.google.android.material.floatingtoolbar.FloatingToolbarLayout-->
-			<!--                android:id="@+id/ftbWhite_promotion"-->
-			<!--                android:layout_width="wrap_content"-->
-			<!--                android:layout_height="wrap_content"-->
-			<!--                android:layout_gravity="bottom|center"-->
-			<!--                android:elevation="1dp"-->
-			<!--                app:layout_constraintBottom_toBottomOf="@+id/gmb__C4"-->
-			<!--                app:layout_constraintEnd_toStartOf="@+id/gmb__D8"-->
-			<!--                app:layout_constraintStart_toEndOf="@+id/gmb__B8"-->
-			<!--                app:layout_constraintTop_toTopOf="@+id/gmb__C7">-->
+            <!--            <com.google.android.material.floatingtoolbar.FloatingToolbarLayout-->
+            <!--                android:id="@+id/ftbWhite_promotion"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="bottom|center"-->
+            <!--                android:elevation="1dp"-->
+            <!--                app:layout_constraintBottom_toBottomOf="@+id/gmb__C4"-->
+            <!--                app:layout_constraintEnd_toStartOf="@+id/gmb__D8"-->
+            <!--                app:layout_constraintStart_toEndOf="@+id/gmb__B8"-->
+            <!--                app:layout_constraintTop_toTopOf="@+id/gmb__C7">-->
 
-			<!--                &lt;!&ndash; floating toolbar sample content &ndash;&gt;-->
-			<!--                <LinearLayout-->
-			<!--                    android:layout_width="wrap_content"-->
-			<!--                    android:layout_height="wrap_content"-->
-			<!--                    android:layout_gravity="center"-->
-			<!--                    android:orientation="vertical">-->
+            <!--                &lt;!&ndash; floating toolbar sample content &ndash;&gt;-->
+            <!--                <LinearLayout-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:orientation="vertical">-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_white_queen"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/queen_white"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_white_queen"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/queen_white"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_white_knight"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/knight_white"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_white_knight"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/knight_white"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_white_rook"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/rook_white"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_white_rook"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/rook_white"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_white_bishop"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/bishop_white"-->
-			<!--                        app:iconTint="@null" />-->
-			<!--                </LinearLayout>-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_white_bishop"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/bishop_white"-->
+            <!--                        app:iconTint="@null" />-->
+            <!--                </LinearLayout>-->
 
-			<!--            </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>-->
+            <!--            </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>-->
 
-			<!--            <com.google.android.material.floatingtoolbar.FloatingToolbarLayout-->
-			<!--                android:id="@+id/ftbBlack_promotion"-->
-			<!--                android:layout_width="wrap_content"-->
-			<!--                android:layout_height="wrap_content"-->
-			<!--                android:layout_gravity="bottom|center"-->
-			<!--                android:elevation="1dp"-->
-			<!--                app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"-->
-			<!--                app:layout_constraintEnd_toEndOf="@+id/gmb__F6"-->
-			<!--                app:layout_constraintStart_toStartOf="@+id/gmb__F6"-->
-			<!--                app:layout_constraintTop_toTopOf="@+id/gmb__F7">-->
+            <!--            <com.google.android.material.floatingtoolbar.FloatingToolbarLayout-->
+            <!--                android:id="@+id/ftbBlack_promotion"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="bottom|center"-->
+            <!--                android:elevation="1dp"-->
+            <!--                app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"-->
+            <!--                app:layout_constraintEnd_toEndOf="@+id/gmb__F6"-->
+            <!--                app:layout_constraintStart_toStartOf="@+id/gmb__F6"-->
+            <!--                app:layout_constraintTop_toTopOf="@+id/gmb__F7">-->
 
-			<!--                &lt;!&ndash; floating toolbar sample content &ndash;&gt;-->
-			<!--                <LinearLayout-->
-			<!--                    android:layout_width="wrap_content"-->
-			<!--                    android:layout_height="wrap_content"-->
-			<!--                    android:layout_gravity="center"-->
-			<!--                    android:orientation="vertical">-->
+            <!--                &lt;!&ndash; floating toolbar sample content &ndash;&gt;-->
+            <!--                <LinearLayout-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:orientation="vertical">-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_black_queen"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/queen_black"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_black_queen"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/queen_black"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_black_knight"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/knight_black"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_black_knight"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/knight_black"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_black_rook"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/rook_black"-->
-			<!--                        app:iconTint="@null" />-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_black_rook"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/rook_black"-->
+            <!--                        app:iconTint="@null" />-->
 
-			<!--                    <Button-->
-			<!--                        android:id="@+id/promote_black_bishop"-->
-			<!--                        style="?attr/materialIconButtonFilledStyle"-->
-			<!--                        android:layout_width="wrap_content"-->
-			<!--                        android:layout_height="wrap_content"-->
-			<!--                        android:checkable="true"-->
-			<!--                        app:icon="@drawable/bishop_black"-->
-			<!--                        app:iconTint="@null" />-->
-			<!--                </LinearLayout>-->
+            <!--                    <Button-->
+            <!--                        android:id="@+id/promote_black_bishop"-->
+            <!--                        style="?attr/materialIconButtonFilledStyle"-->
+            <!--                        android:layout_width="wrap_content"-->
+            <!--                        android:layout_height="wrap_content"-->
+            <!--                        android:checkable="true"-->
+            <!--                        app:icon="@drawable/bishop_black"-->
+            <!--                        app:iconTint="@null" />-->
+            <!--                </LinearLayout>-->
 
-			<!--            </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>-->
-		</androidx.constraintlayout.widget.ConstraintLayout>
-	</com.google.android.material.card.MaterialCardView>
+            <!--            </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayTop_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="48dp" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayStart_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="24dp" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayEnd_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
