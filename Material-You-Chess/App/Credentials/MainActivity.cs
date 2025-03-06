@@ -1,9 +1,9 @@
-﻿//namespace Chess.App.Credentials;
+﻿//using AndroidX.AppCompat.App;
+
+//namespace Chess.App.Credentials;
 
 //public class MainActivity : AppCompatActivity, MainFragmentCallback, HomeFragmentCallback, SignInFragmentCallback, SignUpFragmentCallback
 //{
-
-//    private ActivityMainBinding binding;
 
 //    protected override void OnCreate(Bundle? savedInstanceState)
 //    {

@@ -144,10 +144,6 @@ public class MainActivity : AppCompatActivity
         this.profileAction1 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
         this.profileAction2 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
         this.startGame!.Click += this.StartGame;
-
-        // Use your app or activity context to instantiate a client instance of CredentialManager.
-        //var credentialManager = CredentialManager.Create(this.ApplicationContext!);
-
     }
 
     protected override void OnStart()

@@ -1,43 +1,45 @@
-﻿//namespace Chess.App.Credentials;
+﻿using Android.Content;
 
-//internal class DataProvider
-//{
+namespace Chess.App.Credentials;
 
-//    private ISharedPreferences? sharedPreference;
-//    private ISharedPreferencesEditor? editor;
+public static class DataProvider
+{
 
-//    private const string IS_SIGNED_IN = "isSignedIn";
-//    private const string IS_SIGNED_IN_THROUGH_PASSKEYS = "isSignedInThroughPasskeys";
-//    private const string PREF_NAME = "CREDMAN_PREF";
+    private static ISharedPreferences? sharedPreference;
+    private static ISharedPreferencesEditor? editor;
 
-//    public void InitSharedPref(Context context)
-//    {
-//        sharedPreference = context.ApplicationContext?.GetSharedPreferences(PREF_NAME, FileCreationMode.Private);
-//        editor = sharedPreference?.Edit();
-//    }
+    private const string IS_SIGNED_IN = "isSignedIn";
+    private const string IS_SIGNED_IN_THROUGH_PASSKEYS = "isSignedInThroughPasskeys";
+    private const string PREF_NAME = "CREDMAN_PREF";
 
-//    //Set if the user is signed in or not
-//    public void ConfigureSignedInPref(bool flag)
-//    {
-//        editor?.PutBoolean(IS_SIGNED_IN, flag);
-//        editor?.Commit();
-//    }
+    public static void InitSharedPref(Context context)
+    {
+        sharedPreference = context.ApplicationContext?.GetSharedPreferences(PREF_NAME, FileCreationMode.Private);
+        editor = sharedPreference?.Edit();
+    }
 
-//    //Set if signed in through passkeys or not
-//    public void SetSignedInThroughPasskeys(bool flag)
-//    {
-//        editor?.PutBoolean(IS_SIGNED_IN_THROUGH_PASSKEYS, flag);
-//        editor?.Commit();
-//    }
+    //Set if the user is signed in or not
+    public static void ConfigureSignedInPref(bool flag)
+    {
+        editor?.PutBoolean(IS_SIGNED_IN, flag);
+        editor?.Commit();
+    }
 
-//    public bool IsSignedIn()
-//    {
-//        return sharedPreference!.GetBoolean(IS_SIGNED_IN, false);
-//    }
+    //Set if signed in through passkeys or not
+    public static void SetSignedInThroughPasskeys(bool flag)
+    {
+        editor?.PutBoolean(IS_SIGNED_IN_THROUGH_PASSKEYS, flag);
+        editor?.Commit();
+    }
 
-//    public bool IsSignedInThroughPasskeys()
-//    {
-//        return sharedPreference!.GetBoolean(IS_SIGNED_IN_THROUGH_PASSKEYS, false);
-//    }
-//}
+    public static bool IsSignedIn()
+    {
+        return sharedPreference!.GetBoolean(IS_SIGNED_IN, false);
+    }
+
+    public static bool IsSignedInThroughPasskeys()
+    {
+        return sharedPreference!.GetBoolean(IS_SIGNED_IN_THROUGH_PASSKEYS, false);
+    }
+}
 

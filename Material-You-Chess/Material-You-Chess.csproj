@@ -8,7 +8,7 @@
     <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>com.catsarmy.chess</ApplicationId>
-    
+   
     <!--<ApplicationDisplayVersion>$(Major).$(Minor).$(Patch)</ApplicationDisplayVersion>
     <ApplicationVersion>$(Major)</ApplicationVersion>
     <ApplicationId>com.catsarmy.chess</ApplicationId>
@@ -32,9 +32,42 @@
   <Import Project="Properties\Material-You-Chess.Build.props.user" />
   
   <ItemGroup>
+    <AndroidJavaSource Remove="App\Credentials\**" />
+    <AndroidLibrary Remove="App\Credentials\**" />
+    <AndroidNativeLibrary Remove="App\Credentials\**" />
+    <Compile Remove="App\Credentials\**" />
+    <EmbeddedResource Remove="App\Credentials\**" />
+    <JavaSourceJar Remove="App\Credentials\**" />
+    <None Remove="App\Credentials\**" />
+    <ProguardConfiguration Remove="App\Credentials\**" />
+    <TransformFile Remove="App\Credentials\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AndroidResource Remove="Resources\layout\fragment_home.xml" />
+    <AndroidResource Remove="Resources\layout\fragment_main.xml" />
+    <AndroidResource Remove="Resources\layout\fragment_sign_in.xml" />
+    <AndroidResource Remove="Resources\layout\fragment_sign_up.xml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Resources\layout\fragment_home.xml" />
+    <None Remove="Resources\layout\fragment_main.xml" />
+    <None Remove="Resources\layout\fragment_sign_in.xml" />
+    <None Remove="Resources\layout\fragment_sign_up.xml" />
+  </ItemGroup>
+  
+ <!-- <ItemGroup>
+    <AndroidBoundLayout Include="Resources\layout\fragment_home.xml" />
+    <AndroidBoundLayout Include="Resources\layout\fragment_main.xml" />
+    <AndroidBoundLayout Include="Resources\layout\fragment_sign_in.xml" />
+  </ItemGroup>-->
+  
+  <ItemGroup>
     <GoogleServicesJson Include="$(GoogleServicesJsonFile)" />
     <None Include="Properties\Material-You-Chess.Build.props.user" />
     <None Include="Properties\Material-You-Chess.Build.props.user.template" />
+    
   </ItemGroup>
 
   <PropertyGroup>
@@ -42,10 +75,10 @@
     <AndroidEnableProfiler>False</AndroidEnableProfiler>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
     <!--<AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
     <AndroidGenerateJniMarshalMethods>True</AndroidGenerateJniMarshalMethods>
     <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
-    <AndroidFragmentType>AndroidX.Fragment.App</AndroidFragmentType>
     <AndroidLintEnabled>True</AndroidLintEnabled>-->
   </PropertyGroup>
 
@@ -90,6 +123,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.40" />
+    <PackageReference Include="Plugin.Firebase.Auth" Version="3.1.1" />
+    <PackageReference Include="Plugin.Firebase.Auth.Facebook" Version="3.1.0" />
+    <PackageReference Include="Plugin.Firebase.Auth.Google" Version="3.1.1" />
+    <PackageReference Include="Plugin.Firebase.Core" Version="3.1.1" />
+    <PackageReference Include="Plugin.Firebase.Firestore" Version="3.1.2" />
+    <PackageReference Include="Plugin.Firebase.Storage" Version="3.1.1" />
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
     <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.11" />
     <PackageReference Include="Xamarin.Android.Glide.Annotations" Version="4.16.0.11" />
@@ -106,6 +145,8 @@
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.0.2" />
     <PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.3.0.2" />
     <PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.3.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.7.2" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel" Version="2.8.7.2" />
     <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
     <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
     <PackageReference Include="Xamarin.AndroidX.Media" Version="1.7.0.9" />
@@ -118,7 +159,6 @@
     <PackageReference Include="Xamarin.Google.Android.Play.Integrity" Version="1.4.0.3" />
     <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0" />
     <PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.36.0.1" />
-    <PackageReference Include="Xamarin.Google.Guava.ListenableFuture" Version="1.0.0.26" />
     <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
   </ItemGroup>
