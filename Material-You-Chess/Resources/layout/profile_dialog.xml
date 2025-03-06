@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ProfilePicture"
+            android:id="@+id/profile_picture"
             android:layout_width="128dp"
             android:layout_height="128dp"
             android:clickable="false"
@@ -32,11 +32,11 @@
             android:gravity="center"
             app:icon="@drawable/outline_photo_camera_24"
             app:iconGravity="textStart"
-            app:layout_constraintBottom_toBottomOf="@+id/ProfilePicture"
-            app:layout_constraintEnd_toEndOf="@+id/ProfilePicture"
+            app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
+            app:layout_constraintEnd_toEndOf="@+id/profile_picture"
             app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="@+id/ProfilePicture"
-            app:layout_constraintTop_toTopOf="@+id/ProfilePicture"
+            app:layout_constraintStart_toStartOf="@+id/profile_picture"
+            app:layout_constraintTop_toTopOf="@+id/profile_picture"
             app:layout_constraintVertical_bias="0.95"
             tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -164,7 +164,7 @@
                 app:layout_constraintStart_toEndOf="@+id/ThemeIcon" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/EditTheme"
+                android:id="@+id/theme_switch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

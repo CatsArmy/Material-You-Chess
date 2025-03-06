@@ -48,10 +48,10 @@ public class ProfileDialog : IProfileDialog
 
     public void OnShow(object? sender, EventArgs args)
     {
-        this.DialogProfilePicture = this.Dialog.FindViewById<ShapeableImageView>(Resource.Id.ProfilePicture);
+        this.DialogProfilePicture = this.Dialog.FindViewById<ShapeableImageView>(Resource.Id.profile_picture);
         this.EditProfilePicture = this.Dialog.FindViewById<Button>(Resource.Id.editProfilePicture);
         this.ThemeText = this.Dialog.FindViewById<TextView>(Resource.Id.ThemeText);
-        this.ThemeToggle = this.Dialog.FindViewById<MaterialSwitch>(Resource.Id.EditTheme);
+        this.ThemeToggle = this.Dialog.FindViewById<MaterialSwitch>(Resource.Id.theme_switch);
         this.EditProfileUsername = this.Dialog.FindViewById<TextView>(Resource.Id.UsernameText);
         this.EditUsername = this.Dialog.FindViewById<FloatingActionButton>(Resource.Id.EditUsername);
         this.ThemeToggle!.CheckedChange += this.ThemeChanged;

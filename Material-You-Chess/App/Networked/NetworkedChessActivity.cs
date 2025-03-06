@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 using Android.Content;
@@ -32,7 +31,8 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
     /// </summary>
 
     private bool isConnectionInitiator = false;
-    private LobbyWaitingRoomBottomSheet? LobbyWaitingRoom;
+    //private LobbyWaitingRoomBottomSheet? LobbyWaitingRoom;
+    private NetworkDialog? LobbyWaitingRoom = null;
 
     public ChessGame? Game { get; set; }
     public Context? Context { get; set; }
@@ -119,19 +119,29 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         this.Profile2Username = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
         this.PromotionDialogs = (new(this), new(this));
         this.BoardLayout = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-    }
 
-    protected override void OnStart()
-    {
-        base.OnStart();
         this.State = State.Searching;
+        this.LobbyWaitingRoom ??= new NetworkDialog(this);
 
+        if (!this.LobbyWaitingRoom.Dialog.IsShowing)
+        {
+            this.LobbyWaitingRoom.Show();
+            //Show(this.SupportFragmentManager, "Lobby Waiting Room");
+        }
         //set game view to waiting for opponent 
+#if false
         Logger.Debug($"::new {nameof(LobbyWaitingRoomBottomSheet)}()::");
-        this.LobbyWaitingRoom = new LobbyWaitingRoomBottomSheet(this);
+#endif
+
+#if false
         Logger.Debug($"::show {nameof(LobbyWaitingRoomBottomSheet)}()::");
-        this.LobbyWaitingRoom.Show(this.SupportFragmentManager, "Lobby Waiting Room");
+#endif
+
+
+
+#if false
         Logger.Debug($"::showing {nameof(LobbyWaitingRoomBottomSheet)}()::");
+#endif
     }
 
     protected override void OnStop()
@@ -181,12 +191,12 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         this.AcceptConnection(endpoint);
     }
 
-    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
+    //[SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
         this.State = State.Connected;
-        var stream = new MemoryStream();
+        //var stream = new MemoryStream();
         switch (this.isConnectionInitiator)
         {
             case true:
@@ -196,20 +206,20 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                     true => "Player",
                     false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
                 };
-                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-                {
-                    //var load =
-                    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                    //.Error(Resource.Drawable.outline_account_circle_24)
-                    //.Into(this.Player1ShapeableImageView!);
-                }
+                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                //{
+                //    //var load =
+                //    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                //    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                //    //.Error(Resource.Drawable.outline_account_circle_24)
+                //    //.Into(this.Player1ShapeableImageView!);
+                //}
                 this.Profile2Username!.Text = endpoint.Name;
                 this.Player2Name = endpoint.Name;
                 this.Player1Name = FirebaseAuth.Instance?.CurrentUser?.DisplayName!;
                 this.Game = new ChessGame(this, true);
-                if (this.Player1ShapeableImageView == null)
-                    return;
+                //if (this.Player1ShapeableImageView == null)
+                //    return;
 
                 //if (!(this.Player1ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
                 //    return;
@@ -224,20 +234,20 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
                 };
 
                 this.Profile2Username!.Text = this.Player2Name;
-                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-                {
-                    //var load = 
-                    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
-                    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
-                    //.Error(Resource.Drawable.outline_account_circle_24)
-                    //.Into(this.Player2ShapeableImageView!);
-                }
+                //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+                //{
+                //    //var load = 
+                //    //Glide.With(this).Load(FirebaseStorage.Instance.Reference
+                //    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png"))
+                //    //.Error(Resource.Drawable.outline_account_circle_24)
+                //    //.Into(this.Player2ShapeableImageView!);
+                //}
                 this.Player1Name = endpoint.Name;
                 this.Profile1Username!.Text = this.Player1Name;
 
                 this.Game = new ChessGame(this, false);
-                if (this.Player2ShapeableImageView == null)
-                    return;
+                //if (this.Player2ShapeableImageView == null)
+                //    return;
 
                 //if (!(this.Player2ShapeableImageView.Drawable as BitmapDrawable)!.Bitmap!.Compress(Bitmap.CompressFormat.Png!, 100, stream))
                 //    return;
@@ -256,9 +266,9 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
     protected override void OnConnectionFailed(EndPoint endpoint)
     {
         this.State = State.Unknown;
-        this.State = State.Searching;
+        //this.State = State.Searching;
         this.isConnectionInitiator = false;
-        this.StartDiscovering();
+        //this.StartDiscovering();
     }
 
     /// <summary>
@@ -266,8 +276,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
     /// </summary>
     /// <param name="endpoint">The client who is sending the <paramref name="payload"/> to us </param>
     /// <param name="payload">The <see cref="Payload"/> containing all the data for us to handle the event</param>
-    [SuppressMessage("Trimming",
-        "IL2057:Unrecognized value passed to the parameter of method. It's not possible to guarantee the availability of the target type.")]
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
         if (payload.PayloadType == Payload.Type.Bytes)

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Chess</string>
-    <string name="app_title">Material You Chess</string>
+    <string name="app_title"><font fgcolor='?attr/colorTertiary'>Material </font><font fgcolor='?attr/colorPrimary'>"You </font><font fgcolor='?attr/colorSecondary'>Chess</font></string>
     <string name="package_name">com.catsarmy.chess</string>
     <string name="action_settings">Settings</string>
     <string name="text_view">1<sup>st</sup></string>
@@ -17,17 +17,4 @@
     <string name="client_preferences_tooltip"></string>
     <string name="color_preferences_tooltip"></string>
     <string name="game_preferences_tooltip"></string>
-
-	<!-- Strings used for fragments for navigation -->
-	<string name="first_fragment_label">First Fragment</string>
-	<string name="second_fragment_label">Second Fragment</string>
-	<string name="next">Next</string>
-	<string name="previous">Previous</string>
-
-	<string name="hello_first_fragment">Hello first fragment</string>
-	<string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-	<string name="sign_in">Sign in</string>
-	<string name="operation_in_progress">operation in progress...</string>
-	<string name="sign_in_with_passkey_saved_password">Sign in with passkey/saved password</string>
-	<string name="autofill_saved_credentials">Autofill saved credentials</string>
 </resources>

@@ -232,7 +232,16 @@ public class ChessGame : IChessGame
         if (!this.Board.TryGetValue(sIndex, out var space))
             return;
 
-        if (this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index) is not Move move)
+        if (this.IsCastling(space) is Move castling)
+        {
+            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: castling,
+                SourceJsonGenerationContext.Default.Move)));
+            this.Selected!.Move(castling, this);
+            return;
+        }
+
+        var move = this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
+        if (move is null)
         {
             this.Selected = null;
             return;
@@ -240,6 +249,34 @@ public class ChessGame : IChessGame
 
         this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
         this.Selected!.Move(move, this);
+    }
+
+    private Move? IsCastling(BoardSpace space)
+    {
+        var rank = this.Player!.King!.Space.Rank;
+        var queenSideMove = this.Moves?.FirstOrDefault(_move => _move is QueenSideCastle) as QueenSideCastle;
+        var kingSideMove = this.Moves?.FirstOrDefault(_move => _move is KingSideCastle) as KingSideCastle;
+        if (queenSideMove is not null)
+        {
+            List<BoardSpace> queenSideSpaces = [];
+            for (char queenSide = 'A'; queenSide != this.Player!.King!.Space.File - 1; queenSide++)
+                queenSideSpaces.Add(this.Board[(queenSide, rank)]);
+
+            if (queenSideSpaces.FirstOrDefault(Space => Space.Index == space.Index) is not null)
+                return queenSideMove;
+        }
+
+        if (kingSideMove is not null)
+        {
+            List<BoardSpace> kingSideSpaces = [];
+            for (char kingSide = 'H'; kingSide != this.Player!.King!.Space.File + 1; kingSide++)
+                kingSideSpaces.Add(this.Board[(kingSide, rank)]);
+
+            if (kingSideSpaces.FirstOrDefault(Space => Space.Index == space.Index) is not null)
+                return kingSideMove;
+        }
+
+        return null;
     }
 
     private bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)

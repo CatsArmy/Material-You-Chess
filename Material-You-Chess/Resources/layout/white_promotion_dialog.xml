@@ -8,14 +8,14 @@
     android:gravity="center"
     android:orientation="vertical">
 
-	<LinearLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="horizontal">
 
-		<ImageView
+        <ImageView
             android:id="@+id/whitePromoteQueen"
             android:layout_width="96dp"
             android:layout_height="96dp"
@@ -23,23 +23,23 @@
             app:srcCompat="@drawable/queen_white"
             tools:ignore="SpeakableTextPresentCheck" />
 
-		<ImageView
+        <ImageView
             android:id="@+id/whitePromoteKnight"
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
             app:srcCompat="@drawable/knight_white"
             tools:ignore="SpeakableTextPresentCheck" />
-	</LinearLayout>
+    </LinearLayout>
 
-	<LinearLayout
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="horizontal">
 
-		<ImageView
+        <ImageView
             android:id="@+id/whitePromoteRook"
             android:layout_width="96dp"
             android:layout_height="96dp"
@@ -47,13 +47,13 @@
             app:srcCompat="@drawable/rook_white"
             tools:ignore="SpeakableTextPresentCheck" />
 
-		<ImageView
+        <ImageView
             android:id="@+id/whitePromoteBishop"
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
             app:srcCompat="@drawable/bishop_white"
             tools:ignore="SpeakableTextPresentCheck" />
-	</LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

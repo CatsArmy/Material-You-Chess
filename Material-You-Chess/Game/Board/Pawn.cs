@@ -225,7 +225,6 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
 public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
 {
-
     public bool EnPassantCapturable = false;
     public override char Abbreviation => 'P';
     public override void Move(Move move, ChessGame game)
@@ -260,6 +259,7 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
     public override void Update(bool IsUpdatingPlayer = false)
     {
         base.Update(IsUpdatingPlayer);
-        this.EnPassantCapturable = false;
+        if (IsUpdatingPlayer)
+            this.EnPassantCapturable = false;
     }
 }

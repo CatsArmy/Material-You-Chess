@@ -58,11 +58,22 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         {
             this.Capture(capture.Piece, game);
         }
+
+        if (move is Castling castling)
+        {
+            var castlingRook = castling.Rook;
+            var castlingKing = castling.King;
+            game.NextTurn(move);
+            this.Move(castlingRook);
+            this.Move(castlingKing);
+            return;
+        }
+
         game.NextTurn(move);
         this.Move(move);
     }
 
-    internal void Move(Move move)
+    public void Move(Move move)
     {
         this.LastSpace = this.Space;
         this.Space = move.Destination;

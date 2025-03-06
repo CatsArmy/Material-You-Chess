@@ -16,7 +16,7 @@ public class BlackRook(int id, int count, BoardSpace space, string prefix = $"b{
     public override bool IsWhite => false;
 }
 
-public class Rook(int id, BoardSpace space) : SpecialPiece(id, space)
+public class Rook(int id, BoardSpace space) : CastleablePiece(id, space)
 {
     public override char Abbreviation => 'R';
 

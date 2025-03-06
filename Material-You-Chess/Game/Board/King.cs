@@ -16,7 +16,7 @@ public class BlackKing(int id, int count, BoardSpace space) : King(id, space)
     public override bool IsWhite => false;
 }
 
-public class King(int id, BoardSpace space) : SpecialPiece(id, space)
+public class King(int id, BoardSpace space) : CastleablePiece(id, space)
 {
     public override char Abbreviation => 'K';
 
