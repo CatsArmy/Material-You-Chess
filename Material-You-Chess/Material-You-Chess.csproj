@@ -92,10 +92,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.40" />
-    <PackageReference Include="Plugin.Firebase.Auth" Version="3.1.1" />
+    <!--<PackageReference Include="Plugin.Firebase.Auth" Version="3.1.1" />-->
     <!--<PackageReference Include="Plugin.Firebase.Auth.Facebook" Version="3.1.0" />-->
     <!--<PackageReference Include="Plugin.Firebase.Auth.Google" Version="3.1.1" />-->
-    <PackageReference Include="Plugin.Firebase.Core" Version="3.1.1" />
+    <!--<PackageReference Include="Plugin.Firebase.Core" Version="3.1.1" />-->
     <!--<PackageReference Include="Plugin.Firebase.Firestore" Version="3.1.2" />-->
     <!--<PackageReference Include="Plugin.Firebase.Storage" Version="3.1.1" />-->
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
@@ -111,7 +111,7 @@
     <PackageReference Include="Xamarin.AndroidX.Compose.Material" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Material3" Version="1.3.1.2" />
-    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.1" />
     <PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.3.0.2" />
     <PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.3.0.2" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.7.2" />
@@ -130,5 +130,9 @@
     <PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.36.0.1" />
     <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\android-bindinglib\android-bindinglib\android-bindinglib.csproj" />
   </ItemGroup>
 </Project>

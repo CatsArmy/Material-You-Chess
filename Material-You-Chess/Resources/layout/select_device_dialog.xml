@@ -1,51 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/standard_bottom_sheet"
-    style="@style/Widget.Material3.BottomSheet"
+    android:id="@+id/bottom_sheet"
+    style="@style/Widget.Material3.BottomSheet.Modal"
     android:layout_width="match_parent"
-    android:layout_height="600dp"
-    android:layout_gravity="bottom"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="auto"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    tools:layout_gravity="bottom"
+    tools:layout_height="600dp">
 
     <!-- Drag handle for accessibility -->
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
         android:id="@+id/drag_handle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Bottom sheet contents. -->
+    <!-- Bottom sheet contents -->
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/SearchingIndicator"
+        style="@style/Widget.Material3.CircularProgressIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
+
     <TextView
+        android:id="@+id/SearchingText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="64dp"
-        android:text="Online game settings"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:layout_marginTop="8dp"
+        android:autoSizeTextType="uniform"
+        android:text="Please select a matchmaking preference"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchingIndicator" />
 
-    <TextView
-        android:id="@+id/bsSearching"
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/matchmaking_pref"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="128dp"
-        android:text="Searching for players"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchingText"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
-    <!--        <com.google.android.material.loadingindicator.LoadingIndicator-->
-    <!--            android:id="@+id/mliSearching"-->
-    <!--            style="@style/Widget.Material3.LoadingIndicator.Contained"-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_gravity="center_horizontal"-->
-    <!--            android:layout_marginTop="192dp" />-->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/white_chip"
+            style="@style/Widget.Material3.Chip.Assist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="White"
+            app:chipIcon="@drawable/king_white"
+            app:ensureMinTouchTargetSize="true" />
 
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/msIsHost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Is Lobby Host" />
-</FrameLayout><!--</androidx.coordinatorlayout.widget.CoordinatorLayout>-->
-
+        <com.google.android.material.chip.Chip
+            android:id="@+id/black_chip"
+            style="@style/Widget.Material3.Chip.Assist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Black"
+            app:chipIcon="@drawable/king_black"
+            app:ensureMinTouchTargetSize="true" />
+    </com.google.android.material.chip.ChipGroup>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,8 +2,7 @@
 
 public enum State
 {
-    Unknown,
-    Searching,
-    Connecting,
-    Connected
+    Idle,
+    Advertising,
+    Discovering
 }

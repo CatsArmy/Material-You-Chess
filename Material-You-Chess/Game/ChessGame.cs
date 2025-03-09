@@ -222,9 +222,8 @@ public class ChessGame : IChessGame
             if (this.Selected.IsWhite == Piece.IsWhite)
             {
                 if (this.Selected.Id != Piece.Id)
-                {
                     this.Selected = Piece;
-                }
+
                 return;
             }
         }

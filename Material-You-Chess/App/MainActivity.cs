@@ -24,7 +24,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
+//[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
     public bool MaterialYouThemePreference
