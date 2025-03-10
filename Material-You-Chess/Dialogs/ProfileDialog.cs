@@ -115,7 +115,7 @@ public class ProfileDialog : IProfileDialog
         this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
     }
 
-    public void OnSelectPhoto(Bitmap photo)
+    public void OnSelectPhoto(Bitmap? photo)
     {
         this.PhotoBitmap = photo;
         Glide.With(this.Dialog.Context).Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.DialogProfilePicture!);

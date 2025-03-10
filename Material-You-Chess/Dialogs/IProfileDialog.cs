@@ -22,5 +22,5 @@ public interface IProfileDialog : IMaterialDialog
     public bool WasShown { get; set; }
 
     public void OnUsernameChange(string username);
-    public void OnSelectPhoto(Bitmap photo);
+    public void OnSelectPhoto(Bitmap? photo);
 }

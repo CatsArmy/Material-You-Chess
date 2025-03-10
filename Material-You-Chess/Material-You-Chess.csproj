@@ -92,12 +92,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.40" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.40" />
-    <!--<PackageReference Include="Plugin.Firebase.Auth" Version="3.1.1" />-->
-    <!--<PackageReference Include="Plugin.Firebase.Auth.Facebook" Version="3.1.0" />-->
-    <!--<PackageReference Include="Plugin.Firebase.Auth.Google" Version="3.1.1" />-->
-    <!--<PackageReference Include="Plugin.Firebase.Core" Version="3.1.1" />-->
-    <!--<PackageReference Include="Plugin.Firebase.Firestore" Version="3.1.2" />-->
-    <!--<PackageReference Include="Plugin.Firebase.Storage" Version="3.1.1" />-->
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
     <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.11" />
     <PackageReference Include="Xamarin.Android.Glide.Annotations" Version="4.16.0.11" />
@@ -112,12 +106,11 @@
     <PackageReference Include="Xamarin.AndroidX.Compose.Material.Icons.Extended" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Material3" Version="1.3.1.2" />
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.1" />
-    <PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.3.0.2" />
-    <PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.3.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Credentials.PlayServicesAuth" Version="1.2.2.4" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.7.2" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel" Version="2.8.7.2" />
     <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
-    <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
+    <PackageReference Include="Xamarin.Firebase.Auth" Version="122.3.1.4" />
     <PackageReference Include="Xamarin.AndroidX.Media" Version="1.7.0.9" />
     <PackageReference Include="Xamarin.AndroidX.Compose.UI.ViewBinding" Version="1.7.6.1" />
     <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.8.0.1" />
@@ -128,11 +121,14 @@
     <PackageReference Include="Xamarin.Google.Android.Play.Integrity" Version="1.4.0.3" />
     <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0" />
     <PackageReference Include="Xamarin.Google.ErrorProne.Annotations" Version="2.36.0.1" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
+    <PackageReference Include="Xamarin.GoogleAndroid.Libraries.Identity.GoogleId" Version="1.1.0.6" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Identity" Version="118.1.0.4" />
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.68.0.1869" />
+    <!--<PackageReference Include="Xamarin.AndroidX.Credentials" Version="1.3.0.2" />-->
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\android-bindinglib\android-bindinglib\android-bindinglib.csproj" />
+    <ProjectReference Include="..\..\android-bindinglib\android-bindinglib\FirebaseUI.csproj" />
   </ItemGroup>
 </Project>

@@ -17,4 +17,10 @@
     <string name="client_preferences_tooltip"></string>
     <string name="color_preferences_tooltip"></string>
     <string name="game_preferences_tooltip"></string>
+
+
+	<string name="sign_in_cancelled">Sign in cancelled</string>
+	<string name="no_internet_connection">No internet connection</string>
+	<string name="account_disabled">Account is disabled by the administrator</string>
+	<string name="unknown_error">An unknown error occurred</string>
 </resources>

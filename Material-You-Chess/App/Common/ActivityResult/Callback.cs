@@ -2,10 +2,18 @@
 
 namespace Chess.App.Common.ActivityResult;
 
-public class ActivityResultCallback<O> : Java.Lang.Object, IActivityResultCallback where O : Java.Lang.Object
+public interface IActivityResultCallback<O> : IActivityResultCallback where O : Java.Lang.Object
 {
-    private readonly Action<O> _callback;
-    public ActivityResultCallback(Action<O> callback) => _callback = callback;
-    public ActivityResultCallback(TaskCompletionSource<O> tcs) => _callback = tcs.SetResult;
-    public void OnActivityResult(Java.Lang.Object? result) => _callback((O)result!);
+    public void OnActivityResult(O? result);
+}
+
+public class ActivityResultCallback<O>(Action<O?> callback) : Java.Lang.Object, IActivityResultCallback<O> where O : Java.Lang.Object
+{
+    public bool IsAsync = false;
+
+    public ActivityResultCallback(TaskCompletionSource<O?> tcs) : this(tcs.SetResult) => this.IsAsync = true;
+
+    public void OnActivityResult(Java.Lang.Object? result) => this.OnActivityResult(result as O);
+
+    public void OnActivityResult(O? result) => callback(result);
 }

@@ -2,7 +2,7 @@
 
 namespace Chess.App.Common.ActivityResult;
 
-public class ActivityResultLauncher<I>(ActivityResultLauncher Launcher) where I : Java.Lang.Object
+public abstract class ActivityResultLauncher<I> : ActivityResultLauncher where I : Java.Lang.Object
 {
-    public void Launch(I? input) => Launcher.Launch(input);
+    public void Launch(I? input) => base.Launch(input as Java.Lang.Object);
 }

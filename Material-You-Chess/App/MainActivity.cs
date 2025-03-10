@@ -12,12 +12,10 @@ using Chess.App.Common.ActivityResult;
 using Chess.App.Networked;
 using Chess.Dialogs;
 using Firebase.Auth;
-using Firebase.Storage;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
-using Java.IO;
 using Microsoft.Maui.ApplicationModel;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
@@ -83,9 +81,18 @@ public class MainActivity : AppCompatActivity
         this.permissionsHandler.RequestMediaAccess();
     }
 
-    private void CapturePhoto(Bitmap photo) => this.profileDialog?.OnSelectPhoto(photo);
+    private void CapturePhoto(Bitmap? photo) => this.profileDialog?.OnSelectPhoto(photo);
 
-    private void SelectPhoto(AndroidUri photo) => this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
+    private void SelectPhoto(AndroidUri? photo)
+    {
+        if (photo is null)
+        {
+            this.profileDialog?.OnSelectPhoto(null);
+            return;
+        }
+
+        this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
+    }
 
     private void StartGame(object? sender, EventArgs e)
     {
@@ -113,10 +120,10 @@ public class MainActivity : AppCompatActivity
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
 
-        this.photoPicker = new(base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<AndroidUri>(this.SelectPhoto)));
+        this.photoPicker = this.RegisterForActivityResult<PickVisualMediaRequest, AndroidUri>(new PickVisualMedia(),
+            new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
 
-        this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
+        this.PhotoTaker = this.RegisterForActivityResult(new TakePicturePreview(),
             new ActivityResultCallback<Bitmap>(this.CapturePhoto));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
@@ -127,11 +134,11 @@ public class MainActivity : AppCompatActivity
         // Set our view from layout resource
         base.SetContentView(Resource.Layout.main_activity);
 
-        using var glide = Glide.Get(this);
-        {
-            glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)),
-            Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
-        }
+        //using var glide = Glide.Get(this);
+        //{
+        //    glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)),
+        //    Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
+        //}
 
         this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
         this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);

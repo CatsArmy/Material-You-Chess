@@ -1,25 +1,44 @@
 ﻿using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
-using Chess.App.Common.ActivityResult;
 using Firebase.Auth;
-using FirebaseUI.Auth.Data.Model;
 using Google.Android.Material.Navigation;
-using Microsoft.Maui.ApplicationModel;
+using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess;
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class Main : AppCompatActivity
 {
+    public static Main? Instance { get; set; }
     public NavigationBarView? NavigationBar { get; set; }
     public IMenuItem? PlayItem { get; set; }
     public IMenuItem? ProfileItem { get; set; }
+    public FragmentContainerView? Fragment { get; set; }
 
-    public FragmentContainerView? Fragment;
+    public bool MaterialYouThemePreference
+    {
+        get; set
+        {
+            field = value;
+            if (value == true)
+            {
+                base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
+            }
+            if (value == false)
+            {
+                base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
+            }
+        }
+    } = true;
+
+    public int ThemeId => this.MaterialYouThemePreference
+            ? Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar
+            : Resource.Style.AppTheme_Material3_DayNight_NoActionBar;
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
+        Main.Instance = this;
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
 
@@ -32,7 +51,7 @@ public class Main : AppCompatActivity
         this.SupportFragmentManager?.BeginTransaction()
             ?.Add(this.Fragment!.Id, new MainFragment())?.Commit();
         //profileItem.SetIcon();
-        FirebaseAuth.Instance.SignOut();
+        //FirebaseAuth.Instance.SignOut();
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
@@ -55,47 +74,4 @@ public class Main : AppCompatActivity
             };
         }
     }
-}
-
-public interface IMainNavigationBar
-{
-    public NavigationBarView? NavigationBar { get; set; }
-    public IMenuItem? PlayItem { get; set; }
-    public IMenuItem? ProfileItem { get; set; }
-}
-
-public class MainFragment : AndroidX.Fragment.App.Fragment
-{
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.main_fragment, container, false);
-}
-
-public class ProfileFragment() : AndroidX.Fragment.App.Fragment()
-{
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.__profile_fragment__, container, false);
-}
-
-public class SelectAccountMethodFragment() : AndroidX.Fragment.App.Fragment()
-{
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.account_select_method, container, false);
-}
-
-public class SignInFragment() : AndroidX.Fragment.App.Fragment()
-{
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.sign_in, container, false);
-}
-
-public class SignUpFragment() : AndroidX.Fragment.App.Fragment()
-{
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.sign_up, container, false);
-}
-
-public class AuthUIActivity : AppCompatActivity
-{
-    public ActivityResultCallback<FirebaseAuthUIAuthenticationResult> Callback;
-
 }

@@ -7,11 +7,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		..\android-bindinglib\android-bindinglib\bin\Release\android-bindinglib.1.0.0.nupkg = ..\android-bindinglib\android-bindinglib\bin\Release\android-bindinglib.1.0.0.nupkg
 		todo.md = todo.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android-bindinglib", "..\android-bindinglib\android-bindinglib\android-bindinglib.csproj", "{9F7528AD-BA46-3371-68EC-7190DDA96E26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirebaseUI", "..\android-bindinglib\android-bindinglib\FirebaseUI.csproj", "{9F7528AD-BA46-3371-68EC-7190DDA96E26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
