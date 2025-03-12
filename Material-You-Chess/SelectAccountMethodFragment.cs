@@ -1,15 +1,11 @@
 ﻿using Android.Content;
-using Android.Gms.Auth.Api.SignIn;
 using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using AndroidX.Credentials;
+using AndroidX.Credentials.Exceptions;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Firebase.Auth;
-using FirebaseUI.Auth;
-using FirebaseUI.Auth.Data.Model;
-using Google.Android.Material.Snackbar;
 using Xamarin.GoogleAndroid.Libraries.Identity.GoogleId;
 
 namespace Chess;
@@ -26,110 +22,118 @@ public class SelectAccountMethodFragment() : AndroidX.Fragment.App.Fragment()
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        this.SignInLauncher = this.RegisterForActivityResult<Intent, FirebaseAuthUIAuthenticationResult>(
-            new FirebaseAuthUIActivityResultContract(),
-            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
-
+        //this.SignInLauncher = this.RegisterForActivityResult<Intent, FirebaseAuthUIAuthenticationResult>(
+        //    new FirebaseAuthUIActivityResultContract(),
+        //    new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
+        if (FirebaseAuth.Instance.CurrentUser != null)
+        {
+            Logger.Debug("the device is signed in");
+            try
+            {
+                Logger.Debug(FirebaseAuth.Instance.CurrentUser.DisplayName!);
+            }
+            catch (Exception e)
+            {
+                Logger.Warn($"{e}");
+            }
+            return;
+        }
         this.OpenSignInIntentActivity();
     }
 
     private async void OpenSignInIntentActivity()
     {
-        var googleIdOption = new GetGoogleIdOption.Builder()
-            .SetFilterByAuthorizedAccounts(true)
-            .SetAutoSelectEnabled(true)
-            //.SetNonce(Guid.NewGuid().ToString())
-            .Build();
-        var request = new GetCredentialRequest.Builder().AddCredentialOption(googleIdOption).Build();
         var credentialManager = CredentialManager.Create(this.Context!);
 
-        await credentialManager.GetCredentialAsync(request, new CancellationToken());
+        var googleIdOption = new GetGoogleIdOption.Builder()
+            .SetNonce($"{Guid.NewGuid()}")
+            .SetServerClientId(base.GetString(Resource.String.default_web_client_id))
+            .SetFilterByAuthorizedAccounts(true)
+            //.SetAutoSelectEnabled(false)
+            .Build();
+        var signInWithGoogle = new GetSignInWithGoogleOption.Builder(
+            base.GetString(Resource.String.default_web_client_id)).Build();
 
-        List<AuthUI.IdpConfig> providers =
-            [new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
-            new AuthUI.IdpConfig.GoogleBuilder().SetSignInOptions(GoogleSignInOptions.DefaultSignIn).Build()
-            ];
+        //var requestIdOptions = new GetCredentialRequest.Builder().AddCredentialOption(googleIdOption).Build();
 
-        // Create and launch sign-in intent
-        var signInIntent = new AuthUI.AuthIntent()
+        var requestSignInWithGoogle = new GetCredentialRequest.Builder().AddCredentialOption(signInWithGoogle).Build();
+        try
         {
-            Providers = providers,
-            Theme = Main.Instance!.ThemeId,
-            Logo = Resource.Drawable.ic_launcher_foreground,
-            LockOrientation = true,
-        }.Build();
+            //var result = await credentialManager.GetCredentialAsync(requestIdOptions, new());
+            var result = await credentialManager.GetCredentialAsync(requestSignInWithGoogle, new());
+            await HandleSignIn(result);
+        }
+        catch (GetCredentialException e)
+        {
+            Logger.Warn($"credential error: {e}");
+        }
 
-        if (FirebaseAuth.Instance.CurrentUser != null)
-            return;
+
+        //List<AuthUI.IdpConfig> providers =
+        //    [new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(false).Build(),
+        //    new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
+        //    //new AuthUI.IdpConfig.GoogleBuilder().SetSignInOptions(GoogleSignInOptions.DefaultSignIn).Build()
+        //    ];
+
+        //// Create and launch sign-in intent
+        //var signInIntent = new AuthUI.AuthIntent()
+        //{
+        //    Providers = providers,
+        //    Theme = Main.Instance!.ThemeId,
+        //    Logo = Resource.Drawable.ic_launcher_foreground,
+        //    LockOrientation = true,
+        //}.Build();
 
         // Attempt to Sign In/Up the device
-        this.SignInLauncher?.Launch(signInIntent);
+        //this.SignInLauncher?.Launch(signInIntent);
     }
 
+    //private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    //{
+    //    if (result is null)
+    //    {
+    //        Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+    //        return;
+    //    }
 
-    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
-    {
-        if (result is null)
-        {
-            Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-            return;
-        }
+    //    var response = result.IdpResponse;
+    //    this.HandleSignInResponse(result.ResultCode.IntValue(), response);
+    //}
 
-        var response = result.IdpResponse;
-        this.HandleSignInResponse(result.ResultCode.IntValue(), response);
-    }
+    //private void HandleSignInResponse(int resultCode, IdpResponse? response)
+    //{
+    //    // Successfully signed in
+    //    if (resultCode == ((int)Result.Ok))
+    //    {
+    //        this.ParentFragmentManager?.BeginTransaction()?.SetReorderingAllowed(true)
+    //            ?.Replace(Resource.Id.fragment_container_view, new ProfileFragment())?.Commit();
+    //        return;
+    //    }
 
-    private void HandleSignInResponse(int resultCode, IdpResponse? response)
-    {
-        // Successfully signed in
-        if (resultCode == ((int)Result.Ok))
-        {
-            this.ParentFragmentManager?.BeginTransaction()?.SetReorderingAllowed(true)
-                ?.Replace(Resource.Id.fragment_container_view, new ProfileFragment())?.Commit();
-            return;
-        }
+    //    // Sign in failed
+    //    if (response == null)
+    //    {
+    //        // User pressed back button
+    //        Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+    //        return;
+    //    }
 
-        // Sign in failed
-        if (response == null)
-        {
-            // User pressed back button
-            Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-            return;
-        }
+    //    (response.Error!.ErrorCode switch
+    //    {
+    //        ErrorCodes.NoNetwork => Snackbar.Make(this.Root!, Resource.String.no_internet_connection, Snackbar.LengthLong),
+    //        ErrorCodes.ErrorUserDisabled => Snackbar.Make(this.Root!, Resource.String.account_disabled, Snackbar.LengthLong),
+    //        _ => Snackbar.Make(this.Root!, Resource.String.unknown_error, Snackbar.LengthLong)
+    //    }).Show();
 
-        (response.Error!.ErrorCode switch
-        {
-            ErrorCodes.NoNetwork => Snackbar.Make(this.Root!, Resource.String.no_internet_connection, Snackbar.LengthLong),
-            ErrorCodes.ErrorUserDisabled => Snackbar.Make(this.Root!, Resource.String.account_disabled, Snackbar.LengthLong),
-            _ => Snackbar.Make(this.Root!, Resource.String.unknown_error, Snackbar.LengthLong)
-        }).Show();
+    //    this.OpenSignInIntentActivity();
+    //}
 
-        this.OpenSignInIntentActivity();
-    }
-
-    public void handleSignIn(GetCredentialResponse result)
+    public async Task HandleSignIn(GetCredentialResponse? result)
     {
         // Handle the successfully returned credential.
-        var credential = result.Credential;
-        // Passkey credential
-        if (credential is PublicKeyCredential passkey)
-        {
-            // Share responseJson such as a GetCredentialResponse on your server to
-            // validate and authenticate
-            responseJson = passkey.AuthenticationResponseJson;
-        }
+        var credential = result?.Credential;
 
-        // Password credential
-        if (credential is PasswordCredential cred)
-        {
-            // Send ID and password to your server to validate and authenticate.
-            var username = cred.Id;
-            var password = cred.Password;
-
-        }
-
-        // GoogleIdToken credential
-        if (credential is not CustomCredential)
+        if (credential is not CustomCredential) // GoogleIdToken credential
         {
             // Catch any unrecognized credential type here.
             Logger.Error("Unexpected type of credential");
@@ -140,40 +144,69 @@ public class SelectAccountMethodFragment() : AndroidX.Fragment.App.Fragment()
         {
             try
             {
-                // Use googleIdTokenCredential and extract the ID to validate and
-                // authenticate on your server.
-                var googleIdTokenCredential = GoogleIdTokenCredential.CreateFrom(credential.Data);
-                // You can use the members of googleIdTokenCredential directly for UX
-                // purposes, but don't use them to store or control access to user
-                // data. For that you first need to validate the token:
-                // pass googleIdTokenCredential.getIdToken() to the backend server.
-                //GoogleIdTokenVerifier
-                //var verifier = ... // see validation instructions
+                var googleIdTokenCredential = GoogleIdTokenCredential.CreateFrom(result!.Credential.Data);
 
-                GoogleIdTokenCredential idToken = verifier.verify(googleIdTokenCredential.IdToken);
-                // To get a stable account identifier (e.g. for storing user data),
-                // use the subject ID:
-                idToken.getPayload().getSubject()
-                    }
-            catch (e: GoogleIdTokenParsingException) {
-                Log.e(TAG, "Received an invalid google id token response", e)
-        }
-            } else
+                // Sign in to Firebase with using the token
+                var auth = GoogleAuthProvider.GetCredential(googleIdTokenCredential.IdToken, null);
+                var signInTask = FirebaseAuth.Instance.SignInWithCredentialAsync(auth);
+                var authResult = await signInTask;
+
+                if (signInTask.IsCompletedSuccessfully)
+                {
+                    // Sign in success, update UI with the signed-in user's information
+                    Logger.Debug("signInWithCredential:success");
+                    var user = FirebaseAuth.Instance.CurrentUser;
+                    Logger.Debug($"{user?.DisplayName}");
+                    return;
+                }
+
+                if (signInTask.IsFaulted)
+                {
+                    // If sign in fails, display a message to the user
+                    Logger.Warn($"signInWithCredential:failure {signInTask.Exception}");
+                }
+
+                Logger.Warn($"signInWithCredential:failure");
+                //updateUI(null);
+            }
+            catch (GoogleIdTokenParsingException e)
             {
-                // Catch any unrecognized custom credential type here.
-                Log.e(TAG, "Unexpected type of credential")
-                    }
+                Logger.Error($"Received an invalid google id token response {e}");
+            }
+            return;
         }
 
-        else
+        if (credential is PublicKeyCredential passkeyCredential) // Passkey credential
         {
+            // Share responseJson such as a GetCredentialResponse on your server to validate and authenticate
 
+            //var responseJson = passkeyCredential.AuthenticationResponseJson;
+            //return;
         }
+
+        if (credential is PasswordCredential passwordCredential) // Password credential
+        {
+            // Send ID and password to your server to validate and authenticate.
+
+            //var username = passwordCredential.Id;
+            //var password = passwordCredential.Password;
+            //var auth = EmailAuthProvider.GetCredential(username, password);
+            //var signInTask = FirebaseAuth.Instance.SignInWithCredentialAsync(auth);
+            //return;
+        }
+
+
+
+        // Catch any unrecognized custom credential type here.
+        Logger.Error("Unexpected type of credential");
     }
 }
 
+
+#region
+
 internal sealed class CredentialManagerCallback<TResult, TException>(CancellationToken cancellationToken)
-    : CallbackBase<TResult, TException>(cancellationToken)
+    : AsyncCallback<TResult, TException>(cancellationToken)
     , ICredentialManagerCallback
     where TResult : Java.Lang.Object
     where TException : Java.Lang.Exception
@@ -195,7 +228,8 @@ internal sealed class CredentialManagerCallback<TResult, TException>(Cancellatio
 }
 
 internal class CredentialManagerCallback<TException>(CancellationToken cancellationToken)
-    : CallbackBase<TException>(cancellationToken), ICredentialManagerCallback
+    : AsyncCallback<TException>(cancellationToken)
+    , ICredentialManagerCallback
     where TException : Java.Lang.Exception
 {
     public void OnResult(Java.Lang.Object? result)
@@ -210,13 +244,13 @@ internal class CredentialManagerCallback<TException>(CancellationToken cancellat
     }
 }
 
-internal abstract class CallbackBase<TResult, TException> : Java.Lang.Object
+internal abstract class AsyncCallback<TResult, TException> : Java.Lang.Object
     where TResult : Java.Lang.Object
     where TException : Java.Lang.Exception
 {
     private readonly TaskCompletionSource<TResult?> _taskCompletionSource;
 
-    public CallbackBase(CancellationToken cancellationToken)
+    public AsyncCallback(CancellationToken cancellationToken)
     {
         _taskCompletionSource = new TaskCompletionSource<TResult?>();
         cancellationToken.Register(() => _taskCompletionSource.TrySetCanceled());
@@ -235,12 +269,12 @@ internal abstract class CallbackBase<TResult, TException> : Java.Lang.Object
     }
 }
 
-internal abstract class CallbackBase<TException> : Java.Lang.Object
+internal abstract class AsyncCallback<TException> : Java.Lang.Object
     where TException : Java.Lang.Exception
 {
     private readonly TaskCompletionSource _taskCompletionSource;
 
-    public CallbackBase(CancellationToken cancellationToken)
+    public AsyncCallback(CancellationToken cancellationToken)
     {
         _taskCompletionSource = new TaskCompletionSource();
         cancellationToken.Register(() => _taskCompletionSource.TrySetCanceled());
@@ -258,3 +292,4 @@ internal abstract class CallbackBase<TException> : Java.Lang.Object
         _taskCompletionSource.TrySetException(exception);
     }
 }
+#endregion

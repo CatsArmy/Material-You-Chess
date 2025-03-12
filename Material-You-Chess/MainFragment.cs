@@ -26,6 +26,8 @@ public class MainFragment : AndroidX.Fragment.App.Fragment
         this.GameModeSelector = view.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
         this.Local = view.FindViewById<Button>(Resource.Id.btnLocal);
         this.GameModeSelector!.Check(this.Local!.Id);
+
+        //this.Start!.Text = FirebaseAuth.Instance.CurrentUser!.DisplayName;
     }
 
     private void StartGame(object? sender, EventArgs e)

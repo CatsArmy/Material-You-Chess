@@ -175,7 +175,7 @@ public static class Extensions
     private static Task<CreateCredentialResponse?> CreateCredential(this ICredentialManager credentialManager,
         CreateCredentialRequest request, CancellationToken cancellationToken, Action<GetCredentialResponse>? _callback = null)
     {
-        var callback = new CredentialManagerCallback<CreateCredentialResponse, CreateCredentialException>(cancellationToken, _callback);
+        var callback = new CredentialManagerCallback<CreateCredentialResponse, CreateCredentialException>(cancellationToken);
 
         credentialManager.CreateCredentialAsync(
             Platform.CurrentActivity!,

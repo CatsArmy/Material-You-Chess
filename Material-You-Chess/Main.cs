@@ -50,8 +50,9 @@ public class Main : AppCompatActivity
         this.Fragment = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
         this.SupportFragmentManager?.BeginTransaction()
             ?.Add(this.Fragment!.Id, new MainFragment())?.Commit();
+
         //profileItem.SetIcon();
-        //FirebaseAuth.Instance.SignOut();
+        FirebaseAuth.Instance.SignOut();
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)

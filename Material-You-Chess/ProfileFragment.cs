@@ -55,7 +55,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment()
 
         this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
         this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
+        this.ThemeToggle!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         this.UsernameInput!.Hint = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        this.UsernameInput!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         this.ProfilePicture!.SetImageURI(null);
 
         if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
