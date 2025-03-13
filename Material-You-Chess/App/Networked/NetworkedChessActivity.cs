@@ -15,7 +15,7 @@ namespace Chess.App.Networked;
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
     ScreenOrientation = ScreenOrientation.Locked)]
-public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
+public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 {
     public ChessGame? Game { get; set; }
     public Context? Context { get; set; }
@@ -25,7 +25,7 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
     public ShapeableImageView? Player2ShapeableImageView { get; set; }
     public TextView? Profile1Username { get; set; }
     public TextView? Profile2Username { get; set; }
-    public LobbyModalBottomSheet? LobbyWaitingRoom;
+    public LobbyBottomSheet? LobbyWaitingRoom;
     public State State
     {
         get; set
@@ -54,7 +54,6 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
 
-        //Run our logic
         this.Player1ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
         this.Player2ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
 
@@ -62,8 +61,25 @@ public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
         this.Profile2Username = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
         this.PromotionDialogs = (new(this), new(this));
         this.BoardLayout = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.LobbyWaitingRoom = new LobbyModalBottomSheet(this);
-        this.LobbyWaitingRoom.Show(this.SupportFragmentManager);
+        base.OnCreate();
+    }
+
+    public override void OnSelectWhite()
+    {
+        base.OnSelectWhite();
+        this.State = State.Advertising;
+    }
+
+    public override void OnSelectBlack()
+    {
+        base.OnSelectBlack();
+        this.State = State.Discovering;
+    }
+
+    public override void OnSelectNone()
+    {
+        base.OnSelectNone();
+        this.State = State.Idle;
     }
 
     public override void Send(Payload payload) => base.Send(payload);

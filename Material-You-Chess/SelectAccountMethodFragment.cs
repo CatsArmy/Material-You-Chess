@@ -2,10 +2,12 @@
 using Android.Runtime;
 using Android.Views;
 using AndroidX.Credentials;
-using AndroidX.Credentials.Exceptions;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Firebase.Auth;
+using FirebaseUI.Auth;
+using FirebaseUI.Auth.Data.Model;
+using Google.Android.Material.Snackbar;
 using Xamarin.GoogleAndroid.Libraries.Identity.GoogleId;
 
 namespace Chess;
@@ -22,111 +24,121 @@ public class SelectAccountMethodFragment() : AndroidX.Fragment.App.Fragment()
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        //this.SignInLauncher = this.RegisterForActivityResult<Intent, FirebaseAuthUIAuthenticationResult>(
-        //    new FirebaseAuthUIActivityResultContract(),
-        //    new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
-        if (FirebaseAuth.Instance.CurrentUser != null)
-        {
-            Logger.Debug("the device is signed in");
-            try
-            {
-                Logger.Debug(FirebaseAuth.Instance.CurrentUser.DisplayName!);
-            }
-            catch (Exception e)
-            {
-                Logger.Warn($"{e}");
-            }
-            return;
-        }
+        this.SignInLauncher = this.RegisterForActivityResult<Intent, FirebaseAuthUIAuthenticationResult>(
+            new FirebaseAuthUIActivityResultContract(),
+            new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
+        //if (FirebaseAuth.Instance.CurrentUser != null)
+        //{
+        //    Logger.Debug("the device is signed in");
+        //    try
+        //    {
+        //        Logger.Debug(FirebaseAuth.Instance.CurrentUser.DisplayName!);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Logger.Warn($"{e}");
+        //    }
+        //    return;
+        //}
         this.OpenSignInIntentActivity();
     }
 
-    private async void OpenSignInIntentActivity()
+    private void OpenSignInIntentActivity()
     {
+        /*
         var credentialManager = CredentialManager.Create(this.Context!);
+        var rawNonce = new Java.Lang.String($"{UUID.RandomUUID()}");
+        var bytes = rawNonce.GetBytes();
+        var md = MessageDigest.GetInstance("SHA-256");
+        var digest = md.Digest(bytes!);
+        digest.
 
-        var googleIdOption = new GetGoogleIdOption.Builder()
-            .SetNonce($"{Guid.NewGuid()}")
-            .SetServerClientId(base.GetString(Resource.String.default_web_client_id))
-            .SetFilterByAuthorizedAccounts(true)
-            //.SetAutoSelectEnabled(false)
-            .Build();
         var signInWithGoogle = new GetSignInWithGoogleOption.Builder(
-            base.GetString(Resource.String.default_web_client_id)).Build();
+            base.GetString(Resource.String.default_web_client_id))
+            .SetNonce($"{Guid.NewGuid()}")
+            .Build();
+        var googleIdOption = new GetGoogleIdOption.Builder()
+    .SetNonce($"{Guid.NewGuid()}")
+    .SetServerClientId(base.GetString(Resource.String.default_web_client_id))
+    .SetFilterByAuthorizedAccounts(true)
+    .SetAutoSelectEnabled(false)
+    .Build();
 
-        //var requestIdOptions = new GetCredentialRequest.Builder().AddCredentialOption(googleIdOption).Build();
+        //CoroutineScopeKt.MainScope();
+
 
         var requestSignInWithGoogle = new GetCredentialRequest.Builder().AddCredentialOption(signInWithGoogle).Build();
         try
         {
-            //var result = await credentialManager.GetCredentialAsync(requestIdOptions, new());
-            var result = await credentialManager.GetCredentialAsync(requestSignInWithGoogle, new());
+            //var result = await credentialManager.GetCredentialAsync(requestIdOptions);
+            var result = await credentialManager.GetCredentialAsync(requestSignInWithGoogle);
             await HandleSignIn(result);
         }
         catch (GetCredentialException e)
         {
             Logger.Warn($"credential error: {e}");
         }
+        */
 
+        List<AuthUI.IdpConfig> providers = [
+            new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
+            //new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(false).Build(),
+            // new AuthUI.IdpConfig.GoogleBuilder().SetSignInOptions(GoogleSignInOptions.DefaultSignIn).Build()
+        ];
 
-        //List<AuthUI.IdpConfig> providers =
-        //    [new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(false).Build(),
-        //    new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
-        //    //new AuthUI.IdpConfig.GoogleBuilder().SetSignInOptions(GoogleSignInOptions.DefaultSignIn).Build()
-        //    ];
-
-        //// Create and launch sign-in intent
-        //var signInIntent = new AuthUI.AuthIntent()
-        //{
-        //    Providers = providers,
-        //    Theme = Main.Instance!.ThemeId,
-        //    Logo = Resource.Drawable.ic_launcher_foreground,
-        //    LockOrientation = true,
-        //}.Build();
+        // Create and launch sign-in intent
+        var signInIntent = new AuthUI.AuthIntent()
+        {
+            Providers = providers,
+            Theme = Main.Instance!.ThemeId,
+            Logo = Resource.Drawable.ic_launcher_foreground,
+            LockOrientation = true,
+            AlwaysShowProviderChoice = true,
+        }.Build();
 
         // Attempt to Sign In/Up the device
-        //this.SignInLauncher?.Launch(signInIntent);
+        this.SignInLauncher?.Launch(signInIntent);
     }
 
-    //private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
-    //{
-    //    if (result is null)
-    //    {
-    //        Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-    //        return;
-    //    }
+    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    {
+        if (result is null)
+        {
+            Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+            return;
+        }
 
-    //    var response = result.IdpResponse;
-    //    this.HandleSignInResponse(result.ResultCode.IntValue(), response);
-    //}
+        var response = result.IdpResponse;
+        this.HandleSignInResponse(result.ResultCode.IntValue(), response);
+    }
 
-    //private void HandleSignInResponse(int resultCode, IdpResponse? response)
-    //{
-    //    // Successfully signed in
-    //    if (resultCode == ((int)Result.Ok))
-    //    {
-    //        this.ParentFragmentManager?.BeginTransaction()?.SetReorderingAllowed(true)
-    //            ?.Replace(Resource.Id.fragment_container_view, new ProfileFragment())?.Commit();
-    //        return;
-    //    }
+    private void HandleSignInResponse(int resultCode, IdpResponse? response)
+    {
+        // Successfully signed in
+        if (resultCode == ((int)Result.Ok))
+        {
+            this.ParentFragmentManager?.BeginTransaction()?.SetReorderingAllowed(true)
+                ?.Replace(Resource.Id.fragment_container_view, new ProfileFragment())?.Commit();
+            return;
+        }
 
-    //    // Sign in failed
-    //    if (response == null)
-    //    {
-    //        // User pressed back button
-    //        Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-    //        return;
-    //    }
+        // Sign in failed
+        if (response == null)
+        {
+            // User pressed back button
+            Snackbar.Make(this.Root!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+            return;
+        }
 
-    //    (response.Error!.ErrorCode switch
-    //    {
-    //        ErrorCodes.NoNetwork => Snackbar.Make(this.Root!, Resource.String.no_internet_connection, Snackbar.LengthLong),
-    //        ErrorCodes.ErrorUserDisabled => Snackbar.Make(this.Root!, Resource.String.account_disabled, Snackbar.LengthLong),
-    //        _ => Snackbar.Make(this.Root!, Resource.String.unknown_error, Snackbar.LengthLong)
-    //    }).Show();
+        (response.Error!.ErrorCode switch
+        {
+            ErrorCodes.NoNetwork => Snackbar.Make(this.Root!, Resource.String.no_internet_connection, Snackbar.LengthLong),
+            ErrorCodes.ErrorUserDisabled => Snackbar.Make(this.Root!, Resource.String.account_disabled, Snackbar.LengthLong),
+            _ => Snackbar.Make(this.Root!, Resource.String.unknown_error, Snackbar.LengthLong)
+        }).Show();
 
-    //    this.OpenSignInIntentActivity();
-    //}
+        this.OpenSignInIntentActivity();
+    }
 
     public async Task HandleSignIn(GetCredentialResponse? result)
     {
@@ -197,8 +209,8 @@ public class SelectAccountMethodFragment() : AndroidX.Fragment.App.Fragment()
 
 
 
-        // Catch any unrecognized custom credential type here.
-        Logger.Error("Unexpected type of credential");
+        //    // Catch any unrecognized custom credential type here.
+        //    Logger.Error("Unexpected type of credential");
     }
 }
 

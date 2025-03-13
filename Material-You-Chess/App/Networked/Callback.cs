@@ -4,7 +4,7 @@ using Google.Android.Material.BottomSheet;
 
 namespace Chess.App.Networked;
 
-public class Callback(LobbyModalBottomSheet instance) : BottomSheetBehavior.BottomSheetCallback()
+public class Callback(LobbyBottomSheet instance) : BottomSheetBehavior.BottomSheetCallback()
 {
     public override void OnSlide(View bottomSheet, float newState) { }
 
@@ -29,13 +29,13 @@ public class Callback(LobbyModalBottomSheet instance) : BottomSheetBehavior.Bott
 
     public void OnStateHidden(View view)
     {
-        (instance.Dialog as BottomSheetDialog)!.Behavior.State = BottomSheetBehavior.StateCollapsed;
+        instance.BottomSheet!.State = BottomSheetBehavior.StateCollapsed;
     }
 
     public void OnStateSettling(View bottomSheet) { }
 }
 
-public class BackCallback(LobbyModalBottomSheet instance) : OnBackPressedCallback(true)
+public class BackCallback(LobbyBottomSheet instance) : OnBackPressedCallback(true)
 {
-    public override void HandleOnBackPressed() => base.Enabled = !instance.IsConnected();
+    public override void HandleOnBackPressed() => base.Enabled = !instance.IsConnected;
 }

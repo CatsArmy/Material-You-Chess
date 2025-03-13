@@ -123,7 +123,7 @@ public static class Extensions
     }
 
     public static async Task<GetCredentialResponse?> GetCredentialAsync(this ICredentialManager credentialManager,
-        GetCredentialRequest request, CancellationToken cancellationToken)
+        GetCredentialRequest request, CancellationToken cancellationToken = new())
     {
         var callback = new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>(cancellationToken);
 
