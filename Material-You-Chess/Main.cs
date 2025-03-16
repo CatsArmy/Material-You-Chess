@@ -1,6 +1,10 @@
 ﻿using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
+using Chess.App.Common;
+using Firebase;
+using Firebase.AppCheck;
+using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using Google.Android.Material.Navigation;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
@@ -48,11 +52,38 @@ public class Main : AppCompatActivity
         this.PlayItem = this.NavigationBar.Menu.FindItem(Resource.Id.item_1);
         this.ProfileItem = this.NavigationBar.Menu.FindItem(Resource.Id.item_2);
         this.Fragment = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
-        this.SupportFragmentManager?.BeginTransaction()?.Add(this.Fragment!.Id, new MainFragment(),
-            nameof(MainFragment))?.AddToBackStack(nameof(MainFragment))?.Commit();
+
+        FirebaseApp.InitializeApp(this);
+        FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.Instance;
+        firebaseAppCheck.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
+
+
+        this.SupportFragmentManager?.BeginTransaction()?.Add(this.Fragment!.Id, new MainFragment())?.Commit();
 
         //profileItem.SetIcon();
         //FirebaseAuth.Instance.SignOut();
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        if (FirebaseAuth.Instance == null)
+        {
+            Logger.Warn("FirebaseAuth.Instance is null");
+            return;
+        }
+
+        var user = FirebaseAuth.Instance.CurrentUser;
+        if (user is not null)
+        {
+            Logger.Warn(user.DisplayName ?? "No display name found");
+            Logger.Warn(user.Email ?? "No email found");
+            Logger.Warn(user.Uid ?? "No Uid found");
+        }
+        else
+        {
+            Logger.Warn("user is null");
+        }
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)

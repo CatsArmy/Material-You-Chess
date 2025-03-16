@@ -5,43 +5,78 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayLeft_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="0dp" />
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayRight_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="0dp" />
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayTop_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="0dp" />
 
-    <TextView
+	<TextView
         android:id="@+id/profile_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Profile"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.imageview.ShapeableImageView
+	<TextView
+        android:id="@+id/displayname_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+        tools:text="{Username}" />
+
+	<com.google.android.material.divider.MaterialDivider
+        android:id="@+id/materialDivider3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/displayname_text"
+        tools:visibility="visible" />
+
+	<Button
+        android:id="@+id/logout"
+        style="?attr/materialIconButtonFilledTonalStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        app:icon="@drawable/logout"
+        app:iconGravity="textStart"
+        app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
+        app:layout_constraintTop_toTopOf="@+id/displayTop_CA"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+	<com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_picture"
         android:layout_width="128dp"
         android:layout_height="128dp"
-        android:layout_marginTop="8dp"
         android:clickable="false"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,7 +86,7 @@
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
         app:srcCompat="@drawable/outline_account_circle_24" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/library"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,10 +95,10 @@
         app:icon="@drawable/photo_library"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -72,10 +107,10 @@
         app:icon="@drawable/delete"
         app:layout_constraintEnd_toStartOf="@+id/library"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -84,10 +119,10 @@
         app:icon="@drawable/outline_add_a_photo_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/library"
-        app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-    <com.google.android.material.divider.MaterialDivider
+	<com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -97,7 +132,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/library" />
 
-    <TextView
+	<TextView
         android:id="@+id/username_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -107,7 +142,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider" />
 
-    <com.google.android.material.textfield.TextInputLayout
+	<com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -120,16 +155,16 @@
         app:layout_constraintTop_toBottomOf="@+id/username_text"
         app:startIconDrawable="@drawable/outline_person_edit">
 
-        <com.google.android.material.textfield.TextInputEditText
+		<com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username"
-            android:imeOptions="actionDone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             android:inputType="textPersonName"
             tools:ignore="VisualLintTextFieldSize" />
-    </com.google.android.material.textfield.TextInputLayout>
+	</com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.divider.MaterialDivider
+	<com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -137,8 +172,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_layout" />
-    
-    <TextView
+
+	<TextView
         android:id="@+id/theme_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -148,7 +183,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider2" />
 
-    <com.google.android.material.materialswitch.MaterialSwitch
+	<com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/theme_switch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

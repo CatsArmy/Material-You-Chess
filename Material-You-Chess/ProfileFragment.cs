@@ -1,5 +1,4 @@
-﻿using Android.Content.PM;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Views;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
@@ -20,6 +19,8 @@ public class ProfileFragment() : SelectAccountMethodFragment()
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; } = new();
     public ShapeableImageView? ProfilePicture { get; set; }
     public MaterialSwitch? ThemeToggle { get; set; }
+    public Button? Logout { get; set; }
+    public TextView? DisplayName { get; set; }
     public TextInputEditText? UsernameInput { get; set; }
     public TextInputLayout? UsernameLayout { get; set; }
     public Bitmap? PhotoBitmap { get; set; } = null;
@@ -53,8 +54,8 @@ public class ProfileFragment() : SelectAccountMethodFragment()
 
         this.ProfilePicture = view.FindViewById<ShapeableImageView>(Resource.Id.profile_picture);
         this.ThemeToggle = view.FindViewById<MaterialSwitch>(Resource.Id.theme_switch);
-        //this.ThemeToggle!.CheckedChange += this.ThemeChanged;
-        //this.ThemeToggle!.Checked = .App.MaterialYouThemePreference;
+        this.Logout = view.FindViewById<Button>(Resource.Id.logout);
+        this.DisplayName = view.FindViewById<TextView>(Resource.Id.displayname_text);
         this.DeleteProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.delete);
         this.SelectProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.library);
         this.CaptureProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.camera);
@@ -76,6 +77,9 @@ public class ProfileFragment() : SelectAccountMethodFragment()
         //    //TODO redo the way i store profile pictures
         //}
 
+        //this.ThemeToggle!.CheckedChange += this.ThemeChanged;
+        //this.ThemeToggle!.Checked = .App.MaterialYouThemePreference;
+        this.Logout!.Click += (_, _) => FirebaseAuth.Instance.SignOut();
         this.SelectProfilePicture!.Click += this.OpenPhotoPicker;
         this.CaptureProfilePicture!.Click += this.OpenPhotoTaker;
         //this.DeleteProfilePicture!.Click +=
@@ -83,24 +87,26 @@ public class ProfileFragment() : SelectAccountMethodFragment()
 
     public void OpenPhotoTaker(object? sender, EventArgs args)
     {
-        if (this.permissionsHandler?.Camera == Permission.Granted)
-        {
-            this.PhotoTaker?.Launch(null);
-            return;
-        }
+        //if (this.permissionsHandler?.Camera != Permission.Granted)
+        //{
+        //    this.permissionsHandler?.RequestCamaraAccess();
+        //    return;
+        //}
 
-        this.permissionsHandler?.RequestCamaraAccess();
+        this.PhotoTaker?.Launch(null);
+        return;
     }
 
     public void OpenPhotoPicker(object? sender, EventArgs args)
     {
-        if (this.permissionsHandler!.HasMediaAccess())
-        {
-            this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
-            return;
-        }
+        //if (!this.permissionsHandler!.HasMediaAccess())
+        //{
+        //    this.permissionsHandler.RequestMediaAccess();
+        //    return;
+        //}
 
-        this.permissionsHandler.RequestMediaAccess();
+        this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+        return;
     }
 
     private void CapturePhoto(Bitmap? photo) => this.OnSelectPhoto(photo);
@@ -110,7 +116,7 @@ public class ProfileFragment() : SelectAccountMethodFragment()
     {
         if (photo is null)
         {
-            this.OnSelectPhoto(null);
+            //this.OnSelectPhoto(null);
             return;
         }
 

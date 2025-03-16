@@ -3,10 +3,13 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
+using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
+using Firebase.Auth;
+using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -24,7 +27,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
-    public LobbyBottomSheet? LobbyWaitingRoom;
+    public LobbyBottomSheet? LobbyWaitingRoom { get; set; }
     public State State
     {
         get; set
@@ -34,12 +37,26 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     } = State.Idle;
 
-    public string WhitePlayerName { get; private set; } = string.Empty;
-    public string BlackPlayerName { get; private set; } = string.Empty;
+    public string WhitePlayerName
+    {
+        get; private set
+        {
+            field = value;
+            this.WhitePlayerUsername!.Text = value;
+        }
+    } = string.Empty;
+    public string BlackPlayerName
+    {
+        get; private set
+        {
+            field = value;
+            this.BlackPlayerUsername!.Text = value;
+        }
+    } = string.Empty;
 
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    //protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
-    protected override string Name => "Player2Test";
+    protected override string Name => FirebaseAuth.Instance.CurrentUser?.Uid
+        ?? throw new("No Uid for the current user?");
     protected override Strategy Strategy => Strategy.P2pStar;
 
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -82,7 +99,6 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         this.State = State.Idle;
     }
 
-    public override void Send(Payload payload) => base.Send(payload);
 
     public void OnStateChanged(State currentState, State requestedState)
     {
@@ -116,9 +132,6 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     }
 
-    protected override void OnConnectionFailed(EndPoint endpoint)
-        => this.StartDiscovering();
-
     protected override void OnEndpointDiscovered(EndPoint endpoint)
     {
         //We found an advertiser!
@@ -126,61 +139,58 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         this.ConnectToEndpoint(endpoint);
     }
 
+    protected override void OnConnectionFailed(EndPoint endpoint)
+        => this.StartDiscovering();
+
     protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
         => this.AcceptConnection(endpoint);
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
+        Toast.MakeText(this, $"DEBUG: Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
         bool? clientIsWhite = null;
-        string name = "Player";
-        //if (FirebaseAuth.Instance?.CurrentUser?.DisplayName != null)
-        //    name = FirebaseAuth.Instance.CurrentUser.DisplayName;
-
+        var clientName = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        var clientProfilePicture = Glide.With(this).Load(FirebaseStorage.Instance.Reference
+            .Child($"{FirebaseAuth.Instance?.CurrentUser?.Uid}.png"));
         switch (this.State)
         {
             case State.Advertising:
-                Logger.Error("isConnection Initiator true");
-                this.WhitePlayerName = name;
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance?.Uid}.png"))
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"Player1Test.png"))
-                //    .Into(this.WhitePlayerProfilePicture!);
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
-                //    .Into(this.BlackPlayerProfilePicture!);
-
+                Logger.Verbose("Client is white player");
+                this.WhitePlayerName = clientName ?? "White Player";
                 this.BlackPlayerName = endpoint.Name;
                 clientIsWhite = true;
+
+                Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
+                    .Into(this.BlackPlayerProfilePicture!);
+
+                clientProfilePicture.Into(this.WhitePlayerProfilePicture!);
                 break;
 
             case State.Discovering:
-                Logger.Error("isConnection Initiator false");
-                this.BlackPlayerName = name;
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance?.Uid}.png"))
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"Player2Test.png"))
-                //    .Into(this.BlackPlayerProfilePicture!);
-
-                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
-                //    .Into(this.WhitePlayerProfilePicture!);
-
+                Logger.Verbose("Client is black player");
+                this.BlackPlayerName = clientName ?? "Black Player";
                 this.WhitePlayerName = endpoint.Name;
                 clientIsWhite = false;
+
+                Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
+                    .Into(this.WhitePlayerProfilePicture!);
+
+                clientProfilePicture.Into(this.BlackPlayerProfilePicture!);
                 break;
         }
+
         this.State = State.Idle;
-        this.WhitePlayerUsername!.Text = this.WhitePlayerName;
-        //await Firebase.Firestore.FirebaseFirestore.Instance.Collection($"/Names/{this.WhitePlayerName}").Document("Name").Get().AsAsync<string>();
         this.BlackPlayerUsername!.Text = this.BlackPlayerName;
-        //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child(this.BlackPlayerName)).Into(this.BlackPlayerProfilePicture!);
         this.Game = new ChessGame(this, clientIsWhite);
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
         => Toast.MakeText(this, $"Error, {endpoint.Name} disconnected", ToastLength.Short)?.Show();
+
+    /// <summary>
+    /// Gives IChessActivity the send command by both implementing and overriding the methods
+    /// </summary>
+    public override void Send(Payload payload) => base.Send(payload);
 
     /// <summary> Handles the <paramref name="payload"/> sent by <paramref name="endpoint"/> client </summary>
     /// <param name="endpoint">The client who is sending the <paramref name="payload"/> to us </param>
