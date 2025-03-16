@@ -7,7 +7,6 @@ using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
-using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -21,10 +20,10 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     public Context? Context { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
-    public ShapeableImageView? Player1ShapeableImageView { get; set; }
-    public ShapeableImageView? Player2ShapeableImageView { get; set; }
-    public TextView? Profile1Username { get; set; }
-    public TextView? Profile2Username { get; set; }
+    public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
+    public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
+    public TextView? WhitePlayerUsername { get; set; }
+    public TextView? BlackPlayerUsername { get; set; }
     public LobbyBottomSheet? LobbyWaitingRoom;
     public State State
     {
@@ -35,11 +34,12 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     } = State.Idle;
 
-    public string Player1Name { get; private set; } = string.Empty;
-    public string Player2Name { get; private set; } = string.Empty;
+    public string WhitePlayerName { get; private set; } = string.Empty;
+    public string BlackPlayerName { get; private set; } = string.Empty;
 
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
+    //protected override string Name => FirebaseAuth.Instance.CurrentUser!.DisplayName!;
+    protected override string Name => "Player2Test";
     protected override Strategy Strategy => Strategy.P2pStar;
 
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -54,11 +54,11 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
 
-        this.Player1ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        this.Player2ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
+        this.WhitePlayerProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+        this.BlackPlayerProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
 
-        this.Profile1Username = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
-        this.Profile2Username = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        this.WhitePlayerUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        this.BlackPlayerUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
         this.PromotionDialogs = (new(this), new(this));
         this.BoardLayout = this.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         base.OnCreate();
@@ -92,13 +92,11 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         if (currentState == State.Advertising)
         {
             this.StopAdvertising();
-            Thread.Sleep(10);
         }
 
         if (currentState == State.Discovering)
         {
             this.StopDiscovering();
-            Thread.Sleep(10);
         }
 
         if (requestedState == State.Idle)
@@ -118,64 +116,71 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     }
 
+    protected override void OnConnectionFailed(EndPoint endpoint)
+        => this.StartDiscovering();
+
     protected override void OnEndpointDiscovered(EndPoint endpoint)
     {
         //We found an advertiser!
         this.StopDiscovering();
-        if (!this.IsConnecting)
-            this.ConnectToEndpoint(endpoint);
+        this.ConnectToEndpoint(endpoint);
     }
 
     protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
-    {
-        if (!this.IsConnecting)
-            this.AcceptConnection(endpoint);
-    }
+        => this.AcceptConnection(endpoint);
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         Toast.MakeText(this, $"Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
+        bool? clientIsWhite = null;
+        string name = "Player";
+        //if (FirebaseAuth.Instance?.CurrentUser?.DisplayName != null)
+        //    name = FirebaseAuth.Instance.CurrentUser.DisplayName;
+
         switch (this.State)
         {
             case State.Advertising:
                 Logger.Error("isConnection Initiator true");
-                this.Profile1Username!.Text = (FirebaseAuth.Instance?.CurrentUser == null) switch
-                {
-                    true => "Player",
-                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName,
-                };
-                this.Profile2Username!.Text = endpoint.Name;
-                this.Player2Name = endpoint.Name;
-                this.Player1Name = FirebaseAuth.Instance?.CurrentUser?.DisplayName!;
-                this.Game = new ChessGame(this, true);
+                this.WhitePlayerName = name;
+
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance?.Uid}.png"))
+
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"Player1Test.png"))
+                //    .Into(this.WhitePlayerProfilePicture!);
+
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
+                //    .Into(this.BlackPlayerProfilePicture!);
+
+                this.BlackPlayerName = endpoint.Name;
+                clientIsWhite = true;
                 break;
 
             case State.Discovering:
                 Logger.Error("isConnection Initiator false");
-                this.Player2Name = (FirebaseAuth.Instance?.CurrentUser == null) switch
-                {
-                    true => "Player",
-                    false => FirebaseAuth.Instance?.CurrentUser?.DisplayName!,
-                };
+                this.BlackPlayerName = name;
 
-                this.Profile2Username!.Text = this.Player2Name;
-                this.Player1Name = endpoint.Name;
-                this.Profile1Username!.Text = this.Player1Name;
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance?.Uid}.png"))
 
-                this.Game = new ChessGame(this, false);
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"Player2Test.png"))
+                //    .Into(this.BlackPlayerProfilePicture!);
+
+                //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
+                //    .Into(this.WhitePlayerProfilePicture!);
+
+                this.WhitePlayerName = endpoint.Name;
+                clientIsWhite = false;
                 break;
         }
+        this.State = State.Idle;
+        this.WhitePlayerUsername!.Text = this.WhitePlayerName;
+        //await Firebase.Firestore.FirebaseFirestore.Instance.Collection($"/Names/{this.WhitePlayerName}").Document("Name").Get().AsAsync<string>();
+        this.BlackPlayerUsername!.Text = this.BlackPlayerName;
+        //Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child(this.BlackPlayerName)).Into(this.BlackPlayerProfilePicture!);
+        this.Game = new ChessGame(this, clientIsWhite);
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
-    {
-        Toast.MakeText(this, $"Error, {endpoint.Name} disconnected", ToastLength.Short)?.Show();
-    }
-
-    protected override void OnConnectionFailed(EndPoint endpoint)
-    {
-
-    }
+        => Toast.MakeText(this, $"Error, {endpoint.Name} disconnected", ToastLength.Short)?.Show();
 
     /// <summary> Handles the <paramref name="payload"/> sent by <paramref name="endpoint"/> client </summary>
     /// <param name="endpoint">The client who is sending the <paramref name="payload"/> to us </param>

@@ -152,8 +152,8 @@ public class ChessGame : IChessGame
             keyValuePair.Value.SpaceView!.Clickable = true;
         }
 
-        this.Player1 = new White(activity.Player1Name!, this.Board, activity.PromotionDialogs.White);
-        this.Player2 = new Black(activity.Player2Name!, this.Board, activity.PromotionDialogs.Black);
+        this.Player1 = new White(activity.WhitePlayerName!, this.Board, activity.PromotionDialogs.White);
+        this.Player2 = new Black(activity.BlackPlayerName!, this.Board, activity.PromotionDialogs.Black);
 
         this.AllPieces.Merge(this.Player1.Pieces, this.Player2.Pieces);
 

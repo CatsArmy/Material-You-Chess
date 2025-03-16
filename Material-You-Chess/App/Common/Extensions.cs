@@ -1,5 +1,4 @@
-﻿using Android.Annotation;
-using Android.Content;
+﻿using Android.Content;
 using Android.Gms.Common.Apis;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
@@ -116,7 +115,7 @@ public static class Extensions
         return (CreatePasswordResponse?)response;
     }
 
-    [TargetApi(Value = 34)]
+    //[TargetApi(Value = 34)]
     public static PendingIntent CreateSettingsPendingIntent(this ICredentialManager credentialManager)
     {
         return credentialManager.CreateSettingsPendingIntent();
@@ -138,7 +137,7 @@ public static class Extensions
         return await callback.Task;
     }
 
-    [TargetApi(Value = 34)]
+    //[TargetApi(Value = 34)]
     public static async Task<PrepareGetCredentialResponse?> PrepareGetCredential(this ICredentialManager credentialManager,
         GetCredentialRequest request, CancellationToken cancellationToken)
     {

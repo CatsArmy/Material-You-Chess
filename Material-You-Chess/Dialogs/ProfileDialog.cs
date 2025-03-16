@@ -138,7 +138,7 @@ public class ProfileDialog : IProfileDialog
 
     public async Task<bool> OnConfirmProfilePicture()
     {
-        StorageReference path = FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png");
+        StorageReference path = FirebaseStorage.Instance.Reference.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}.png");
 
         if (this.PhotoBitmap == null)
         {

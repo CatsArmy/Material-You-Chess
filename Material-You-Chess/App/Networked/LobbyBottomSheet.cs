@@ -1,4 +1,5 @@
-﻿using AndroidX.ConstraintLayout.Widget;
+﻿using Android.Views;
+using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Nearby;
 using Google.Android.Material.BottomSheet;
@@ -45,9 +46,8 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
         this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
         this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
         this.BottomSheet!.AddBottomSheetCallback(new Callback(this));
-        this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
-        this.BottomSheet!.Hideable = false;
-        this.StandardBottomSheet!.Visibility = Android.Views.ViewStates.Visible;
+        this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
+        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
 
         this.SearchingIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator);
         this.SearchingText = base.FindViewById<TextView>(Resource.Id.SearchingText);

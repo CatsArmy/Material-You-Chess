@@ -23,12 +23,12 @@ public class ChessActivity : AppCompatActivity, IChessActivity
     public Context? Context { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
-    public ShapeableImageView? Player1ShapeableImageView { get; set; }
-    public ShapeableImageView? Player2ShapeableImageView { get; set; }
-    public TextView? Profile1Username { get; set; }
-    public TextView? Profile2Username { get; set; }
-    public string? Player1Name => "Player 1";
-    public string? Player2Name => "Player 2";
+    public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
+    public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
+    public TextView? WhitePlayerUsername { get; set; }
+    public TextView? BlackPlayerUsername { get; set; }
+    public string? WhitePlayerName => "Player 1";
+    public string? BlackPlayerName => "Player 2";
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -44,13 +44,13 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         base.SetContentView(Resource.Layout.chess_activity);
 
         //Run our logic
-        this.Player1ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        this.Player2ShapeableImageView = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
-        this.Profile1Username = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
-        this.Profile2Username = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        this.WhitePlayerProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
+        this.BlackPlayerProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
+        this.WhitePlayerUsername = this.FindViewById<TextView>(Resource.Id.p1MainUsername);
+        this.BlackPlayerUsername = this.FindViewById<TextView>(Resource.Id.p2MainUsername);
         this.PromotionDialogs = (new(this), new(this));
-        this.Profile1Username!.Text = this.Player1Name;
-        this.Profile2Username!.Text = this.Player2Name;
+        this.WhitePlayerUsername!.Text = this.WhitePlayerName;
+        this.BlackPlayerUsername!.Text = this.BlackPlayerName;
 
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         this.Game = new(this);

@@ -48,11 +48,11 @@ public class Main : AppCompatActivity
         this.PlayItem = this.NavigationBar.Menu.FindItem(Resource.Id.item_1);
         this.ProfileItem = this.NavigationBar.Menu.FindItem(Resource.Id.item_2);
         this.Fragment = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
-        this.SupportFragmentManager?.BeginTransaction()
-            ?.Add(this.Fragment!.Id, new MainFragment())?.Commit();
+        this.SupportFragmentManager?.BeginTransaction()?.Add(this.Fragment!.Id, new MainFragment(),
+            nameof(MainFragment))?.AddToBackStack(nameof(MainFragment))?.Commit();
 
         //profileItem.SetIcon();
-        FirebaseAuth.Instance.SignOut();
+        //FirebaseAuth.Instance.SignOut();
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)

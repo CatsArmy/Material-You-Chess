@@ -6,15 +6,12 @@ using Google.Android.Material.Button;
 
 namespace Chess;
 
-public class MainFragment : AndroidX.Fragment.App.Fragment
+public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.main_fragment)
 {
     private MaterialButtonToggleGroup? GameModeSelector;
     private Button? Online;
     private Button? Local;
     private Button? Start;
-
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.main_fragment, container, false);
 
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
@@ -27,7 +24,7 @@ public class MainFragment : AndroidX.Fragment.App.Fragment
         this.Local = view.FindViewById<Button>(Resource.Id.btnLocal);
         this.GameModeSelector!.Check(this.Local!.Id);
 
-        //this.Start!.Text = FirebaseAuth.Instance.CurrentUser!.DisplayName;
+        //this.Start!.Text = FirebaseAuth.Instance.CurrentUser?.DisplayName;
     }
 
     private void StartGame(object? sender, EventArgs e)

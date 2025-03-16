@@ -10,11 +10,12 @@ using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
 using Google.Android.Material.TextField;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
 
 namespace Chess;
 
-public class ProfileFragment() : AndroidX.Fragment.App.Fragment()
+public class ProfileFragment() : SelectAccountMethodFragment()
 {
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; } = new();
     public ShapeableImageView? ProfilePicture { get; set; }
@@ -30,16 +31,24 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment()
     public ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
     public PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
 
-    private View? Root;
     private PermissionsRequester? permissionsHandler;
 
-    public override View? OnCreateView(LayoutInflater inflater, ViewGroup? container, Bundle? savedInstanceState)
-        => inflater.Inflate(Resource.Layout.__profile_fragment__, container, false);
+    public override void OnCreate(Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+
+        this.photoPicker = this.RegisterForActivityResult<PickVisualMediaRequest, AndroidUri>(new PickVisualMedia(),
+            new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
+
+        this.PhotoTaker = this.RegisterForActivityResult(new TakePicturePreview(),
+            new ActivityResultCallback<Bitmap>(this.CapturePhoto));
+
+        this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
+    }
 
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
-        this.Root = view;
         this.permissionsHandler = new(this.Activity!);
 
         this.ProfilePicture = view.FindViewById<ShapeableImageView>(Resource.Id.profile_picture);
@@ -50,24 +59,22 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment()
         this.SelectProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.library);
         this.CaptureProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.camera);
 
-        if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
-            Logger.Debug("Display name is missing???");
+        //if (FirebaseAuth.Instance?.CurrentUser?.DisplayName == null || FirebaseAuth.Instance?.CurrentUser?.DisplayName == string.Empty)
+        //    Logger.Debug("Display name is missing???");
 
-        this.UserProfileChangeRequest.SetDisplayName(FirebaseAuth.Instance?.CurrentUser?.DisplayName);
-        this.UserProfileChangeRequest.SetPhotoUri(FirebaseAuth.Instance?.CurrentUser?.PhotoUrl);
-        this.ThemeToggle!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        this.UsernameInput!.Hint = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        this.UsernameInput!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        this.ProfilePicture!.SetImageURI(null);
+        //this.ThemeToggle!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        //this.UsernameInput!.Hint = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        //this.UsernameInput!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        //this.ProfilePicture!.SetImageURI(null);
 
-        if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-        {
-            //Glide.With(view).Load(FirebaseStorage.Instance.Reference
-            //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png")).Error(Resource.Drawable.outline_account_circle_24)
-            //.Into(this.DialogProfilePicture!);
+        //if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
+        //{
+        //    //Glide.With(view).Load(FirebaseStorage.Instance.Reference
+        //    //.Child($"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png")).Error(Resource.Drawable.outline_account_circle_24)
+        //    //.Into(this.DialogProfilePicture!);
 
-            //TODO redo the way i store profile pictures
-        }
+        //    //TODO redo the way i store profile pictures
+        //}
 
         this.SelectProfilePicture!.Click += this.OpenPhotoPicker;
         this.CaptureProfilePicture!.Click += this.OpenPhotoTaker;
