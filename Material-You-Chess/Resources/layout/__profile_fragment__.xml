@@ -46,6 +46,7 @@
         app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_picture"
+        android:text="{Username}"
         tools:text="{Username}" />
 
 	<com.google.android.material.divider.MaterialDivider

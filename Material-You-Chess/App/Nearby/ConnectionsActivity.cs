@@ -36,7 +36,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     }
 
     /// <summary> Returns the client's name. Visible to others when connecting. </summary>
-    protected abstract string Name { get; }
+    protected abstract string AdvertisingName { get; }
 
     /// <summary> Returns the service id. This represents the action this connection is for. When discovering,
     /// we'll verify that the advertiser has the same service id before we consider connecting to them. </summary>
@@ -54,7 +54,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     protected async void StartAdvertising()
     {
         this.IsAdvertising = true;
-        string localEndpointName = Name;
+        string localEndpointName = AdvertisingName;
 
         var options = new AdvertisingOptions.Builder().SetStrategy(this.Strategy);
 
@@ -143,7 +143,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
         this.IsConnecting = true;
 
         // Ask to connect
-        var connection = this.ConnectionsClient!.RequestConnectionAsync(this.Name, endpoint.Id, new ConnectionLifecycleCallback(this));
+        var connection = this.ConnectionsClient!.RequestConnectionAsync(this.AdvertisingName, endpoint.Id, new ConnectionLifecycleCallback(this));
         await connection;
 
         if (connection.IsFaulted)

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
+using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
@@ -9,14 +10,13 @@ using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
 using Firebase.Auth;
-using Firebase.Storage;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Networked;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
-    ScreenOrientation = ScreenOrientation.Locked)]
+[Activity(Label = "@string/app_name", ScreenOrientation = ScreenOrientation.Locked,
+    Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 {
     public ChessGame? Game { get; set; }
@@ -28,6 +28,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
     public LobbyBottomSheet? LobbyWaitingRoom { get; set; }
+
     public State State
     {
         get; set
@@ -44,7 +45,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
             field = value;
             this.WhitePlayerUsername!.Text = value;
         }
-    } = string.Empty;
+    } = "White Player";
     public string BlackPlayerName
     {
         get; private set
@@ -52,10 +53,10 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
             field = value;
             this.BlackPlayerUsername!.Text = value;
         }
-    } = string.Empty;
+    } = "Black Player";
 
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string Name => FirebaseAuth.Instance.CurrentUser?.Uid
+    protected override string AdvertisingName => FirebaseAuth.Instance.CurrentUser?.Uid
         ?? throw new("No Uid for the current user?");
     protected override Strategy Strategy => Strategy.P2pStar;
 
@@ -147,41 +148,35 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
-        Toast.MakeText(this, $"DEBUG: Found opponent, {endpoint.Name}", ToastLength.Short)?.Show();
-        bool? clientIsWhite = null;
-        var clientName = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-        var clientProfilePicture = Glide.With(this).Load(FirebaseStorage.Instance.Reference
-            .Child($"{FirebaseAuth.Instance?.CurrentUser?.Uid}.png"));
-        switch (this.State)
+        Toast.MakeText(this, $"DEBUG: Connected to Client: {{id}}::{endpoint.Name}", ToastLength.Short)?.Show();
+        this.State = State.Idle;
+
+
+        if (this.State == State.Advertising)
         {
-            case State.Advertising:
-                Logger.Verbose("Client is white player");
-                this.WhitePlayerName = clientName ?? "White Player";
-                this.BlackPlayerName = endpoint.Name;
-                clientIsWhite = true;
+            Logger.Verbose("Client is white player");
 
-                Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
-                    .Into(this.BlackPlayerProfilePicture!);
+            var client = new WhiteClient(this.AdvertisingName,
+                FirebaseAuth.Instance?.CurrentUser?.DisplayName ?? this.WhitePlayerName);
+            client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+            this.WhitePlayerName = client!.WhitePlayerName;
 
-                clientProfilePicture.Into(this.WhitePlayerProfilePicture!);
-                break;
-
-            case State.Discovering:
-                Logger.Verbose("Client is black player");
-                this.BlackPlayerName = clientName ?? "Black Player";
-                this.WhitePlayerName = endpoint.Name;
-                clientIsWhite = false;
-
-                Glide.With(this).Load(FirebaseStorage.Instance.Reference.Child($"{endpoint.Name}.png"))
-                    .Into(this.WhitePlayerProfilePicture!);
-
-                clientProfilePicture.Into(this.BlackPlayerProfilePicture!);
-                break;
+            //Init handshake
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.PlayerClient)));
         }
 
-        this.State = State.Idle;
-        this.BlackPlayerUsername!.Text = this.BlackPlayerName;
-        this.Game = new ChessGame(this, clientIsWhite);
+        if (this.State == State.Discovering)
+        {
+            Logger.Verbose("Client is black player");
+
+            var client = new BlackClient(this.AdvertisingName,
+                FirebaseAuth.Instance?.CurrentUser?.DisplayName ?? this.BlackPlayerName);
+            client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+            this.BlackPlayerName = client.BlackPlayerName;
+
+            //Init handshake
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.PlayerClient)));
+        }
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
@@ -197,10 +192,47 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     /// <param name="payload">The <see cref="Payload"/> containing all the data for us to handle the event </param>
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
-        if (payload.PayloadType == Payload.Type.Bytes)
+        if (payload.PayloadType != Payload.Type.Bytes)
+        {
+            return;
+        }
+
+        if (this.Game != null)
         {
             var move = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.Move);
             move!.Origin.Move(move, this.Game!);
+            return;
+        }
+
+        try
+        {
+            this.StandardBottomSheet!.Visibility = ViewStates.Gone;
+            var otherClient = JsonSerializer.Deserialize(payload.AsBytes()!,
+                SourceJsonGenerationContext.Default.PlayerClient);
+
+            if (otherClient is WhiteClient whiteClient)
+            {
+                this.WhitePlayerName = whiteClient.WhitePlayerName;
+                whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+                this.Game = new ChessGame(this, false);
+            }
+
+            else if (otherClient is BlackClient blackClient)
+            {
+                this.BlackPlayerName = blackClient.BlackPlayerName;
+                blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+                this.Game = new ChessGame(this, true);
+            }
+
+            else
+            {
+                //Unknown state something went wrong
+            }
+        }
+
+        catch (Exception)
+        {
+            //Unknown state something big went wrong
         }
     }
 }

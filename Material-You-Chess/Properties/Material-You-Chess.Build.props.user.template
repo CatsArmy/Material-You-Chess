@@ -2,7 +2,7 @@
     <!-- Build configurations -->
     <!-- Remove the .Template extenstion from this file when using template -->
   <PropertyGroup>
-	<AndroidSigningPassFile></AndroidSigningPassFile>
+	<AndroidSigningPassword></AndroidSigningPassword>
 	<GoogleServicesJsonFile>Properties\google-services.json</GoogleServicesJsonFile>
   </PropertyGroup>
 	

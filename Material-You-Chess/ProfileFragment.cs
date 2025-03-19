@@ -14,7 +14,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace Chess;
 
-public class ProfileFragment() : SelectAccountMethodFragment()
+public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.__profile_fragment__)
 {
     public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; } = new();
     public ShapeableImageView? ProfilePicture { get; set; }
@@ -33,6 +33,7 @@ public class ProfileFragment() : SelectAccountMethodFragment()
     public PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
 
     private PermissionsRequester? permissionsHandler;
+    private FirebaseAuth? Auth;
 
     public override void OnCreate(Bundle? savedInstanceState)
     {
@@ -45,6 +46,7 @@ public class ProfileFragment() : SelectAccountMethodFragment()
             new ActivityResultCallback<Bitmap>(this.CapturePhoto));
 
         this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
+        this.Auth = Main_Activity.Instance.Auth!;
     }
 
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
@@ -79,7 +81,7 @@ public class ProfileFragment() : SelectAccountMethodFragment()
 
         //this.ThemeToggle!.CheckedChange += this.ThemeChanged;
         //this.ThemeToggle!.Checked = .App.MaterialYouThemePreference;
-        this.Logout!.Click += (_, _) => FirebaseAuth.Instance.SignOut();
+        this.Logout!.Click += (_, _) => this.Auth?.SignOut();
         this.SelectProfilePicture!.Click += this.OpenPhotoPicker;
         this.CaptureProfilePicture!.Click += this.OpenPhotoTaker;
         //this.DeleteProfilePicture!.Click +=
@@ -97,6 +99,7 @@ public class ProfileFragment() : SelectAccountMethodFragment()
         return;
     }
 
+    //[RequiresPermission()]
     public void OpenPhotoPicker(object? sender, EventArgs args)
     {
         //if (!this.permissionsHandler!.HasMediaAccess())
@@ -104,21 +107,17 @@ public class ProfileFragment() : SelectAccountMethodFragment()
         //    this.permissionsHandler.RequestMediaAccess();
         //    return;
         //}
-
         this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
         return;
     }
 
     private void CapturePhoto(Bitmap? photo) => this.OnSelectPhoto(photo);
-    private void OnSelectPhoto(Bitmap? photo) => Glide.With(this.Context!)
-        .Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.ProfilePicture!);
+    private void OnSelectPhoto(Bitmap? photo) => Glide.With(this.Context!).Load(photo)
+        .Error(Resource.Drawable.outline_account_circle_24).Into(this.ProfilePicture!);
     private void SelectPhoto(AndroidUri? photo)
     {
         if (photo is null)
-        {
-            //this.OnSelectPhoto(null);
             return;
-        }
 
         this.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.Activity!.ContentResolver!, photo)));
     }
