@@ -8,6 +8,7 @@ using AndroidX.Activity.Result.Contract;
 using Chess.App.Common.ActivityResult;
 using Google.Android.Material.FloatingActionButton;
 using Java.Util;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess.App.Common;
 
@@ -48,6 +49,13 @@ public static class Extensions
 
                 to[kvp.Key] = kvp.Value;
             }
+    }
+
+    public static NearbyConnections RegisterNearbyPermissionManager(this ComponentActivity activity, Action<bool> OnRequestCallback)
+    {
+
+        return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(),
+            new RequestPermissionCallback(OnRequestCallback)), OnRequestCallback, activity.CheckSelfPermission);
     }
 
     public static ActivityResultLauncher<I> RegisterForActivityResult<I, O>(this ComponentActivity @base,

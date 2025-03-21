@@ -1,6 +1,10 @@
-﻿using Android.Content.PM;
+﻿using System.Runtime.Intrinsics.X86;
+using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using AndroidX.Activity.Result;
+using Chess.App.Common.ActivityResult;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using Request = Android.Manifest.Permission;
 
 namespace Chess.App.Common;
@@ -64,11 +68,34 @@ public class PermissionsRequester
     private Action? OnGrantNearbyAccess;
     private Action? OnGrantCameraAccess;
     private Action? OnGrantMediaAccess;
+    private ActivityResultLauncher requestPermissionLauncher;
+
+    public PermissionsRequester(Main_Activity activity) : this(activity as Activity)
+    {
+        requestPermissionLauncher = //<I>: string[], <O>: Dictionary<string, bool>>
+        activity.RegisterForActivityResult(new RequestMultiplePermissions(),
+        callback: new ActivityResultCallback<IMap<string, bool>>((permissions) =>
+        {
+            foreach (var isGranted in permissions!.Values().Cast<bool>().ToArray())
+            {
+                if (!isGranted)
+                {
+                    // Explain to the user that the feature is unavailable because the
+                    // feature requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their decision.
+
+                    return;
+                }
+
+                // Permission is granted. Continue the action or workflow in your app.
+            }
+        }));
+    }
 
     public PermissionsRequester(Activity activity)
     {
         this.Activity = activity;
-
         this.Camera = activity.CheckSelfPermission(Request.Camera);
         try
         {
@@ -133,7 +160,6 @@ public class PermissionsRequester
     public void RequestNearbyConnectionsAccess(Action onGranted)
     {
         this.OnGrantNearbyAccess = onGranted;
-
         try
         {
             // Partial access on Android 13 (API level 33) or higher

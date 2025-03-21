@@ -27,7 +27,6 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
-    public LobbyBottomSheet? LobbyWaitingRoom { get; set; }
 
     public State State
     {

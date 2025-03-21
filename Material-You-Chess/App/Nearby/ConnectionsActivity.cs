@@ -2,6 +2,8 @@ using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using Chess.App.Common;
+using Chess.App.Common.ActivityResult;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Nearby.EndPoint>.KeyCollection;
 
 namespace Chess.App.Nearby;

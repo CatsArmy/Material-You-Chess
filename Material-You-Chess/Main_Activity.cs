@@ -12,6 +12,8 @@ using FirebaseUI.Auth;
 using FirebaseUI.Auth.Data.Model;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
+using Java.Util;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess;
@@ -27,6 +29,11 @@ public class Main_Activity : AppCompatActivity
     public ActivityResultLauncher? SignInLauncher;
     public MainFragment? Main;
     public FirebaseAuth? Auth;
+    public int ThemeId
+        => this.MaterialYouThemePreference
+        ? Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar
+        : Resource.Style.AppTheme_Material3_DayNight_NoActionBar;
+
     public bool MaterialYouThemePreference
     {
         get; set
@@ -37,8 +44,9 @@ public class Main_Activity : AppCompatActivity
         }
     } = true;
 
-    public int ThemeId => this.MaterialYouThemePreference ? Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar
-            : Resource.Style.AppTheme_Material3_DayNight_NoActionBar;
+    // Register the permissions callback, which handles the user's response to the
+    // system permissions dialog. Save the return value, an instance of
+    // ActivityResultLauncher, as an instance variable.
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -59,11 +67,9 @@ public class Main_Activity : AppCompatActivity
         this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
             .Add(this.FragmentContainer!.Id, this.Main, nameof(MainFragment)).Commit();
 
-
         var app = FirebaseApp.InitializeApp(this)!;
         var check = FirebaseAppCheck.GetInstance(app);
         check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
-        //check.InstallAppCheckProviderFactory(DebugAppCheckProviderFactory.Instance);
 
         this.Auth = FirebaseAuth.GetInstance(app);
         this.Auth.AuthState += (s, e) =>
@@ -169,3 +175,5 @@ public class Main_Activity : AppCompatActivity
         this.OpenSignInIntentActivity();
     }
 }
+
+public interface IMap<TKey, TValue> : IMap;

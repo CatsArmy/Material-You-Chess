@@ -1,10 +1,12 @@
 ﻿using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
+using Chess.App.Common;
 using Chess.App.Nearby;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
 using Google.Android.Material.ProgressIndicator;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess.App.Networked;
 
@@ -21,6 +23,8 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
     public ChipGroup? MatchmakingPreferences { get; set; }
     public Chip? White { get; set; }
     public Chip? Black { get; set; }
+
+    private NearbyConnections? PermissionManager;
 
     public virtual void OnSelectNone()
     {
@@ -40,14 +44,31 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
         this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
+    public virtual void HandlePermission(bool isGranted)
+    {
+        if (!isGranted)
+        {
+            this.SetResult(Result.Canceled);
+            this.Finish();
+            return;
+        }
+
+        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
+    }
+
     public void OnCreate()
     {
+        this.PermissionManager = this.RegisterNearbyPermissionManager(this.HandlePermission);
+
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
         this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
         this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
         this.BottomSheet!.AddBottomSheetCallback(new Callback(this));
         this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
-        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
 
         this.SearchingIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator);
         this.SearchingText = base.FindViewById<TextView>(Resource.Id.SearchingText);
