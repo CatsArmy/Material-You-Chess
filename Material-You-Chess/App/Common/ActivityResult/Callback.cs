@@ -1,6 +1,4 @@
-﻿using Android.Runtime;
-using AndroidX.Activity.Result;
-using AndroidX.Credentials;
+﻿using AndroidX.Activity.Result;
 
 namespace Chess.App.Common.ActivityResult;
 

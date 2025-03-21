@@ -1,7 +1,5 @@
-﻿using Android;
-using Android.Content;
+﻿using Android.Content;
 using Android.Views;
-using AndroidX.Annotations;
 using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;

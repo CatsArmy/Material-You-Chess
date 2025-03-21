@@ -1,10 +1,8 @@
 ﻿using Android.Content.PM;
 using Android.Graphics;
 using Android.Views;
-using Android.Views.Animations;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
-using Chess.App;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Firebase.Auth;
@@ -12,7 +10,6 @@ using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
 using Google.Android.Material.TextField;
-using Java.Lang;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
 

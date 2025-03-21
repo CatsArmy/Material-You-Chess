@@ -1,11 +1,6 @@
-﻿using Android;
-using Android.Content;
-using Android.Content.PM;
+﻿using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
-using Chess.App.Networked;
-using Kotlin.Experimental;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 using Request = Android.Manifest.Permission;
 
 namespace Chess.App.Common;

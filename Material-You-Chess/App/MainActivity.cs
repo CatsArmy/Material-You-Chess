@@ -17,7 +17,6 @@ using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
 using Microsoft.Maui.ApplicationModel;
-using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;

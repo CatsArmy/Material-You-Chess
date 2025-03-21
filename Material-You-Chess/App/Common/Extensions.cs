@@ -1,19 +1,13 @@
 ﻿using Android.Content;
 using Android.Gms.Common.Apis;
 using Android.Gms.Nearby.Connection;
-using Android.OS;
 using Android.Views.Animations;
 using AndroidX.Activity;
 using AndroidX.Activity.Result;
 using AndroidX.Activity.Result.Contract;
-using AndroidX.Core.Content;
-using AndroidX.Credentials;
-using AndroidX.Credentials.Exceptions;
 using Chess.App.Common.ActivityResult;
 using Google.Android.Material.FloatingActionButton;
-using Java.Lang;
 using Java.Util;
-using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Common;
 

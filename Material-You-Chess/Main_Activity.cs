@@ -1,7 +1,4 @@
-﻿using Android.Content;
-using Android.Gms.Auth.Api.SignIn;
-using Android.Runtime;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
@@ -9,7 +6,6 @@ using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Firebase;
 using Firebase.AppCheck;
-using Firebase.AppCheck.Debug;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using FirebaseUI.Auth;
