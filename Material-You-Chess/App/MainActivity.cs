@@ -67,7 +67,7 @@ public class MainActivity : AppCompatActivity
             return;
         }
 
-        this.permissionsHandler?.RequestCamaraAccess();
+        //this.permissionsHandler?.RequestCamaraAccess();
     }
 
     public void OpenPhotoPicker(object? sender, EventArgs args)
@@ -78,7 +78,7 @@ public class MainActivity : AppCompatActivity
             return;
         }
 
-        this.permissionsHandler.RequestMediaAccess();
+        //this.permissionsHandler.RequestMediaAccess();
     }
 
     private void CapturePhoto(Bitmap? photo) => this.profileDialog?.OnSelectPhoto(photo);
@@ -120,13 +120,13 @@ public class MainActivity : AppCompatActivity
         _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
         this.MaterialYouThemePreference = MaterialYouThemePreference;
 
-        this.photoPicker = this.RegisterForActivityResult<PickVisualMediaRequest, AndroidUri>(new PickVisualMedia(),
-            new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
+        //this.photoPicker = this.RegisterForActivityResult<PickVisualMediaRequest, AndroidUri>(new PickVisualMedia(),
+        //    new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
 
-        this.PhotoTaker = this.RegisterForActivityResult(new TakePicturePreview(),
-            new ActivityResultCallback<Bitmap>(this.CapturePhoto));
+        //this.PhotoTaker = this.RegisterForActivityResult(new TakePicturePreview(),
+        //    new ActivityResultCallback<Bitmap>(this.CapturePhoto));
 
-        this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
+        //this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);

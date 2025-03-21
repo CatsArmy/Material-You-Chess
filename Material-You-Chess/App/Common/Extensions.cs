@@ -2,6 +2,7 @@
 using Android.Gms.Common.Apis;
 using Android.Gms.Nearby.Connection;
 using Android.OS;
+using Android.Views.Animations;
 using AndroidX.Activity;
 using AndroidX.Activity.Result;
 using AndroidX.Activity.Result.Contract;
@@ -9,6 +10,8 @@ using AndroidX.Core.Content;
 using AndroidX.Credentials;
 using AndroidX.Credentials.Exceptions;
 using Chess.App.Common.ActivityResult;
+using Google.Android.Material.FloatingActionButton;
+using Java.Lang;
 using Java.Util;
 using Microsoft.Maui.ApplicationModel;
 
@@ -29,6 +32,16 @@ public static class Extensions
         editor?.PutBoolean(nameof(MaterialYouThemePreference), MaterialYouThemePreference)?.Commit();
         editor?.Apply();
         return sharedPref;
+    }
+
+    public static void Spin(this ExtendedFloatingActionButton fab)
+    {
+        if (fab.Extended)
+            return;
+
+        fab.Rotation = 0;
+
+        fab.Animate()?.Rotation(360).WithLayer().SetDuration(1000).SetInterpolator(new AccelerateDecelerateInterpolator()).Start();
     }
 
     public static void Merge<TKey, TValue>(this Dictionary<TKey, TValue> to, params Dictionary<TKey, TValue>[] merge) where TKey : notnull where TValue : notnull
@@ -92,98 +105,5 @@ public static class Extensions
             false => status.StatusMessage
         };
         return Java.Lang.String.Format(Locale.Us!, "[%d]%s", status.StatusCode, msg!).ToString();
-    }
-
-    public static Java.Lang.Class ToJavaClass(this Type type) => Java.Lang.Class.FromType(type);
-
-    public static async Task<CreatePublicKeyCredentialResponse?> CreatePublicKeyCredential(this ICredentialManager credentialManager,
-        CreatePublicKeyCredentialRequest request, CancellationToken cancellationToken)
-    {
-        var response = await credentialManager.CreateCredential(request, cancellationToken);
-        return (CreatePublicKeyCredentialResponse?)response;
-    }
-    public static async Task<CreateCustomCredentialResponse?> CreateCustomCredential(this ICredentialManager credentialManager,
-        CreateCustomCredentialRequest request, CancellationToken cancellationToken)
-    {
-        var response = await credentialManager.CreateCredential(request, cancellationToken);
-        return (CreateCustomCredentialResponse?)response;
-    }
-    public static async Task<CreatePasswordResponse?> CreatePassword(this ICredentialManager credentialManager,
-        CreatePasswordRequest request, CancellationToken cancellationToken)
-    {
-        var response = await credentialManager.CreateCredential(request, cancellationToken);
-        return (CreatePasswordResponse?)response;
-    }
-
-    //[TargetApi(Value = 34)]
-    public static PendingIntent CreateSettingsPendingIntent(this ICredentialManager credentialManager)
-    {
-        return credentialManager.CreateSettingsPendingIntent();
-    }
-
-    public static async Task<GetCredentialResponse?> GetCredentialAsync(this ICredentialManager credentialManager,
-        GetCredentialRequest request, CancellationToken cancellationToken = new())
-    {
-        var callback = new CredentialManagerCallback<GetCredentialResponse, GetCredentialException>(cancellationToken);
-
-        credentialManager.GetCredentialAsync(
-            Platform.CurrentActivity!,
-            request,
-            null,
-            ContextCompat.GetMainExecutor(Platform.CurrentActivity!),
-            callback
-        );
-
-        return await callback.Task;
-    }
-
-    //[TargetApi(Value = 34)]
-    public static async Task<PrepareGetCredentialResponse?> PrepareGetCredential(this ICredentialManager credentialManager,
-        GetCredentialRequest request, CancellationToken cancellationToken)
-    {
-        var callback = new CredentialManagerCallback<PrepareGetCredentialResponse, GetCredentialException>(cancellationToken);
-
-        credentialManager.PrepareGetCredentialAsync(
-            request,
-            null,
-            ContextCompat.GetMainExecutor(Platform.CurrentActivity!),
-            callback
-        );
-
-        return await callback.Task;
-    }
-
-    public static async Task ClearCredentialState(this ICredentialManager credentialManager, CancellationToken cancellationToken)
-    {
-        var request = new ClearCredentialStateRequest();
-        var callback = new CredentialManagerCallback<ClearCredentialException>(cancellationToken);
-
-        var cancellationSignal = new CancellationSignal();
-        cancellationToken.Register(() => cancellationSignal.Cancel());
-
-        credentialManager.ClearCredentialStateAsync(
-            request,
-            cancellationSignal,
-            ContextCompat.GetMainExecutor(Platform.CurrentActivity!),
-            callback
-        );
-
-        await callback.Task;
-    }
-
-    private static Task<CreateCredentialResponse?> CreateCredential(this ICredentialManager credentialManager,
-        CreateCredentialRequest request, CancellationToken cancellationToken, Action<GetCredentialResponse>? _callback = null)
-    {
-        var callback = new CredentialManagerCallback<CreateCredentialResponse, CreateCredentialException>(cancellationToken);
-
-        credentialManager.CreateCredentialAsync(
-            Platform.CurrentActivity!,
-            request,
-            null,
-            ContextCompat.GetMainExecutor(Platform.CurrentActivity!),
-            callback
-        );
-
-        return callback.Task;
     }
 }

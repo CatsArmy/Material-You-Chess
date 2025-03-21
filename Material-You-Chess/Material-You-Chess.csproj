@@ -52,6 +52,14 @@
     <RunAOTCompilation>False</RunAOTCompilation>
     <PublishTrimmed>False</PublishTrimmed>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+
+      <SignAssembly>True</SignAssembly>
+  <AndroidUseApkSigner>true</AndroidUseApkSigner>
+  <AndroidKeyStore>true</AndroidKeyStore>
+  <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
+  <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+  <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
+  <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        

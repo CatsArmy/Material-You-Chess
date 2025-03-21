@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Gms.Auth.Api.SignIn;
+using Android.Runtime;
 using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
@@ -8,6 +9,7 @@ using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Firebase;
 using Firebase.AppCheck;
+using Firebase.AppCheck.Debug;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using FirebaseUI.Auth;
@@ -27,9 +29,8 @@ public class Main_Activity : AppCompatActivity
     public IMenuItem? ProfileItem { get; set; }
     public FragmentContainerView? FragmentContainer { get; set; }
     public ActivityResultLauncher? SignInLauncher;
-    public ProfileFragment? Profile;
     public MainFragment? Main;
-    private FirebaseAuth? Auth;
+    public FirebaseAuth? Auth;
     public bool MaterialYouThemePreference
     {
         get; set
@@ -55,19 +56,20 @@ public class Main_Activity : AppCompatActivity
         this.PlayItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_1);
         this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_2);
         this.NavigationBar!.ItemSelected += this.NavigationBar_ItemSelected;
-        this.Main = new();
-        this.Profile = new();
-        this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-            .Add(this.FragmentContainer!.Id, this.Main).Commit();
-
         this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
             callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
 
-        //var app = FirebaseApp.InitializeApp(this)!;
-        //FirebaseAppCheck.GetInstance(app).InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
+        this.Main = new();
+        this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+            .Add(this.FragmentContainer!.Id, this.Main, nameof(MainFragment)).Commit();
 
-        //this.Auth = FirebaseAuth.GetInstance(app);
-        this.Auth = FirebaseAuth.Instance;
+
+        var app = FirebaseApp.InitializeApp(this)!;
+        var check = FirebaseAppCheck.GetInstance(app);
+        check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
+        //check.InstallAppCheckProviderFactory(DebugAppCheckProviderFactory.Instance);
+
+        this.Auth = FirebaseAuth.GetInstance(app);
         this.Auth.AuthState += (s, e) =>
         {
             if (this.Main?.Online is null)
@@ -85,60 +87,28 @@ public class Main_Activity : AppCompatActivity
             new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
             new AuthUI.IdpConfig.GoogleBuilder().Build()
         ];
-
         // Create and launch sign-in intent
-        var signInIntent = AuthUI.Instance.CreateSignInIntentBuilder()
-            //.EnableAnonymousUsersAutoUpgrade()
-            //.SetAvailableProviders(providers)
-            //.SetAlwaysShowSignInMethodScreen(true)
-            .SetTheme(this.ThemeId)
-            .SetLogo(Resource.Drawable.ic_launcher_foreground)
-            .SetCredentialManagerEnabled(true)
-            .SetLockOrientation(true)
-            .Build();
+        var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
+        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
+        signInIntentBuilder.SetAvailableProviders(providers);
+        signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
+        signInIntentBuilder.SetTheme(this.ThemeId);
+        signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
+        signInIntentBuilder.SetCredentialManagerEnabled(true);
+        signInIntentBuilder.SetLockOrientation(true);
+        var signInIntent = signInIntentBuilder.Build();
 
         // Attempt to Sign In/Up the device
         this.SignInLauncher?.Launch(signInIntent);
     }
 
-    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
-    {
-        var resultCode = result?.ResultCode.IntValue();
-        var response = result?.IdpResponse;
-
-        // Successfully signed in
-        if (resultCode == ((int)Result.Ok))
-        {
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, this.Profile!).Commit();
-        }
-        else
-        {
-            //Sign in failed
-            if (response == null)
-            {
-                // User pressed back button
-                Snackbar.Make(this.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-                return;
-            }
-
-            if (response?.Error?.ErrorCode == ErrorCodes.NoNetwork)
-            {
-                Snackbar.Make(this.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
-                return;
-            }
-
-            Snackbar.Make(this.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
-            this.OpenSignInIntentActivity();
-        }
-    }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
         if (e.Item.ItemId == this.PlayItem?.ItemId)
         {
             this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, this.Main!).Commit();
+                .Replace(this.FragmentContainer!.Id, this.Main!, nameof(MainFragment)).Commit();
             return;
         }
 
@@ -147,11 +117,59 @@ public class Main_Activity : AppCompatActivity
             if (this.Auth?.CurrentUser is not null)
             {
                 this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                    .Replace(this.FragmentContainer!.Id, this.Profile!).Commit();
+                    .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
                 return;
             }
 
             this.OpenSignInIntentActivity();
         }
+    }
+
+    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    {
+        var resultCode = result?.ResultCode.IntValue();
+        var response = result?.IdpResponse;
+
+        if (result != null)
+        {
+            Logger.Warn("result is not null");
+        }
+        else
+        {
+            Logger.Warn("result is null");
+        }
+
+        // Successfully signed in
+        if (resultCode == ((int)Result.Ok))
+        {
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
+        }
+
+        //Sign in failed
+        else if (response == null)
+        {
+            if (resultCode != null)
+            {
+                Logger.Warn($"{resultCode}");
+            }
+            if (response != null)
+            {
+                Logger.Warn($"response != null");
+            }
+
+            // User pressed back button
+            Snackbar.Make(this.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+            return;
+        }
+
+        if (response?.Error?.ErrorCode == ErrorCodes.NoNetwork)
+        {
+            Snackbar.Make(this.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
+            return;
+        }
+
+        Snackbar.Make(this.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
+        this.OpenSignInIntentActivity();
     }
 }

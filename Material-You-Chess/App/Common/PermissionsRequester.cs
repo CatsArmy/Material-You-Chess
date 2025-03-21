@@ -1,8 +1,11 @@
-﻿using Android.Content;
+﻿using Android;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using Chess.App.Networked;
+using Kotlin.Experimental;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 using Request = Android.Manifest.Permission;
 
 namespace Chess.App.Common;
@@ -35,10 +38,10 @@ public class PermissionsRequester
     public Permission NearbyDevices = Permission.Denied;
 
     /// <summary> Request Code: 21 </summary>
-    public Permission AccessWiFiState = Permission.Denied;
+    public Permission AccessWifiState = Permission.Denied;
 
     /// <summary> Request Code: 22 </summary> 
-    public Permission ChangeWiFiState = Permission.Denied;
+    public Permission ChangeWifiState = Permission.Denied;
 
     /// <summary> Request Code: 23 </summary> 
     public Permission Bluetooth = Permission.Denied;
@@ -63,16 +66,13 @@ public class PermissionsRequester
 
     public Activity Activity { get; }
 
-    private bool HasRequestedNearbyAccess;
-    private bool HasRequestedCameraAccess;
-    private bool HasRequestedMediaAccess;
+    private Action? OnGrantNearbyAccess;
+    private Action? OnGrantCameraAccess;
+    private Action? OnGrantMediaAccess;
 
     public PermissionsRequester(Activity activity)
     {
         this.Activity = activity;
-        this.HasRequestedNearbyAccess = false;
-        this.HasRequestedCameraAccess = false;
-        this.HasRequestedMediaAccess = false;
 
         this.Camera = activity.CheckSelfPermission(Request.Camera);
         try
@@ -80,8 +80,8 @@ public class PermissionsRequester
             // Partial access on Android 11 (API level 31) or lower
             if (Build.VERSION.SdkInt <= BuildVersionCodes.S)
             {
-                this.AccessWiFiState = activity.CheckSelfPermission(Request.AccessWifiState);
-                this.ChangeWiFiState = activity.CheckSelfPermission(Request.ChangeWifiState);
+                this.AccessWifiState = activity.CheckSelfPermission(Request.AccessWifiState);
+                this.ChangeWifiState = activity.CheckSelfPermission(Request.ChangeWifiState);
             }
 
             // Partial access on Android 10 (API level 30) or lower
@@ -135,9 +135,10 @@ public class PermissionsRequester
         catch (Exception) { }
     }
 
-    public void RequestNearbyConnectionsAccess()
+    public void RequestNearbyConnectionsAccess(Action onGranted)
     {
-        this.HasRequestedNearbyAccess = true;
+        this.OnGrantNearbyAccess = onGranted;
+
         try
         {
             // Partial access on Android 13 (API level 33) or higher
@@ -179,9 +180,9 @@ public class PermissionsRequester
         catch (Exception) { }
     }
 
-    public void RequestMediaAccess()
+    public void RequestMediaAccess(Action onGranted)
     {
-        this.HasRequestedMediaAccess = true;
+        this.OnGrantMediaAccess = onGranted;
         try
         {
             // Partial access on Android 14 (API level 34) or higher 
@@ -207,9 +208,9 @@ public class PermissionsRequester
         catch (Exception) { }
     }
 
-    public void RequestCamaraAccess()
+    public void RequestCamaraAccess(Action onGranted)
     {
-        this.HasRequestedCameraAccess = true;
+        this.OnGrantCameraAccess = onGranted;
         try
         {
             this.Activity.RequestPermissions([Request.Camera], 9);
@@ -229,30 +230,44 @@ public class PermissionsRequester
 
     public bool HasNearbyAccess()
     {
-        if (this.BluetoothAdvertise == Permission.Granted
-            && this.BluetoothConnect == Permission.Granted
-            && this.BluetoothScan == Permission.Granted)
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
         {
-            return true;
+            return this.BluetoothScan == Permission.Granted &&
+                this.BluetoothAdvertise == Permission.Granted &&
+                this.BluetoothConnect == Permission.Granted &&
+                this.AccessWifiState == Permission.Granted &&
+                this.ChangeWifiState == Permission.Granted &&
+                this.NearbyDevices == Permission.Granted;
         }
-        if (this.AccessWiFiState == Permission.Granted
-            && this.ChangeWiFiState == Permission.Granted)
+        else if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
         {
-            return true;
+            return this.BluetoothScan == Permission.Granted &&
+                this.BluetoothAdvertise == Permission.Granted &&
+                this.BluetoothConnect == Permission.Granted &&
+                this.AccessWifiState == Permission.Granted &&
+                this.ChangeWifiState == Permission.Granted &&
+                this.NearbyDevices == Permission.Granted &&
+                this.CoarseLocationAccess == Permission.Granted &&
+                this.FineLocationAccess == Permission.Granted;
         }
-
-        if (this.Bluetooth == Permission.Granted
-            && this.BluetoothAdmin == Permission.Granted)
+        else if (Build.VERSION.SdkInt >= BuildVersionCodes.Q)
         {
-            return true;
+            return this.Bluetooth == Permission.Granted &&
+                this.BluetoothAdmin == Permission.Granted &&
+                this.BluetoothConnect == Permission.Granted &&
+                this.AccessWifiState == Permission.Granted &&
+                this.ChangeWifiState == Permission.Granted &&
+                this.NearbyDevices == Permission.Granted &&
+                this.CoarseLocationAccess == Permission.Granted &&
+                this.FineLocationAccess == Permission.Granted;
         }
-
-        if (this.NearbyDevices == Permission.Granted)
-        {
-            return true;
-        }
-
-        return false;
+        return this.Bluetooth == Permission.Granted &&
+            this.BluetoothAdmin == Permission.Granted &&
+            this.BluetoothConnect == Permission.Granted &&
+            this.AccessWifiState == Permission.Granted &&
+            this.ChangeWifiState == Permission.Granted &&
+            this.CoarseLocationAccess == Permission.Granted &&
+            this.FineLocationAccess == Permission.Granted;
     }
 
     public bool HasMediaAccess()
@@ -272,11 +287,11 @@ public class PermissionsRequester
         {
             case 9:
                 this.Camera = grantResults[0];
-                if (this.Camera != Permission.Granted || !this.HasRequestedCameraAccess)
+                if (this.Camera != Permission.Granted || this.OnGrantCameraAccess is null)
                     return;
 
-                this.HasRequestedCameraAccess = false;
-                (this.Activity as MainActivity)?.PhotoTaker?.Launch(null);
+                this.OnGrantCameraAccess();
+                this.OnGrantCameraAccess = null;
                 return;
 
             case 10:
@@ -300,11 +315,11 @@ public class PermissionsRequester
                 break;
 
             case 21:
-                this.AccessWiFiState = grantResults[0];
+                this.AccessWifiState = grantResults[0];
                 break;
 
             case 22:
-                this.ChangeWiFiState = grantResults[0];
+                this.ChangeWifiState = grantResults[0];
                 break;
 
             case 23:
@@ -343,23 +358,24 @@ public class PermissionsRequester
 
         if (requestCode >= 10 && requestCode < 20)
         {
-            if (this.HasMediaAccess() && this.HasRequestedMediaAccess)
+            if (!this.HasMediaAccess() || this.OnGrantMediaAccess is null)
             {
-                this.HasRequestedMediaAccess = false;
-                (this.Activity as MainActivity)?.photoPicker?.Launch((this.Activity as MainActivity)?.pickVisualMediaRequestBuilder?.Build());
+                return;
             }
+
+            this.OnGrantMediaAccess();
+            this.OnGrantMediaAccess = null;
         }
 
         else if (requestCode >= 20 && requestCode < 30)
         {
-            if (this.HasNearbyAccess() && this.HasRequestedNearbyAccess)
+            if (!this.HasNearbyAccess() || this.OnGrantNearbyAccess is null)
             {
-                this.HasRequestedNearbyAccess = false;
-                var intent = new Intent(this.Activity, typeof(NetworkedChessActivity))
-                    .PutExtra(nameof(MainActivity.MaterialYouThemePreference),
-                    $"{(this.Activity as MainActivity)?.MaterialYouThemePreference}");
-                this.Activity.StartActivity(intent);
+                return;
             }
+
+            this.OnGrantNearbyAccess();
+            this.OnGrantNearbyAccess = null;
         }
     }
 }
