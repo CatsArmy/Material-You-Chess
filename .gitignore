@@ -365,3 +365,4 @@ FodyWeavers.xsd
 # ignore .idea 
 .idea/**
 /Material-You-Chess/Properties/google-services.json
+/Material-You-Chess/Resources/values/values.xml
