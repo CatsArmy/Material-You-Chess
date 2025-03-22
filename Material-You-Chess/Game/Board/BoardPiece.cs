@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Android.Animation;
 using AndroidX.ConstraintLayout.Widget;
-using Chess.App.Common;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;

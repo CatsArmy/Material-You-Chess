@@ -1,9 +1,9 @@
-﻿using System.Runtime.Intrinsics.X86;
-using Android.Content.PM;
+﻿using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
 using AndroidX.Activity.Result;
 using Chess.App.Common.ActivityResult;
+using Java.Util;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using Request = Android.Manifest.Permission;
 
@@ -70,11 +70,11 @@ public class PermissionsRequester
     private Action? OnGrantMediaAccess;
     private ActivityResultLauncher requestPermissionLauncher;
 
-    public PermissionsRequester(Main_Activity activity) : this(activity as Activity)
+    public PermissionsRequester(MainActivity activity) : this(activity as Activity)
     {
         requestPermissionLauncher = //<I>: string[], <O>: Dictionary<string, bool>>
         activity.RegisterForActivityResult(new RequestMultiplePermissions(),
-        callback: new ActivityResultCallback<IMap<string, bool>>((permissions) =>
+        callback: new ActivityResultCallback<IMap>((permissions) =>
         {
             foreach (var isGranted in permissions!.Values().Cast<bool>().ToArray())
             {

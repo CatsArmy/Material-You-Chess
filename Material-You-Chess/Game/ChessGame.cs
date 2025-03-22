@@ -64,11 +64,6 @@ public class ChessGame : IChessGame
             field?.IndicateUnmovable();
             field = value;
 
-            //foreach (var space in this.Board.Values)
-            //{
-            //    space.Unselect();
-            //}
-
             value?.IndicateUnmovable();
             value?.Select();
         }
@@ -182,9 +177,7 @@ public class ChessGame : IChessGame
 
     /// <returns> true if an enemy piece can capture the given piece</returns>
     public bool IsInCheck(BoardPiece Piece)
-        => this.Player!.Pieces.Values.FirstOrDefault(p => Piece.IsWhite == p.IsWhite) != null
-        ? this.IsInCheck(Piece.Space)
-        : false;
+        => this.Player!.Pieces.Values.FirstOrDefault(p => Piece.IsWhite == p.IsWhite) != null && this.IsInCheck(Piece.Space);
 
     /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
     public bool IsInCheck(BoardSpace Space)

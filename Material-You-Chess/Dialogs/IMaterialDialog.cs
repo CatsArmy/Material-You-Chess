@@ -4,6 +4,9 @@ using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
 
+/// <summary>
+/// Template Interface
+/// </summary>
 public interface IMaterialDialog
 {
     public AlertDialog Dialog { get; set; }

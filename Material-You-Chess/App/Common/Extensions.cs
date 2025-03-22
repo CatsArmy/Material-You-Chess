@@ -53,9 +53,8 @@ public static class Extensions
 
     public static NearbyConnections RegisterNearbyPermissionManager(this ComponentActivity activity, Action<bool> OnRequestCallback)
     {
-
-        return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(),
-            new RequestPermissionCallback(OnRequestCallback)), OnRequestCallback, activity.CheckSelfPermission);
+        var callback = new RequestPermissionCallback(OnRequestCallback, activity.CheckSelfPermission);
+        return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
     }
 
     public static ActivityResultLauncher<I> RegisterForActivityResult<I, O>(this ComponentActivity @base,

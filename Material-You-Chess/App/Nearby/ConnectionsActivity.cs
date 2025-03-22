@@ -2,8 +2,6 @@ using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using Chess.App.Common;
-using Chess.App.Common.ActivityResult;
-using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Nearby.EndPoint>.KeyCollection;
 
 namespace Chess.App.Nearby;
@@ -18,6 +16,8 @@ public abstract class ConnectionsActivity : AppCompatActivity
     public bool IsConnecting { get; private set; } = false;
     public bool IsDiscovering { get; private set; } = false;
     public bool IsAdvertising { get; private set; } = false;
+
+    public bool IsConnected => this.EstablishedConnections.Count > 0;
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {

@@ -5,7 +5,6 @@ using Android.Gms.Nearby.Connection;
 using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
-using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
@@ -213,20 +212,21 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
             {
                 this.WhitePlayerName = whiteClient.WhitePlayerName;
                 whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+                this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
                 this.Game = new ChessGame(this, false);
+                return;
             }
 
             else if (otherClient is BlackClient blackClient)
             {
                 this.BlackPlayerName = blackClient.BlackPlayerName;
                 blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+                this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
                 this.Game = new ChessGame(this, true);
+                return;
             }
 
-            else
-            {
-                //Unknown state something went wrong
-            }
+            Logger.Warn("Unknown state something went wrong");
         }
 
         catch (Exception)

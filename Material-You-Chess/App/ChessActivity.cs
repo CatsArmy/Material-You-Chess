@@ -5,7 +5,6 @@ using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
-using Chess.App.Common;
 using Chess.App.Networked;
 using Chess.Dialogs;
 using Chess.Game;

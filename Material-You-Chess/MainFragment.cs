@@ -3,6 +3,7 @@ using Android.Views;
 using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;
+using Firebase.Auth;
 using Google.Android.Material.Button;
 
 namespace Chess;
@@ -13,7 +14,7 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
     public Button? Online { get; private set; }
     public Button? Local { get; private set; }
     public Button? Start { get; private set; }
-    private PermissionsRequester? permissionsRequester;
+
     public bool IsLoggedIn
     {
         get;
@@ -38,37 +39,37 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Local = view.FindViewById<Button>(Resource.Id.btnLocal);
         this.GameModeSelector!.Check(this.Local!.Id);
         this.Online!.Enabled = this.IsLoggedIn;
-        this.permissionsRequester = new(this.Activity!);
+        this.IsLoggedIn = MainActivity.Instance!.Auth!.CurrentUser is not null;
+        MainActivity.Instance!.Auth!.AuthState += this.OnAuthState;
+
+    }
+
+    public override void OnDestroy()
+    {
+        MainActivity.Instance!.Auth!.AuthState -= this.OnAuthState;
+        base.OnDestroy();
+    }
+
+    public void OnAuthState(object? sender, FirebaseAuth.AuthStateEventArgs args)
+    {
+        if (this.Online is null)
+            return;
+
+        this.Online.Enabled = args.Auth.CurrentUser is not null;
     }
 
     private void StartGame(object? sender, EventArgs e)
     {
         if (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline)
         {
-            this.StartOnlineGame();
+            base.StartActivity(new Intent(this.Activity!, typeof(NetworkedChessActivity))
+                .PutExtra(nameof(MainActivity.MaterialYouThemePreference),
+            $"{MainActivity.Instance?.MaterialYouThemePreference}"));
             return;
         }
 
-        base.StartActivity(new Intent(this.Activity!,
-            typeof(ChessActivity))
-            .PutExtra(nameof(Main_Activity.MaterialYouThemePreference),
-            $"{Main_Activity.Instance?.MaterialYouThemePreference}"));
-    }
-
-    private void StartOnlineGame()
-    {
-        if (!this.permissionsRequester!.HasNearbyAccess())
-        {
-            this.permissionsRequester.RequestNearbyConnectionsAccess(() => base.StartActivity(new Intent(this.Activity!,
-                typeof(NetworkedChessActivity))
-                .PutExtra(nameof(Main_Activity.MaterialYouThemePreference),
-                $"{Main_Activity.Instance?.MaterialYouThemePreference}")));
-            return;
-        }
-
-        base.StartActivity(new Intent(this.Activity!,
-            typeof(NetworkedChessActivity))
-            .PutExtra(nameof(Main_Activity.MaterialYouThemePreference),
-            $"{Main_Activity.Instance?.MaterialYouThemePreference}"));
+        base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity))
+            .PutExtra(nameof(MainActivity.MaterialYouThemePreference),
+            $"{MainActivity.Instance?.MaterialYouThemePreference}"));
     }
 }

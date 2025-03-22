@@ -1,248 +1,166 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Android.Content;
-using Android.Content.PM;
-using Android.Graphics;
-using Android.Runtime;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
-using Bumptech.Glide;
-using Chess.App.Common;
+using AndroidX.Fragment.App;
 using Chess.App.Common.ActivityResult;
-using Chess.App.Networked;
-using Chess.Dialogs;
+using Firebase;
+using Firebase.AppCheck;
+using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
-using Google.Android.Material.Button;
-using Google.Android.Material.FloatingActionButton;
-using Google.Android.Material.ImageView;
-using Google.Android.Material.ProgressIndicator;
-using Microsoft.Maui.ApplicationModel;
-using AndroidUri = Android.Net.Uri;
+using FirebaseUI.Auth;
+using FirebaseUI.Auth.Data.Model;
+using Google.Android.Material.Navigation;
+using Google.Android.Material.Snackbar;
+using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
 
-//[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
+    public static MainActivity? Instance { get; set; }
+    public NavigationBarView? NavigationBar { get; set; }
+    public IMenuItem? PlayItem { get; set; }
+    public IMenuItem? ProfileItem { get; set; }
+    public FragmentContainerView? FragmentContainer { get; set; }
+    public ActivityResultLauncher? SignInLauncher;
+    public FirebaseAuth? Auth;
+
+    public int ThemeId
+        => this.MaterialYouThemePreference
+        ? Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar
+        : Resource.Style.AppTheme_Material3_DayNight_NoActionBar;
+
     public bool MaterialYouThemePreference
     {
         get; set
         {
             field = value;
-            if (value == true)
-            {
-                base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
-            }
-            if (value == false)
-            {
-                base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
-            }
+
+            base.SetTheme(this.ThemeId);
         }
     } = true;
 
-    public CircularProgressIndicator? UserProgressIndicator;
-    public ShapeableImageView? mainProfilePicture;
-    public ActivityResultLauncher? PhotoTaker;
-    public ActivityResultLauncher<PickVisualMediaRequest>? photoPicker;
-    public PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
-    public ProfileDialog? profileDialog;
-    private LogoutDialog? logoutDialog;
-    private LoginDialog? loginDialog;
-    private SignupDialog? signupDialog;
-    private MaterialButtonToggleGroup? GameModeSelector;
-    private Button? Online;
-    private Button? Local;
-    private Button? startGame;
-    private TextView? mainUsername;
-    private ExtendedFloatingActionButton? profileAction1;
-    private ExtendedFloatingActionButton? profileAction2;
-    private PermissionsRequester? permissionsHandler;
-
-    public void OpenPhotoTaker(object? sender, EventArgs args)
-    {
-        if (this.permissionsHandler?.Camera == Permission.Granted)
-        {
-            this.PhotoTaker?.Launch(null);
-            return;
-        }
-
-        //this.permissionsHandler?.RequestCamaraAccess();
-    }
-
-    public void OpenPhotoPicker(object? sender, EventArgs args)
-    {
-        if (this.permissionsHandler!.HasMediaAccess())
-        {
-            this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
-            return;
-        }
-
-        //this.permissionsHandler.RequestMediaAccess();
-    }
-
-    private void CapturePhoto(Bitmap? photo) => this.profileDialog?.OnSelectPhoto(photo);
-
-    private void SelectPhoto(AndroidUri? photo)
-    {
-        if (photo is null)
-        {
-            this.profileDialog?.OnSelectPhoto(null);
-            return;
-        }
-
-        this.profileDialog?.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.ContentResolver!, photo)));
-    }
-
-    private void StartGame(object? sender, EventArgs e)
-    {
-        Intent intent;
-        if (this.GameModeSelector!.CheckedButtonId == this.Online!.Id)
-        {
-            //if (this.permissionsHandler!.HasNearbyAccess())
-            //{
-            intent = new Intent(this, typeof(NetworkedChessActivity))
-           .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
-            base.StartActivity(intent);
-            return;
-            //}
-            //this.permissionsHandler!.RequestNearbyConnectionsAccess();
-            //return;
-        }
-
-        intent = new Intent(this, typeof(ChessActivity))
-        .PutExtra(nameof(this.MaterialYouThemePreference), $"{this.MaterialYouThemePreference}");
-        base.StartActivity(intent);
-    }
-
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        _ = this.GetMaterialYouThemePreference(out bool MaterialYouThemePreference);
-        this.MaterialYouThemePreference = MaterialYouThemePreference;
-
-        //this.photoPicker = this.RegisterForActivityResult<PickVisualMediaRequest, AndroidUri>(new PickVisualMedia(),
-        //    new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
-
-        //this.PhotoTaker = this.RegisterForActivityResult(new TakePicturePreview(),
-        //    new ActivityResultCallback<Bitmap>(this.CapturePhoto));
-
-        //this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
-
+        MainActivity.Instance = this;
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
 
-        // Set our view from layout resource
-        base.SetContentView(Resource.Layout.main_activity);
+        this.SetContentView(Resource.Layout._main_activity_);
+        this.NavigationBar = base.FindViewById<NavigationBarView>(Resource.Id.navigation_bar);
+        this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
+        this.PlayItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_1);
+        this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_2);
+        this.NavigationBar!.ItemSelected += this.NavigationBar_ItemSelected;
+        this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
+            callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
 
-        //using var glide = Glide.Get(this);
-        //{
-        //    glide.Registry.Append(Java.Lang.Class.FromType(typeof(StorageReference)),
-        //    Java.Lang.Class.FromType(typeof(InputStream)), new FirebaseImageLoader.Factory());
-        //}
+        this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+            .Add(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
 
-        this.GameModeSelector = this.FindViewById<MaterialButtonToggleGroup>(Resource.Id.GameModeSelector);
-        this.Online = this.FindViewById<Button>(Resource.Id.btnOnline);
-        this.Local = this.FindViewById<Button>(Resource.Id.btnLocal);
-        this.GameModeSelector!.Check(this.Local!.Id);
-        this.startGame = this.FindViewById<Button>(Resource.Id.btnStartGame);
-        this.UserProgressIndicator = this.FindViewById<CircularProgressIndicator>(Resource.Id.UserProgressIndicator);
-        this.mainProfilePicture = this.FindViewById<ShapeableImageView>(Resource.Id.MainProfileImageView);
-        this.mainUsername = this.FindViewById<TextView>(Resource.Id.MainUsername);
-        this.profileAction1 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction1);
-        this.profileAction2 = this.FindViewById<ExtendedFloatingActionButton>(Resource.Id.profileAction2);
-        this.startGame!.Click += this.StartGame;
+        var app = FirebaseApp.InitializeApp(this)!;
+        var check = FirebaseAppCheck.GetInstance(app);
+        check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
+
+        this.Auth = FirebaseAuth.GetInstance(app);
     }
 
-    protected override void OnStart()
+    private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
-        base.OnStart();
-        this.permissionsHandler = new PermissionsRequester(this);
-        this.logoutDialog = new LogoutDialog(this);
-        this.loginDialog = new LoginDialog(this);
-        this.signupDialog = new SignupDialog(this);
-        this.profileDialog = new ProfileDialog(this);
-        this.UpdateUserState();
-    }
+        if (this.NavigationBar?.SelectedItemId == e.Item.ItemId)
+            return;
 
-    public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-    {
-        // Handle permission requests results
-        Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-        try
+        if (e.Item.ItemId == this.PlayItem?.ItemId)
         {
-            this.permissionsHandler?.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                .Replace(this.FragmentContainer!.Id, new MainFragment()!, nameof(MainFragment)).Commit();
+            return;
         }
-        catch (Exception) { }
-    }
 
-    public override void OnCreateContextMenu(IContextMenu? menu, View? view, IContextMenuContextMenuInfo? menuInfo)
-    {
-        base.OnCreateContextMenu(menu, view, menuInfo);
-        base.MenuInflater.Inflate(Resource.Menu.clear_pfp, menu);
-    }
-
-    public override bool OnContextItemSelected(IMenuItem item)
-    {
-        if (item.ItemId == Resource.Id.clear)
+        if (e.Item.ItemId == this.ProfileItem?.ItemId)
         {
-            this.profileDialog?.OnClearPhoto();
-        }
-        return base.OnContextItemSelected(item);
-    }
+            if (this.Auth?.CurrentUser is not null)
+            {
+                this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                    .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
+                return;
+            }
 
-    [SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
-    public void UpdateUserState()
-    {
-        switch (FirebaseAuth.Instance.CurrentUser != null)
-        {
-            case true:
-                this.Online!.Enabled = true;
-                this.UserProgressIndicator?.Show();
-                this.UserProgressIndicator?.Hide();
-                this.profileAction1!.Text = "Profile";
-                this.profileAction1.Click -= this.loginDialog!.Show;
-                this.profileAction1.Click += this.profileDialog!.Show;
-                this.profileAction1.SetIconResource(Resource.Drawable.outline_manage_accounts);
-
-                this.profileAction2!.Text = "Log out";
-                this.profileAction2.Click -= this.signupDialog!.Show;
-                this.profileAction2.Click += this.logoutDialog!.Show;
-                this.profileAction2.SetIconResource(Resource.Drawable.outline_person_remove);
-
-                this.mainUsername!.Text = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
-                if (FirebaseAuth.Instance?.CurrentUser?.PhotoUrl is not null)
-                {
-                    //var path = $"{FirebaseAuth.Instance!.CurrentUser!.Uid}/ProfilePicture.png";
-                    //Potential fix? .AsBitmap(), Downside not sure if it will always download it
-                    //Glide.With(this).AsBitmap().Load(FirebaseStorage.Instance.Reference.Child(path)).Error(Resource.Drawable.outline_account_circle_24)
-                    //    .Into(this.mainProfilePicture!);
-                }
-                break;
-
-            case false:
-                this.Online!.Enabled = false;
-                this.GameModeSelector!.ClearChecked();
-
-                this.profileAction1!.Text = "Login";
-                this.profileAction1.Click -= this.OpenProfileDialog;
-                this.profileAction1.Click += this.OpenLoginDialog;
-                this.profileAction1.SetIconResource(Resource.Drawable.outline_person);
-
-                this.profileAction2!.Text = "Sign up";
-                this.profileAction2.Click -= this.OpenLogoutDialog;
-                this.profileAction2.Click += this.OpenSignupDialog;
-                this.profileAction2.SetIconResource(Resource.Drawable.outline_person_add);
-
-                this.mainUsername!.Text = "Guest";
-                Glide.With(this).Clear(this.mainProfilePicture!);
-                this.mainProfilePicture!.SetImageURI(null);
-                this.mainProfilePicture.RequestLayout();
-                break;
+            this.OpenSignInIntentActivity();
         }
     }
 
-    private void OpenLogoutDialog(object? sender, EventArgs args) => this.logoutDialog?.Dialog.Show();
-    private void OpenProfileDialog(object? sender, EventArgs args) => this.profileDialog?.Dialog.Show();
-    private void OpenLoginDialog(object? sender, EventArgs args) => this.loginDialog?.Dialog.Show();
-    private void OpenSignupDialog(object? sender, EventArgs args) => this.signupDialog?.Dialog.Show();
+    private void OpenSignInIntentActivity()
+    {
+        List<AuthUI.IdpConfig> providers = [
+            new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
+            new AuthUI.IdpConfig.GoogleBuilder().Build()
+        ];
+        // Create and launch sign-in intent
+        var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
+        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
+        signInIntentBuilder.SetAvailableProviders(providers);
+        signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
+        signInIntentBuilder.SetTheme(this.ThemeId);
+        signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
+        signInIntentBuilder.SetCredentialManagerEnabled(true);
+        signInIntentBuilder.SetLockOrientation(true);
+        var signInIntent = signInIntentBuilder.Build();
+
+        // Attempt to Sign In/Up the device
+        this.SignInLauncher?.Launch(signInIntent);
+    }
+
+    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    {
+        var resultCode = result?.ResultCode.IntValue();
+        var response = result?.IdpResponse;
+
+        if (result != null)
+        {
+            Logger.Warn("result is not null");
+        }
+        else
+        {
+            Logger.Warn("result is null");
+        }
+
+        // Successfully signed in
+        if (resultCode == ((int)Result.Ok))
+        {
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
+        }
+
+        //Sign in failed
+        else if (response == null)
+        {
+            if (resultCode != null)
+            {
+                Logger.Warn($"{resultCode}");
+            }
+            if (response != null)
+            {
+                Logger.Warn($"response != null");
+            }
+
+            // User pressed back button
+            Snackbar.Make(this.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                .Replace(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
+            return;
+        }
+
+        if (response?.Error?.ErrorCode == ErrorCodes.NoNetwork)
+        {
+            Snackbar.Make(this.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
+                .Replace(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
+            return;
+        }
+
+        Snackbar.Make(this.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
+        this.OpenSignInIntentActivity();
+    }
 }

@@ -6,18 +6,15 @@ using Chess.App.Nearby;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
 using Google.Android.Material.ProgressIndicator;
-using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
 namespace Chess.App.Networked;
 
 public abstract class LobbyBottomSheet : ConnectionsActivity
 {
-    public bool IsConnected => this.EstablishedConnections.Count > 0;
-
     public BottomSheetBehavior? BottomSheet { get; set; }
     public CoordinatorLayout? StandardBottomSheet { get; set; }
     public ConstraintLayout? BottomSheetLayout { get; set; }
-
+    public Callback? Callback { get; set; }
     public TextView? SearchingText { get; set; }
     public CircularProgressIndicator? SearchingIndicator { get; set; }
     public ChipGroup? MatchmakingPreferences { get; set; }
@@ -63,11 +60,12 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
     public void OnCreate()
     {
         this.PermissionManager = this.RegisterNearbyPermissionManager(this.HandlePermission);
-
+        this.PermissionManager.RequestAccess();
+        this.Callback = new Callback(this);
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
         this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
         this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
-        this.BottomSheet!.AddBottomSheetCallback(new Callback(this));
+        this.BottomSheet!.AddBottomSheetCallback(this.Callback);
         this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
 
         this.SearchingIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator);
