@@ -2,14 +2,21 @@
 
 namespace Chess.Game.Board;
 
-public class BoardSpace : ISpace
+public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : ISpace
 {
-    [JsonIgnore] public ImageView? SpaceView { get; }
     [JsonIgnore] public (char file, int rank) Index => (this.File, this.Rank);
-    public bool IsWhite { get; protected set; }
-    public char File { get; protected set; }
-    public int Rank { get; protected set; }
-    public int Id { get; }
+    [JsonIgnore] public ImageView? SpaceView { get; } = Space;
+    public bool IsWhite { get; protected set; } = IsWhite;
+    public char File { get; protected set; } = File;
+    public int Rank { get; protected set; } = Rank;
+    public int Id { get; } = Space.Id;
+
+    [JsonConstructor]
+    public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
+
+    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite,
+        ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(Id)!)
+    { }
 
     //Normal state: 0..1
     //Normal Move indicator state: 1
@@ -42,7 +49,6 @@ public class BoardSpace : ISpace
         this.SpaceView?.SetImageLevel(UnselectSpace);
     }
 
-
     public void IndicateMoveable()
     {
         if (this.IsUnselected() || this.IsUnselectedMove())
@@ -70,26 +76,6 @@ public class BoardSpace : ISpace
     public bool IsUnselectedMove() => this.SpaceView?.Drawable?.Level == UnselectMove;
     public bool IsUnselected() => this.SpaceView?.Drawable?.Level == UnselectSpace;
     public bool IsSelected() => this.SpaceView?.Drawable?.Level == SelectSpace;
-
-
-    public BoardSpace(char File, int Rank, bool IsWhite, ImageView Space)
-    {
-        this.SpaceView = Space;
-        this.IsWhite = IsWhite;
-        this.File = File;
-        this.Rank = Rank;
-        this.Id = this.SpaceView.Id;
-    }
-
-    [JsonConstructor]
-    public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
-    public BoardSpace(char File, int Rank, bool IsWhite, int Id)
-    {
-        this.SpaceView = ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(Id);
-        this.IsWhite = IsWhite;
-        this.File = File;
-        this.Rank = Rank;
-    }
 
     public BoardSpace? DiagonalUp(Dictionary<(char file, int rank), BoardSpace> board, bool isRight)
     {

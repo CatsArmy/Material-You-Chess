@@ -1,5 +1,4 @@
 ﻿using Android.Content;
-using Google.Android.Material.Dialog;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
 namespace Chess.Dialogs;
@@ -10,10 +9,10 @@ namespace Chess.Dialogs;
 public interface IMaterialDialog
 {
     public AlertDialog Dialog { get; set; }
-    public MaterialAlertDialogBuilder Builder { get; set; }
+    public AlertDialog.Builder Builder { get; set; }
 
-    public void Show(object? sender, EventArgs args);
-    public void OnShow(object? sender, EventArgs args);
-    public void OnConfirm(object? sender, DialogClickEventArgs args);
-    public void OnCancel(object? sender, DialogClickEventArgs args);
+    public virtual void Show(object? sender, EventArgs args) { }
+    public virtual void OnShow(object? sender, EventArgs args) { }
+    public virtual void OnConfirm(object? sender, DialogClickEventArgs args) { }
+    public virtual void OnCancel(object? sender, DialogClickEventArgs args) { }
 }

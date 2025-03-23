@@ -3,10 +3,8 @@ using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
-public class DoubleMove : MoveOnly
+[method: JsonConstructor]
+public class DoubleMove(BoardPiece origin, BoardSpace destination) : MoveOnly(origin, destination)
 {
-    public DoubleMove(Pawn origin, BoardSpace destination) : base(origin, destination) { }
-
-    [JsonConstructor]
-    public DoubleMove(BoardPiece origin, BoardSpace destination) : base(origin, destination) { }
+    public DoubleMove(Pawn origin, BoardSpace destination) : this(origin as BoardPiece, destination) { }
 }

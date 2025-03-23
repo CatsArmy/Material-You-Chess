@@ -36,6 +36,9 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     } = State.Idle;
 
+    public string? ClientName;
+    public string? ConnectedClientName;
+
     public string WhitePlayerName
     {
         get; private set
@@ -44,6 +47,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
             this.WhitePlayerUsername!.Text = value;
         }
     } = "White Player";
+
     public string BlackPlayerName
     {
         get; private set
@@ -60,7 +64,8 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        bool hasValue = bool.TryParse(base.Intent?.GetStringExtra("MaterialYouThemePreference"), out var MaterialYouThemePreference);
+        bool hasValue = bool.TryParse(base.Intent?.GetStringExtra("MaterialYouThemePreference"),
+            out var MaterialYouThemePreference);
         if (hasValue && !MaterialYouThemePreference)
             base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
 
@@ -97,7 +102,6 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         base.OnSelectNone();
         this.State = State.Idle;
     }
-
 
     public void OnStateChanged(State currentState, State requestedState)
     {
@@ -138,47 +142,54 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         this.ConnectToEndpoint(endpoint);
     }
 
-    protected override void OnConnectionFailed(EndPoint endpoint)
-        => this.StartDiscovering();
+    protected override void OnConnectionFailed(EndPoint endpoint) => this.StartDiscovering();
 
-    protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
-        => this.AcceptConnection(endpoint);
+    protected override void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo) => this.AcceptConnection(endpoint);
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
+#if DEBUG
         Toast.MakeText(this, $"DEBUG: Connected to Client: {{id}}::{endpoint.Name}", ToastLength.Short)?.Show();
-        this.State = State.Idle;
-
-
+#endif
+        this.ClientName = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         if (this.State == State.Advertising)
         {
+#if DEBUG
             Logger.Verbose("Client is white player");
-
-            var client = new WhiteClient(this.AdvertisingName,
-                FirebaseAuth.Instance?.CurrentUser?.DisplayName ?? this.WhitePlayerName);
+#endif
+            var client = new WhiteClient(this.AdvertisingName, this.ClientName ?? this.WhitePlayerName);
             client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
             this.WhitePlayerName = client!.WhitePlayerName;
 
             //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.PlayerClient)));
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.UserClient)));
         }
 
         if (this.State == State.Discovering)
         {
+#if DEBUG
             Logger.Verbose("Client is black player");
-
-            var client = new BlackClient(this.AdvertisingName,
-                FirebaseAuth.Instance?.CurrentUser?.DisplayName ?? this.BlackPlayerName);
+#endif
+            var client = new BlackClient(this.AdvertisingName, this.ClientName ?? this.WhitePlayerName);
             client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
             this.BlackPlayerName = client.BlackPlayerName;
 
             //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.PlayerClient)));
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.UserClient)));
         }
+
+        this.State = State.Idle;
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
-        => Toast.MakeText(this, $"Error, {endpoint.Name} disconnected", ToastLength.Short)?.Show();
+    {
+        if (this.Game != null)
+        {
+            Toast.MakeText(this, $"Error, {this.ClientName} disconnected", ToastLength.Short)?.Show();
+            this.SetResult(Result.Canceled, new Intent());
+            this.Finish();
+        }
+    }
 
     /// <summary>
     /// Gives IChessActivity the send command by both implementing and overriding the methods
@@ -202,36 +213,28 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
             return;
         }
 
-        try
+        this.StandardBottomSheet!.Visibility = ViewStates.Gone;
+        this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
+        var otherClient = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.UserClient);
+
+        if (otherClient is WhiteClient whiteClient)
         {
-            this.StandardBottomSheet!.Visibility = ViewStates.Gone;
-            var otherClient = JsonSerializer.Deserialize(payload.AsBytes()!,
-                SourceJsonGenerationContext.Default.PlayerClient);
-
-            if (otherClient is WhiteClient whiteClient)
-            {
-                this.WhitePlayerName = whiteClient.WhitePlayerName;
-                whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
-                this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
-                this.Game = new ChessGame(this, false);
-                return;
-            }
-
-            else if (otherClient is BlackClient blackClient)
-            {
-                this.BlackPlayerName = blackClient.BlackPlayerName;
-                blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
-                this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
-                this.Game = new ChessGame(this, true);
-                return;
-            }
-
-            Logger.Warn("Unknown state something went wrong");
+            this.ConnectedClientName = whiteClient.WhitePlayerName;
+            this.WhitePlayerName = this.ConnectedClientName;
+            whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+            this.Game = new ChessGame(this, false);
+            return;
         }
 
-        catch (Exception)
+        if (otherClient is BlackClient blackClient)
         {
-            //Unknown state something big went wrong
+            this.ConnectedClientName = blackClient.BlackPlayerName;
+            this.BlackPlayerName = this.ConnectedClientName;
+            blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+            this.Game = new ChessGame(this, true);
+            return;
         }
+
+        Logger.Warn("Unknown state something went wrong");
     }
 }

@@ -12,9 +12,9 @@ namespace Chess.Game.Moves;
 [JsonDerivedType(typeof(Promotion), nameof(Promotion))]
 
 [JsonDerivedType(typeof(DoubleMove), nameof(DoubleMove))]
-[JsonDerivedType(typeof(PromotionCapture), nameof(PromotionCapture))]
 [JsonDerivedType(typeof(KingSideCastle), nameof(KingSideCastle))]
 [JsonDerivedType(typeof(QueenSideCastle), nameof(QueenSideCastle))]
+[JsonDerivedType(typeof(PromotionCapture), nameof(PromotionCapture))]
 public class Move(BoardPiece origin, BoardSpace destination) : IMove
 {
     public BoardPiece Origin { get; set; } = origin;

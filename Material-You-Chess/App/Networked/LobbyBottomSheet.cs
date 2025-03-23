@@ -41,11 +41,8 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
         this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
-    public virtual void HandlePermission(bool isGranted)
+    public virtual void HandlePermissionResult(bool isGranted)
     {
         if (!isGranted)
         {
@@ -59,7 +56,7 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
 
     public void OnCreate()
     {
-        this.PermissionManager = this.RegisterNearbyPermissionManager(this.HandlePermission);
+        this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
         this.PermissionManager.RequestAccess();
         this.Callback = new Callback(this);
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);

@@ -10,13 +10,13 @@ namespace Chess.Dialogs;
 public class WhitePromotionDialog : IPromotionDialog
 {
     public AlertDialog Dialog { get; set; }
-    public MaterialAlertDialogBuilder Builder { get; set; }
+    public AlertDialog.Builder Builder { get; set; }
     public Promotion? Move { get; set; }
     public Pawn? Caller { get; set; }
 
     private ChessGame? game;
 
-    public List<int> Id => [Resource.Id.whitePromoteQueen, Resource.Id.whitePromoteKnight, Resource.Id.whitePromoteRook,
+    public List<int> IDs => [Resource.Id.whitePromoteQueen, Resource.Id.whitePromoteKnight, Resource.Id.whitePromoteRook,
     Resource.Id.whitePromoteBishop];
 
     public WhitePromotionDialog(Context app)
@@ -38,7 +38,7 @@ public class WhitePromotionDialog : IPromotionDialog
 
     public void OnShow(object? sender, EventArgs args)
     {
-        foreach (var id in this.Id)
+        foreach (var id in this.IDs)
             this.Dialog.FindViewById<ImageView>(id)!.Click += this.OnConfirm;
     }
 

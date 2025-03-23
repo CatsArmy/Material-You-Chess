@@ -3,20 +3,12 @@ using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
-public class Capture : Move
+[method: JsonConstructor]
+public class Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece) : Move(origin, destination)
 {
-    public BoardPiece Piece { get; set; }
+    public Capture(BoardPiece origin, BoardPiece destination) : this(origin, destination.Space, destination) { }
 
-    public Capture(BoardPiece origin, BoardPiece destination) : base(origin, destination.Space)
-    {
-        this.Piece = destination;
-    }
-
-    [JsonConstructor]
-    public Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece) : base(origin, destination)
-    {
-        this.Piece = Piece;
-    }
+    public BoardPiece Piece { get; set; } = Piece;
 
     public override void IndicateMoveable()
     {

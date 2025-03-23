@@ -9,24 +9,27 @@ using Chess.App.Common.ActivityResult;
 using Google.Android.Material.FloatingActionButton;
 using Java.Util;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Chess.App.Common;
 
 public static class Extensions
 {
-    public static ISharedPreferences? GetMaterialYouThemePreference(this Android.App.Activity app, out bool MaterialYouThemePreference)
+    public static bool MaterialYouThemePreference(this ContextWrapper contextWrapper)
     {
-        ISharedPreferences? sharedPref = app.GetPreferences(FileCreationMode.Private);
-        MaterialYouThemePreference = true;
-        if (sharedPref!.Contains(nameof(MaterialYouThemePreference)))
+        var themePref =
+            contextWrapper.ApplicationContext!.GetSharedPreferences("Theme", FileCreationMode.Private)!;
+
+        return themePref.GetBoolean(nameof(MaterialYouThemePreference), true);
+    }
+
+    public static void MaterialYouThemePreference(this ContextWrapper contextWrapper, bool value)
+    {
+        var themePref = contextWrapper.ApplicationContext!.GetSharedPreferences("Theme", FileCreationMode.Private)!.Edit();
+        if (!themePref!.PutBoolean(nameof(MaterialYouThemePreference), value)!.Commit())
         {
-            MaterialYouThemePreference = sharedPref.GetBoolean(nameof(MaterialYouThemePreference), MaterialYouThemePreference);
-            return sharedPref;
+            Logger.Debug("Failed to commit material you theme preference?");
         }
-        var editor = sharedPref.Edit();
-        editor?.PutBoolean(nameof(MaterialYouThemePreference), MaterialYouThemePreference)?.Commit();
-        editor?.Apply();
-        return sharedPref;
     }
 
     public static void Spin(this ExtendedFloatingActionButton fab)
@@ -51,10 +54,22 @@ public static class Extensions
             }
     }
 
-    public static NearbyConnections RegisterNearbyPermissionManager(this ComponentActivity activity, Action<bool> OnRequestCallback)
+    public static NearbyConnections RegisterNearbyPermissionsManager(this ComponentActivity activity, Action<bool> OnRequestCallback)
     {
-        var callback = new RequestPermissionCallback(OnRequestCallback, activity.CheckSelfPermission);
+        var callback = new RequestPermissionsCallback(OnRequestCallback, activity.CheckSelfPermission);
         return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
+    }
+
+    public static MediaAccess RegisterMediaPermissionsManager(this Fragment fragment, Action<bool> OnRequestCallback)
+    {
+        var callback = new RequestPermissionsCallback(OnRequestCallback, fragment.Activity!.CheckSelfPermission);
+        return new(fragment.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
+    }
+
+    public static CameraAccess RegisterCameraPermissionManager(this Fragment fragment, Action<bool> OnRequestCallback)
+    {
+        var callback = new RequestPermissionCallback(OnRequestCallback, fragment.Activity!.CheckSelfPermission);
+        return new(fragment.RegisterForActivityResult(new RequestPermission(), callback), callback);
     }
 
     public static ActivityResultLauncher<I> RegisterForActivityResult<I, O>(this ComponentActivity @base,

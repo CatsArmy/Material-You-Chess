@@ -7,7 +7,7 @@ using AndroidX.Activity.Result;
 namespace Chess.App.Common;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
-public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPermissionCallback callback) : IPermissionManager
+public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPermissionsCallback callback) : IPermissionsManager
 {
     public (Permission IsGranted, string Permission) NearbyWifiDevices = (Permission.Denied, Manifest.Permission.NearbyWifiDevices);
     public (Permission IsGranted, string Permission) AccessWifiState = (Permission.Denied, Manifest.Permission.AccessWifiState);
@@ -59,7 +59,7 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
     public bool HasAccess()
     {
         for (int i = 0; i < this.Permissions.Length; i++)
-            this.Permissions[i].IsGranted = callback.CheckSelfPermission(Permissions[i].Permission);
+            this.Permissions[i].IsGranted = callback.CheckSelfPermission(this.Permissions[i].Permission);
 
         bool hasAccess = true;
         foreach (var permission in this.Permissions) if (permission.IsGranted == Permission.Denied)

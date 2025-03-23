@@ -1,16 +1,23 @@
-﻿using Android.Views;
+﻿using Android.Content;
+using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
+using Bumptech.Glide;
+using Bumptech.Glide.Module;
 using Chess.App.Common.ActivityResult;
 using Firebase;
 using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
+using Firebase.Storage;
+using FirebaseUI;
 using FirebaseUI.Auth;
 using FirebaseUI.Auth.Data.Model;
+using FirebaseUI.Storage.Images;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
+using Java.IO;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
@@ -62,8 +69,17 @@ public class MainActivity : AppCompatActivity
         var app = FirebaseApp.InitializeApp(this)!;
         var check = FirebaseAppCheck.GetInstance(app);
         check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
-
         this.Auth = FirebaseAuth.GetInstance(app);
+
+        Kdd.Glide.AppModuleInjector.GlideAppModuleInjector.Inject(new FirebaseImageLoaderModule());
+    }
+
+    public class FirebaseImageLoaderModule : AppGlideModule
+    {
+        public override void RegisterComponents(Context context, Glide glide, Registry registry)
+        {
+            registry.Prepend(typeof(StorageReference).Class(), typeof(InputStream).Class(), new FirebaseImageLoader.Factory());
+        }
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
