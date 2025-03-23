@@ -131,4 +131,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\FirebaseUI\FirebaseUI\FirebaseUI.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="App\Common\Permissions\" />
+  </ItemGroup>
 </Project>

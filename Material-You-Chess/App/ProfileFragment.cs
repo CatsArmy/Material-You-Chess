@@ -1,27 +1,26 @@
-﻿using Android.Gms.Tasks;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Views;
+using Android.Views.InputMethods;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
-using Chess.App.Networked;
+using Chess.App.Common.Extensions;
+using Chess.App.Common.Listener;
+using Chess.App.Common.Permissions;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.MaterialSwitch;
 using Google.Android.Material.TextField;
-using Java.IO;
-using Java.Lang;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
 
-namespace Chess;
+namespace Chess.App;
 
 public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.__profile_fragment__)
 {
-    public UserProfileChangeRequest.Builder UserProfileChangeRequest { get; set; } = new();
     public ShapeableImageView? ProfilePicture { get; set; }
     public MaterialSwitch? ThemeToggle { get; set; }
     public Button? Logout { get; set; }
@@ -35,9 +34,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
     public ActivityResultLauncher? PhotoTaker;
     public FirebaseUser? User;
+
     /// <summary> Input is <see langword="typeof"/>(<see cref="PickVisualMediaRequest" />) </summary>
     public ActivityResultLauncher? photoPicker;
-    public PickVisualMediaRequest.Builder? pickVisualMediaRequestBuilder;
     private CameraAccess? CameraAccessPermissionManager;
     private MediaAccess? MediaAccessPermissionManager;
     private Toast MissingPermissions => Toast.MakeText(this.Context, "Canceled operation, missing permissions", ToastLength.Long)!;
@@ -47,12 +46,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         base.OnCreate(savedInstanceState);
 
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<AndroidUri>(this.SelectPhoto));
+            new ActivityResultCallback<AndroidUri>(this.OnSelectPhoto));
 
         this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
-            new ActivityResultCallback<Bitmap>(this.CapturePhoto));
+            new ActivityResultCallback<Bitmap>(this.OnCapturePhoto));
 
-        this.pickVisualMediaRequestBuilder = new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance);
         this.CameraAccessPermissionManager = this.RegisterCameraPermissionManager(this.PhotoCapturer);
         this.MediaAccessPermissionManager = this.RegisterMediaPermissionsManager(this.PhotoPicker);
     }
@@ -71,7 +69,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.CaptureProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.camera);
         if (FirebaseAuth.Instance?.CurrentUser is not FirebaseUser user)
         {
-            Logger.Warn("FirebaseAuth.Instance?.CurrentUser is not FirebaseUser user");
+            Logger.Warn("FirebaseAuth.Instance?.CurrentUser is null");
             return;
         }
 
@@ -81,8 +79,17 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.DisplayName!.Text = User.Username;
         this.UsernameInput!.Hint = User.Username;
         this.UsernameInput!.Text = User.Username;
-        this.ThemeToggle!.CheckedChange += this.OnThemeChanged;
+        this.UsernameInput.EditorAction += (a, args) =>
+        {
+            if (args.ActionId == ImeAction.Done)
+            {
+                var changeUsernameRequest = new UserProfileChangeRequest.Builder();
+                changeUsernameRequest.SetDisplayName(this.UsernameInput.Text);
+            }
+        };
+
         this.ThemeToggle!.Checked = this.Activity!.MaterialYouThemePreference();
+        this.ThemeToggle!.CheckedChange += this.OnThemeChanged;
         this.Logout!.Click += (_, _) => FirebaseAuth.Instance?.SignOut();
         this.SelectProfilePicture!.Click += (_, _) => this.MediaAccessPermissionManager!.RequestAccess();
         this.SelectProfilePicture!.LongClick += (_, _) => this.SelectProfilePicture.Spin();
@@ -100,8 +107,18 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             true => Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar,
             false => Resource.Style.AppTheme_Material3_DayNight_NoActionBar,
         };
-        this.Activity!.SetTheme(themeResId);
-        this.Activity!.Recreate();
+        this.Activity?.ApplicationContext?.SetTheme(themeResId);
+        this.Activity?.BaseContext?.SetTheme(themeResId);
+        this.Activity?.SetTheme(themeResId);
+
+        this.Activity?.ApplicationContext?.Theme?.ApplyStyle(themeResId, true);
+        this.Activity?.BaseContext?.Theme?.ApplyStyle(themeResId, true);
+        this.Activity?.Theme?.ApplyStyle(themeResId, true);
+
+        this.Activity?.ApplicationContext?.Theme?.Rebase();
+        this.Activity?.BaseContext?.Theme?.Rebase();
+        this.Activity?.Theme?.Rebase();
+
     }
 
     private void PhotoCapturer(bool isGranted)
@@ -117,43 +134,93 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
     private void PhotoPicker(bool isGranted)
     {
-        if (!isGranted)
-        {
-            this.MissingPermissions.Show();
-            return;
-        }
+        //if (!isGranted)
+        //{
+        //    this.MissingPermissions.Show();
+        //    return;
+        //}
 
-        this.photoPicker?.Launch(this.pickVisualMediaRequestBuilder?.Build());
+        this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
     }
 
-    private void CapturePhoto(Bitmap? photo) => this.OnSelectPhoto(photo);
-
-    private void OnSelectPhoto(Bitmap? photo)
+    private void OnCapturePhoto(Bitmap? photo)
     {
-        Glide.With(this.Context!).Load(photo).Error(Resource.Drawable.outline_account_circle_24).Into(this.ProfilePicture!);
         var stream = new MemoryStream();
-
         photo!.Compress(Bitmap.CompressFormat.Png!, 100, stream);
         byte[] data = stream.ToArray();
-        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}.png");
+        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
         var uploadTask = storageRef.PutBytes(data);
-        uploadTask.AddOnSuccessListener(new OnSuccessListener((taskSnapshot) =>
+        uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>
         {
-            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-            // ...
+            var glide = Glide.Get(this.Activity!);
+            glide.ClearMemory();
+            glide.ClearDiskCache();
+
+            Glide.With(this).DownloadOnly()
+            .Load(storageRef)
+            .Error(Resource.Drawable.outline_account_circle_24)
+            .Into(this.ProfilePicture!);
+
+            this.CaptureProfilePicture?.Spin();
         }));
-        uploadTask.AddOnFailureListener(new OnFailureListener((exception) =>
+        uploadTask.AddOnFailureListener(new OnFailure((exception) =>
         {
             // Handle unsuccessful uploads
+            Logger.Warn(exception.ToString());
+            this.CaptureProfilePicture?.OnError(this.Activity!);
         }));
-
     }
 
-    private void SelectPhoto(AndroidUri? photo)
+    private void OnSelectPhoto(AndroidUri? photo)
     {
         if (photo is null)
             return;
 
-        this.OnSelectPhoto(ImageDecoder.DecodeBitmap(ImageDecoder.CreateSource(base.Activity!.ContentResolver!, photo)));
+        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
+        var uploadTask = storageRef.PutFile(photo);
+        uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>
+        {
+            var glide = Glide.Get(this.Activity!);
+            glide.ClearMemory();
+            glide.ClearDiskCache();
+
+            Glide.With(this).DownloadOnly()
+            .Load(storageRef)
+            .Error(Resource.Drawable.outline_account_circle_24)
+            .Into(this.ProfilePicture!);
+
+            this.SelectProfilePicture?.Spin();
+        }));
+        uploadTask.AddOnFailureListener(new OnFailure((exception) =>
+        {
+            // Handle unsuccessful uploads
+            Logger.Warn(exception.ToString());
+            this.SelectProfilePicture?.OnError(this.Activity!);
+        }));
+    }
+
+    public void OnDeletePhoto()
+    {
+        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
+        var uploadTask = storageRef.Delete();
+
+        uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>
+        {
+            var glide = Glide.Get(this.Activity!);
+            glide.ClearMemory();
+            glide.ClearDiskCache();
+
+            Glide.With(this)
+            .Load(Resource.Drawable.outline_account_circle_24)
+            .Into(this.ProfilePicture!);
+
+            this.DeleteProfilePicture?.Spin();
+        }));
+        uploadTask.AddOnFailureListener(new OnFailure((exception) =>
+        {
+            // Handle unsuccessful uploads
+            Logger.Warn(exception.ToString());
+            this.DeleteProfilePicture?.OnError(this.Activity!);
+        }));
     }
 }

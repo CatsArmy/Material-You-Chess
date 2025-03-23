@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Android.Animation;
 using AndroidX.ConstraintLayout.Widget;
+using Chess.App.Common;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
@@ -118,7 +119,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         destination.Capture(game);
     }
 
-    public void Diagonals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void Diagonals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         this.DiagonalsUpRight(board, pieces, ref moves);
         this.DiagonalsUpLeft(board, pieces, ref moves);
@@ -126,12 +127,13 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         this.DiagonalsDownLeft(board, pieces, ref moves);
     }
 
-    public void DiagonalsUpRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void DiagonalsUpRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         for (var diagonal = this.Space.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
         {
             if (diagonal == null)
                 break;
+
             if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece.IsWhite != this.IsWhite)
@@ -143,7 +145,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         }
     }
 
-    public void DiagonalsUpLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void DiagonalsUpLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         for (var diagonal = this.Space.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
         {
@@ -160,7 +162,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         }
     }
 
-    public void DiagonalsDownRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void DiagonalsDownRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         for (var diagonal = this.Space.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
         {
@@ -177,7 +179,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         }
     }
 
-    public void DiagonalsDownLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void DiagonalsDownLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         for (var diagonal = this.Space.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
         {
@@ -194,13 +196,13 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         }
     }
 
-    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         this.Horizontals(board, pieces, true, ref moves);
         this.Horizontals(board, pieces, false, ref moves);
     }
 
-    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, bool isRight, ref List<Move> moves)
+    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, bool isRight, ref List<Move> moves)
     {
         Func<Dictionary<(char file, int rank), BoardSpace>, BoardSpace?> iterator = isRight ? this.Space.Right : this.Space.Left;
         for (var horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
@@ -219,13 +221,13 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         }
     }
 
-    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, ref List<Move> moves)
+    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
     {
         this.Verticals(board, pieces, true, ref moves);
         this.Verticals(board, pieces, false, ref moves);
     }
 
-    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string, int), BoardPiece> pieces, bool isUp, ref List<Move> moves)
+    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, bool isUp, ref List<Move> moves)
     {
         Func<Dictionary<(char file, int rank), BoardSpace>, BoardSpace?> iterator = isUp ? this.Space.Up : this.Space.Down;
         for (var vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up

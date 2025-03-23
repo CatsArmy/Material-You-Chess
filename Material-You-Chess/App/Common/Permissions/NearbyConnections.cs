@@ -4,7 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Activity.Result;
 
-namespace Chess.App.Common;
+namespace Chess.App.Common.Permissions;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPermissionsCallback callback) : IPermissionsManager

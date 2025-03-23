@@ -9,7 +9,7 @@ public class White : IPlayer
     public IPromotionDialog PromotionDialog { get; set; }
     public GameOutcome Outcome { get; set; }
 
-    public Dictionary<(string, int), BoardPiece> Pieces { get; } = [];
+    public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; } = [];
 
     public List<Pawn> Pawns { get; } = [];
 

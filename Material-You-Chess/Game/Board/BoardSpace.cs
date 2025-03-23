@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using AndroidX.ConstraintLayout.Widget;
 
 namespace Chess.Game.Board;
 
@@ -9,23 +10,16 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
     public bool IsWhite { get; protected set; } = IsWhite;
     public char File { get; protected set; } = File;
     public int Rank { get; protected set; } = Rank;
-    public int Id { get; } = Space.Id;
+    public int Id { get; protected set; } = Space.Id;
 
-    [JsonConstructor]
-    public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
+    public const int UnselectSpace = 0;
+    public const int UnselectMove = 1;
+    public const int SelectSpace = 2;
+    public const int SelectMove = 3;
 
-    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite,
-        ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(Id)!)
-    { }
-
-    //Normal state: 0..1
-    //Normal Move indicator state: 1
-    //Selected state: 2..3
-    //Selected Move indicator state: 3
-    const int UnselectSpace = 0;
-    const int UnselectMove = 1;
-    const int SelectSpace = 2;
-    const int SelectMove = 3;
+    [JsonConstructor] public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
+    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite, BoardLayout!.FindViewById<ImageView>(Id)!) { }
+    private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
 
     public void Select()
     {
@@ -171,6 +165,6 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
         return this.Down(board);
     }
 
-    public BoardPiece? Piece(Dictionary<(string, int), BoardPiece> boardPieces)
+    public BoardPiece? Piece(Dictionary<(string Prefix, int Count), BoardPiece> boardPieces)
         => boardPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
 }

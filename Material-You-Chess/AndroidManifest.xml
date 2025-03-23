@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools">
   <application android:allowBackup="true"		   
 			   android:icon="@mipmap/ic_launcher"
 			   android:label="@string/app_name"
 			   android:theme="@style/Theme.Material3.DynamicColors.DayNight.NoActionBar"
 			   android:roundIcon="@mipmap/ic_launcher_round">
+	  <!-- Trigger Google Play services to install the backported photo picker module. -->
+	  <service android:name="com.google.android.gms.metadata.ModuleDependencies"
+			   android:enabled="false"
+			   android:exported="false"
+			   tools:ignore="MissingClass">
+		  <intent-filter>
+			  <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+		  </intent-filter>
+		  <meta-data android:name="photopicker_activity:0:required" android:value="" />
+	  </service>
   </application>
 
 	<uses-permission android:name="android.permission.CAMERA" />
@@ -17,9 +29,6 @@
 	<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
 	<!-- To handle the reselection within the app on devices running Android 14 or higher if your app targets Android 14 (API level 34) or higher. -->
 	<uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-	<!-- Uncomment if you need camera permissions -->
-	<!-- <uses-feature android:name="android.hardware.camera.any" /> -->
-	<!-- <uses-permission android:name="android.permission.CAMERA"/> -->
 	<!-- Required for Nearby Connections -->
 	<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />

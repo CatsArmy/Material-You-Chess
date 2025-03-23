@@ -3,7 +3,7 @@ using Chess.App.Common.ActivityResult;
 using Java.Util;
 using JavaBool = Java.Lang.Boolean;
 
-namespace Chess.App.Common;
+namespace Chess.App.Common.Permissions;
 
 /// <param name="callback">
 /// <see langword="when" /> <paramref name="callback"/> <see langword="is" /> <see langword="false" />: <br />

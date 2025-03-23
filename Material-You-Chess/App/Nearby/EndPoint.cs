@@ -1,4 +1,6 @@
-﻿namespace Chess.App.Nearby;
+﻿using Chess.App.Common;
+
+namespace Chess.App.Nearby;
 
 public class EndPoint
 {

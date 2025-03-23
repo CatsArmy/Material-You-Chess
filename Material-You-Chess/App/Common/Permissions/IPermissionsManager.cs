@@ -1,6 +1,6 @@
 ﻿using Android.Content.PM;
 
-namespace Chess.App.Common;
+namespace Chess.App.Common.Permissions;
 
 public interface IPermissionManager
 {

@@ -1,14 +1,16 @@
 ﻿using Android.Content;
 using Android.Views;
-using Chess.App;
+using Chess.App.Common.Extensions;
 using Chess.App.Networked;
 using Firebase.Auth;
 using Google.Android.Material.Button;
+using Extensions = Chess.App.Common.Extensions.Extensions;
 
-namespace Chess;
+namespace Chess.App;
 
 public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.main_fragment)
 {
+    private FirebaseAuth? Auth;
     public MaterialButtonToggleGroup? GameModeSelector { get; private set; }
     public Button? Online { get; private set; }
     public Button? Local { get; private set; }
@@ -16,8 +18,7 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
 
     public bool IsLoggedIn
     {
-        get;
-        set
+        get; set
         {
             field = value;
             if (this.Online is null)
@@ -38,14 +39,14 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Local = view.FindViewById<Button>(Resource.Id.btnLocal);
         this.GameModeSelector!.Check(this.Local!.Id);
         this.Online!.Enabled = this.IsLoggedIn;
-        this.IsLoggedIn = MainActivity.Instance!.Auth!.CurrentUser is not null;
-        MainActivity.Instance!.Auth!.AuthState += this.OnAuthState;
-
+        this.Auth = MainActivity.Instance!.Auth;
+        this.IsLoggedIn = this.Auth!.CurrentUser is not null;
+        this.Auth!.AuthState += this.OnAuthState;
     }
 
     public override void OnDestroy()
     {
-        MainActivity.Instance!.Auth!.AuthState -= this.OnAuthState;
+        this.Auth!.AuthState -= this.OnAuthState;
         base.OnDestroy();
     }
 
@@ -62,13 +63,13 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         if (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline)
         {
             base.StartActivity(new Intent(this.Activity!, typeof(NetworkedChessActivity))
-                .PutExtra(nameof(MainActivity.MaterialYouThemePreference),
-            $"{MainActivity.Instance?.MaterialYouThemePreference}"));
+                .PutExtra(nameof(Extensions.MaterialYouThemePreference),
+            $"{this.Activity!.MaterialYouThemePreference()}"));
             return;
         }
 
         base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity))
-            .PutExtra(nameof(MainActivity.MaterialYouThemePreference),
-            $"{MainActivity.Instance?.MaterialYouThemePreference}"));
+            .PutExtra(nameof(Extensions.MaterialYouThemePreference),
+            $"{this.Activity!.MaterialYouThemePreference()}"));
     }
 }

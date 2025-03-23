@@ -1,23 +1,18 @@
-﻿using Android.Content;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
-using Bumptech.Glide;
-using Bumptech.Glide.Module;
+using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
+using Chess.App.Common.Extensions;
 using Firebase;
 using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
-using Firebase.Storage;
-using FirebaseUI;
 using FirebaseUI.Auth;
 using FirebaseUI.Auth.Data.Model;
-using FirebaseUI.Storage.Images;
 using Google.Android.Material.Navigation;
 using Google.Android.Material.Snackbar;
-using Java.IO;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
@@ -33,27 +28,19 @@ public class MainActivity : AppCompatActivity
     public ActivityResultLauncher? SignInLauncher;
     public FirebaseAuth? Auth;
 
-    public int ThemeId
-        => this.MaterialYouThemePreference
+    public int ThemeId => this.MaterialYouThemePreference()
         ? Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar
         : Resource.Style.AppTheme_Material3_DayNight_NoActionBar;
-
-    public bool MaterialYouThemePreference
-    {
-        get; set
-        {
-            field = value;
-
-            base.SetTheme(this.ThemeId);
-        }
-    } = true;
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         MainActivity.Instance = this;
+        if (!this.MaterialYouThemePreference())
+        {
+            base.SetTheme(Resource.Style.AppTheme_Material3_DayNight_NoActionBar);
+        }
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-
         this.SetContentView(Resource.Layout._main_activity_);
         this.NavigationBar = base.FindViewById<NavigationBarView>(Resource.Id.navigation_bar);
         this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
@@ -71,15 +58,7 @@ public class MainActivity : AppCompatActivity
         check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
         this.Auth = FirebaseAuth.GetInstance(app);
 
-        Kdd.Glide.AppModuleInjector.GlideAppModuleInjector.Inject(new FirebaseImageLoaderModule());
-    }
-
-    public class FirebaseImageLoaderModule : AppGlideModule
-    {
-        public override void RegisterComponents(Context context, Glide glide, Registry registry)
-        {
-            registry.Prepend(typeof(StorageReference).Class(), typeof(InputStream).Class(), new FirebaseImageLoader.Factory());
-        }
+        this.RegisterComponents();
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)

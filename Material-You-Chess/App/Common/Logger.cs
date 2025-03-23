@@ -1,6 +1,6 @@
 ﻿using Log = Android.Util.Log;
 
-namespace Chess;
+namespace Chess.App.Common;
 
 public static class Logger
 {

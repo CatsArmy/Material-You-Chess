@@ -15,9 +15,9 @@ public class ChessGame : IChessGame
 
     private int Turn = 1;
     private bool CurrentPlayerIsWhite = true;
-    private readonly bool? clientPlayerIsWhite;
+    private readonly bool? ClientIsWhite;
 
-    public Dictionary<(string, int), BoardPiece> AllPieces { get; } = [];
+    public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
     public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
     public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{this.Player!.Name} wins", ToastLength.Long)!;
 
@@ -89,24 +89,33 @@ public class ChessGame : IChessGame
 
     public BoardSpace BindSpace(int id, int rank, char file)
     {
-        const string isWhite = "IsWhite";
-        const string isBlack = "IsBlack";
+        const string IsWhite = "IsWhite";
+        const string IsBlack = "IsBlack";
         var space = this.Activity.BoardLayout!.FindViewById<ImageView>(id);
         string? tag = (space?.Tag as Java.Lang.String)?.ToString();
-
-        return new BoardSpace(file, rank, tag switch
+        bool isWhite = tag switch
         {
-            isWhite => true,
-            isBlack => false,
+            IsWhite => true,
+            IsBlack => false,
             _ => throw new Exception($"{this.Activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
-        }, space!);
+        };
+        space!.Click += OnClick;
+        space!.Tag = new Java.Lang.String($"{file}{rank}");
+        space!.Clickable = true;
+
+        return new BoardSpace(file, rank, isWhite, space!);
     }
 
-    public ChessGame(IChessActivity activity, bool? clientPlayerIsWhite = null)
+    public ChessGame(IChessActivity activity)
     {
-        Instance = this;
+        ChessGame.Instance = this;
         this.Activity = activity;
-        this.clientPlayerIsWhite = clientPlayerIsWhite;
+        this.ClientIsWhite = activity.Client switch
+        {
+            WhiteClient => true,
+            BlackClient => false,
+            _ => null,
+        };
 
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
@@ -140,23 +149,35 @@ public class ChessGame : IChessGame
         for (int id = Resource.Id.gmb__H1, rank = 1; id <= Resource.Id.gmb__H8; id++, rank++)
             this.Board[(file, rank)] = this.BindSpace(id, rank, file);
 
-        foreach (var keyValuePair in this.Board)
+        switch (this.ClientIsWhite)
         {
-            keyValuePair.Value.SpaceView!.Click += OnClick;
-            keyValuePair.Value.SpaceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.file}{keyValuePair.Key.rank}");
-            keyValuePair.Value.SpaceView!.Clickable = true;
+            case false:
+                this.Player1 = new White(activity.ConnectedClient!.Username!, this.Board, activity.PromotionDialogs.White);
+                this.Player2 = new Black(activity.Client!.Username!, this.Board, activity.PromotionDialogs.Black);
+                break;
+
+            default:
+                this.Player1 = new White(activity.Client!.Username!, this.Board, activity.PromotionDialogs.White);
+                this.Player2 = new Black(activity.ConnectedClient!.Username!, this.Board, activity.PromotionDialogs.Black);
+                break;
         }
 
-        this.Player1 = new White(activity.WhitePlayerName!, this.Board, activity.PromotionDialogs.White);
-        this.Player2 = new Black(activity.BlackPlayerName!, this.Board, activity.PromotionDialogs.Black);
+        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.Player1.Pieces, this.Player2.Pieces];
 
-        this.AllPieces.Merge(this.Player1.Pieces, this.Player2.Pieces);
-
-        foreach (var keyValuePair in this.AllPieces)
+        foreach (var player in players)
         {
-            keyValuePair.Value.PieceView!.Click += OnClick;
-            keyValuePair.Value.PieceView!.Tag = new Java.Lang.String($"{keyValuePair.Key.Item1}{keyValuePair.Key.Item2}");
-            keyValuePair.Value.PieceView!.Clickable = true;
+            foreach (var kvp in player)
+            {
+                var index = kvp.Key;
+                var piece = kvp.Value;
+                if (this.AllPieces.ContainsKey(index))
+                    continue;
+
+                piece.PieceView!.Click += this.OnClick;
+                piece.PieceView!.Tag = new Java.Lang.String($"{index.Prefix}{index.Count}");
+                piece.PieceView!.Clickable = true;
+                this.AllPieces[index] = piece;
+            }
         }
     }
 
@@ -198,8 +219,8 @@ public class ChessGame : IChessGame
         if (imageView?.Tag is not Java.Lang.String javaString)
             return;
 
-        if (this.clientPlayerIsWhite != null)
-            if (this.clientPlayerIsWhite != this.CurrentPlayerIsWhite)
+        if (this.ClientIsWhite != null)
+            if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
                 return;
 
         this.Validate(javaString, out var pIndex, out var sIndex);

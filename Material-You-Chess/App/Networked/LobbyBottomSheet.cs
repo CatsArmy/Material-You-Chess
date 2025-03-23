@@ -1,7 +1,8 @@
 ﻿using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
-using Chess.App.Common;
+using Chess.App.Common.Extensions;
+using Chess.App.Common.Permissions;
 using Chess.App.Nearby;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;

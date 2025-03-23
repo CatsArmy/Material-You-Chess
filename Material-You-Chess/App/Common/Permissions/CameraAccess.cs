@@ -3,7 +3,7 @@ using Android;
 using Android.Content.PM;
 using AndroidX.Activity.Result;
 
-namespace Chess.App.Common;
+namespace Chess.App.Common.Permissions;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 public class CameraAccess(ActivityResultLauncher requestLauncher, RequestPermissionCallback callback) : IPermissionManager
@@ -12,19 +12,19 @@ public class CameraAccess(ActivityResultLauncher requestLauncher, RequestPermiss
 
     public bool HasAccess()
     {
-        this.Camera.IsGranted = callback.CheckSelfPermission(this.Camera.Permission);
+        Camera.IsGranted = callback.CheckSelfPermission(Camera.Permission);
 
-        return this.Camera.IsGranted == Permission.Granted;
+        return Camera.IsGranted == Permission.Granted;
     }
 
     public void RequestAccess()
     {
-        if (this.HasAccess())
+        if (HasAccess())
         {
             callback.OnRequestCallback(true);
             return;
         }
 
-        requestLauncher.Launch(this.Camera.Permission);
+        requestLauncher.Launch(Camera.Permission);
     }
 }

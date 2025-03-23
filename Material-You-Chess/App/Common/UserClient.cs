@@ -2,23 +2,23 @@
 using Bumptech.Glide;
 using Firebase.Storage;
 
-namespace Chess.App.Networked;
+namespace Chess.App.Common;
 
 [JsonPolymorphic()]
 [JsonDerivedType(typeof(WhiteClient), nameof(WhiteClient))]
 [JsonDerivedType(typeof(BlackClient), nameof(BlackClient))]
 [JsonDerivedType(typeof(UserClient), nameof(UserClient))]
-public class UserClient(string Uid, string? Username = null)
+public class UserClient(string? Uid, string? Username = null)
 {
     public string? Username = Username;
-    public string Uid = Uid;
+    public string? Uid = Uid;
 
     public RequestBuilder LoadProfilePicture(RequestManager glide)
-        => glide.Load(FirebaseStorage.Instance.Reference.Child($"{this.Uid}.png"))
+        => glide.Load(FirebaseStorage.Instance.Reference.Child($"{Uid}"))
         .Error(Resource.Drawable.outline_account_circle_24);
 
     public RequestBuilder DownloadProfilePicture(RequestManager glide)
-        => glide.Download(FirebaseStorage.Instance.Reference.Child($"{this.Uid}.png"))
+        => glide.Download(FirebaseStorage.Instance.Reference.Child($"{Uid}"))
         .Error(Resource.Drawable.outline_account_circle_24);
 }
 

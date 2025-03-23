@@ -9,7 +9,7 @@ public interface IPlayer
     public GameOutcome Outcome { get; set; }
     public IPromotionDialog PromotionDialog { get; set; }
 
-    public Dictionary<(string, int), BoardPiece> Pieces { get; }
+    public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; }
 
     public List<Pawn> Pawns { get; }
 

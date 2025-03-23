@@ -5,6 +5,8 @@ using Android.Gms.Nearby.Connection;
 using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
+using Chess.App.Common;
+using Chess.App.Common.Extensions;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
@@ -18,8 +20,9 @@ namespace Chess.App.Networked;
     Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 {
+    public Context? Context => this;
+
     public ChessGame? Game { get; set; }
-    public Context? Context { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -36,26 +39,8 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     } = State.Idle;
 
-    public string? ClientName;
-    public string? ConnectedClientName;
-
-    public string WhitePlayerName
-    {
-        get; private set
-        {
-            field = value;
-            this.WhitePlayerUsername!.Text = value;
-        }
-    } = "White Player";
-
-    public string BlackPlayerName
-    {
-        get; private set
-        {
-            field = value;
-            this.BlackPlayerUsername!.Text = value;
-        }
-    } = "Black Player";
+    public UserClient? Client { get; set; }
+    public UserClient? ConnectedClient { get; set; }
 
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
     protected override string AdvertisingName => FirebaseAuth.Instance.CurrentUser?.Uid
@@ -64,9 +49,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        bool hasValue = bool.TryParse(base.Intent?.GetStringExtra("MaterialYouThemePreference"),
-            out var MaterialYouThemePreference);
-        if (hasValue && !MaterialYouThemePreference)
+        if (!this.MaterialYouThemePreference())
             base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
 
         base.OnCreate(savedInstanceState);
@@ -151,15 +134,16 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 #if DEBUG
         Toast.MakeText(this, $"DEBUG: Connected to Client: {{id}}::{endpoint.Name}", ToastLength.Short)?.Show();
 #endif
-        this.ClientName = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
+        var ClientName = FirebaseAuth.Instance?.CurrentUser?.DisplayName;
         if (this.State == State.Advertising)
         {
 #if DEBUG
             Logger.Verbose("Client is white player");
 #endif
-            var client = new WhiteClient(this.AdvertisingName, this.ClientName ?? this.WhitePlayerName);
+            var client = new WhiteClient(this.AdvertisingName, ClientName ?? "White Player");
             client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
-            this.WhitePlayerName = client!.WhitePlayerName;
+            this.WhitePlayerUsername!.Text = client!.WhitePlayerName;
+            this.Client = client;
 
             //Init handshake
             this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.UserClient)));
@@ -170,12 +154,13 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 #if DEBUG
             Logger.Verbose("Client is black player");
 #endif
-            var client = new BlackClient(this.AdvertisingName, this.ClientName ?? this.WhitePlayerName);
+            var client = new BlackClient(this.AdvertisingName, ClientName ?? "Black Player");
             client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
-            this.BlackPlayerName = client.BlackPlayerName;
+            this.BlackPlayerUsername!.Text = client.BlackPlayerName;
+            this.Client = client;
 
             //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.UserClient)));
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(Client, SourceJsonGenerationContext.Default.UserClient)));
         }
 
         this.State = State.Idle;
@@ -185,8 +170,8 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     {
         if (this.Game != null)
         {
-            Toast.MakeText(this, $"Error, {this.ClientName} disconnected", ToastLength.Short)?.Show();
-            this.SetResult(Result.Canceled, new Intent());
+            Toast.MakeText(this, $"Error, {this.Client!.Username} disconnected", ToastLength.Short)?.Show();
+            this.SetResult(Result.Canceled);
             this.Finish();
         }
     }
@@ -215,23 +200,26 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 
         this.StandardBottomSheet!.Visibility = ViewStates.Gone;
         this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
+
         var otherClient = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.UserClient);
 
         if (otherClient is WhiteClient whiteClient)
         {
-            this.ConnectedClientName = whiteClient.WhitePlayerName;
-            this.WhitePlayerName = this.ConnectedClientName;
+            this.WhitePlayerUsername!.Text = whiteClient.WhitePlayerName;
             whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
-            this.Game = new ChessGame(this, false);
+            this.ConnectedClient = whiteClient;
+
+            this.Game = new ChessGame(this);
             return;
         }
 
         if (otherClient is BlackClient blackClient)
         {
-            this.ConnectedClientName = blackClient.BlackPlayerName;
-            this.BlackPlayerName = this.ConnectedClientName;
+            this.BlackPlayerUsername!.Text = blackClient.BlackPlayerName;
             blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
-            this.Game = new ChessGame(this, true);
+            this.ConnectedClient = blackClient;
+
+            this.Game = new ChessGame(this);
             return;
         }
 
