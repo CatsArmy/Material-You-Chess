@@ -10,6 +10,8 @@ using Chess.App.Common.Extensions;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
+using Chess.Game.Board;
+using Chess.Game.Player;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
@@ -22,7 +24,7 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 {
     public Context? Context => this;
 
-    public ChessGame? Game { get; set; }
+    public required ChessGame Game { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -39,8 +41,8 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
         }
     } = State.Idle;
 
-    public UserClient? Client { get; set; }
-    public UserClient? ConnectedClient { get; set; }
+    public required UserClient Client { get; set; }
+    public required UserClient ConnectedClient { get; set; }
 
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
     protected override string AdvertisingName => FirebaseAuth.Instance.CurrentUser?.Uid
@@ -140,13 +142,13 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 #if DEBUG
             Logger.Verbose("Client is white player");
 #endif
-            var client = new WhiteClient(this.AdvertisingName, ClientName ?? "White Player");
+            var client = new WhitePlayerClient(this.AdvertisingName, ClientName ?? "White Player");
             client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
-            this.WhitePlayerUsername!.Text = client!.WhitePlayerName;
+            this.WhitePlayerUsername!.Text = client!.Username;
             this.Client = client;
 
             //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.UserClient)));
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
         }
 
         if (this.State == State.Discovering)
@@ -154,13 +156,13 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
 #if DEBUG
             Logger.Verbose("Client is black player");
 #endif
-            var client = new BlackClient(this.AdvertisingName, ClientName ?? "Black Player");
+            var client = new BlackPlayerClient(this.AdvertisingName, ClientName ?? "Black Player");
             client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
-            this.BlackPlayerUsername!.Text = client.BlackPlayerName;
+            this.BlackPlayerUsername!.Text = client.Username;
             this.Client = client;
 
             //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(Client, SourceJsonGenerationContext.Default.UserClient)));
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
         }
 
         this.State = State.Idle;
@@ -177,7 +179,9 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     }
 
     /// <summary>
-    /// Gives IChessActivity the send command by both implementing and overriding the methods
+    /// Allows <see cref="IChessActivity"/> access to <see cref="ConnectionsActivity.Send(Payload)"/>
+    /// by both implementing <see cref="IChessActivity.Send(Payload)"/> 
+    /// and overriding the methods <see cref="ConnectionsActivity.Send(Payload)"/>
     /// </summary>
     public override void Send(Payload payload) => base.Send(payload);
 
@@ -187,42 +191,36 @@ public class NetworkedChessActivity : LobbyBottomSheet, IChessActivity
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
         if (payload.PayloadType != Payload.Type.Bytes)
-        {
             return;
-        }
 
         if (this.Game != null)
         {
             var move = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.Move);
-            move!.Origin.Move(move, this.Game!);
+            this.Game.PlayMove(move!, false);
             return;
         }
 
         this.StandardBottomSheet!.Visibility = ViewStates.Gone;
         this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
-
-        var otherClient = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.UserClient);
-
-        if (otherClient is WhiteClient whiteClient)
+        switch (JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.FirebaseUserClient))
         {
-            this.WhitePlayerUsername!.Text = whiteClient.WhitePlayerName;
-            whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
-            this.ConnectedClient = whiteClient;
+            case WhitePlayerClient whiteClient:
+                this.WhitePlayerUsername!.Text = whiteClient.Username;
+                whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+                this.ConnectedClient = whiteClient;
+                this.Game = new ChessGame(this);
+                break;
 
-            this.Game = new ChessGame(this);
-            return;
+            case BlackPlayerClient blackClient:
+                this.BlackPlayerUsername!.Text = blackClient.Username;
+                blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+                this.ConnectedClient = blackClient;
+                this.Game = new ChessGame(this);
+                break;
+
+            default:
+                Logger.Warn("Unknown state something went wrong");
+                break;
         }
-
-        if (otherClient is BlackClient blackClient)
-        {
-            this.BlackPlayerUsername!.Text = blackClient.BlackPlayerName;
-            blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
-            this.ConnectedClient = blackClient;
-
-            this.Game = new ChessGame(this);
-            return;
-        }
-
-        Logger.Warn("Unknown state something went wrong");
     }
 }

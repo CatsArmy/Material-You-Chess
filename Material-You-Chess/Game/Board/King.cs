@@ -1,4 +1,5 @@
-﻿using Chess.Game.Moves;
+﻿using Chess.App;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
@@ -16,7 +17,7 @@ public class BlackKing(int id, int count, BoardSpace space) : King(id, space)
     public override bool IsWhite => false;
 }
 
-public class King(int id, BoardSpace space) : CastleablePiece(id, space)
+public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 {
     public override char Abbreviation => 'K';
 
@@ -39,8 +40,8 @@ public class King(int id, BoardSpace space) : CastleablePiece(id, space)
 
     public override List<Move> Moves(ChessGame game)
     {
-        List<Move> moves = base.Moves(game);
-
+        var moves = base.Moves(game);
+        #region Regualar Moves
         var up = this.Space?.Up(game.Board);
         if (up != null)
         {
@@ -111,6 +112,42 @@ public class King(int id, BoardSpace space) : CastleablePiece(id, space)
                 moves.Add(new Move(this, bottomRight));
             else if (bottomRight.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
+        }
+        #endregion
+
+        if (this.HasMoved || game.Player!.Rook1!.HasMoved && game.Player!.Rook2!.HasMoved)
+            return moves;
+
+        List<Move> enemyMoves = [];
+        foreach (var piece in game.Enemy!.Pieces.Values)
+            enemyMoves.AddRange(piece.Moves(game));
+        enemyMoves = [.. moves.Where(move => move is not MoveOnly)];
+
+        var rank = this.Space!.Rank;
+        if (!game.Player!.Rook1!.HasMoved) //Rook1 == Queen Side
+        {
+            char[] files = [game.Player!.Rook1!.Space.File, 'B', 'C', 'D', this.Space.File];
+
+            var inDanger = false;
+            foreach (var file in files)
+                if (ChessGame.IsThreateningSpace(game.Board[(file, rank)], ref enemyMoves))
+                    inDanger = true;
+
+            if (!inDanger)
+                moves.Add(new QueenSideCastle(game));
+        }
+
+        if (!game.Player!.Rook2!.HasMoved) //Rook2 == King Side
+        {
+            char[] files = [this.Space.File, 'F', 'G', game.Player!.Rook2!.Space.File];
+
+            var inDanger = false;
+            foreach (var file in files)
+                if (ChessGame.IsThreateningSpace(game.Board[(file, rank)], ref enemyMoves))
+                    inDanger = true;
+
+            if (!inDanger)
+                moves.Add(new KingSideCastle(game));
         }
 
         return moves;

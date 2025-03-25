@@ -1,10 +1,12 @@
-﻿namespace Chess.Game.Moves;
+﻿using Chess.Game.Board;
 
-public class QueenSideCastle() : Castling(ChessGame.Instance!.Player!.King!, ChessGame.Instance!.Player.Rook1!.Space)
+namespace Chess.Game.Moves;
+
+public class QueenSideCastle(ChessGame game) : Castling(game.Player!.King!, game.Board[('C', game.Player!.King!.Space.Rank)])
 {
-    public override MoveOnly Rook
-        => new(ChessGame.Instance!.Player!.Rook1!, ChessGame.Instance!.Board[('D', ChessGame.Instance!.Player!.Rook1!.Space.Rank)]);
+    public QueenSideCastle() : this(ChessGame.Instance!) { }
 
-    public override MoveOnly King
-        => new(ChessGame.Instance!.Player!.King!, ChessGame.Instance!.Board[('C', ChessGame.Instance!.Player!.King!.Space.Rank)]);
+    public override char File => 'D';
+    public override Rook Rook { get; } = game.Player!.Rook1!;
+    public override MoveOnly PlayRook => new(this.Rook, game.Board[(this.File, this.Rook.Space.Rank)]);
 }

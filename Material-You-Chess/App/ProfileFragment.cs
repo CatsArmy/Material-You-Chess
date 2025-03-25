@@ -8,6 +8,7 @@ using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Extensions;
 using Chess.App.Common.Listener;
 using Chess.App.Common.Permissions;
+using Chess.App.Networked;
 using Firebase.Auth;
 using Firebase.Storage;
 using Google.Android.Material.FloatingActionButton;
@@ -74,12 +75,12 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
 
         this.User = user;
-        var User = new UserClient(this.User.Uid, this.User.DisplayName);
+        var User = new FirebaseUserClient(this.User.Uid, this.User.DisplayName!);
         User.LoadProfilePicture(Glide.With(this)).Into(this.ProfilePicture!);
         this.DisplayName!.Text = User.Username;
         this.UsernameInput!.Hint = User.Username;
         this.UsernameInput!.Text = User.Username;
-        this.UsernameInput.EditorAction += (a, args) =>
+        this.UsernameInput.EditorAction += (sender, args) =>
         {
             if (args.ActionId == ImeAction.Done)
             {
@@ -99,10 +100,10 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.DeleteProfilePicture!.LongClick += (_, _) => this.DeleteProfilePicture.Spin();
     }
 
-    private void OnThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs e)
+    private void OnThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs args)
     {
-        this.Activity!.MaterialYouThemePreference(e.IsChecked);
-        int themeResId = e.IsChecked switch
+        this.Activity!.MaterialYouThemePreference(args.IsChecked);
+        int themeResId = args.IsChecked switch
         {
             true => Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar,
             false => Resource.Style.AppTheme_Material3_DayNight_NoActionBar,
@@ -118,7 +119,6 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.Activity?.ApplicationContext?.Theme?.Rebase();
         this.Activity?.BaseContext?.Theme?.Rebase();
         this.Activity?.Theme?.Rebase();
-
     }
 
     private void PhotoCapturer(bool isGranted)
@@ -146,17 +146,22 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     private void OnCapturePhoto(Bitmap? photo)
     {
         var stream = new MemoryStream();
-        photo!.Compress(Bitmap.CompressFormat.Png!, 100, stream);
+        if (photo == null || !photo.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+            return;
+
         byte[] data = stream.ToArray();
-        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
+        var storageRef = FirebaseStorage.Instance.GetReference(this.User!.Uid);
         var uploadTask = storageRef.PutBytes(data);
-        uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>
+        uploadTask.AddOnSuccessListener(new OnSuccess<UploadTask.TaskSnapshot>((taskSnapshot) =>
         {
             var glide = Glide.Get(this.Activity!);
-            glide.ClearMemory();
             glide.ClearDiskCache();
+            glide.ClearMemory();
 
-            Glide.With(this).DownloadOnly()
+            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Reference?.Path}");
+            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Name}");
+
+            Glide.With(this)
             .Load(storageRef)
             .Error(Resource.Drawable.outline_account_circle_24)
             .Into(this.ProfilePicture!);
@@ -176,15 +181,18 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         if (photo is null)
             return;
 
-        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
+        var storageRef = FirebaseStorage.Instance.GetReference(this.User!.Uid);
         var uploadTask = storageRef.PutFile(photo);
-        uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>
+        uploadTask.AddOnSuccessListener(new OnSuccess<UploadTask.TaskSnapshot>((taskSnapshot) =>
         {
             var glide = Glide.Get(this.Activity!);
             glide.ClearMemory();
             glide.ClearDiskCache();
 
-            Glide.With(this).DownloadOnly()
+            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Reference?.Path}");
+            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Name}");
+
+            Glide.With(this)
             .Load(storageRef)
             .Error(Resource.Drawable.outline_account_circle_24)
             .Into(this.ProfilePicture!);
@@ -201,7 +209,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
     public void OnDeletePhoto()
     {
-        var storageRef = FirebaseStorage.Instance.Reference.Child($"{this.User!.Uid}");
+        var storageRef = FirebaseStorage.Instance.GetReference(this.User!.Uid);
         var uploadTask = storageRef.Delete();
 
         uploadTask.AddOnSuccessListener(new OnSuccess((taskSnapshot) =>

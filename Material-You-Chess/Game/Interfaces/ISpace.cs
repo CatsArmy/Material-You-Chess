@@ -1,12 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 using Chess.Game.Board;
 
-namespace Chess.Game;
+namespace Chess.Game.Interfaces;
 
 public interface ISpace
 {
     [JsonIgnore] ImageView? SpaceView { get; }
-    (char file, int rank) Index { get; }
+    (char File, int Rank) Index { get; }
     bool IsWhite { get; }
     char File { get; }
     int Rank { get; }

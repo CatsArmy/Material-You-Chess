@@ -6,7 +6,7 @@ namespace Chess.Game.Player;
 public interface IPlayer
 {
     public string Name { get; set; }
-    public GameOutcome Outcome { get; set; }
+    public GameOutcome? Outcome { get; set; }
     public IPromotionDialog PromotionDialog { get; set; }
 
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; }

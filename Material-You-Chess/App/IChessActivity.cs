@@ -18,10 +18,10 @@ public interface IChessActivity
     public ConstraintLayout? BoardLayout { get; set; }
 
     /// <summary> This Client</summary>
-    public UserClient? Client { get; set; }
+    public UserClient Client { get; set; }
 
     /// <summary> The client that we connect to </summary>
-    public UserClient? ConnectedClient { get; set; }
+    public UserClient ConnectedClient { get; set; }
 
-    public void Send(Payload payload);
+    public virtual void Send(Payload payload) { return; }
 }

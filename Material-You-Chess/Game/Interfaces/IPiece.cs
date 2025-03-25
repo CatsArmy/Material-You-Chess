@@ -2,7 +2,7 @@
 using Chess.Game.Board;
 using Chess.Game.Moves;
 
-namespace Chess.Game;
+namespace Chess.Game.Interfaces;
 
 public interface IPiece
 {

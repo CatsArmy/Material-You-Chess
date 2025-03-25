@@ -1,14 +1,15 @@
-﻿using Chess.Dialogs;
+﻿using Chess.App;
+using Chess.App.Common;
+using Chess.Dialogs;
 using Chess.Game.Board;
 
 namespace Chess.Game.Player;
 
-public class Black : IPlayer
+public class Black(UserClient client, IChessActivity activity) : IPlayer
 {
-    public string Name { get; set; }
-
-    public IPromotionDialog PromotionDialog { get; set; }
-    public GameOutcome Outcome { get; set; }
+    public string Name { get; set; } = client.Username;
+    public IPromotionDialog PromotionDialog { get; set; } = activity.PromotionDialogs.Black;
+    public GameOutcome? Outcome { get; set; }
 
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; set; } = [];
 
@@ -30,10 +31,8 @@ public class Black : IPlayer
 
     public Rook? Rook2 { get; set; }
 
-    public Black(string name, Dictionary<(char file, int rank), BoardSpace> Board, BlackPromotionDialog promotionDialog)
+    public Black(UserClient client, IChessActivity activity, Dictionary<(char file, int rank), BoardSpace> Board) : this(client, activity)
     {
-        this.Name = name;
-        this.PromotionDialog = promotionDialog;
         char file = 'A';
         const int rank = 8;
         this.Rook1 = new BlackRook(Resource.Id.gmp__bRook1, count: 1, Board[(file, rank)]);

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Android.Animation;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
+using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
@@ -49,27 +49,11 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
 
     public virtual void Move(Move move, ChessGame game)
     {
-        if (game.Player == null || game.Enemy == null)
-            return;
-
-        game.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-
         if (move is Capture capture)
         {
             this.Capture(capture.Piece, game);
         }
 
-        if (move is Castling castling)
-        {
-            var castlingRook = castling.Rook;
-            var castlingKing = castling.King;
-            game.NextTurn(move);
-            this.Move(castlingRook);
-            this.Move(castlingKing);
-            return;
-        }
-
-        game.NextTurn(move);
         this.Move(move);
     }
 
@@ -289,4 +273,3 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
             return (null, null);
         return (left.Up(board), left.Down(board));
     }
-}

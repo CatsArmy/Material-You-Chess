@@ -1,7 +1,7 @@
 using System.Text.Json;
+using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Chess.App;
-using Chess.App.Common;
 using Chess.App.Networked;
 using Chess.Game.Board;
 using Chess.Game.Moves;
@@ -9,22 +9,32 @@ using Chess.Game.Player;
 
 namespace Chess.Game;
 
-public class ChessGame : IChessGame
+public class ChessGame
 {
     public static ChessGame? Instance { get; set; }
+    public IChessActivity Activity;
+    public White WhitePlayer { get; set; }
+    public Black BlackPlayer { get; set; }
 
-    private int Turn = 1;
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? ClientIsWhite;
+    private int Turn = 1;
 
     public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
     public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
     public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{this.Player!.Name} wins", ToastLength.Long)!;
 
-    public IChessActivity Activity;
-    public White? Player1 { get; set; }
+    public IPlayer Player => this.CurrentPlayerIsWhite switch
+    {
+        true => this.WhitePlayer,
+        false => this.BlackPlayer,
+    };
 
-    public Black? Player2 { get; set; }
+    public IPlayer Enemy => !this.CurrentPlayerIsWhite switch
+    {
+        true => this.WhitePlayer,
+        false => this.BlackPlayer
+    };
 
     public BoardPiece? Selected
     {
@@ -56,7 +66,8 @@ public class ChessGame : IChessGame
                 move.IndicateMoveable();
         }
     }
-    public Move? LastMove
+
+    private Move? LastMove
     {
         get; set
         {
@@ -67,24 +78,6 @@ public class ChessGame : IChessGame
             value?.IndicateUnmovable();
             value?.Select();
         }
-    }
-
-    public IPlayer? Player
-    {
-        get => this.CurrentPlayerIsWhite switch
-        {
-            true => this.Player1,
-            false => this.Player2,
-        };
-    }
-
-    public IPlayer? Enemy
-    {
-        get => !this.CurrentPlayerIsWhite switch
-        {
-            true => this.Player1,
-            false => this.Player2
-        };
     }
 
     public BoardSpace BindSpace(int id, int rank, char file)
@@ -112,8 +105,8 @@ public class ChessGame : IChessGame
         this.Activity = activity;
         this.ClientIsWhite = activity.Client switch
         {
-            WhiteClient => true,
-            BlackClient => false,
+            WhitePlayerClient => true,
+            BlackPlayerClient => false,
             _ => null,
         };
 
@@ -152,17 +145,17 @@ public class ChessGame : IChessGame
         switch (this.ClientIsWhite)
         {
             case false:
-                this.Player1 = new White(activity.ConnectedClient!.Username!, this.Board, activity.PromotionDialogs.White);
-                this.Player2 = new Black(activity.Client!.Username!, this.Board, activity.PromotionDialogs.Black);
+                this.WhitePlayer = new White(activity.ConnectedClient, activity, this.Board);
+                this.BlackPlayer = new Black(activity.Client, activity, this.Board);
                 break;
 
             default:
-                this.Player1 = new White(activity.Client!.Username!, this.Board, activity.PromotionDialogs.White);
-                this.Player2 = new Black(activity.ConnectedClient!.Username!, this.Board, activity.PromotionDialogs.Black);
+                this.WhitePlayer = new White(activity.Client, activity, this.Board);
+                this.BlackPlayer = new Black(activity.ConnectedClient, activity, this.Board);
                 break;
         }
 
-        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.Player1.Pieces, this.Player2.Pieces];
+        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
 
         foreach (var player in players)
         {
@@ -196,22 +189,23 @@ public class ChessGame : IChessGame
         this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
     }
 
-    /// <returns> true if an enemy piece can capture the given piece</returns>
-    public bool IsInCheck(BoardPiece Piece)
-        => this.Player!.Pieces.Values.FirstOrDefault(p => Piece.IsWhite == p.IsWhite) != null && this.IsInCheck(Piece.Space);
-
-    /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
-    public bool IsInCheck(BoardSpace Space)
+    public void PlayMove(Move move, bool isSender)
     {
-        List<Move> moves = [];
-        foreach (var piece in this.Enemy!.Pieces.Values)
-            moves.AddRange(piece.Moves(this));
+        if (isSender)
+            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
 
-        moves = [.. moves.Where(move => move is not MoveOnly)];
-        return moves.FirstOrDefault(move => move.Destination == Space) != null;
+        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        if (move is Castling castle) //Selected is a king
+            castle.Rook?.Move(castle.PlayRook);
+
+        this.Selected!.Move(move, this);
+        this.NextTurn(move);
     }
 
-    private void OnClick(object? sender, EventArgs args)
+    /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
+    public static bool IsThreateningSpace(BoardSpace Space, ref List<Move> enemyMoves) => enemyMoves.FirstOrDefault(move => move.Destination == Space) != null;
+
+    public void OnClick(object? sender, EventArgs args)
     {
         if (sender is not ImageView imageView)
             return;
@@ -245,14 +239,6 @@ public class ChessGame : IChessGame
         if (!this.Board.TryGetValue(sIndex, out var space))
             return;
 
-        if (this.IsCastling(space) is Move castling)
-        {
-            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: castling,
-                SourceJsonGenerationContext.Default.Move)));
-            this.Selected!.Move(castling, this);
-            return;
-        }
-
         var move = this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
         {
@@ -260,39 +246,10 @@ public class ChessGame : IChessGame
             return;
         }
 
-        this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
-        this.Selected!.Move(move, this);
+        this.PlayMove(move, true);
     }
 
-    private Move? IsCastling(BoardSpace space)
-    {
-        var rank = this.Player!.King!.Space.Rank;
-        var queenSideMove = this.Moves?.FirstOrDefault(_move => _move is QueenSideCastle) as QueenSideCastle;
-        var kingSideMove = this.Moves?.FirstOrDefault(_move => _move is KingSideCastle) as KingSideCastle;
-        if (queenSideMove is not null)
-        {
-            List<BoardSpace> queenSideSpaces = [];
-            for (char queenSide = 'A'; queenSide != this.Player!.King!.Space.File - 1; queenSide++)
-                queenSideSpaces.Add(this.Board[(queenSide, rank)]);
-
-            if (queenSideSpaces.FirstOrDefault(Space => Space.Index == space.Index) is not null)
-                return queenSideMove;
-        }
-
-        if (kingSideMove is not null)
-        {
-            List<BoardSpace> kingSideSpaces = [];
-            for (char kingSide = 'H'; kingSide != this.Player!.King!.Space.File + 1; kingSide++)
-                kingSideSpaces.Add(this.Board[(kingSide, rank)]);
-
-            if (kingSideSpaces.FirstOrDefault(Space => Space.Index == space.Index) is not null)
-                return kingSideMove;
-        }
-
-        return null;
-    }
-
-    private bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)
+    public bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)
     {
         string tag = Tag.ToString();
         sIndex = (tag[0], int.Parse($"{tag[^1]}"));
@@ -306,7 +263,6 @@ public class ChessGame : IChessGame
 
         if (this.Player == null || this.Enemy == null)
             return false;
-
 
         //----------+-----------+-----------+-----------+-----------+-----------
         //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 

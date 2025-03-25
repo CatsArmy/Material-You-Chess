@@ -1,25 +1,25 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
+using Chess.Game.Interfaces;
 
 namespace Chess.Game.Board;
 
 public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : ISpace
 {
-    [JsonIgnore] public (char file, int rank) Index => (this.File, this.Rank);
+    [JsonIgnore] public (char File, int Rank) Index => (this.File, this.Rank);
     [JsonIgnore] public ImageView? SpaceView { get; } = Space;
-    public bool IsWhite { get; protected set; } = IsWhite;
-    public char File { get; protected set; } = File;
-    public int Rank { get; protected set; } = Rank;
-    public int Id { get; protected set; } = Space.Id;
+    public bool IsWhite { get; } = IsWhite;
+    public char File { get; } = File;
+    public int Rank { get; } = Rank;
+    public int Id { get; } = Space.Id;
+    [JsonConstructor] public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
+    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite, BoardLayout!.FindViewById<ImageView>(Id)!) { }
+    private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
 
     public const int UnselectSpace = 0;
     public const int UnselectMove = 1;
     public const int SelectSpace = 2;
     public const int SelectMove = 3;
-
-    [JsonConstructor] public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
-    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite, BoardLayout!.FindViewById<ImageView>(Id)!) { }
-    private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
 
     public void Select()
     {
