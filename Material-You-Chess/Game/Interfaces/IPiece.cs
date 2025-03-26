@@ -18,6 +18,6 @@ public interface IPiece
 
     public char Abbreviation { get; }
 
-    public void Update(bool IsUpdatingPlayer = false);
     public void Move(Move destination, ChessGame game);
+    public void Update();
 }

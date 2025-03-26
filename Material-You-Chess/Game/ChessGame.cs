@@ -36,50 +36,6 @@ public class ChessGame
         false => this.BlackPlayer
     };
 
-    public BoardPiece? Selected
-    {
-        get; set
-        {
-            if (value is null)
-            {
-                this.Moves = null;
-            }
-            field = value;
-
-            if (value is not null)
-                this.Moves = value.Moves(this);
-        }
-    }
-
-    public List<Move>? Moves
-    {
-        get; set
-        {
-            if (field is not null)
-                foreach (var move in field)
-                    move.IndicateUnmovable();
-            field = value;
-            if (value is null)
-                return;
-
-            foreach (var move in value)
-                move.IndicateMoveable();
-        }
-    }
-
-    private Move? LastMove
-    {
-        get; set
-        {
-            field?.Unselect();
-            field?.IndicateUnmovable();
-            field = value;
-
-            value?.IndicateUnmovable();
-            value?.Select();
-        }
-    }
-
     public BoardSpace BindSpace(int id, int rank, char file)
     {
         const string IsWhite = "IsWhite";
@@ -145,13 +101,13 @@ public class ChessGame
         switch (this.ClientIsWhite)
         {
             case false:
-                this.WhitePlayer = new White(activity.ConnectedClient, activity, this.Board);
-                this.BlackPlayer = new Black(activity.Client, activity, this.Board);
+                this.WhitePlayer = new White(activity.ConnectedClient, this);
+                this.BlackPlayer = new Black(activity.Client, this);
                 break;
 
             default:
-                this.WhitePlayer = new White(activity.Client, activity, this.Board);
-                this.BlackPlayer = new Black(activity.ConnectedClient, activity, this.Board);
+                this.WhitePlayer = new White(activity.Client, this);
+                this.BlackPlayer = new Black(activity.ConnectedClient, this);
                 break;
         }
 
@@ -174,32 +130,36 @@ public class ChessGame
         }
     }
 
-    public void NextTurn(Move move)
-    {
-        this.Selected = null;
-        if (!this.CurrentPlayerIsWhite)
-            this.Turn += 1;
-
-        this.LastMove = move;
-        foreach (var piece in this.Player!.Pieces.Values)
-        {
-            piece.Update(true);
-        }
-
-        this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
-    }
-
     public void PlayMove(Move move, bool isSender)
     {
         if (isSender)
             this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
 
         this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-        if (move is Castling castle) //Selected is a king
-            castle.Rook?.Move(castle.PlayRook);
 
-        this.Selected!.Move(move, this);
-        this.NextTurn(move);
+        this.Player.Selected!.Move(move, this);
+        // Update Our Player Pieces state if it is needed
+        if (move?.Origin is SpecialPiece piece)
+            piece.Update();
+
+        if (move is Castling castle) //the only edge case where the move contains multiple moves
+        {
+            castle.Rook?.Update();
+            castle.Rook?.Move(castle.PlayRook);
+        }
+
+        // Update Enemy Player Pieces state if it is needed
+        this.Enemy.LastMove?.Unselect();
+        if (this.Enemy.LastMove?.Origin is SpecialPiece enemyPiece)
+        {
+            enemyPiece.Update();
+        }
+
+        this.Player.Selected = null;
+        this.Player.LastMove = move;
+
+        // Update who is the current player 
+        this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
     }
 
     /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
@@ -221,17 +181,18 @@ public class ChessGame
 
         if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
         {
-            if (this.Selected == null)
+            if (this.Player.Selected == null)
             {
-                this.Selected = Piece;
+                this.Player.Selected = Piece;
                 return;
             }
 
-            if (this.Selected.IsWhite == Piece.IsWhite)
+            if (this.Player.Selected.IsWhite == Piece.IsWhite)
             {
-                if (this.Selected.Id != Piece.Id)
-                    this.Selected = Piece;
-
+                if (this.Player.Selected.Id != Piece.Id)
+                    this.Player.Selected = Piece;
+                else
+                    this.Player.Selected = null;
                 return;
             }
         }
@@ -239,10 +200,10 @@ public class ChessGame
         if (!this.Board.TryGetValue(sIndex, out var space))
             return;
 
-        var move = this.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
+        var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
         {
-            this.Selected = null;
+            this.Player.Selected = null;
             return;
         }
 

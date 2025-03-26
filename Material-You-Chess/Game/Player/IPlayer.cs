@@ -1,5 +1,6 @@
 ﻿using Chess.Dialogs;
 using Chess.Game.Board;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
 
@@ -28,4 +29,10 @@ public interface IPlayer
     public Knight? Knight2 { get; set; }
 
     public Rook? Rook2 { get; set; }
+
+    public BoardPiece? Selected { get; set; }
+
+    public List<Move>? Moves { get; set; }
+
+    public Move? LastMove { get; set; }
 }

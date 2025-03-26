@@ -256,10 +256,11 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
 
     public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);
 
-    public override void Update(bool IsUpdatingPlayer = false)
+    public override void Update()
     {
-        base.Update(IsUpdatingPlayer);
-        if (IsUpdatingPlayer)
+        if (this.HasMoved)
             this.EnPassantCapturable = false;
+
+        base.Update();
     }
 }

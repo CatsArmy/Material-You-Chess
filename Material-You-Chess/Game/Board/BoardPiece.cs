@@ -43,7 +43,7 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
 
     public BoardPiece(int id, BoardSpace space) : this(ChessGame.Instance!.Activity.BoardLayout!.FindViewById<ImageView>(id)!, space) { }
 
-    public virtual void Update(bool IsUpdatingPlayer = false) { return; }
+    public virtual void Update() { return; }
 
     public virtual List<Move> Moves(ChessGame game) => [];
 
@@ -273,3 +273,4 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
             return (null, null);
         return (left.Up(board), left.Down(board));
     }
+}

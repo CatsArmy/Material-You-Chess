@@ -2,74 +2,118 @@
 using Chess.App.Common;
 using Chess.Dialogs;
 using Chess.Game.Board;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
 
-public class Black(UserClient client, IChessActivity activity) : IPlayer
+public class Black(ChessGame game) : IPlayer
 {
-    public string Name { get; set; } = client.Username;
-    public IPromotionDialog PromotionDialog { get; set; } = activity.PromotionDialogs.Black;
+    public string Name { get; set; }
+    public IPromotionDialog PromotionDialog { get; set; } = game.Activity.PromotionDialogs.Black;
     public GameOutcome? Outcome { get; set; }
 
+    #region Board Pieces
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; set; } = [];
-
     public List<Pawn> Pawns { get; set; } = [];
-
     public Rook? Rook1 { get; set; }
-
     public Knight? Knight1 { get; set; }
-
     public Bishop? Bishop1 { get; set; }
-
     public King? King { get; set; }
-
     public Queen? Queen { get; set; }
-
     public Bishop? Bishop2 { get; set; }
-
     public Knight? Knight2 { get; set; }
-
     public Rook? Rook2 { get; set; }
+    #endregion
 
-    public Black(UserClient client, IChessActivity activity, Dictionary<(char file, int rank), BoardSpace> Board) : this(client, activity)
+    public BoardPiece? Selected
     {
+        get; set
+        {
+            if (value is null)
+            {
+                this.Moves = null;
+            }
+            field = value;
+
+            if (value is not null)
+                this.Moves = value.Moves(game);
+        }
+    }
+
+    public List<Move>? Moves
+    {
+        get; set
+        {
+            if (field is not null)
+                foreach (var move in field)
+                    move.IndicateUnmovable();
+            field = value;
+            if (value is null)
+                return;
+
+            foreach (var move in value)
+                move.IndicateMoveable();
+        }
+    }
+
+    public Move? LastMove
+    {
+        get; set
+        {
+
+            field?.Unselect();
+            field?.IndicateUnmovable();
+            if (value is null)
+                return;
+
+            field = value;
+
+            value?.IndicateUnmovable();
+            value?.Select();
+        }
+    }
+
+    public Black(UserClient client, ChessGame game) : this(game)
+    {
+        this.Name = client.Username;
+
         char file = 'A';
         const int rank = 8;
-        this.Rook1 = new BlackRook(Resource.Id.gmp__bRook1, count: 1, Board[(file, rank)]);
+        this.Rook1 = new BlackRook(Resource.Id.gmp__bRook1, count: 1, game.Board[(file, rank)]);
         this.Pieces[this.Rook1.Index] = this.Rook1;
         file++;//B
 
-        this.Knight1 = new BlackKnight(Resource.Id.gmp__bKnight1, count: 1, Board[(file, rank)]);
+        this.Knight1 = new BlackKnight(Resource.Id.gmp__bKnight1, count: 1, game.Board[(file, rank)]);
         this.Pieces[this.Knight1.Index] = this.Knight1;
         file++;//C
 
-        this.Bishop1 = new BlackBishop(Resource.Id.gmp__bBishop1, 1, Board[(file, rank)]);
+        this.Bishop1 = new BlackBishop(Resource.Id.gmp__bBishop1, 1, game.Board[(file, rank)]);
         this.Pieces[this.Bishop1.Index] = this.Bishop1;
         file++;//D
 
-        this.Queen = new BlackQueen(Resource.Id.gmp__bQueen1, 1, Board[(file, rank)]);
+        this.Queen = new BlackQueen(Resource.Id.gmp__bQueen1, 1, game.Board[(file, rank)]);
         this.Pieces[this.Queen.Index] = this.Queen;
         file++;//E
 
-        this.King = new BlackKing(Resource.Id.gmp__bKing1, 1, Board[(file, rank)]);
+        this.King = new BlackKing(Resource.Id.gmp__bKing1, 1, game.Board[(file, rank)]);
         this.Pieces[this.King.Index] = this.King;
         file++;//F
 
-        this.Bishop2 = new BlackBishop(Resource.Id.gmp__bBishop2, 2, Board[(file, rank)]);
+        this.Bishop2 = new BlackBishop(Resource.Id.gmp__bBishop2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Bishop2.Index] = this.Bishop2;
         file++;//G
 
-        this.Knight2 = new BlackKnight(Resource.Id.gmp__bKnight2, 2, Board[(file, rank)]);
+        this.Knight2 = new BlackKnight(Resource.Id.gmp__bKnight2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Knight2.Index] = this.Knight2;
         file++;//H
 
-        this.Rook2 = new BlackRook(Resource.Id.gmp__bRook2, 2, Board[(file, rank)]);
+        this.Rook2 = new BlackRook(Resource.Id.gmp__bRook2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Rook2.Index] = this.Rook2;
 
         file = 'A';
         for (int i = 0; i < 8; i++)
         {
-            this.Pawns.Add(new BlackPawn(Resource.Id.gmp__bPawn1 + i, i + 1, Board[(file, rank - 1)]));
+            this.Pawns.Add(new BlackPawn(Resource.Id.gmp__bPawn1 + i, i + 1, game.Board[(file, rank - 1)]));
             this.Pieces[this.Pawns[i].Index] = this.Pawns[i];
             file++;
         }
