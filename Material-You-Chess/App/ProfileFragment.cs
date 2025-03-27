@@ -97,6 +97,8 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.CaptureProfilePicture!.LongClick += (_, _) => this.CaptureProfilePicture.Spin();
         this.DeleteProfilePicture!.Click += (_, _) => this.OnDeletePhoto();
         this.DeleteProfilePicture!.LongClick += (_, _) => this.DeleteProfilePicture.Spin();
+
+        //Microsoft.Maui.Media.MediaPicker
     }
 
     private void OnThemeChanged(object? sender, CompoundButton.CheckedChangeEventArgs args)

@@ -29,56 +29,59 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <EnableLLVM>False</EnableLLVM>
-    <AndroidEnableProfiler>False</AndroidEnableProfiler>
-    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <!--
+      <EnableLLVM>False</EnableLLVM>
+      <AndroidEnableProfiler>False</AndroidEnableProfiler>
+      <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+      <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    -->
+
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
-    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
-    <!--<AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
-    <AndroidGenerateJniMarshalMethods>True</AndroidGenerateJniMarshalMethods>
+    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
     <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
-    <AndroidLintEnabled>True</AndroidLintEnabled>-->
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>True</SignAssembly>
+    <AndroidUseApkSigner>True</AndroidUseApkSigner>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
     <DebugSymbols>True</DebugSymbols>
+    <StripSymbols>False</StripSymbols>
     <DebugType>full</DebugType>
     <DebugType>embedded</DebugType>
     <AndroidManagedSymbols>True</AndroidManagedSymbols>
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-    <Optimize>False</Optimize>
-    <StripSymbols>False</StripSymbols>
     <RunAOTCompilation>False</RunAOTCompilation>
     <PublishTrimmed>False</PublishTrimmed>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
 
-      <SignAssembly>True</SignAssembly>
-  <AndroidUseApkSigner>true</AndroidUseApkSigner>
-  <AndroidKeyStore>true</AndroidKeyStore>
-  <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
-  <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
-  <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
-  <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
+    <SignAssembly>True</SignAssembly>
+    <AndroidUseApkSigner>True</AndroidUseApkSigner>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
+    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
+    <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        
-  <RunAOTCompilation>True</RunAOTCompilation>
-  <IsAotCompatible>True</IsAotCompatible>
-  <DebugType>portable</DebugType>
-    <!--
-      Enables trim analyzers and full trimming during Release mode.
-      To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
-    -->
-  <TrimMode>full</TrimMode>
-
-  <SignAssembly>True</SignAssembly>
-  <AndroidUseApkSigner>true</AndroidUseApkSigner>
-  <AndroidKeyStore>true</AndroidKeyStore>
-  <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
-  <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
-  <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
-  <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
+    <RunAOTCompilation>True</RunAOTCompilation>
+    <IsAotCompatible>True</IsAotCompatible>
+    <DebugType>portable</DebugType>
+      <!--
+        Enables trim analyzers and full trimming during Release mode.
+        To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
+      -->
+    <TrimMode>full</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>
