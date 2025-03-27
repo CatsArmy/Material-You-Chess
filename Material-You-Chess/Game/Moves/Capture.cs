@@ -16,9 +16,9 @@ public class Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece
         this.Piece.Space.IndicateMoveable();
     }
 
-    public override void IndicateUnmovable()
+    public override void UnindicateMoveable()
     {
-        base.IndicateUnmovable();
+        base.UnindicateMoveable();
         this.Piece.Space.IndicateUnmovable();
     }
 

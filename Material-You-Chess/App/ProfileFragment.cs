@@ -1,5 +1,4 @@
-﻿using Android.Graphics;
-using Android.Views;
+﻿using Android.Views;
 using Android.Views.InputMethods;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
@@ -49,8 +48,8 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
             new ActivityResultCallback<AndroidUri>(this.OnSelectPhoto));
 
-        this.PhotoTaker = base.RegisterForActivityResult(new TakePicturePreview(),
-            new ActivityResultCallback<Bitmap>(this.OnCapturePhoto));
+        this.PhotoTaker = base.RegisterForActivityResult(new TakePicture(),
+            new ActivityResultCallback<AndroidUri>(this.OnSelectPhoto));
 
         this.CameraAccessPermissionManager = this.RegisterCameraPermissionManager(this.PhotoCapturer);
         this.MediaAccessPermissionManager = this.RegisterMediaPermissionsManager(this.PhotoPicker);
@@ -75,7 +74,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
 
         this.User = user;
-        var User = new FirebaseUserClient(this.User.Uid, this.User.DisplayName!);
+        var User = new FirebaseUserClient(this.User);
         User.LoadProfilePicture(Glide.With(this)).Into(this.ProfilePicture!);
         this.DisplayName!.Text = User.Username;
         this.UsernameInput!.Hint = User.Username;
@@ -96,7 +95,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.SelectProfilePicture!.LongClick += (_, _) => this.SelectProfilePicture.Spin();
         this.CaptureProfilePicture!.Click += (_, _) => this.CameraAccessPermissionManager!.RequestAccess();
         this.CaptureProfilePicture!.LongClick += (_, _) => this.CaptureProfilePicture.Spin();
-        //this.DeleteProfilePicture!.Click +=
+        this.DeleteProfilePicture!.Click += (_, _) => this.OnDeletePhoto();
         this.DeleteProfilePicture!.LongClick += (_, _) => this.DeleteProfilePicture.Spin();
     }
 
@@ -143,38 +142,38 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
     }
 
-    private void OnCapturePhoto(Bitmap? photo)
-    {
-        var stream = new MemoryStream();
-        if (photo == null || !photo.Compress(Bitmap.CompressFormat.Png!, 100, stream))
-            return;
+    //private void OnCapturePhoto(AndroidUri? photo)
+    //{
+    //    var stream = new MemoryStream();
+    //    if (photo == null || !photo.Compress(Bitmap.CompressFormat.Png!, 100, stream))
+    //        return;
 
-        byte[] data = stream.ToArray();
-        var storageRef = FirebaseStorage.Instance.GetReference(this.User!.Uid);
-        var uploadTask = storageRef.PutBytes(data);
-        uploadTask.AddOnSuccessListener(new OnSuccess<UploadTask.TaskSnapshot>((taskSnapshot) =>
-        {
-            var glide = Glide.Get(this.Activity!);
-            glide.ClearDiskCache();
-            glide.ClearMemory();
+    //    byte[] data = stream.ToArray();
+    //    var storageRef = FirebaseStorage.Instance.GetReference(this.User!.Uid);
+    //    var uploadTask = storageRef.PutBytes(data);
+    //    uploadTask.AddOnSuccessListener(new OnSuccess<UploadTask.TaskSnapshot>((taskSnapshot) =>
+    //    {
+    //        var glide = Glide.Get(this.Activity!);
+    //        glide.ClearDiskCache();
+    //        glide.ClearMemory();
 
-            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Reference?.Path}");
-            Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Name}");
+    //        Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Reference?.Path}");
+    //        Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Name}");
 
-            Glide.With(this)
-            .Load(storageRef)
-            .Error(Resource.Drawable.outline_account_circle_24)
-            .Into(this.ProfilePicture!);
+    //        Glide.With(this)
+    //        .Load(storageRef)
+    //        .Error(Resource.Drawable.outline_account_circle_24)
+    //        .Into(this.ProfilePicture!);
 
-            this.CaptureProfilePicture?.Spin();
-        }));
-        uploadTask.AddOnFailureListener(new OnFailure((exception) =>
-        {
-            // Handle unsuccessful uploads
-            Logger.Warn(exception.ToString());
-            this.CaptureProfilePicture?.OnError(this.Activity!);
-        }));
-    }
+    //        this.CaptureProfilePicture?.Spin();
+    //    }));
+    //    uploadTask.AddOnFailureListener(new OnFailure((exception) =>
+    //    {
+    //        // Handle unsuccessful uploads
+    //        Logger.Warn(exception.ToString());
+    //        this.CaptureProfilePicture?.OnError(this.Activity!);
+    //    }));
+    //}
 
     private void OnSelectPhoto(AndroidUri? photo)
     {

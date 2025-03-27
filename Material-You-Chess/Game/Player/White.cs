@@ -1,15 +1,14 @@
-﻿using Chess.App;
-using Chess.App.Common;
+﻿using Chess.App.Common;
 using Chess.Dialogs;
 using Chess.Game.Board;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
 
-public class White(ChessGame game) : IPlayer
+public class White(ChessGame game, string username) : IPlayer
 {
-    public string Name { get; set; }
-    public IPromotionDialog PromotionDialog { get; set; } = game.Activity.PromotionDialogs.White;
+    public string Name { get; } = username;
+    public IPromotionDialog PromotionDialog { get; } = game.Activity.PromotionDialogs.White;
     public GameOutcome? Outcome { get; set; }
 
     #region Board Pieces
@@ -46,7 +45,7 @@ public class White(ChessGame game) : IPlayer
         {
             if (field is not null)
                 foreach (var move in field)
-                    move.IndicateUnmovable();
+                    move.UnindicateMoveable();
             field = value;
             if (value is null)
                 return;
@@ -61,47 +60,47 @@ public class White(ChessGame game) : IPlayer
         get; set
         {
             field?.Unselect();
-            field?.IndicateUnmovable();
+            field?.UnindicateMoveable();
+            if (value is null)
+                return;
             field = value;
 
-            value?.IndicateUnmovable();
+            value?.UnindicateMoveable();
             value?.Select();
         }
     }
 
-    public White(UserClient client, ChessGame game) : this(game)
+    public White(ChessGame game, UserClient client) : this(game, client.Username)
     {
-        this.Name = client.Username;
-
-        char file = 'A';
         const int rank = 1;
+        char file = 'A';
         this.Rook1 = new WhiteRook(Resource.Id.gmp__wRook1, count: 1, game.Board[(file, rank)]);
         this.Pieces[this.Rook1.Index] = this.Rook1;
-        file++;//B
+        file++; //B
 
         this.Knight1 = new WhiteKnight(Resource.Id.gmp__wKnight1, count: 1, game.Board[(file, rank)]);
         this.Pieces[this.Knight1.Index] = this.Knight1;
-        file++;//C
+        file++; //C
 
         this.Bishop1 = new WhiteBishop(Resource.Id.gmp__wBishop1, 1, game.Board[(file, rank)]);
         this.Pieces[this.Bishop1.Index] = this.Bishop1;
-        file++;//D
+        file++; //D
 
         this.Queen = new WhiteQueen(Resource.Id.gmp__wQueen1, 1, game.Board[(file, rank)]);
         this.Pieces[this.Queen.Index] = this.Queen;
-        file++;//E
+        file++; //E
 
         this.King = new WhiteKing(Resource.Id.gmp__wKing1, 1, game.Board[(file, rank)]);
         this.Pieces[this.King.Index] = this.King;
-        file++;//F
+        file++; //F
 
         this.Bishop2 = new WhiteBishop(Resource.Id.gmp__wBishop2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Bishop2.Index] = this.Bishop2;
-        file++;//G
+        file++; //G
 
         this.Knight2 = new WhiteKnight(Resource.Id.gmp__wKnight2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Knight2.Index] = this.Knight2;
-        file++;//H
+        file++; //H
 
         this.Rook2 = new WhiteRook(Resource.Id.gmp__wRook2, 2, game.Board[(file, rank)]);
         this.Pieces[this.Rook2.Index] = this.Rook2;

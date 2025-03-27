@@ -11,13 +11,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Nullable>enable</Nullable>
-    <LangVersion>preview</LangVersion>
-    <AnalysisLevel>preview</AnalysisLevel>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-    <WarningLevel>9999</WarningLevel>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages</RestoreAdditionalProjectSources>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <LangVersion>preview</LangVersion>
+    <WarningLevel>9999</WarningLevel>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   
   <Import Project="Properties\Material-You-Chess.Build.props.user" />
@@ -82,24 +82,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FirebaseUI" Version="1.0.0" />
+
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.50" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.50" />
     <PackageReference Include="System.Text.Json" Version="9.0.3" />
 
     <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.2" />
+    <PackageReference Include="Xamarin.AndroidX.Core.Animation" Version="1.0.0.5" />
 
     <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
     <PackageReference Include="Xamarin.Firebase.AppCheck.Debug" Version="118.0.0.4" />
     <PackageReference Include="Xamarin.Firebase.AppCheck.PlayIntegrity" Version="118.0.0.4" />
-
-    <!--<PackageReference Include="Xamarin.Firebase.Database" Version="121.0.0.4" />-->
-    <!--<PackageReference Include="Xamarin.Firebase.Firestore" Version="125.0.0.1" />-->
-
     <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
     <PackageReference Include="Xamarin.Firebase.Storage" Version="121.0.1.2" />
-    <!--<PackageReference Include="Xamarin.Firebase.Firestore" Version="125.1.2" />-->
-    <!--<PackageReference Include="Xamarin.Firebase.Database" Version="121.0.0.4" />-->
 
     <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.11" />
     <PackageReference Include="Xamarin.Android.Glide.AVIF.Integration" Version="4.16.0.11" />
@@ -126,13 +123,5 @@
 
     <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0" />
     <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\FirebaseUI\FirebaseUI\FirebaseUI.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="App\Common\Permissions\" />
   </ItemGroup>
 </Project>

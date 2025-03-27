@@ -12,13 +12,13 @@ namespace Chess.Game;
 public class ChessGame
 {
     public static ChessGame? Instance { get; set; }
+
     public IChessActivity Activity;
     public White WhitePlayer { get; set; }
     public Black BlackPlayer { get; set; }
 
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? ClientIsWhite;
-    private int Turn = 1;
 
     public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
     public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
@@ -101,13 +101,13 @@ public class ChessGame
         switch (this.ClientIsWhite)
         {
             case false:
-                this.WhitePlayer = new White(activity.ConnectedClient, this);
-                this.BlackPlayer = new Black(activity.Client, this);
+                this.WhitePlayer = new White(this, activity.ConnectedClient);
+                this.BlackPlayer = new Black(this, activity.Client);
                 break;
 
             default:
-                this.WhitePlayer = new White(activity.Client, this);
-                this.BlackPlayer = new Black(activity.ConnectedClient, this);
+                this.WhitePlayer = new White(this, activity.Client);
+                this.BlackPlayer = new Black(this, activity.ConnectedClient);
                 break;
         }
 
@@ -132,12 +132,23 @@ public class ChessGame
 
     public void PlayMove(Move move, bool isSender)
     {
-        if (isSender)
-            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
+        if (!isSender)
+        {
+            this.PlayMove(move);
+            return;
+        }
 
+        this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
+        this.PlayMove(move);
+    }
+
+    private void PlayMove(Move move)
+    {
         this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
-
         this.Player.Selected!.Move(move, this);
+        this.Player.Selected = null;
+        this.Player.LastMove = move;
+
         // Update Our Player Pieces state if it is needed
         if (move?.Origin is SpecialPiece piece)
             piece.Update();
@@ -148,22 +159,11 @@ public class ChessGame
             castle.Rook?.Move(castle.PlayRook);
         }
 
-        // Update Enemy Player Pieces state if it is needed
-        this.Enemy.LastMove?.Unselect();
-        if (this.Enemy.LastMove?.Origin is SpecialPiece enemyPiece)
-        {
-            enemyPiece.Update();
-        }
+        this.Enemy.LastMove?.Origin.Update();
+        this.Enemy.LastMove = null;
 
-        this.Player.Selected = null;
-        this.Player.LastMove = move;
-
-        // Update who is the current player 
         this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
     }
-
-    /// <returns> true if an enemy piece can capture a piece that would be placed on the given space</returns>
-    public static bool IsThreateningSpace(BoardSpace Space, ref List<Move> enemyMoves) => enemyMoves.FirstOrDefault(move => move.Destination == Space) != null;
 
     public void OnClick(object? sender, EventArgs args)
     {
@@ -193,6 +193,7 @@ public class ChessGame
                     this.Player.Selected = Piece;
                 else
                     this.Player.Selected = null;
+
                 return;
             }
         }
@@ -202,10 +203,7 @@ public class ChessGame
 
         var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
-        {
-            this.Player.Selected = null;
             return;
-        }
 
         this.PlayMove(move, true);
     }

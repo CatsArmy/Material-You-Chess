@@ -1,6 +1,4 @@
-﻿using Chess.Game.Moves;
-
-namespace Chess.Game.Board;
+﻿namespace Chess.Game.Board;
 
 public class SpecialPiece(int id, BoardSpace space) : BoardPiece(id, space)
 {

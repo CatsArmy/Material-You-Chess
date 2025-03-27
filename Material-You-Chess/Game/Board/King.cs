@@ -1,4 +1,4 @@
-﻿using Chess.App;
+﻿using Chess.App.Common.Extensions;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
@@ -38,10 +38,9 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
         ChessGame.Instance = null;
     }
 
-    public override List<Move> Moves(ChessGame game)
+    public List<Move> RegularMoves(ChessGame game)
     {
-        var moves = base.Moves(game);
-        #region Regualar Moves
+        var moves = (List<Move>)[];
         var up = this.Space?.Up(game.Board);
         if (up != null)
         {
@@ -113,15 +112,32 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
             else if (bottomRight.Piece(game.AllPieces)?.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
-        #endregion
 
-        if (this.HasMoved || game.Player!.Rook1!.HasMoved && game.Player!.Rook2!.HasMoved)
+        return moves;
+    }
+
+    public override List<Move> Moves(ChessGame game)
+    {
+        var moves = base.Moves(game);
+        moves.AddRange(this.RegularMoves(game));
+
+        if (this.HasMoved)
             return moves;
 
-        List<Move> enemyMoves = [];
-        foreach (var piece in game.Enemy!.Pieces.Values)
-            enemyMoves.AddRange(piece.Moves(game));
-        enemyMoves = [.. moves.Where(move => move is not MoveOnly)];
+        var enemyMoves = (List<Move>)[];
+        foreach (var enemyPiece in game.Enemy!.Pieces.Values)
+        {
+            if (enemyPiece is King king)
+            {
+                enemyMoves.AddRange(king.RegularMoves(game));
+                continue;
+            }
+
+            enemyMoves.AddRange(enemyPiece.Moves(game));
+        }
+
+        //Filter by moves that can potentially threaten us
+        //enemyMoves = [.. moves.Where(move => move is not MoveOnly)];
 
         var rank = this.Space!.Rank;
         if (!game.Player!.Rook1!.HasMoved) //Rook1 == Queen Side
@@ -130,7 +146,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 
             var inDanger = false;
             foreach (var file in files)
-                if (ChessGame.IsThreateningSpace(game.Board[(file, rank)], ref enemyMoves))
+                if (game.Board[(file, rank)].IsThreateningSpace(ref enemyMoves))
                     inDanger = true;
 
             if (!inDanger)
@@ -143,7 +159,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 
             var inDanger = false;
             foreach (var file in files)
-                if (ChessGame.IsThreateningSpace(game.Board[(file, rank)], ref enemyMoves))
+                if (game.Board[(file, rank)].IsThreateningSpace(ref enemyMoves))
                     inDanger = true;
 
             if (!inDanger)

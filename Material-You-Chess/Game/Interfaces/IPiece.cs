@@ -6,18 +6,30 @@ namespace Chess.Game.Interfaces;
 
 public interface IPiece
 {
-    [JsonIgnore] public ImageView? PieceView { get; set; }
+    [JsonIgnore] ImageView? PieceView { get; set; }
+    BoardSpace Space { get; set; }
+    int Id { get; }
+    bool IsWhite { get; }
+    (string prefix, int count) Index { get; }
+    char Abbreviation { get; }
+    string Prefix { get; }
+    int Count { get; }
+    BoardSpace? LastSpace { get; set; }
 
-    public BoardSpace Space { get; set; }
+    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Origin"/> </summary>
+    /// <remarks> <see langword="this"/> is not the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
+    /// <param name="destination"> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </param>
+    void Capture(BoardPiece destination, ChessGame game);
 
-    public int Id { get; }
+    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Destination"/> </summary>
+    /// <remarks> <see langword="this"/> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
+    void Capture(ChessGame game);
 
-    public bool IsWhite { get; }
+    void Move(Move destination, ChessGame game);
 
-    public (string prefix, int count) Index { get; }
-
-    public char Abbreviation { get; }
-
-    public void Move(Move destination, ChessGame game);
-    public void Update();
+    /// <remarks> Visually moves the piece </remarks>
+    /// <summary> <see langword="this"/> is the <see cref="BoardPiece"/> that will be moved to the <paramref name="move"/> </summary>
+    void Move(Move move);
+    List<Move> Moves(ChessGame game);
+    void Update();
 }

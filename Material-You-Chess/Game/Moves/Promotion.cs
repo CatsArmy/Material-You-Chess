@@ -1,4 +1,5 @@
-﻿using Chess.Game.Board;
+﻿using System.Diagnostics.CodeAnalysis;
+using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
@@ -10,12 +11,7 @@ public class Promotion(Pawn origin, BoardSpace destination, SerializedType? prom
         : this(origin, destination, promoteTo: new(typeToPromoteTo)) { }
 }
 
-
-/// Type defines operator == or operator != but does not override Object.GetHashCode()
-/// Type defines operator == or operator != but does not override Object.Equals(object o)
-#pragma warning disable CS0660, CS0661 
 public readonly struct SerializedType
-#pragma warning restore CS0660, CS0661
 {
     public string Type { get; }
 
@@ -25,13 +21,11 @@ public readonly struct SerializedType
     public static bool operator !=(SerializedType serialized, Type type) => serialized.Type != $"{type}";
     public static bool operator !=(Type type, SerializedType serialized) => serialized.Type != $"{type}";
 
-    public SerializedType(string type)
-    {
-        Type = type;
-    }
+    public SerializedType(string type) => this.Type = type;
 
-    public SerializedType(Type type)
-    {
-        Type = $"{type}";
-    }
+    public SerializedType(Type type) => this.Type = $"{type}";
+
+    public override bool Equals([NotNullWhen(true)] object? obj) => base.Equals(obj);
+
+    public override int GetHashCode() => base.GetHashCode();
 }

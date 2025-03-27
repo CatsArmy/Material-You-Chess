@@ -10,5 +10,5 @@ public interface IMove
 
     public void IndicateMoveable();
 
-    public void IndicateUnmovable();
+    public void UnindicateMoveable();
 }

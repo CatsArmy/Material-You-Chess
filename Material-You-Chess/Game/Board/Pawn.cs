@@ -2,6 +2,49 @@
 
 namespace Chess.Game.Board;
 
+public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
+{
+    public override char Abbreviation => 'P';
+    public bool EnPassantCapturable = false;
+
+    public override void Move(Move move, ChessGame game)
+    {
+        if (move is DoubleMove)
+        {
+            this.EnPassantCapturable = true;
+        }
+
+        else if (move is Promotion promotion)
+        {
+            if (promotion.PromoteTo is null)
+            {
+                game.Player!.PromotionDialog.Show(game, this, promotion);
+                return;
+            }
+
+            this.Promote(game, promotion);
+        }
+
+        base.Move(move, game);
+    }
+
+    public override void Capture(ChessGame game)
+    {
+        base.Capture(game);
+        game.Enemy!.Pawns.Remove(this);
+    }
+
+    public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);
+
+    public override void Update()
+    {
+        if (this.HasMoved)
+            this.EnPassantCapturable = false;
+
+        base.Update();
+    }
+}
+
 public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 {
     public override string Prefix => $"w{nameof(Pawn)}";
@@ -220,47 +263,5 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
             Piece.Capture(capture.Piece, game);
 
         base.Promote(game, move);
-    }
-}
-
-public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
-{
-    public bool EnPassantCapturable = false;
-    public override char Abbreviation => 'P';
-    public override void Move(Move move, ChessGame game)
-    {
-        if (move is DoubleMove)
-        {
-            this.EnPassantCapturable = true;
-        }
-
-        else if (move is Promotion promotion)
-        {
-            if (promotion.PromoteTo is null)
-            {
-                game.Player!.PromotionDialog.Show(game, this, promotion);
-                return;
-            }
-
-            this.Promote(game, promotion);
-        }
-
-        base.Move(move, game);
-    }
-
-    public override void Capture(ChessGame game)
-    {
-        base.Capture(game);
-        game.Enemy!.Pawns.Remove(this);
-    }
-
-    public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);
-
-    public override void Update()
-    {
-        if (this.HasMoved)
-            this.EnPassantCapturable = false;
-
-        base.Update();
     }
 }

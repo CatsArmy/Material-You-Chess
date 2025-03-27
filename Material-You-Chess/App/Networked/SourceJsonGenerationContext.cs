@@ -24,22 +24,22 @@ internal partial class SourceJsonGenerationContext : JsonSerializerContext;
 [JsonDerivedType(typeof(WhitePlayerClient), nameof(WhitePlayerClient))]
 [JsonDerivedType(typeof(BlackPlayerClient), nameof(BlackPlayerClient))]
 [JsonDerivedType(typeof(FirebaseUserClient), nameof(FirebaseUserClient))]
-public class FirebaseUserClient(string Username, string? Uid) : UserClient(Username)
+public class FirebaseUserClient(string Username, string Uid) : UserClient(Username)
 {
-    public FirebaseUserClient(FirebaseUser user) : this(user.DisplayName!, user.Uid) { }
-    public readonly string? Uid = Uid;
+    public FirebaseUserClient(FirebaseUser user) : this(user.DisplayName ?? throw new("Missing display name"), user.Uid) { }
+    public readonly string Uid = Uid;
 
     public RequestBuilder LoadProfilePicture(RequestManager glide) =>
-        glide.Load(FirebaseStorage.Instance.GetReference(this.Uid!))
+        glide.Load(FirebaseStorage.Instance.GetReference(this.Uid))
         .Error(Resource.Drawable.outline_account_circle_24);
 }
 
-public class WhitePlayerClient(string Username, string? Uid) : FirebaseUserClient(Username, Uid)
+public class WhitePlayerClient(string Username, string Uid) : FirebaseUserClient(Username, Uid)
 {
-    public WhitePlayerClient(FirebaseUser user) : this(user.DisplayName!, user.Uid) { }
+    public WhitePlayerClient(FirebaseUser user) : this(user.DisplayName ?? "White Player", user.Uid) { }
 }
 
-public class BlackPlayerClient(string Username, string? Uid) : FirebaseUserClient(Username, Uid)
+public class BlackPlayerClient(string Username, string Uid) : FirebaseUserClient(Username, Uid)
 {
-    public BlackPlayerClient(FirebaseUser user) : this(user.DisplayName!, user.Uid) { }
+    public BlackPlayerClient(FirebaseUser user) : this(user.DisplayName ?? "Black Player", user.Uid) { }
 }

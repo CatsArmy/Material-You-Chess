@@ -6,8 +6,6 @@ using Chess.App.Common;
 using Chess.App.Common.Extensions;
 using Chess.Dialogs;
 using Chess.Game;
-using Chess.Game.Board;
-using Chess.Game.Player;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -19,7 +17,6 @@ public class ChessActivity : AppCompatActivity, IChessActivity
 {
     public Context? Context => this;
 
-    public required ChessGame Game { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -27,6 +24,7 @@ public class ChessActivity : AppCompatActivity, IChessActivity
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
 
+    public required ChessGame Game { get; set; }
     public required UserClient Client { get; set; } = new("White Player");
     public required UserClient ConnectedClient { get; set; } = new("Black Player");
 

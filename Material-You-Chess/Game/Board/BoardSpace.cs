@@ -63,7 +63,6 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
         }
 
         this.SpaceView?.SetImageLevel(SelectSpace);
-
     }
 
     public bool IsSelectedMove() => this.SpaceView?.Drawable?.Level == SelectMove;

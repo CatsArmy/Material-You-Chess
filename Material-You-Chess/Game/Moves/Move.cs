@@ -26,7 +26,7 @@ public class Move(BoardPiece origin, BoardSpace destination) : IMove
         this.Origin.Space.IndicateMoveable();
     }
 
-    public virtual void IndicateUnmovable()
+    public virtual void UnindicateMoveable()
     {
         this.Destination.IndicateUnmovable();
         this.Origin.Space.IndicateUnmovable();

@@ -22,7 +22,7 @@ public class MainActivity : AppCompatActivity
 {
     public static MainActivity? Instance { get; set; }
     public NavigationBarView? NavigationBar { get; set; }
-    public IMenuItem? PlayItem { get; set; }
+    public IMenuItem? MainItem { get; set; }
     public IMenuItem? ProfileItem { get; set; }
     public FragmentContainerView? FragmentContainer { get; set; }
     public ActivityResultLauncher? SignInLauncher;
@@ -44,7 +44,7 @@ public class MainActivity : AppCompatActivity
         this.SetContentView(Resource.Layout._main_activity_);
         this.NavigationBar = base.FindViewById<NavigationBarView>(Resource.Id.navigation_bar);
         this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
-        this.PlayItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_1);
+        this.MainItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_1);
         this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_2);
         this.NavigationBar!.ItemSelected += this.NavigationBar_ItemSelected;
         this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
@@ -66,7 +66,7 @@ public class MainActivity : AppCompatActivity
         if (this.NavigationBar?.SelectedItemId == e.Item.ItemId)
             return;
 
-        if (e.Item.ItemId == this.PlayItem?.ItemId)
+        if (e.Item.ItemId == this.MainItem?.ItemId)
         {
             this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
                 .Replace(this.FragmentContainer!.Id, new MainFragment()!, nameof(MainFragment)).Commit();
@@ -124,8 +124,7 @@ public class MainActivity : AppCompatActivity
         // Successfully signed in
         if (resultCode == ((int)Result.Ok))
         {
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
+            this.NavigationBar!.SelectedItemId = this.ProfileItem!.ItemId;
         }
 
         //Sign in failed
@@ -142,16 +141,14 @@ public class MainActivity : AppCompatActivity
 
             // User pressed back button
             Snackbar.Make(this.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
+            this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
             return;
         }
 
         if (response?.Error?.ErrorCode == ErrorCodes.NoNetwork)
         {
             Snackbar.Make(this.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
+            this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
             return;
         }
 
