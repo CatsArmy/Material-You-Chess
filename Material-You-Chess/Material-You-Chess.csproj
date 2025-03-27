@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages</RestoreAdditionalProjectSources>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
     <AnalysisLevel>preview</AnalysisLevel>
@@ -36,10 +35,21 @@
       <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
     -->
 
+    <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Release</RestoreAdditionalProjectSources>
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
-    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
     <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
+    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <AndroidEnableProguard>True</AndroidEnableProguard>
+    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+    <AndroidEnableDesugar>True</AndroidEnableDesugar>
+
+    <!--New properties-->
+    <AndroidDexTool>d8</AndroidDexTool>
+    <AndroidLinkTool>r8</AndroidLinkTool>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -53,27 +63,22 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>False</Optimize>
-    <DebugSymbols>True</DebugSymbols>
-    <StripSymbols>False</StripSymbols>
-    <DebugType>full</DebugType>
-    <DebugType>embedded</DebugType>
-    <AndroidManagedSymbols>True</AndroidManagedSymbols>
-    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+    <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Debug</RestoreAdditionalProjectSources>
     <RunAOTCompilation>False</RunAOTCompilation>
     <PublishTrimmed>False</PublishTrimmed>
+    <Optimize>False</Optimize>
+    <StripSymbols>False</StripSymbols>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
+    <AndroidIncludeDebugSymbols>True</AndroidIncludeDebugSymbols>
+    <AndroidManagedSymbols>True</AndroidManagedSymbols>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-
-    <SignAssembly>True</SignAssembly>
-    <AndroidUseApkSigner>True</AndroidUseApkSigner>
-    <AndroidKeyStore>True</AndroidKeyStore>
-    <AndroidSigningKeyStore>catsarmy.keystore</AndroidSigningKeyStore>
-    <AndroidSigningKeyAlias>catsarmy</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass>$(AndroidSigningPassword)</AndroidSigningKeyPass>
-    <AndroidSigningStorePass>$(AndroidSigningPassword)</AndroidSigningStorePass>  
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">        
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AndroidIncludeDebugSymbols>False</AndroidIncludeDebugSymbols>
     <RunAOTCompilation>True</RunAOTCompilation>
     <IsAotCompatible>True</IsAotCompatible>
     <DebugType>portable</DebugType>
@@ -85,6 +90,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+      <ProguardConfiguration>
+      </ProguardConfiguration>
+    -->
+
     <PackageReference Include="FirebaseUI" Version="1.0.0" />
 
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.50" />
