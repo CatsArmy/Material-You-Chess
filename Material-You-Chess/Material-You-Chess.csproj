@@ -28,28 +28,17 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!--
-      <EnableLLVM>False</EnableLLVM>
-      <AndroidEnableProfiler>False</AndroidEnableProfiler>
-      <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-      <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
-    -->
-
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableProfiler>False</AndroidEnableProfiler>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
     <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Release</RestoreAdditionalProjectSources>
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
-    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
-    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
-    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <AndroidEnableProguard>True</AndroidEnableProguard>
-    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-    <AndroidEnableDesugar>True</AndroidEnableDesugar>
 
-    <!--New properties-->
-    <AndroidDexTool>d8</AndroidDexTool>
-    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
+    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -90,11 +79,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--
-      <ProguardConfiguration>
-      </ProguardConfiguration>
-    -->
-
     <PackageReference Include="FirebaseUI" Version="1.0.0" />
 
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.50" />

@@ -1526,9 +1526,7 @@
         android:id="@+id/standard_bottom_sheet"
         android:layout_width="640dp"
         android:layout_height="0dp"
-        android:layout_marginStart="56dp"
         android:layout_marginTop="56dp"
-        android:layout_marginEnd="56dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -1543,8 +1541,7 @@
             android:layout_height="match_parent"
             app:behavior_fitToContents="true"
             app:behavior_saveFlags="all"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-            tools:layout_gravity="top">
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
 			<!-- Drag handle for accessibility -->
 			<com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -1558,66 +1555,179 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-
 			<!-- Bottom sheet contents -->
-			<com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/SearchingIndicator"
-                style="@style/Widget.Material3.CircularProgressIndicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
-                android:indeterminate="true"
-                android:visibility="invisible"
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/matchmaking"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/drag_handle" />
+                app:layout_constraintTop_toTopOf="@+id/drag_handle"
+                tools:visibility="gone">
 
-			<TextView
-                android:id="@+id/SearchingText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:autoSizeTextType="uniform"
-                android:text="Please select a matchmaking preference"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/SearchingIndicator" />
-
-			<com.google.android.material.chip.ChipGroup
-                android:id="@+id/matchmaking_pref"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/SearchingText"
-                app:selectionRequired="true"
-                app:singleSelection="true">
-
-				<com.google.android.material.chip.Chip
-                    android:id="@+id/white_chip"
-                    style="@style/Widget.Material3.Chip.Assist"
+				<androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/drag_handle_guideline1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="White"
-                    app:checkedIconVisible="true"
-                    app:chipIcon="@drawable/king_white" />
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="48dp" />
 
-				<com.google.android.material.chip.Chip
-                    android:id="@+id/black_chip"
-                    style="@style/Widget.Material3.Chip.Assist"
+				<com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/SearchingIndicator"
+                    style="@style/Widget.Material3.CircularProgressIndicator"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checkable="true"
-                    android:text="Black"
-                    app:checkedIconVisible="true"
-                    app:chipIcon="@drawable/king_black"
-                    app:ensureMinTouchTargetSize="true" />
-			</com.google.android.material.chip.ChipGroup>
+                    android:layout_marginTop="48dp"
+                    android:indeterminate="true"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/drag_handle_guideline1" />
+
+				<TextView
+                    android:id="@+id/SearchingText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:autoSizeTextType="uniform"
+                    android:text="Please select a matchmaking preference"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/SearchingIndicator" />
+
+				<com.google.android.material.chip.ChipGroup
+                    android:id="@+id/matchmaking_pref"
+                    style="@style/Widget.Material3.ChipGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/SearchingText"
+                    app:singleSelection="true">
+
+					<com.google.android.material.chip.Chip
+                        android:id="@+id/white_chip"
+                        style="@style/Widget.Material3.Chip.Input.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="White"
+                        app:checkedIcon="@drawable/king_white"
+                        app:chipIcon="@drawable/king_white" />
+
+					<com.google.android.material.chip.Chip
+                        android:id="@+id/black_chip"
+                        style="@style/Widget.Material3.Chip.Input.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Black"
+                        app:checkedIcon="@drawable/king_black"
+                        app:chipIcon="@drawable/king_black" />
+				</com.google.android.material.chip.ChipGroup>
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
+			<androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/game_over"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/drag_handle">
+
+				<androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/drag_handle_guideline2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_begin="48dp" />
+
+				<androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/displayStart_BS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="24dp" />
+
+				<androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/displayEnd_BS"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="24dp" />
+
+				<com.google.android.material.card.MaterialCardView
+                    android:id="@+id/winningPlayerCard"
+                    style="?attr/materialCardViewFilledStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/displayEnd_BS"
+                    app:layout_constraintStart_toStartOf="@+id/displayStart_BS"
+                    app:layout_constraintTop_toTopOf="@+id/drag_handle_guideline2">
+
+					<androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+						<com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/winningPlayer"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:clickable="false"
+                            android:scaleType="centerCrop"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+                            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+                            app:srcCompat="@drawable/outline_account_circle_24" />
+
+						<ImageView
+                            android:id="@+id/winningPlayerIndicator"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/king_white" />
+
+						<TextView
+                            android:id="@+id/winningPlayerUsername"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="8dp"
+                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            app:layout_constraintEnd_toStartOf="@+id/winningPlayerIndicator"
+                            app:layout_constraintHorizontal_bias="0.0"
+                            app:layout_constraintStart_toEndOf="@+id/winningPlayer"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="{Winner}" />
+
+						<TextView
+                            android:id="@+id/winnerDescription"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="8dp"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            app:layout_constraintEnd_toStartOf="@+id/winningPlayerIndicator"
+                            app:layout_constraintStart_toEndOf="@+id/winningPlayer"
+                            app:layout_constraintTop_toBottomOf="@id/winningPlayerUsername"
+                            tools:text="Wins, {Loser} loses" />
+
+					</androidx.constraintlayout.widget.ConstraintLayout>
+				</com.google.android.material.card.MaterialCardView>
+			</androidx.constraintlayout.widget.ConstraintLayout>
+
 		</androidx.constraintlayout.widget.ConstraintLayout>
-
 	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 	<androidx.constraintlayout.widget.Guideline
