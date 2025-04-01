@@ -33,9 +33,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
             piece.Space.SpaceView!.Clickable = false;
 
         //display and handle the end of the game
-        game.WinnerToast.Show();
-
-        ChessGame.Instance = null;
+        game.Activity.EndGame(game.Player, game.Enemy);
     }
 
     public List<Move> RegularMoves(ChessGame game)

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.Game.Interfaces;
+using Java.Lang;
 
 namespace Chess.Game.Board;
 
@@ -164,6 +165,7 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
         return this.Down(board);
     }
 
+    public BoardPiece? Piece(ChessGame game) => this.Piece(game.AllPieces);
     public BoardPiece? Piece(Dictionary<(string Prefix, int Count), BoardPiece> boardPieces)
         => boardPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
 }

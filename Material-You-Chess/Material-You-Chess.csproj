@@ -35,8 +35,8 @@
     <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Release</RestoreAdditionalProjectSources>
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
 
-    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
-    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
+ <!--   <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
+    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>-->
     <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>

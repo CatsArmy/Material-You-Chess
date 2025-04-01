@@ -1,7 +1,11 @@
+using System;
 using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
+using Android.Nfc;
+using Android.Views;
 using Chess.App;
+using Chess.App.Common;
 using Chess.App.Networked;
 using Chess.Game.Board;
 using Chess.Game.Moves;
@@ -20,9 +24,8 @@ public class ChessGame
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? ClientIsWhite;
 
-    public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
-    public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
-    public Toast WinnerToast => Toast.MakeText(this.Activity.Context, $"{this.Player!.Name} wins", ToastLength.Long)!;
+    public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; }
+    public Dictionary<(char file, int rank), BoardSpace> Board { get; }
 
     public IPlayer Player => this.CurrentPlayerIsWhite switch
     {
@@ -36,6 +39,18 @@ public class ChessGame
         false => this.BlackPlayer
     };
 
+    public void BindPiece(BoardPiece piece)
+    {
+        piece.PieceView!.Click += this.OnClick;
+        piece.PieceView.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
+        piece.PieceView!.Clickable = true;
+        if (piece.PieceView.Handler is null)
+        {
+            Logger.Error("piece.PieceView.Handler is null");
+        }
+        this.AllPieces[piece.Index] = piece;
+    }
+
     public BoardSpace BindSpace(int id, int rank, char file)
     {
         const string IsWhite = "IsWhite";
@@ -48,7 +63,8 @@ public class ChessGame
             IsBlack => false,
             _ => throw new Exception($"{this.Activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
         };
-        space!.Click += OnClick;
+
+        space!.Click += this.OnClick;
         space!.Tag = new Java.Lang.String($"{file}{rank}");
         space!.Clickable = true;
 
@@ -58,6 +74,8 @@ public class ChessGame
     public ChessGame(IChessActivity activity)
     {
         ChessGame.Instance = this;
+        this.Board = [];
+        this.AllPieces = [];
         this.Activity = activity;
         this.ClientIsWhite = activity.Client switch
         {
@@ -111,23 +129,27 @@ public class ChessGame
                 break;
         }
 
-        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
+        //var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
 
-        foreach (var player in players)
-        {
-            foreach (var kvp in player)
-            {
-                var index = kvp.Key;
-                var piece = kvp.Value;
-                if (this.AllPieces.ContainsKey(index))
-                    continue;
+        //foreach (var player in players)
+        //{
+        //    foreach (var kvp in player)
+        //    {
+        //        var index = kvp.Key;
+        //        var piece = kvp.Value;
+        //        if (this.AllPieces.ContainsKey(index))
+        //            continue;
 
-                piece.PieceView!.Click += this.OnClick;
-                piece.PieceView!.Tag = new Java.Lang.String($"{index.Prefix}{index.Count}");
-                piece.PieceView!.Clickable = true;
-                this.AllPieces[index] = piece;
-            }
-        }
+        //        if (!piece.PieceView!.HasOnClickListeners || piece.PieceView!.Handler is null)
+        //        {
+        //            piece.PieceView!.Click += this.OnClick;
+        //            piece.PieceView!.Clickable = true;
+        //        }
+        //        this.AllPieces[index] = piece;
+        //    }
+        //}
+
+        Logger.Debug("Created game");
     }
 
     public void PlayMove(Move move, bool isSender)
@@ -177,8 +199,8 @@ public class ChessGame
             if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
                 return;
 
-        this.Validate(javaString, out var pIndex, out var sIndex);
-
+        var validate = this.Validate(javaString, out var pIndex, out var sIndex);
+        Logger.Warn($"{nameof(validate)}: {validate}");
         if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
         {
             if (this.Player.Selected == null)
@@ -208,6 +230,72 @@ public class ChessGame
         this.PlayMove(move, true);
     }
 
+    public void OnClickPiece(object? sender, EventArgs args)
+    {
+        if (sender is not ImageView view)
+            return;
+
+        if (this.Player.Pieces.Values.FirstOrDefault(p => p.Space.Id == view.Id) is BoardPiece piece)
+            this.OnClickPiece(piece, args);
+        else if (this.Enemy.Pieces.Values.FirstOrDefault(p => p.Space.Id == view.Id) is BoardPiece enemyPiece)
+            this.OnClickSpace(enemyPiece.Space, args);
+
+    }
+
+    public void OnClickPiece(BoardPiece Piece, EventArgs args)
+    {
+        if (this.ClientIsWhite != null)
+            if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
+                return;
+
+
+        if (this.Player.Selected == null)
+        {
+            this.Player.Selected = Piece;
+            return;
+        }
+
+        if (this.Player.Selected.IsWhite == Piece.IsWhite)
+        {
+            if (this.Player.Selected.Id != Piece.Id)
+                this.Player.Selected = Piece;
+            else
+                this.Player.Selected = null;
+
+            return;
+        }
+    }
+
+    public void OnClickSpace(object? sender, EventArgs args)
+    {
+        if (sender is not ImageView view)
+            return;
+
+        if (this.Board.Values.FirstOrDefault((space) => space.Id == view.Id) is not BoardSpace space)
+            return;
+
+        this.OnClickSpace(space, args);
+    }
+
+    public void OnClickSpace(BoardSpace space, EventArgs args)
+    {
+        if (this.ClientIsWhite != null)
+            if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
+                return;
+
+        if (space.Piece(this) is BoardPiece p)
+        {
+            this.OnClickPiece(p, args);
+            return;
+        }
+
+        var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
+        if (move is null)
+            return;
+
+        this.PlayMove(move, true);
+    }
+
     public bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)
     {
         string tag = Tag.ToString();
@@ -218,17 +306,17 @@ public class ChessGame
         //lowercase &   len <= 2|   unknown |   unknown | uppercase &   len > 2 
 
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
-            return false;
+            return false; //invalid tag
 
-        if (this.Player == null || this.Enemy == null)
-            return false;
-
+        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
         //----------+-----------+-----------+-----------+-----------+-----------
         //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
         {
             if (!this.AllPieces.TryGetValue(pIndex, out BoardPiece? value))
-                return false;
+            {
+                return true; // space only
+            }
 
             sIndex = value.Space.Index;
         }

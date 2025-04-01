@@ -1,22 +1,32 @@
 ﻿using Android.Gms.Nearby.Connection;
 using Android.Views;
+using AndroidX.Activity;
+using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common.Extensions;
 using Chess.App.Common.Permissions;
 using Chess.App.Nearby;
+using Chess.Game;
+using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
+using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
+using Google.Android.Material.Snackbar;
 
 namespace Chess.App.Networked;
 
-public abstract class LobbyBottomSheet : ConnectionsActivity
+public partial class NetworkedChessActivity : ConnectionsActivity
 {
+    public ChessBottomSheet? ChessBottomSheet { get; set; }
     public BottomSheetBehavior? BottomSheet { get; set; }
     public CoordinatorLayout? StandardBottomSheet { get; set; }
     public ConstraintLayout? BottomSheetLayout { get; set; }
-    public Callback? Callback { get; set; }
+    public ConstraintLayout? GameOverLayout { get; set; }
+    public ConstraintLayout? MatchmakingLayout { get; set; }
+
+
     public TextView? SearchingText { get; set; }
     public CircularProgressIndicator? SearchingIndicator { get; set; }
     public ChipGroup? MatchmakingPreferences { get; set; }
@@ -72,12 +82,6 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
     {
         this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
         this.PermissionManager.RequestAccess();
-        this.Callback = new Callback(this);
-        this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
-        this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
-        this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
-        this.BottomSheet!.AddBottomSheetCallback(this.Callback);
-        this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
 
         this.SearchingIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator);
         this.SearchingText = base.FindViewById<TextView>(Resource.Id.SearchingText);
@@ -101,6 +105,22 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
                 this.OnSelectBlack();
             }
         };
+    }
+
+    public void Hide()
+    {
+        this.MatchmakingLayout!.Visibility = ViewStates.Gone;
+        this.GameOverLayout!.Visibility = ViewStates.Gone;
+        this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
+    }
+
+    public void Show()
+    {
+        this.GameOverLayout!.Visibility = ViewStates.Gone;
+        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
+        this.MatchmakingLayout!.Visibility = ViewStates.Visible;
+        this.BottomSheet!.AddBottomSheetCallback(this.Callback!);
+        this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
     }
 
     public void OnStateChanged(State currentState, State requestedState)
@@ -144,5 +164,32 @@ public abstract class LobbyBottomSheet : ConnectionsActivity
         //We found an advertiser!
         this.StopDiscovering();
         this.ConnectToEndpoint(endpoint);
+    }
+}
+
+public class ChessBottomSheet(IChessActivity activity)
+{
+    public void Show(IPlayer winner, IPlayer loser)
+    {
+        activity.GameOverLayout!.Visibility = ViewStates.Visible;
+        activity.StandardBottomSheet!.Visibility = ViewStates.Visible;
+        activity.MatchmakingLayout!.Visibility = ViewStates.Gone;
+        activity.BottomSheet!.AddBottomSheetCallback(activity.Callback!);
+        activity.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
+
+        activity.WinnerUsername!.Text = winner.Name;
+        activity.WinnerDescription!.Text = $"{winner.Name} Wins, {loser.Name} loses";
+        switch (winner)
+        {
+            case Black:
+                activity.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
+                activity.Indicator?.SetImageResource(Resource.Drawable.king_black);
+                break;
+            default:
+                activity.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);
+                break;
+        }
+
+        activity.Home!.Click += (_, _) => activity.Finish();
     }
 }

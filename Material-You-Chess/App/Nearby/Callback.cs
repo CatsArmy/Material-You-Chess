@@ -5,7 +5,7 @@ using Google.Android.Material.BottomSheet;
 
 namespace Chess.App.Nearby;
 
-public class Callback(LobbyBottomSheet instance) : BottomSheetBehavior.BottomSheetCallback()
+public class BottomSheetCallback(IChessActivity instance) : BottomSheetBehavior.BottomSheetCallback()
 {
     public override void OnSlide(View bottomSheet, float newState) { }
 
@@ -34,9 +34,4 @@ public class Callback(LobbyBottomSheet instance) : BottomSheetBehavior.BottomShe
     }
 
     public virtual void OnStateSettling(View bottomSheet) { }
-}
-
-public class BackCallback(LobbyBottomSheet instance) : OnBackPressedCallback(true)
-{
-    public override void HandleOnBackPressed() => Enabled = !instance.IsConnected;
 }
