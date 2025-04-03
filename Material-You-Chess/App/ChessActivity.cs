@@ -91,14 +91,4 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         this.ChessBottomSheet = new(this);
         this.Game = new(this);
     }
-
-    protected override void OnDestroy()
-    {
-        this.Game?.Board?.Clear();
-        this.Game?.AllPieces?.Clear();
-        this.Game?.BlackPlayer.UnbindPieces();
-        this.Game?.WhitePlayer.UnbindPieces();
-        ChessGame.Instance = null;
-        base.OnDestroy();
-    }
 }

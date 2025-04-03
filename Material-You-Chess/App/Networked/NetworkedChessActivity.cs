@@ -2,7 +2,6 @@ using System.Text.Json;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
-using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
@@ -91,38 +90,27 @@ public partial class NetworkedChessActivity : IChessActivity
 
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
-#if DEBUG
-        Toast.MakeText(this, $"DEBUG: Connected to Client: {{id}}::{endpoint.Name}", ToastLength.Short)?.Show();
-#endif
-        var firebaseUserClient = FirebaseAuth.Instance?.CurrentUser;
+        var firebaseUserClient = this.CurrentUser;
         if (this.State == State.Advertising)
         {
-#if DEBUG
             Logger.Verbose("Client is white player");
-#endif
             var client = new WhitePlayerClient(firebaseUserClient!);
             client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
             this.WhitePlayerUsername!.Text = client!.Username;
             this.Client = client;
-
-            //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
         }
 
         if (this.State == State.Discovering)
         {
-#if DEBUG
             Logger.Verbose("Client is black player");
-#endif
             var client = new BlackPlayerClient(firebaseUserClient!);
             client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
             this.BlackPlayerUsername!.Text = client.Username;
             this.Client = client;
-
-            //Init handshake
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
         }
 
+        //Init handshake
+        this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
         this.State = State.Idle;
     }
 
@@ -177,15 +165,5 @@ public partial class NetworkedChessActivity : IChessActivity
                 Logger.Warn("Unknown state something went wrong");
                 break;
         }
-    }
-
-    protected override void OnDestroy()
-    {
-        this.Game?.Board?.Clear();
-        this.Game?.AllPieces?.Clear();
-        this.Game?.BlackPlayer.UnbindPieces();
-        this.Game?.WhitePlayer.UnbindPieces();
-        ChessGame.Instance = null;
-        base.OnDestroy();
     }
 }

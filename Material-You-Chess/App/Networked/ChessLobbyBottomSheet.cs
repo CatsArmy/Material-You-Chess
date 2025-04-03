@@ -1,31 +1,27 @@
 ﻿using Android.Gms.Nearby.Connection;
 using Android.Views;
-using AndroidX.Activity;
-using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common.Extensions;
 using Chess.App.Common.Permissions;
 using Chess.App.Nearby;
-using Chess.Game;
 using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
-using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
-using Google.Android.Material.Snackbar;
 
 namespace Chess.App.Networked;
 
 public partial class NetworkedChessActivity : ConnectionsActivity
 {
+    private NearbyConnections? PermissionManager;
+
     public ChessBottomSheet? ChessBottomSheet { get; set; }
     public BottomSheetBehavior? BottomSheet { get; set; }
     public CoordinatorLayout? StandardBottomSheet { get; set; }
     public ConstraintLayout? BottomSheetLayout { get; set; }
     public ConstraintLayout? GameOverLayout { get; set; }
     public ConstraintLayout? MatchmakingLayout { get; set; }
-
 
     public TextView? SearchingText { get; set; }
     public CircularProgressIndicator? SearchingIndicator { get; set; }
@@ -41,8 +37,6 @@ public partial class NetworkedChessActivity : ConnectionsActivity
             field = value;
         }
     } = State.Idle;
-
-    private NearbyConnections? PermissionManager;
 
     public virtual void OnSelectNone()
     {

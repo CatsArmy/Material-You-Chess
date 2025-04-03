@@ -1,9 +1,6 @@
-using System;
 using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
-using Android.Nfc;
-using Android.Views;
 using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;
@@ -38,18 +35,6 @@ public class ChessGame
         true => this.WhitePlayer,
         false => this.BlackPlayer
     };
-
-    public void BindPiece(BoardPiece piece)
-    {
-        piece.PieceView!.Click += this.OnClick;
-        piece.PieceView.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
-        piece.PieceView!.Clickable = true;
-        if (piece.PieceView.Handler is null)
-        {
-            Logger.Error("piece.PieceView.Handler is null");
-        }
-        this.AllPieces[piece.Index] = piece;
-    }
 
     public BoardSpace BindSpace(int id, int rank, char file)
     {
@@ -129,25 +114,23 @@ public class ChessGame
                 break;
         }
 
-        //var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
+        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
 
-        //foreach (var player in players)
-        //{
-        //    foreach (var kvp in player)
-        //    {
-        //        var index = kvp.Key;
-        //        var piece = kvp.Value;
-        //        if (this.AllPieces.ContainsKey(index))
-        //            continue;
+        foreach (var player in players)
+        {
+            foreach (var kvp in player)
+            {
+                var index = kvp.Key;
+                var piece = kvp.Value;
+                if (this.AllPieces.ContainsKey(index))
+                    continue;
 
-        //        if (!piece.PieceView!.HasOnClickListeners || piece.PieceView!.Handler is null)
-        //        {
-        //            piece.PieceView!.Click += this.OnClick;
-        //            piece.PieceView!.Clickable = true;
-        //        }
-        //        this.AllPieces[index] = piece;
-        //    }
-        //}
+                piece.PieceView!.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
+                piece.PieceView!.Click += this.OnClick;
+                piece.PieceView!.Clickable = true;
+                this.AllPieces[index] = piece;
+            }
+        }
 
         Logger.Debug("Created game");
     }
@@ -171,8 +154,7 @@ public class ChessGame
         this.Player.Selected = null;
         this.Player.LastMove = move;
 
-        // Update Our Player Pieces state if it is needed
-        if (move?.Origin is SpecialPiece piece)
+        if (move?.Origin is SpecialPiece piece) // Update Our Player Pieces state if it is needed
             piece.Update();
 
         if (move is Castling castle) //the only edge case where the move contains multiple moves
@@ -199,8 +181,7 @@ public class ChessGame
             if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
                 return;
 
-        var validate = this.Validate(javaString, out var pIndex, out var sIndex);
-        Logger.Warn($"{nameof(validate)}: {validate}");
+        this.Validate(javaString, out var pIndex, out var sIndex);
         if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
         {
             if (this.Player.Selected == null)
@@ -215,79 +196,12 @@ public class ChessGame
                     this.Player.Selected = Piece;
                 else
                     this.Player.Selected = null;
-
                 return;
             }
         }
 
         if (!this.Board.TryGetValue(sIndex, out var space))
             return;
-
-        var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
-        if (move is null)
-            return;
-
-        this.PlayMove(move, true);
-    }
-
-    public void OnClickPiece(object? sender, EventArgs args)
-    {
-        if (sender is not ImageView view)
-            return;
-
-        if (this.Player.Pieces.Values.FirstOrDefault(p => p.Space.Id == view.Id) is BoardPiece piece)
-            this.OnClickPiece(piece, args);
-        else if (this.Enemy.Pieces.Values.FirstOrDefault(p => p.Space.Id == view.Id) is BoardPiece enemyPiece)
-            this.OnClickSpace(enemyPiece.Space, args);
-
-    }
-
-    public void OnClickPiece(BoardPiece Piece, EventArgs args)
-    {
-        if (this.ClientIsWhite != null)
-            if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
-                return;
-
-
-        if (this.Player.Selected == null)
-        {
-            this.Player.Selected = Piece;
-            return;
-        }
-
-        if (this.Player.Selected.IsWhite == Piece.IsWhite)
-        {
-            if (this.Player.Selected.Id != Piece.Id)
-                this.Player.Selected = Piece;
-            else
-                this.Player.Selected = null;
-
-            return;
-        }
-    }
-
-    public void OnClickSpace(object? sender, EventArgs args)
-    {
-        if (sender is not ImageView view)
-            return;
-
-        if (this.Board.Values.FirstOrDefault((space) => space.Id == view.Id) is not BoardSpace space)
-            return;
-
-        this.OnClickSpace(space, args);
-    }
-
-    public void OnClickSpace(BoardSpace space, EventArgs args)
-    {
-        if (this.ClientIsWhite != null)
-            if (this.ClientIsWhite != this.CurrentPlayerIsWhite)
-                return;
-
-        if (space.Piece(this) is BoardPiece p)
-        {
-            this.OnClickPiece(p, args);
-            return;
-        }
 
         var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
@@ -314,9 +228,7 @@ public class ChessGame
         if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2))
         {
             if (!this.AllPieces.TryGetValue(pIndex, out BoardPiece? value))
-            {
-                return true; // space only
-            }
+                return true;
 
             sIndex = value.Space.Index;
         }

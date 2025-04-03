@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Chess.App.Common;
+﻿using Chess.App.Common;
 using Chess.Dialogs;
 using Chess.Game.Board;
 using Chess.Game.Moves;
@@ -23,7 +22,6 @@ public class Black(ChessGame game, string username) : IPlayer
     public Bishop? Bishop2 { get; set; }
     public Knight? Knight2 { get; set; }
     public Rook? Rook2 { get; set; }
-    private readonly ImmutableArray<BoardPiece> pieces;
     #endregion
 
     public BoardPiece? Selected
@@ -72,16 +70,6 @@ public class Black(ChessGame game, string username) : IPlayer
             value?.Select();
         }
     }
-    public void UnbindPieces()
-    {
-        this.Pieces.Clear();
-        this.Pawns.Clear();
-        foreach (var piece in this.pieces)
-        {
-            piece.PieceView!.Click -= game.OnClick;
-            piece.PieceView!.Tag = null;
-        }
-    }
 
     public Black(ChessGame game, UserClient client) : this(game, client.Username)
     {
@@ -125,10 +113,5 @@ public class Black(ChessGame game, string username) : IPlayer
             this.Pieces[this.Pawns[i].Index] = this.Pawns[i];
             file++;
         }
-
-        this.pieces = [.. this.Pieces.Values];
-
-        foreach (var piece in this.Pieces.Values)
-            game.BindPiece(piece);
     }
 }

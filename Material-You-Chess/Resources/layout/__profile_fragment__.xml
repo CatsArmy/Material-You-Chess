@@ -46,7 +46,6 @@
         app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_picture"
-        android:text="{Username}"
         tools:text="{Username}" />
 
 	<com.google.android.material.divider.MaterialDivider
@@ -85,13 +84,29 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_text"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:srcCompat="@drawable/outline_account_circle_24" />
+        app:srcCompat="@drawable/outline_account_circle_24"
+        tools:alpha="0.8" />
+
+	<com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/uploadIndicator"
+        style="@style/Widget.Material3.CircularProgressIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"
+        app:indicatorSize="128dp"
+        android:padding="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
+        app:layout_constraintEnd_toEndOf="@+id/profile_picture"
+        app:layout_constraintStart_toStartOf="@+id/profile_picture"
+        app:layout_constraintTop_toTopOf="@+id/profile_picture"
+        tools:visibility="visible" />
 
 	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/library"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         app:icon="@drawable/photo_library"
         app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +118,7 @@
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         app:icon="@drawable/delete"
         app:layout_constraintEnd_toStartOf="@+id/library"
@@ -115,7 +130,7 @@
         android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         app:icon="@drawable/outline_add_a_photo_24"
         app:layout_constraintEnd_toEndOf="parent"
@@ -137,7 +152,7 @@
         android:id="@+id/username_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="Edit Username:"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintStart_toStartOf="parent"
@@ -164,38 +179,5 @@
             android:inputType="textPersonName"
             tools:ignore="VisualLintTextFieldSize" />
 	</com.google.android.material.textfield.TextInputLayout>
-
-	<com.google.android.material.divider.MaterialDivider
-        android:id="@+id/materialDivider2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_layout" />
-
-	<TextView
-        android:id="@+id/theme_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Material Theme:"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/materialDivider2" />
-
-	<com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/theme_switch"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:autoSizeTextType="uniform"
-        android:checked="true"
-        android:text="Material You"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/theme_text"
-        app:thumbIcon="@drawable/outline_palette"
-        tools:ignore="VisualLintButtonSize" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

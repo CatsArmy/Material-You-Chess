@@ -1,6 +1,4 @@
 ﻿using Android.Views;
-using AndroidX.Activity;
-using Chess.App.Networked;
 using Google.Android.Material.BottomSheet;
 
 namespace Chess.App.Nearby;

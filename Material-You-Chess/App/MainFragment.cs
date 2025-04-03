@@ -60,16 +60,10 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
 
     private void StartGame(object? sender, EventArgs e)
     {
-        if (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline)
+        base.StartActivity(new Intent(this.Activity!, (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline) switch
         {
-            base.StartActivity(new Intent(this.Activity!, typeof(NetworkedChessActivity))
-                .PutExtra(nameof(Extensions.MaterialYouThemePreference),
-            $"{this.Activity!.MaterialYouThemePreference()}"));
-            return;
-        }
-
-        base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity))
-            .PutExtra(nameof(Extensions.MaterialYouThemePreference),
-            $"{this.Activity!.MaterialYouThemePreference()}"));
+            false => typeof(ChessActivity),
+            true => typeof(NetworkedChessActivity),
+        }).PutExtra(nameof(Extensions.MaterialYouThemePreference), $"{this.Activity!.MaterialYouThemePreference()}"));
     }
 }

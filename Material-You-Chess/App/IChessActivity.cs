@@ -4,7 +4,6 @@ using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
 using Chess.App.Nearby;
-using Chess.App.Networked;
 using Chess.Dialogs;
 using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
