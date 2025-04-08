@@ -26,11 +26,6 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
         base.Capture(game);
         game.Player!.Outcome = GameOutcome.Win;
         game.Enemy!.Outcome = GameOutcome.Lose;
-        foreach (var Space in game.Board.Values)
-            Space.SpaceView!.Clickable = false;
-
-        foreach (var piece in game.AllPieces.Values)
-            piece.Space.SpaceView!.Clickable = false;
 
         //display and handle the end of the game
         game.Activity.EndGame(game.Player, game.Enemy);

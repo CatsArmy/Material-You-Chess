@@ -18,7 +18,7 @@ using Microsoft.Maui.ApplicationModel;
 namespace Chess.App;
 
 [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
-    ScreenOrientation = ScreenOrientation.Locked)]
+    ScreenOrientation = ScreenOrientation.Portrait)]
 public class ChessActivity : AppCompatActivity, IChessActivity
 {
     public Context? Context => this;
@@ -48,9 +48,14 @@ public class ChessActivity : AppCompatActivity, IChessActivity
     public required UserClient Client { get; set; } = new("White Player");
     public required UserClient ConnectedClient { get; set; } = new("Black Player");
 
-    public void EndGame(IPlayer winner, IPlayer loser) => this.ChessBottomSheet?.Show(winner, loser);
-
     public override void Finish() => base.Finish();
+
+    public void EndGame(IPlayer winner, IPlayer loser)
+    {
+        this.ChessBottomSheet?.Show(winner, loser);
+        this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
+        this.Game.Cleanup();
+    }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {

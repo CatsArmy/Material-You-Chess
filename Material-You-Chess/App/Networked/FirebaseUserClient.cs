@@ -15,7 +15,9 @@ public class FirebaseUserClient(string Username, string Uid) : UserClient(Userna
     public FirebaseUserClient(FirebaseUser user) : this(user.DisplayName ?? throw new("Missing display name"), user.Uid) { }
     public readonly string Uid = Uid;
 
-    public StorageReference ProfilePicture => FirebaseStorage.Instance.GetReference($"user/{this.Uid}.image");
+    public StorageReference UserDir => FirebaseStorage.Instance.GetReference($"users/{this.Uid}/");
+    public StorageReference ImagesDir => this.UserDir.Child($"images/");
+    public StorageReference ProfilePicture => this.ImagesDir.Child($"user.image");
 
     public RequestBuilder LoadProfilePicture(RequestManager glide) => glide.Load(this.ProfilePicture).Error(Resource.Drawable.outline_account_circle_24);
 }

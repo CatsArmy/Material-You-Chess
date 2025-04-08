@@ -19,7 +19,7 @@ using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App.Networked;
 
-[Activity(Label = "@string/app_name", ScreenOrientation = ScreenOrientation.Locked,
+[Activity(Label = "@string/app_name", ScreenOrientation = ScreenOrientation.Portrait,
     Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
 public partial class NetworkedChessActivity : IChessActivity
 {
@@ -51,7 +51,13 @@ public partial class NetworkedChessActivity : IChessActivity
     private readonly FirebaseUser CurrentUser = FirebaseAuth.Instance.CurrentUser ?? throw new NullReferenceException(UserIsNull);
 
     public override void Finish() => base.Finish();
-    public void EndGame(IPlayer winner, IPlayer loser) => this.ChessBottomSheet?.Show(winner, loser);
+
+    public void EndGame(IPlayer winner, IPlayer loser)
+    {
+        this.ChessBottomSheet?.Show(winner, loser);
+        this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
+        this.Game.Cleanup();
+    }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -60,8 +66,8 @@ public partial class NetworkedChessActivity : IChessActivity
 
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-
         base.SetContentView(Resource.Layout.chess_activity); //Set our view
+        base.SetResult(Result.FirstUser);
         this.PromotionDialogs = (new(this), new(this));
 
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);

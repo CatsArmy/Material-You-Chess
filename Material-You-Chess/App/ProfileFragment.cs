@@ -1,4 +1,5 @@
-﻿using Android.Views;
+﻿using Android.Gms.Extensions;
+using Android.Views;
 using Android.Views.InputMethods;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
@@ -9,6 +10,7 @@ using Chess.App.Common.Listener;
 using Chess.App.Networked;
 using Firebase.Auth;
 using Firebase.Storage;
+using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
@@ -41,7 +43,6 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// <summary> Input is <see langword="typeof"/>(<see cref="AndroidUri" />) 
     /// Output is <see langword="typeof"/>(<see cref="Java.Lang.Boolean" />) </summary>
     public ActivityResultLauncher? photoTaker;
-
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
@@ -74,25 +75,36 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
         this.User = user;
         this.UserClient = new FirebaseUserClient(this.User);
-        this.UserClient.LoadProfilePicture(Glide.With(this)).Into(this.ProfilePicture!);
-        this.DisplayName!.Text = UserClient.Username;
-        this.UsernameInput!.Hint = UserClient.Username;
-        this.UsernameInput!.Text = UserClient.Username;
-        this.UsernameInput.EditorAction += (sender, args) =>
+        Glide.With(this).Load(this.UserClient.ProfilePicture).SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
+            .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+        this.DisplayName!.Text = this.UserClient.Username;
+        this.UsernameInput!.Hint = this.UserClient.Username;
+        this.UsernameInput!.Text = this.UserClient.Username;
+        this.UsernameInput.SetImeActionLabel("Done", ImeAction.Done);
+        this.UsernameInput.EditorAction += async (sender, args) =>
         {
             if (args.ActionId == ImeAction.Done)
             {
-                var changeUsernameRequest = new UserProfileChangeRequest.Builder();
-                changeUsernameRequest.SetDisplayName(this.UsernameInput.Text);
+                this.DisplayName!.Text = this.UsernameInput.Text;
+                var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetDisplayName(this.DisplayName.Text);
+                await user.UpdateProfileAsync(changeUsernameRequest.Build());
             }
         };
 
-        this.Logout!.Click += (_, _) => FirebaseAuth.Instance?.SignOut();
+        var signOut = new MaterialAlertDialogBuilder(this.Context!).SetTitle("Sign Out")?.SetIcon(Resource.Drawable.logout)
+            ?.SetMessage("Are you sure you want to sign out")?.SetNeutralButton("Ok", (_, _) => FirebaseAuth.Instance?.SignOut());
+
+        var delete = new MaterialAlertDialogBuilder(this.Context!).SetTitle("Delete")?.SetIcon(Resource.Drawable.delete)
+            ?.SetMessage("Are you sure you want to delete your profile picture?\nthis action cannot be undone")
+            ?.SetPositiveButton("Confirm", (_, _) => this.OnDeletePhoto())
+            ?.SetNegativeButton("Cancel", (_, _) => { });
+
+        this.Logout!.Click += (_, _) => signOut?.Show();
         this.SelectProfilePicture!.Click += (_, _) => this.PhotoPicker();
         this.SelectProfilePicture!.LongClick += (_, _) => this.SelectProfilePicture.Spin();
         this.CaptureProfilePicture!.Click += (_, _) => this.PhotoTaker();
         this.CaptureProfilePicture!.LongClick += (_, _) => this.CaptureProfilePicture.Spin();
-        this.DeleteProfilePicture!.Click += (_, _) => this.OnDeletePhoto();
+        this.DeleteProfilePicture!.Click += (_, _) => delete?.Show();
         this.DeleteProfilePicture!.LongClick += (_, _) => this.DeleteProfilePicture.Spin();
     }
 
@@ -125,13 +137,14 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             // Handle unsuccessful uploads
             Logger.Warn(exception.ToString());
             this.SelectProfilePicture?.OnError(this.Activity!);
-        })).AddOnCompleteListener(new OnComplete((task) =>
+        })).AddOnCompleteListener(new OnComplete(async (task) =>
         {
             if (isSuccess)
             {
-                Glide.With(this).Load(storageRef).SkipMemoryCache(true)
-                .SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
-                .Error(Resource.Drawable.outline_account_circle_24).Into(this.ProfilePicture!);
+                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
+                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+                var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
+                await this.User?.UpdateProfileAsync(changeUsernameRequest.Build())!;
                 this.SelectProfilePicture?.Spin();
             }
             this.UploadIndicator!.Visibility = ViewStates.Invisible;
@@ -157,14 +170,15 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             // Handle unsuccessful uploads
             Logger.Warn(exception.ToString());
             this.CaptureProfilePicture?.OnError(this.Activity!);
-        })).AddOnCompleteListener(new OnComplete((task) =>
+        })).AddOnCompleteListener(new OnComplete(async (task) =>
         {
             if (isSuccess)
             {
-                Glide.With(this).Load(storageRef).SkipMemoryCache(true)
-                .SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
-                .Error(Resource.Drawable.outline_account_circle_24).Error(Resource.Drawable.outline_account_circle_24)
-                .Into(this.ProfilePicture!);
+                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
+                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+
+                var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
+                await this.User?.UpdateProfileAsync(changeUsernameRequest.Build())!;
                 this.CaptureProfilePicture?.Spin();
             }
             this.UploadIndicator!.Visibility = ViewStates.Invisible;
@@ -173,30 +187,28 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
     public async void OnDeletePhoto()
     {
-        try
+        if (this.User?.PhotoUrl == null)
         {
-            this.UploadIndicator!.Visibility = ViewStates.Visible;
-            var storageRef = this.UserClient!.ProfilePicture;
-            var deleteTask = storageRef.DeleteAsync(); await deleteTask;
-
-            if (deleteTask.IsCompletedSuccessfully) // bug: cant load the Drawable.outline_account_circle_24 resource
-            {
-                Glide.With(this).Clear(this.ProfilePicture!);
-                this.DeleteProfilePicture?.Spin();
-                this.UploadIndicator!.Visibility = ViewStates.Invisible;
-            }
-
-            if (deleteTask.IsFaulted) // Handle unsuccessful delete
-            {
-                Logger.Warn($"{deleteTask.Exception}");
-                this.DeleteProfilePicture?.OnError(this.Activity!);
-            }
+            this.DeleteProfilePicture?.Spin();
+            return;
         }
-        catch (Exception e) // Handle deleting a non-existent file/user
+
+        this.UploadIndicator!.Visibility = ViewStates.Visible;
+        var storageRef = this.UserClient!.ProfilePicture;
+        var deleteTask = storageRef.DeleteAsync(); await deleteTask;
+        if (deleteTask.IsCompletedSuccessfully) // bug: cant load the Drawable.outline_account_circle_24 resource
         {
-            Logger.Warn($"{e}");
-            this.DeleteProfilePicture?.OnError(this.Activity!);
+            Glide.With(this).Clear(this.ProfilePicture!);
+            this.DeleteProfilePicture?.Spin();
             this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(null);
+            await this.User?.UpdateProfileAsync(changeUsernameRequest.Build())!;
+        }
+
+        if (deleteTask.IsFaulted) // Handle unsuccessful delete
+        {
+            Logger.Warn($"{deleteTask.Exception}");
+            this.DeleteProfilePicture?.OnError(this.Activity!);
         }
     }
 }

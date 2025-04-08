@@ -18,6 +18,7 @@ public class ChessGame
     public White WhitePlayer { get; set; }
     public Black BlackPlayer { get; set; }
 
+    private bool IsOver = false;
     private bool CurrentPlayerIsWhite = true;
     private readonly bool? ClientIsWhite;
 
@@ -147,6 +148,11 @@ public class ChessGame
         this.PlayMove(move);
     }
 
+    public void Cleanup()
+    {
+        this.IsOver = true;
+    }
+
     private void PlayMove(Move move)
     {
         this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
@@ -171,6 +177,8 @@ public class ChessGame
 
     public void OnClick(object? sender, EventArgs args)
     {
+        if (this.IsOver) return;
+
         if (sender is not ImageView imageView)
             return;
 

@@ -2,7 +2,6 @@
 using AndroidX.Activity.Result;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
-using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Extensions;
 using Firebase;
@@ -17,7 +16,8 @@ using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar", MainLauncher = true)]
+[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true)]
 public class MainActivity : AppCompatActivity
 {
     public static MainActivity? Instance { get; set; }
@@ -57,8 +57,16 @@ public class MainActivity : AppCompatActivity
         var check = FirebaseAppCheck.GetInstance(app);
         check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
         this.Auth = FirebaseAuth.GetInstance(app);
-
+        this.Auth!.AuthState += this.OnSignOut;
         this.RegisterComponents();
+    }
+
+    private void OnSignOut(object? sender, FirebaseAuth.AuthStateEventArgs e)
+    {
+        if (e.Auth.CurrentUser is null)
+        {
+            this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
+        }
     }
 
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
@@ -112,40 +120,13 @@ public class MainActivity : AppCompatActivity
         var resultCode = result?.ResultCode.IntValue();
         var response = result?.IdpResponse;
 
-        if (result != null)
-        {
-            Logger.Warn("result is not null");
-        }
-        else
-        {
-            Logger.Warn("result is null");
-        }
-
-        // Successfully signed in
-        if (resultCode == ((int)Result.Ok))
+        if (resultCode == ((int)Result.Ok) || response == null) // Successfully signed in
         {
             this.NavigationBar!.SelectedItemId = this.ProfileItem!.ItemId;
-        }
-
-        //Sign in failed
-        else if (response == null)
-        {
-            if (resultCode != null)
-            {
-                Logger.Warn($"{resultCode}");
-            }
-            if (response != null)
-            {
-                Logger.Warn($"response != null");
-            }
-
-            // User pressed back button
-            Snackbar.Make(this.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-            this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
             return;
         }
 
-        if (response?.Error?.ErrorCode == ErrorCodes.NoNetwork)
+        if (response.Error?.ErrorCode == ErrorCodes.NoNetwork) //Sign in failed
         {
             Snackbar.Make(this.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
             this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
