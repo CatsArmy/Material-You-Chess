@@ -39,7 +39,7 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Local = view.FindViewById<Button>(Resource.Id.btnLocal);
         this.GameModeSelector!.Check(this.Local!.Id);
         this.Online!.Enabled = this.IsLoggedIn;
-        this.Auth = MainActivity.Instance!.Auth;
+        this.Auth = (this.Activity as MainActivity)!.Auth;
         this.IsLoggedIn = this.Auth!.CurrentUser is not null;
         this.Auth!.AuthState += this.OnAuthState;
     }

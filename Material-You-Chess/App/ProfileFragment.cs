@@ -10,10 +10,13 @@ using Chess.App.Common.Listener;
 using Chess.App.Networked;
 using Firebase.Auth;
 using Firebase.Storage;
+using FirebaseUI.Auth;
+using FirebaseUI.Auth.Data.Model;
 using Google.Android.Material.Dialog;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.ProgressIndicator;
+using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
@@ -22,8 +25,8 @@ namespace Chess.App;
 
 public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.__profile_fragment__)
 {
-    private Toast MissingPermissions => Toast.MakeText(this.Context, "Canceled operation, missing permissions", ToastLength.Long)!;
     private AndroidUri? Upload;
+    public ActivityResultLauncher? SignInLauncher;
     public CircularProgressIndicator? UploadIndicator;
     public ShapeableImageView? ProfilePicture { get; set; }
     public Button? Logout { get; set; }
@@ -35,6 +38,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     public ExtendedFloatingActionButton? CaptureProfilePicture;
     public ExtendedFloatingActionButton? SelectProfilePicture;
     public FirebaseUser? User;
+    private MainActivity? activity;
 
     /// <summary> Input is <see langword="typeof"/>(<see cref="PickVisualMediaRequest" />)
     /// Output is <see langword="typeof"/>(<see cref="AndroidUri" />?) </summary>
@@ -43,9 +47,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// <summary> Input is <see langword="typeof"/>(<see cref="AndroidUri" />) 
     /// Output is <see langword="typeof"/>(<see cref="Java.Lang.Boolean" />) </summary>
     public ActivityResultLauncher? photoTaker;
+
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+        this.activity = this.Activity as MainActivity;
 
         var file = new Java.IO.File(FileProvider.GetTemporaryRootDirectory(), "temp.image");
         this.Upload = FileProvider.GetUriForFile(file);
@@ -53,6 +59,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(), new ActivityResultCallback<AndroidUri>(this.OnPickPhoto));
 
         this.photoTaker = base.RegisterForActivityResult(new TakePicture(), new ActivityResultCallback<Java.Lang.Boolean>((value) => this.OnTakePhoto(value!.BooleanValue())));
+
+        this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
+            callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
     }
 
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
@@ -67,12 +76,18 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.DeleteProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.delete);
         this.SelectProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.library);
         this.CaptureProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.camera);
-        if (FirebaseAuth.Instance?.CurrentUser is not FirebaseUser user)
+        if (this.activity?.Auth?.CurrentUser is not FirebaseUser user)
         {
             Logger.Warn("FirebaseAuth.Instance?.CurrentUser is null");
+            this.OpenSignInIntentActivity();
             return;
         }
 
+        this.OnLoggedIn(user);
+    }
+
+    private void OnLoggedIn(FirebaseUser user)
+    {
         this.User = user;
         this.UserClient = new FirebaseUserClient(this.User);
         Glide.With(this).Load(this.UserClient.ProfilePicture).SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
@@ -81,15 +96,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.UsernameInput!.Hint = this.UserClient.Username;
         this.UsernameInput!.Text = this.UserClient.Username;
         this.UsernameInput.SetImeActionLabel("Done", ImeAction.Done);
-        this.UsernameInput.EditorAction += async (sender, args) =>
-        {
-            if (args.ActionId == ImeAction.Done)
-            {
-                this.DisplayName!.Text = this.UsernameInput.Text;
-                var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetDisplayName(this.DisplayName.Text);
-                await user.UpdateProfileAsync(changeUsernameRequest.Build());
-            }
-        };
+        this.UsernameInput.EditorAction += this.OnUsernameEditorAction;
 
         var signOut = new MaterialAlertDialogBuilder(this.Context!).SetTitle("Sign Out")?.SetIcon(Resource.Drawable.logout)
             ?.SetMessage("Are you sure you want to sign out")?.SetNeutralButton("Ok", (_, _) => FirebaseAuth.Instance?.SignOut());
@@ -118,6 +125,16 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
     }
 
+    private async void OnUsernameEditorAction(object? sender, TextView.EditorActionEventArgs args)
+    {
+        if (args.ActionId == ImeAction.Done)
+        {
+            this.DisplayName!.Text = this.UsernameInput?.Text;
+            var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetDisplayName(this.DisplayName.Text);
+            await this.User?.UpdateProfileAsync(changeUsernameRequest.Build())!;
+        }
+    }
+
     private void OnPickPhoto(AndroidUri? picked)
     {
         if (picked is null)
@@ -132,9 +149,8 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             isSuccess = true;
             Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Reference?.Path}");
             Logger.Debug($"uploadPhoto:onSuccess: {taskSnapshot?.Metadata?.Name}");
-        })).AddOnFailureListener(new OnFailure((exception) =>
+        })).AddOnFailureListener(new OnFailure((exception) => // Handle unsuccessful uploads
         {
-            // Handle unsuccessful uploads
             Logger.Warn(exception.ToString());
             this.SelectProfilePicture?.OnError(this.Activity!);
         })).AddOnCompleteListener(new OnComplete(async (task) =>
@@ -210,6 +226,65 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             Logger.Warn($"{deleteTask.Exception}");
             this.DeleteProfilePicture?.OnError(this.Activity!);
         }
+    }
+
+    /// <summary>
+    /// opens the Sign Up/In activity from the NuGet Package: "FirebaseUI" 
+    /// and sets the available signin providers to be either: signin via email or signin via a private google account
+    /// </summary>
+    public void OpenSignInIntentActivity()
+    {
+        List<AuthUI.IdpConfig> providers = [
+            new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
+            new AuthUI.IdpConfig.GoogleBuilder().Build()
+        ];
+
+        // Create and launch sign-in intent
+        var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
+        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
+        signInIntentBuilder.SetAvailableProviders(providers);
+        signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
+        signInIntentBuilder.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
+        signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
+        signInIntentBuilder.SetCredentialManagerEnabled(true);
+        signInIntentBuilder.SetLockOrientation(true);
+        var signInIntent = signInIntentBuilder.Build();
+
+        // Attempt to Sign In/Up the device
+        this.SignInLauncher?.Launch(signInIntent);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="result"></param>
+    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    {
+        var resultCode = result?.ResultCode.IntValue();
+        var response = result?.IdpResponse;
+
+        if (resultCode == ((int)Result.Ok) || response == null) // Successfully signed in
+        {
+            if (this.activity?.Auth?.CurrentUser is not FirebaseUser user)
+            {
+                Logger.Warn("FirebaseAuth.Instance?.CurrentUser is null");
+                Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+                this.activity!.NavigationBar!.SelectedItemId = this.activity!.MainItem!.ItemId;
+                return;
+            }
+
+            this.OnLoggedIn(user);
+            return;
+        }
+
+        if (response.Error?.ErrorCode == ErrorCodes.NoNetwork) //Sign in failed
+        {
+            Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
+            this.activity!.NavigationBar!.SelectedItemId = this.activity!.MainItem!.ItemId;
+            return;
+        }
+
+        Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
     }
 }
 

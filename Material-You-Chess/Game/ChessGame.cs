@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
+using Android.Views;
 using Chess.App;
 using Chess.App.Common;
 using Chess.App.Networked;
@@ -10,31 +11,37 @@ using Chess.Game.Player;
 
 namespace Chess.Game;
 
-public class ChessGame
+public class ChessGame(IChessActivity activity)
 {
     public static ChessGame? Instance { get; set; }
 
-    public IChessActivity Activity;
-    public White WhitePlayer { get; set; }
-    public Black BlackPlayer { get; set; }
+#pragma warning disable CS9124 // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
+    public IChessActivity Activity = activity;
+#pragma warning restore CS9124 // Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
+    public White? WhitePlayer { get; set; }
+    public Black? BlackPlayer { get; set; }
 
-    private bool IsOver = false;
     private bool CurrentPlayerIsWhite = true;
-    private readonly bool? ClientIsWhite;
+    private readonly bool? ClientIsWhite = activity.Client switch
+    {
+        WhitePlayerClient => true,
+        BlackPlayerClient => false,
+        _ => null,
+    };
 
-    public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; }
-    public Dictionary<(char file, int rank), BoardSpace> Board { get; }
+    public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
+    public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
 
     public IPlayer Player => this.CurrentPlayerIsWhite switch
     {
-        true => this.WhitePlayer,
-        false => this.BlackPlayer,
+        true => this.WhitePlayer!,
+        false => this.BlackPlayer!,
     };
 
     public IPlayer Enemy => !this.CurrentPlayerIsWhite switch
     {
-        true => this.WhitePlayer,
-        false => this.BlackPlayer
+        true => this.WhitePlayer!,
+        false => this.BlackPlayer!,
     };
 
     public BoardSpace BindSpace(int id, int rank, char file)
@@ -57,19 +64,20 @@ public class ChessGame
         return new BoardSpace(file, rank, isWhite, space!);
     }
 
-    public ChessGame(IChessActivity activity)
+    public ChessGame(NetworkedChessActivity activity) : this(activity as IChessActivity)
     {
         ChessGame.Instance = this;
-        this.Board = [];
-        this.AllPieces = [];
-        this.Activity = activity;
-        this.ClientIsWhite = activity.Client switch
-        {
-            WhitePlayerClient => true,
-            BlackPlayerClient => false,
-            _ => null,
-        };
+        this.BindGame();
+    }
 
+    public ChessGame(ChessActivity activity) : this(activity as IChessActivity)
+    {
+        ChessGame.Instance = this;
+        this.BindGame();
+    }
+
+    private void BindGame()
+    {
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
             this.Board[(file, rank)] = this.BindSpace(id, rank, file);
@@ -102,18 +110,17 @@ public class ChessGame
         for (int id = Resource.Id.gmb__H1, rank = 1; id <= Resource.Id.gmb__H8; id++, rank++)
             this.Board[(file, rank)] = this.BindSpace(id, rank, file);
 
-        switch (this.ClientIsWhite)
+        this.WhitePlayer = this.ClientIsWhite switch
         {
-            case false:
-                this.WhitePlayer = new White(this, activity.ConnectedClient);
-                this.BlackPlayer = new Black(this, activity.Client);
-                break;
+            false => new White(this, activity.ConnectedClient),
+            _ => new White(this, activity.Client),
+        };
 
-            default:
-                this.WhitePlayer = new White(this, activity.Client);
-                this.BlackPlayer = new Black(this, activity.ConnectedClient);
-                break;
-        }
+        this.BlackPlayer = this.ClientIsWhite switch
+        {
+            false => new Black(this, activity.Client),
+            _ => new Black(this, activity.ConnectedClient),
+        };
 
         var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
 
@@ -132,25 +139,14 @@ public class ChessGame
                 this.AllPieces[index] = piece;
             }
         }
-
-        Logger.Debug("Created game");
     }
 
     public void PlayMove(Move move, bool isSender)
     {
-        if (!isSender)
-        {
-            this.PlayMove(move);
-            return;
-        }
+        if (isSender)
+            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
 
-        this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
         this.PlayMove(move);
-    }
-
-    public void Cleanup()
-    {
-        this.IsOver = true;
     }
 
     private void PlayMove(Move move)
@@ -177,8 +173,6 @@ public class ChessGame
 
     public void OnClick(object? sender, EventArgs args)
     {
-        if (this.IsOver) return;
-
         if (sender is not ImageView imageView)
             return;
 
@@ -213,9 +207,9 @@ public class ChessGame
 
         var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
-            return;
-
-        this.PlayMove(move, true);
+            this.Player.Selected = null;
+        else
+            this.PlayMove(move, true);
     }
 
     public bool Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)

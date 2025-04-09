@@ -1,10 +1,10 @@
 ﻿using Android.Content;
 using Android.Content.PM;
+using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
-using Chess.App.Common.Extensions;
 using Chess.App.Nearby;
 using Chess.App.Networked;
 using Chess.Dialogs;
@@ -54,21 +54,15 @@ public class ChessActivity : AppCompatActivity, IChessActivity
     {
         this.ChessBottomSheet?.Show(winner, loser);
         this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
-        this.Game.Cleanup();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        if (!this.MaterialYouThemePreference())
-            base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
-
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-
-        //Set our view
         base.SetContentView(Resource.Layout.chess_activity);
+        base.SetResult(Result.FirstUser);
 
-        //Run our logic
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
         this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
         this.MatchmakingLayout = base.FindViewById<ConstraintLayout>(Resource.Id.matchmaking);
@@ -94,6 +88,10 @@ public class ChessActivity : AppCompatActivity, IChessActivity
 
         this.Callback = new BottomSheetCallback(this);
         this.ChessBottomSheet = new(this);
+        //for (int i = Resource.Id.gmb__A1; i <= Resource.Id.gmp__wRook2; i++)
+        //{
+        //    base.FindViewById(i)!.Click += (sender, args) => { this.Game.OnClick(sender, args); };
+        //} bug cause: unknown; view.isattachedtowindow, view.handler is null
         this.Game = new(this);
     }
 }

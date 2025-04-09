@@ -6,10 +6,10 @@ using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
-using Chess.App.Common.Extensions;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
+using Chess.Game.Moves;
 using Chess.Game.Player;
 using Firebase.Auth;
 using Google.Android.Material.BottomSheet;
@@ -56,18 +56,15 @@ public partial class NetworkedChessActivity : IChessActivity
     {
         this.ChessBottomSheet?.Show(winner, loser);
         this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
-        this.Game.Cleanup();
     }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
-        if (!this.MaterialYouThemePreference())
-            base.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
-
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-        base.SetContentView(Resource.Layout.chess_activity); //Set our view
+        base.SetContentView(Resource.Layout.chess_activity);
         base.SetResult(Result.FirstUser);
+
         this.PromotionDialogs = (new(this), new(this));
 
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);

@@ -188,7 +188,7 @@
                 app:layout_constraintGuide_percent="0.035" />
 
 			<TextView
-                android:id="@+id/gmb___8"
+                android:id="@+id/gmt___8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -203,7 +203,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
 			<TextView
-                android:id="@+id/gmb___7"
+                android:id="@+id/gmt___7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -219,7 +219,7 @@
 
 
 			<TextView
-                android:id="@+id/gmb___6"
+                android:id="@+id/gmt___6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -234,7 +234,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A6" />
 
 			<TextView
-                android:id="@+id/gmb___5"
+                android:id="@+id/gmt___5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -249,7 +249,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A5" />
 
 			<TextView
-                android:id="@+id/gmb___4"
+                android:id="@+id/gmt___4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -264,7 +264,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A4" />
 
 			<TextView
-                android:id="@+id/gmb___3"
+                android:id="@+id/gmt___3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -279,7 +279,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A3" />
 
 			<TextView
-                android:id="@+id/gmb___2"
+                android:id="@+id/gmt___2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -294,7 +294,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
 			<TextView
-                android:id="@+id/gmb___1"
+                android:id="@+id/gmt___1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -309,7 +309,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
 			<TextView
-                android:id="@+id/gmb___A"
+                android:id="@+id/gmt___A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -324,7 +324,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___B"
+                android:id="@+id/gmt___B"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -339,7 +339,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___C"
+                android:id="@+id/gmt___C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -354,7 +354,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___D"
+                android:id="@+id/gmt___D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -369,7 +369,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___E"
+                android:id="@+id/gmt___E"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -384,7 +384,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___F"
+                android:id="@+id/gmt___F"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -399,7 +399,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___G"
+                android:id="@+id/gmt___G"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
@@ -414,7 +414,7 @@
                 app:layout_constraintVertical_bias="0.05" />
 
 			<TextView
-                android:id="@+id/gmb___H"
+                android:id="@+id/gmt___H"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
