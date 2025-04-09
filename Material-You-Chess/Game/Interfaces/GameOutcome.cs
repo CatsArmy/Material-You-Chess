@@ -1,6 +1,5 @@
 ﻿namespace Chess.Game;
 
-
 public enum GameOutcome
 {
     Draw,

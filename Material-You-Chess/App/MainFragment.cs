@@ -64,6 +64,6 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         {
             false => typeof(ChessActivity),
             true => typeof(NetworkedChessActivity),
-        }).PutExtra(nameof(Extensions.MaterialYouThemePreference), $"{this.Activity!.MaterialYouThemePreference()}"));
+        }));
     }
 }

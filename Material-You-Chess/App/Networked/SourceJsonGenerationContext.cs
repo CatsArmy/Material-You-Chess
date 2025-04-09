@@ -8,6 +8,5 @@ namespace Chess.App.Networked;
 [JsonSerializable(typeof(BoardSpace))]
 [JsonSerializable(typeof(BoardPiece))]
 [JsonSerializable(typeof(FirebaseUserClient))]
-[JsonSerializable(typeof(SerializedType))]
 [JsonSourceGenerationOptions(IncludeFields = true)]
 internal partial class SourceJsonGenerationContext : JsonSerializerContext;

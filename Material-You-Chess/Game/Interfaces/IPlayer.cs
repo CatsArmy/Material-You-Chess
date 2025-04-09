@@ -46,9 +46,11 @@ public interface IPlayer
     /// </summary>
     public List<Move>? Moves { get; set; }
 
-    /// <summary> When trying to set the <see langword="value" /> to <see langword="null"/>
-    /// it will only clear the selected spaces and keep the last move for later use. </summary> <remarks> 
-    ///     <seealso cref="LastMove"/> will be null only at the start of the game when the player has not played any moves yet.
+    /// <summary> 
+    /// When trying to set the <see langword="value" /> to <see langword="null"/>
+    /// it will only clear the selected spaces and keep the last move for later use. 
+    /// </summary> <remarks> 
+    /// <seealso cref="LastMove"/> will be null only at the start of the game when the player has not played any moves yet.
     /// </remarks>
     public Move? LastMove { get; set; }
 }

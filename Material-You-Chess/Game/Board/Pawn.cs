@@ -116,8 +116,7 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
     public override void Promote(ChessGame game, Promotion move)
     {
-        if (move.PromoteTo is not SerializedType promoteTo)
-            throw new Exception("Failed to promote to type");
+        if (move.PromoteTo is not SerializedType promoteTo) throw new Exception("Failed to promote to type");
 
         BoardPiece Piece;
         if (promoteTo == typeof(WhiteQueen))
@@ -143,10 +142,7 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
             Piece = new WhiteRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.rook_white);
         }
-
-        else
-            throw new Exception("Failed to promote to type");
-
+        else throw new Exception("Failed to promote to type");
         game.Player!.Pieces[this.Index] = Piece;
         game.AllPieces![this.Index] = Piece;
         base.Promote(game, move);
@@ -226,8 +222,7 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
     public override void Promote(ChessGame game, Promotion move)
     {
-        if (move.PromoteTo is not SerializedType promoteTo)
-            throw new Exception("Failed to promote to type");
+        if (move.PromoteTo is not SerializedType promoteTo) throw new Exception("Failed to promote to type");
 
         BoardPiece Piece;
         if (promoteTo == typeof(BlackQueen))
@@ -253,15 +248,13 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
             Piece = new BlackRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
             Piece.PieceView!.SetImageResource(Resource.Drawable.rook_black);
         }
-
-        else
-            throw new Exception("Failed to promote to type");
-
+        else throw new Exception("Failed to promote to type");
+        game.Player!.Pieces.Remove(this.Index);
+        game.AllPieces.Remove(this.Index);
         game.Player!.Pieces[this.Index] = Piece;
         game.AllPieces![this.Index] = Piece;
+        base.Promote(game, move);
         if (move is PromotionCapture capture)
             Piece.Capture(capture.Piece, game);
-
-        base.Promote(game, move);
     }
 }

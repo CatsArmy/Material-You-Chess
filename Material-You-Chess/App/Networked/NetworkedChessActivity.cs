@@ -9,7 +9,6 @@ using Chess.App.Common;
 using Chess.App.Nearby;
 using Chess.Dialogs;
 using Chess.Game;
-using Chess.Game.Moves;
 using Chess.Game.Player;
 using Firebase.Auth;
 using Google.Android.Material.BottomSheet;
@@ -152,21 +151,25 @@ public partial class NetworkedChessActivity : IChessActivity
         {
             case WhitePlayerClient whiteClient:
                 this.WhitePlayerUsername!.Text = whiteClient.Username;
-                whiteClient.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+                whiteClient.LoadProfilePicture(Glide.With(this)).Placeholder(this.WhitePlayerProfilePicture!.Drawable!).Into(this.WhitePlayerProfilePicture!);
                 this.ConnectedClient = whiteClient;
                 this.Game = new ChessGame(this);
-                break;
+                return;
 
             case BlackPlayerClient blackClient:
                 this.BlackPlayerUsername!.Text = blackClient.Username;
-                blackClient.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+                blackClient.LoadProfilePicture(Glide.With(this)).Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
                 this.ConnectedClient = blackClient;
                 this.Game = new ChessGame(this);
-                break;
-
-            default:
-                Logger.Warn("Unknown state something went wrong");
-                break;
+                return;
         }
+
+        Logger.Warn("Unknown state something went wrong");
+    }
+
+    protected override void OnDestroy()
+    {
+        Logger.Debug($"{nameof(OnDestroy)}");
+        base.OnDestroy();
     }
 }

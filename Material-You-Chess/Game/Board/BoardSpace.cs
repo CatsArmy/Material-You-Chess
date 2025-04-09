@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.Game.Interfaces;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
@@ -69,6 +70,13 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
     public bool IsUnselectedMove() => this.SpaceView?.Drawable?.Level == UnselectMove;
     public bool IsUnselected() => this.SpaceView?.Drawable?.Level == UnselectSpace;
     public bool IsSelected() => this.SpaceView?.Drawable?.Level == SelectSpace;
+
+    /// <returns> whether or not an enemy piece can capture a (theoretical) piece 
+    /// that would be placed on the given space </returns>
+    public bool IsThreateningSpace(ref List<Move> enemy)
+    {
+        return enemy.FirstOrDefault(move => move.Destination == this) != null;
+    }
 
     public BoardSpace? DiagonalUp(Dictionary<(char file, int rank), BoardSpace> board, bool isRight)
     {

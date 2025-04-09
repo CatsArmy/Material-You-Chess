@@ -1,6 +1,8 @@
-﻿using Android.Content;
+﻿using System.Text.Json;
+using Android.Content;
 using Android.Content.PM;
-using Android.Views;
+using Android.Gms.Nearby.Connection;
+using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
@@ -93,5 +95,25 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         //    base.FindViewById(i)!.Click += (sender, args) => { this.Game.OnClick(sender, args); };
         //} bug cause: unknown; view.isattachedtowindow, view.handler is null
         this.Game = new(this);
+    }
+
+    public void Send(Payload payload) //Emulate a networked chess activity
+    {
+        var move = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.Move);
+        this.Game.PlayMove(move!, false);
+    }
+
+    protected override void OnDestroy()
+    {
+        Logger.Debug($"{nameof(OnDestroy)}");
+        base.OnDestroy();
+    }
+}
+
+public class OnBackPressedCallback(bool enabled) : AndroidX.Activity.OnBackPressedCallback(enabled)
+{
+    public override void HandleOnBackPressed()
+    {
+
     }
 }

@@ -9,15 +9,14 @@ namespace Chess.Dialogs;
 
 public class BlackPromotionDialog : IPromotionDialog
 {
+    private ChessGame? Game;
+
     public AlertDialog Dialog { get; set; }
     public AlertDialog.Builder Builder { get; set; }
     public Promotion? Move { get; set; }
     public Pawn? Caller { get; set; }
-
-    private ChessGame? game;
-
-    public List<int> IDs => [Resource.Id.blackPromoteQueen, Resource.Id.blackPromoteKnight, Resource.Id.blackPromoteRook,
-        Resource.Id.blackPromoteBishop];
+    public List<int> IDs => [Resource.Id.blackPromoteQueen, Resource.Id.blackPromoteKnight,
+                                     Resource.Id.blackPromoteRook, Resource.Id.blackPromoteBishop];
 
     public BlackPromotionDialog(Context app)
     {
@@ -30,7 +29,7 @@ public class BlackPromotionDialog : IPromotionDialog
 
     public void Show(ChessGame game, Pawn pawn, Promotion move)
     {
-        this.game = game;
+        this.Game = game;
         this.Caller = pawn;
         this.Move = move;
         this.Dialog.Show();
@@ -38,26 +37,25 @@ public class BlackPromotionDialog : IPromotionDialog
 
     public void OnShow(object? sender, EventArgs args)
     {
-        foreach (var id in this.IDs)
-            this.Dialog.FindViewById<ImageView>(id)!.Click += this.OnConfirm;
+        foreach (var id in this.IDs) this.Dialog.FindViewById<ImageView>(id)!.Click += this.OnConfirm;
     }
 
     public void OnConfirm(object? sender, EventArgs args)
     {
         this.Dialog.Dismiss();
+        foreach (var id in this.IDs) this.Dialog.FindViewById<ImageView>(id)!.Click -= this.OnConfirm;
         var type = (sender as ImageView)!.Id switch
         {
-            Resource.Id.blackPromoteQueen => typeof(Queen),
-            Resource.Id.blackPromoteKnight => typeof(Knight),
-            Resource.Id.blackPromoteRook => typeof(Rook),
-            Resource.Id.blackPromoteBishop => typeof(Bishop),
+            Resource.Id.blackPromoteQueen => typeof(BlackQueen),
+            Resource.Id.blackPromoteKnight => typeof(BlackKnight),
+            Resource.Id.blackPromoteRook => typeof(BlackRook),
+            Resource.Id.blackPromoteBishop => typeof(BlackBishop),
             _ => null
         };
 
-        if (type is null)
-            return;
+        if (type is null) return;
 
         this.Move!.PromoteTo = new(type);
-        this.Caller?.Move(this.Move, this.game!);
+        this.Game?.PlayMove(this.Move, true);
     }
 }

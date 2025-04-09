@@ -1,5 +1,4 @@
-﻿using Android.Views;
-using Chess.App.Common.Extensions;
+﻿using Chess.App.Common.Extensions;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
