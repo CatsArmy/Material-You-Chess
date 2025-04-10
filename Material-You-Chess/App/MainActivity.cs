@@ -11,8 +11,12 @@ using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
-    ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, MainLauncher = true)]
+[Activity(MainLauncher = true,
+    Label = "@string/app_name",
+    Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait,
+    EnableOnBackInvokedCallback = true
+)]
 public class MainActivity : AppCompatActivity
 {
     public NavigationBarView? NavigationBar { get; set; }

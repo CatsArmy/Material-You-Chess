@@ -2,7 +2,6 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
-using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
@@ -19,8 +18,12 @@ using Microsoft.Maui.ApplicationModel;
 
 namespace Chess.App;
 
-[Activity(Label = "@string/app_name", Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
-    ScreenOrientation = ScreenOrientation.Portrait)]
+[Activity(
+    Label = "@string/app_name",
+    Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = ScreenOrientation.Locked,
+    EnableOnBackInvokedCallback = true
+)]
 public class ChessActivity : AppCompatActivity, IChessActivity
 {
     public Context? Context => this;
@@ -90,30 +93,19 @@ public class ChessActivity : AppCompatActivity, IChessActivity
 
         this.Callback = new BottomSheetCallback(this);
         this.ChessBottomSheet = new(this);
-        //for (int i = Resource.Id.gmb__A1; i <= Resource.Id.gmp__wRook2; i++)
-        //{
-        //    base.FindViewById(i)!.Click += (sender, args) => { this.Game.OnClick(sender, args); };
-        //} bug cause: unknown; view.isattachedtowindow, view.handler is null
         this.Game = new(this);
+    }
+
+    protected override void OnPostCreate(Bundle? savedInstanceState)
+    {
+        base.OnPostCreate(savedInstanceState);
+        this.BoardLayout?.RequestLayout();
+        this.BoardLayout?.Invalidate();
     }
 
     public void Send(Payload payload) //Emulate a networked chess activity
     {
         var move = JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.Move);
         this.Game.PlayMove(move!, false);
-    }
-
-    protected override void OnDestroy()
-    {
-        Logger.Debug($"{nameof(OnDestroy)}");
-        base.OnDestroy();
-    }
-}
-
-public class OnBackPressedCallback(bool enabled) : AndroidX.Activity.OnBackPressedCallback(enabled)
-{
-    public override void HandleOnBackPressed()
-    {
-
     }
 }

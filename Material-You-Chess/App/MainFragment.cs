@@ -1,10 +1,8 @@
 ﻿using Android.Content;
 using Android.Views;
-using Chess.App.Common.Extensions;
 using Chess.App.Networked;
 using Firebase.Auth;
 using Google.Android.Material.Button;
-using Extensions = Chess.App.Common.Extensions.Extensions;
 
 namespace Chess.App;
 

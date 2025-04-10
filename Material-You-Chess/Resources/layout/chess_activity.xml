@@ -69,14 +69,14 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:gravity="center|start"
+                android:text="White Player"
                 android:textColor="?android:attr/textColorTertiary"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="@+id/p1MainProfileImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/p1MainProfileImageView"
-                app:layout_constraintTop_toTopOf="@+id/p1MainProfileImageView"
-                tools:text="Guest" />
+                app:layout_constraintTop_toTopOf="@+id/p1MainProfileImageView" />
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 	</com.google.android.material.card.MaterialCardView>
@@ -144,13 +144,13 @@
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:gravity="center|start"
+                android:text="Black Player"
                 android:textColor="?android:attr/textColorTertiary"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toBottomOf="@+id/p2MainProfileImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/p2MainProfileImageView"
-                app:layout_constraintTop_toTopOf="@+id/p2MainProfileImageView"
-                tools:text="Guest" />
+                app:layout_constraintTop_toTopOf="@+id/p2MainProfileImageView" />
 
 		</androidx.constraintlayout.widget.ConstraintLayout>
 	</com.google.android.material.card.MaterialCardView>
@@ -1075,420 +1075,518 @@
                 app:shapeAppearanceOverlay="@style/BottomWhite"
                 app:srcCompat="@drawable/white_square" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bRook1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bRook1"
-                android:visibility="visible"
+                app:icon="@drawable/rook_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8"
-                app:srcCompat="@drawable/rook_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bKnight1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bKnight1"
-                android:visibility="visible"
+                app:icon="@drawable/knight_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B8"
-                app:srcCompat="@drawable/knight_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bBishop1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bBishop1"
-                android:visibility="visible"
+                app:icon="@drawable/bishop_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C8"
-                app:srcCompat="@drawable/bishop_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bQueen1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bQueen1"
-                android:visibility="visible"
+                app:icon="@drawable/queen_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D8"
-                app:srcCompat="@drawable/queen_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bKing1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bKing1"
-                android:visibility="visible"
+                app:icon="@drawable/king_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E8"
-                app:srcCompat="@drawable/king_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bBishop2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:tag="bBishop2"
-                android:visibility="visible"
+                app:icon="@drawable/bishop_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F8"
-                app:srcCompat="@drawable/bishop_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bKnight2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bKnight2"
-                android:visibility="visible"
+                app:icon="@drawable/knight_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G8"
-                app:srcCompat="@drawable/knight_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+
+			<Button
                 android:id="@+id/gmp__bRook2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bRook2"
-                android:visibility="visible"
+                app:icon="@drawable/rook_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H8"
-                app:srcCompat="@drawable/rook_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn1"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn2"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn3"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn3"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn4"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn4"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn5"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn5"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn6"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn6"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn7"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn7"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__bPawn8"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="bPawn8"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_black"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H7"
-                app:srcCompat="@drawable/pawn_black" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wRook1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wRook1"
-                android:visibility="visible"
+                app:icon="@drawable/rook_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1"
-                app:srcCompat="@drawable/rook_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wKnight1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wKnight1"
-                android:visibility="visible"
+                app:icon="@drawable/knight_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B1"
-                app:srcCompat="@drawable/knight_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wBishop1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wBishop1"
-                android:visibility="visible"
+                app:icon="@drawable/bishop_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C1"
-                app:srcCompat="@drawable/bishop_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wQueen1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wQueen1"
-                android:visibility="visible"
+                app:icon="@drawable/queen_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D1"
-                app:srcCompat="@drawable/queen_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wKing1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wKing1"
-                android:visibility="visible"
+                app:icon="@drawable/king_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E1"
-                app:srcCompat="@drawable/king_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wBishop2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wBishop2"
-                android:visibility="visible"
+                app:icon="@drawable/bishop_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F1"
-                app:srcCompat="@drawable/bishop_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wKnight2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wKnight2"
-                android:visibility="visible"
+                app:icon="@drawable/knight_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G1"
-                app:srcCompat="@drawable/knight_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wRook2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wRook2"
-                android:visibility="visible"
+                app:icon="@drawable/rook_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H1"
-                app:srcCompat="@drawable/rook_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn1"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn1"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn2"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn2"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn3"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn3"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn4"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn4"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn5"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn5"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn6"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn6"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn7"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn7"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
-			<ImageView
+			<Button
                 android:id="@+id/gmp__wPawn8"
+                style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:clickable="true"
                 android:tag="wPawn8"
-                android:visibility="visible"
+                app:icon="@drawable/pawn_white"
+                app:iconGravity="textStart"
+                app:iconSize="48dp"
+                app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H2"
-                app:srcCompat="@drawable/pawn_white" />
+                tools:ignore="SpeakableTextPresentCheck" />
 
 			<!--
                         <com.google.android.material.floatingtoolbar.FloatingToolbarLayout

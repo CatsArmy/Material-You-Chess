@@ -1,5 +1,4 @@
-﻿using Chess.App.Common.Extensions;
-using Chess.Game.Moves;
+﻿using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 

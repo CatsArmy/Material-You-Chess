@@ -112,5 +112,14 @@ public class White(ChessGame game, string username) : IPlayer
             this.Pieces[this.Pawns[i].Index] = this.Pawns[i];
             file++;
         }
+
+        foreach (var kvp in this.Pieces)
+        {
+            var piece = kvp.Value;
+            var index = kvp.Key;
+            game.AllPieces[index] = piece;
+            piece.PieceView!.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
+            piece.PieceView!.Clickable = true;
+        }
     }
 }

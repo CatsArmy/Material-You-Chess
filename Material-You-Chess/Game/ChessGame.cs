@@ -1,13 +1,12 @@
-using System.Linq;
 using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
+using Android.Views;
 using Chess.App;
 using Chess.App.Networked;
 using Chess.Game.Board;
 using Chess.Game.Moves;
 using Chess.Game.Player;
-using static Java.Util.Jar.Attributes;
 
 namespace Chess.Game;
 
@@ -62,13 +61,13 @@ public class ChessGame(IChessActivity activity)
     /// based on the above the function will either select(<see cref="IPlayer.Selected"/>),
     /// move(<see cref="PlayMove(Move, bool)"/>) or ignore the click (do nothing)
     /// based on the state of the <see cref="CurrentPlayerIsWhite"/> and <see cref="ClientIsWhite"/>
-    /// </summary> <param name="sender">the <see cref="ImageView"/> that was clicked</param>
+    /// </summary> <param name="sender">the <see cref="View"/> that was clicked</param>
     public void OnClick(object? sender, EventArgs args)
     {
-        if (sender is not ImageView imageView)
+        if (sender is not View view)
             return;
 
-        if (imageView?.Tag is not Java.Lang.String javaString)
+        if (view?.Tag is not Java.Lang.String javaString)
             return;
 
         if (this.ClientIsWhite != null)
@@ -121,8 +120,8 @@ public class ChessGame(IChessActivity activity)
     /// <param name="move">the move that the piece will move to</param>
     private void PlayMove(Move move)
     {
-        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing); //Move, selected are null
-        this.Player.Selected!.Move(move, this); // System.NullReferenceException: 'Object reference not set to an instance of an object.'
+        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        this.Player.Selected!.Move(move, this);
         if (move is Promotion promotion && promotion.PromoteTo is null) return; //prevent moving when no move is done
         this.Player.Selected = null;
         this.Player.LastMove = move;
@@ -140,6 +139,12 @@ public class ChessGame(IChessActivity activity)
         this.CurrentPlayerIsWhite = !this.CurrentPlayerIsWhite;
     }
 
+    /// <remarks>ensures that when receiving a move it will reference classes that are in the lists on this client</remarks>
+    /// <summary>
+    /// Localizes the <paramref name="received"/> move into a local move that contains references to pieces/spaces 
+    /// that are in the <see cref="AllPieces"/> and or <see cref="Board"/> 
+    /// </summary>
+    /// <param name="received">a <see cref="Move"/> that was received from another client</param>
     private Move LocalizeMove(Move received)
     {
         var move = this.AllPieces[received.Origin.Index].Moves(this).FirstOrDefault((m)
@@ -152,7 +157,7 @@ public class ChessGame(IChessActivity activity)
         return move!;
     }
 
-    /// <summary> outputs the indexes of the space and or piece of the clicked <see cref="ImageView"/> </summary>
+    /// <summary> outputs the indexes of the space and or piece of the clicked <see cref="View"/> </summary>
     /// <param name="Tag">the index of the space and or piece</param>
     /// <param name="pIndex">the index of the piece that might have been clicked</param>
     /// <param name="sIndex">the index of the space that was clicked</param>
@@ -183,11 +188,11 @@ public class ChessGame(IChessActivity activity)
     /// <summary> Binds all the views to the class that manages them.
     /// for example: (<see cref="ImageView"/> id="gmb__A1") will be bound to a BoardSpace <br />
     /// creating a <see cref="IPlayer"/>(<see cref="White"/> or <see cref="Black"/>) 
-    /// will bind the <see cref="ImageView"/>s of the pieces of that <see cref="IPlayer"/><br />
-    /// For example: (<see cref="ImageView"/> id="gmp__wPawn1") will be bound to a <see cref="WhitePawn"/> <br />
-    /// For example: (<see cref="ImageView"/> id="gmp__bPawn1") will be bound to a <see cref="BlackPawn"/> </summary>
+    /// will bind the <see cref="Button"/>s of the pieces of that <see cref="IPlayer"/><br />
+    /// For example: (<see cref="Button"/> id="gmp__wPawn1") will be bound to a <see cref="WhitePawn"/> <br />
+    /// For example: (<see cref="Button"/> id="gmp__bPawn1") will be bound to a <see cref="BlackPawn"/> </summary>
     /// <remarks>Fills up(binds) both of the dictionaries: <see cref="AllPieces"/>, <see cref="Board"/></remarks>
-    private void BindGame()
+    internal void BindGame()
     {
         char file = 'A';
         for (int id = Resource.Id.gmb__A1, rank = 1; id <= Resource.Id.gmb__A8; id++, rank++)
@@ -233,22 +238,10 @@ public class ChessGame(IChessActivity activity)
             _ => new Black(this, activity.ConnectedClient),
         };
 
-        var players = (Dictionary<(string Prefix, int Count), BoardPiece>[])[this.WhitePlayer.Pieces, this.BlackPlayer.Pieces];
-
-        foreach (var player in players)
+        for (int i = Resource.Id.gmp__bBishop1; i <= Resource.Id.gmp__wRook2; i++)
         {
-            foreach (var kvp in player)
-            {
-                var index = kvp.Key;
-                var piece = kvp.Value;
-                if (this.AllPieces.ContainsKey(index))
-                    continue;
-
-                piece.PieceView!.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
-                piece.PieceView!.Click += this.OnClick;
-                piece.PieceView!.Clickable = true;
-                this.AllPieces[index] = piece;
-            }
+            var view = this.Activity.BoardLayout!.FindViewById(i)!;
+            view.Click += (sender, args) => { this.OnClick(sender, args); };
         }
     }
 
@@ -275,13 +268,7 @@ public class ChessGame(IChessActivity activity)
 
         space!.Tag = new Java.Lang.String($"{file}{rank}");
         space!.Clickable = true;
-        if (!space.IsAttachedToWindow)
-        {
-            //(Activity as Android.App.Activity).WindowManager.AddView()
-            space.ViewAttachedToWindow += (sender, args) => args.AttachedView.Click += this.OnClick;
-        }
-        else
-            space!.Click += this.OnClick;
+        space!.Click += this.OnClick;
 
         return new BoardSpace(file, rank, isWhite, space!);
     }

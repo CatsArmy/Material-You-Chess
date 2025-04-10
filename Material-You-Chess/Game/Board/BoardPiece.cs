@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common;
-using Chess.Game.Interfaces;
 using Chess.Game.Moves;
+using Google.Android.Material.Button;
 
 namespace Chess.Game.Board;
 
@@ -27,15 +27,15 @@ namespace Chess.Game.Board;
 [JsonDerivedType(typeof(BlackKing), nameof(BlackKing))]
 [JsonDerivedType(typeof(BlackPawn), nameof(BlackPawn))]
 [JsonDerivedType(typeof(BlackRook), nameof(BlackRook))]
-public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
+public class BoardPiece(MaterialButton PieceView, BoardSpace space)
 {
     private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
-    public BoardPiece(int id, BoardSpace space) : this(BoardLayout!.FindViewById<ImageView>(id)!, space) { }
+    public BoardPiece(int id, BoardSpace space) : this(BoardLayout!.FindViewById<MaterialButton>(id)!, space) { }
 
     public int Id { get; } = PieceView.Id;
     public BoardSpace Space { get; set; } = space;
     [JsonIgnore] public BoardSpace? LastSpace { get; set; }
-    [JsonIgnore] public ImageView? PieceView { get; set; } = PieceView;
+    [JsonIgnore] public MaterialButton? PieceView { get; set; } = PieceView;
     public (string prefix, int count) Index => (this.Prefix, this.Count);
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public virtual string Prefix { get; }
@@ -56,33 +56,42 @@ public class BoardPiece(ImageView PieceView, BoardSpace space) : IPiece
         this.Move(move);
     }
 
-
+    /// <remarks> Visually moves the piece </remarks>
+    /// <summary> <see langword="this"/> is the <see cref="BoardPiece"/> that will be moved to the <paramref name="move"/> </summary>
     public void Move(Move move)
     {
         this.LastSpace = this.Space;
         this.Space = move.Destination;
-        if (this.PieceView?.LayoutParameters is not ConstraintLayout.LayoutParams @params)
+        if (this.PieceView?.Parent is not ConstraintLayout parent)
         {
-            Logger.Warn("Piece layout params are not the correct type");
+            Logger.Warn("PieceView is not in a ConstraintLayout parent");
             return;
         }
 
-        const float Center = 0.5f;
-        @params.VerticalBias = Center;
-        @params.HorizontalBias = Center;
-        @params.TopToBottom = ConstraintLayout.LayoutParams.Unset;
-        @params.BottomToTop = ConstraintLayout.LayoutParams.Unset;
-        @params.StartToEnd = ConstraintLayout.LayoutParams.Unset;
-        @params.EndToStart = ConstraintLayout.LayoutParams.Unset;
-        @params.TopToTop = this.Space.SpaceView!.Id;
-        @params.BottomToBottom = this.Space.SpaceView!.Id;
-        @params.StartToStart = this.Space.SpaceView!.Id;
-        @params.EndToEnd = this.Space.SpaceView!.Id;
-        this.PieceView.LayoutParameters = @params;
+        var constraintSet = new ConstraintSet();
+        constraintSet.Clone(parent);
+
+        int pieceViewId = this.PieceView.Id;
+        int destinationId = this.Space.SpaceView!.Id;
+
+        // Center the piece within the destination space
+        constraintSet.Connect(pieceViewId, ConstraintSet.Top, destinationId, ConstraintSet.Top);
+        constraintSet.Connect(pieceViewId, ConstraintSet.Bottom, destinationId, ConstraintSet.Bottom);
+        constraintSet.Connect(pieceViewId, ConstraintSet.Start, destinationId, ConstraintSet.Start);
+        constraintSet.Connect(pieceViewId, ConstraintSet.End, destinationId, ConstraintSet.End);
+
+        // Apply the updated constraints
+        constraintSet.ApplyTo(parent);
         this.PieceView.RequestLayout();
     }
 
+    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Origin"/> </summary>
+    /// <remarks> <see langword="this"/> is not the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
+    /// <param name="destination"> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </param>
     public virtual void Capture(BoardPiece destination, ChessGame game) => destination.Capture(game);
+
+    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Destination"/> </summary>
+    /// <remarks> <see langword="this"/> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
     public virtual void Capture(ChessGame game)
     {
         game.AllPieces.Remove(this.Index);
