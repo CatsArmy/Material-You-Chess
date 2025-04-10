@@ -13,7 +13,7 @@ using Google.Android.Material.ImageView;
 
 namespace Chess.App;
 
-public interface IChessActivity // Investigate bug cant play more than once per app session
+public interface IChessActivity
 {
     public static IChessActivity? Instance { get; set; }
     public Context? Context { get; }

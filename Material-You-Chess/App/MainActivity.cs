@@ -22,9 +22,13 @@ public class MainActivity : AppCompatActivity
     public NavigationBarView? NavigationBar { get; set; }
     public IMenuItem? MainItem { get; set; }
     public IMenuItem? ProfileItem { get; set; }
+
     public MainFragment? Main { get; set; }
     public ProfileFragment? Profile { get; set; }
+
+    /// <summary> The container for the MainFragment or ProfileFragment above</summary>
     public FragmentContainerView? FragmentContainer { get; set; }
+    /// <summary>A reference to the FirebaseAuth.Instance with the firebase AppCheck applied</summary>
     public FirebaseAuth? Auth;
 
     protected override void OnCreate(Bundle? savedInstanceState)
