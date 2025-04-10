@@ -17,7 +17,7 @@
     <LangVersion>preview</LangVersion>
     <WarningLevel>9999</WarningLevel>
     <Nullable>enable</Nullable>
-    <NoWarn>syslib1031</NoWarn>
+    <NoWarn>$(NoWarn);syslib1031;IL2026</NoWarn>
   </PropertyGroup>
   
   <Import Project="Properties\Material-You-Chess.Build.props.user" />

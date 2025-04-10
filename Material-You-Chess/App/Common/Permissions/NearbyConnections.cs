@@ -7,6 +7,7 @@ using AndroidX.Activity.Result;
 namespace Chess.App.Common.Permissions;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
+[SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "False positive")]
 public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPermissionsCallback callback) : IPermissionsManager
 {
     public (Permission IsGranted, string Permission) NearbyWifiDevices = (Permission.Denied, Manifest.Permission.NearbyWifiDevices);

@@ -1,6 +1,6 @@
 ﻿using Chess.Game.Board;
 
-namespace Chess.Game.Moves;
+namespace Chess.Game.Interfaces;
 
 public interface IMove
 {

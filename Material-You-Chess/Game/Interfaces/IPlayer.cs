@@ -1,8 +1,9 @@
-﻿using Chess.Dialogs;
+﻿using Chess.App.Dialogs;
 using Chess.Game.Board;
+using Chess.Game.Common;
 using Chess.Game.Moves;
 
-namespace Chess.Game.Player;
+namespace Chess.Game.Interfaces;
 
 public interface IPlayer
 {

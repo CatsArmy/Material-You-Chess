@@ -23,14 +23,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
     public override void Capture(ChessGame game)
     {
         base.Capture(game);
-        game.Player!.Outcome = GameOutcome.Win;
-        game.Enemy!.Outcome = GameOutcome.Lose;
-
-        foreach (var view in game.AllPieces.Values) view.PieceView!.Clickable = false;
-        foreach (var view in game.Board.Values) view.SpaceView!.Clickable = false;
-
-        //display and handle the end of the game
-        game.Activity.EndGame(game.Player, game.Enemy);
+        game.EndGame(game.Player, game.Enemy);
     }
 
     public List<Move> RegularMoves(ChessGame game)

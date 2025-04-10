@@ -5,14 +5,17 @@ using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
 namespace Chess.App.Common;
 
-[ContentProvider(new[] { "${applicationId}.provider" },
+[MetaData(FileProvider.Name, Resource = FileProvider.File)]
+[ContentProvider(["${applicationId}.provider"],
     Name = "com.catsarmy.chess.provider",
-    Exported = false,
-    GrantUriPermissions = true)]
-[MetaData("android.support.FILE_PROVIDER_PATHS", // IMPORTANT: This string doesn't change with AndroidX
-    Resource = "@xml/microsoft_maui_essentials_fileprovider_file_paths")]
+    GrantUriPermissions = true,
+    Exported = false
+)]
 public class FileProvider : ContentFileProvider
 {
+    /// <summary>IMPORTANT: This string doesn't change with AndroidX </summary>
+    internal const string Name = "android.support.FILE_PROVIDER_PATHS";
+    internal const string File = "@xml/microsoft_maui_essentials_fileprovider_file_paths";
     internal static bool AlwaysFailExternalMediaAccess { get; set; } = false;
 
     // This allows us to override the default temporary file location of Preferring external but falling back to internal
@@ -91,7 +94,7 @@ public class FileProvider : ContentFileProvider
         return false;
     }
 
-    internal static AndroidUri GetUriForFile(Java.IO.File file) => FileProvider.GetUriForFile(Application.Context, Authority, file)!;
+    internal static AndroidUri? GetUriForFile(Java.IO.File file) => FileProvider.GetUriForFile(Application.Context, Authority, file);
 
     public enum FileProviderLocation
     {

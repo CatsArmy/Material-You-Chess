@@ -6,11 +6,10 @@ using AndroidX.AppCompat.App;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
-using Chess.App.Nearby;
-using Chess.App.Networked;
-using Chess.Dialogs;
+using Chess.App.Dialogs;
+using Chess.App.Networked.Nearby;
 using Chess.Game;
-using Chess.Game.Player;
+using Chess.Game.Common;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
@@ -27,7 +26,6 @@ namespace Chess.App;
 public class ChessActivity : AppCompatActivity, IChessActivity
 {
     public Context? Context => this;
-
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -55,24 +53,17 @@ public class ChessActivity : AppCompatActivity, IChessActivity
 
     public override void Finish() => base.Finish();
 
-    public void EndGame(IPlayer winner, IPlayer loser)
-    {
-        this.ChessBottomSheet?.Show(winner, loser);
-        this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
-    }
-
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
         base.SetContentView(Resource.Layout.chess_activity);
         base.SetResult(Result.FirstUser);
-
+        IChessActivity.Instance = this;
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
         this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
         this.MatchmakingLayout = base.FindViewById<ConstraintLayout>(Resource.Id.matchmaking);
         this.GameOverLayout = base.FindViewById<ConstraintLayout>(Resource.Id.game_over);
-
         this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
 
         this.Indicator = base.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator);
@@ -94,13 +85,6 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         this.Callback = new BottomSheetCallback(this);
         this.ChessBottomSheet = new(this);
         this.Game = new(this);
-    }
-
-    protected override void OnPostCreate(Bundle? savedInstanceState)
-    {
-        base.OnPostCreate(savedInstanceState);
-        this.BoardLayout?.RequestLayout();
-        this.BoardLayout?.Invalidate();
     }
 
     public void Send(Payload payload) //Emulate a networked chess activity

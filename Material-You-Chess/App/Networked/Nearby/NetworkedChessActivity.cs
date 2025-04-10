@@ -6,24 +6,25 @@ using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
-using Chess.App.Nearby;
-using Chess.Dialogs;
+using Chess.App.Dialogs;
 using Chess.Game;
-using Chess.Game.Player;
 using Firebase.Auth;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
-namespace Chess.App.Networked;
+namespace Chess.App.Networked.Nearby;
 
-[Activity(Label = "@string/app_name", ScreenOrientation = ScreenOrientation.Portrait,
-    Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar")]
+[Activity(
+    Label = "@string/app_name",
+    Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
+    ScreenOrientation = ScreenOrientation.Locked,
+    EnableOnBackInvokedCallback = true
+)]
 public partial class NetworkedChessActivity : IChessActivity
 {
     public Context? Context => this;
-
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -32,7 +33,6 @@ public partial class NetworkedChessActivity : IChessActivity
     public TextView? BlackPlayerUsername { get; set; }
     public ExtendedFloatingActionButton? Home { get; set; }
 
-    public BottomSheetCallback? Callback { get; set; }
     public ImageView? Indicator { get; set; }
     public ShapeableImageView? WinningPlayer { get; set; }
     public TextView? WinnerUsername { get; set; }
@@ -51,19 +51,13 @@ public partial class NetworkedChessActivity : IChessActivity
 
     public override void Finish() => base.Finish();
 
-    public void EndGame(IPlayer winner, IPlayer loser)
-    {
-        this.ChessBottomSheet?.Show(winner, loser);
-        this.BottomSheet!.State = BottomSheetBehavior.StateExpanded;
-    }
-
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
         base.SetContentView(Resource.Layout.chess_activity);
         base.SetResult(Result.FirstUser);
-
+        IChessActivity.Instance = this;
         this.PromotionDialogs = (new(this), new(this));
 
         this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
@@ -93,27 +87,29 @@ public partial class NetworkedChessActivity : IChessActivity
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         var firebaseUserClient = this.CurrentUser;
-        if (this.State == State.Advertising)
+        if (this.State == ConnectionsClientState.Advertising)
         {
             Logger.Verbose("Client is white player");
             var client = new WhitePlayerClient(firebaseUserClient!);
-            client.LoadProfilePicture(Glide.With(this)).Into(this.WhitePlayerProfilePicture!);
+            client.LoadProfilePicture(Glide.With(this)).Placeholder(this.WhitePlayerProfilePicture!.Drawable!)
+                .Into(this.WhitePlayerProfilePicture!);
             this.WhitePlayerUsername!.Text = client!.Username;
             this.Client = client;
         }
 
-        if (this.State == State.Discovering)
+        if (this.State == ConnectionsClientState.Discovering)
         {
             Logger.Verbose("Client is black player");
             var client = new BlackPlayerClient(firebaseUserClient!);
-            client.LoadProfilePicture(Glide.With(this)).Into(this.BlackPlayerProfilePicture!);
+            client.LoadProfilePicture(Glide.With(this)).Placeholder(this.BlackPlayerProfilePicture!.Drawable!)
+                .Into(this.BlackPlayerProfilePicture!);
             this.BlackPlayerUsername!.Text = client.Username;
             this.Client = client;
         }
 
-        //Init handshake
+        //Init handshake between the 2 devices and stop discovering and advertising for other devices
         this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.FirebaseUserClient)));
-        this.State = State.Idle;
+        this.State = ConnectionsClientState.Idle;
     }
 
     protected override void OnEndpointDisconnected(EndPoint endpoint)
@@ -150,21 +146,27 @@ public partial class NetworkedChessActivity : IChessActivity
         switch (JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.FirebaseUserClient))
         {
             case WhitePlayerClient whiteClient:
-                this.WhitePlayerUsername!.Text = whiteClient.Username;
-                whiteClient.LoadProfilePicture(Glide.With(this)).Placeholder(this.WhitePlayerProfilePicture!.Drawable!).Into(this.WhitePlayerProfilePicture!);
                 this.ConnectedClient = whiteClient;
-                this.Game = new ChessGame(this);
-                return;
+                this.WhitePlayerUsername!.Text = whiteClient.Username;
+                whiteClient.LoadProfilePicture(Glide.With(this))
+                    .Placeholder(this.WhitePlayerProfilePicture!.Drawable!)
+                    .Into(this.WhitePlayerProfilePicture!);
+                break;
 
             case BlackPlayerClient blackClient:
-                this.BlackPlayerUsername!.Text = blackClient.Username;
-                blackClient.LoadProfilePicture(Glide.With(this)).Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
                 this.ConnectedClient = blackClient;
-                this.Game = new ChessGame(this);
+                this.BlackPlayerUsername!.Text = blackClient.Username;
+                blackClient.LoadProfilePicture(Glide.With(this))
+                    .Placeholder(this.BlackPlayerProfilePicture!.Drawable!)
+                    .Into(this.BlackPlayerProfilePicture!);
+                break;
+
+            default:
+                Logger.Warn("Unknown state something went wrong");
                 return;
         }
 
-        Logger.Warn("Unknown state something went wrong");
+        this.Game = new ChessGame(this);
     }
 
     protected override void OnDestroy()

@@ -3,39 +3,28 @@ using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Android.Views;
 using Chess.App;
-using Chess.App.Networked;
+using Chess.App.Common;
+using Chess.App.Networked.Nearby;
 using Chess.Game.Board;
+using Chess.Game.Common;
+using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 using Chess.Game.Player;
 
 namespace Chess.Game;
 
-// Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.
-#pragma warning disable CS9124 
 public class ChessGame(IChessActivity activity)
 {
-    public ChessGame(NetworkedChessActivity activity) : this(activity as IChessActivity)
-    {
-        ChessGame.Instance = this;
-        this.BindGame();
-    }
+    private bool CurrentPlayerIsWhite = true;
 
-    public ChessGame(ChessActivity activity) : this(activity as IChessActivity)
-    {
-        ChessGame.Instance = this;
-        this.BindGame();
-    }
-
-    private readonly bool? ClientIsWhite = activity.Client switch
+    public readonly bool? ClientIsWhite = activity.Client switch
     {
         WhitePlayerClient => true,
         BlackPlayerClient => false,
         _ => null,
     };
-    private bool CurrentPlayerIsWhite = true;
 
-    public static ChessGame? Instance { get; set; }
-    public IChessActivity Activity { get; } = activity;
+    //public IChessActivity Activity { get; } = activity;
     public Dictionary<(string Prefix, int Count), BoardPiece> AllPieces { get; } = [];
     public Dictionary<(char file, int rank), BoardSpace> Board { get; } = [];
     public White? WhitePlayer { get; set; }
@@ -54,6 +43,19 @@ public class ChessGame(IChessActivity activity)
         true => this.WhitePlayer!,
         false => this.BlackPlayer!,
     };
+
+    public ChessGame(NetworkedChessActivity activity) : this(activity as IChessActivity) => this.BindGame();
+    public ChessGame(ChessActivity activity) : this(activity as IChessActivity) => this.BindGame();
+
+    public void EndGame(IPlayer winner, IPlayer loser)
+    {
+        foreach (var view in this.AllPieces.Values) view.PieceView!.Clickable = false;
+        foreach (var view in this.Board.Values) view.SpaceView!.Clickable = false;
+
+        this.Player!.Outcome = GameOutcome.Win;
+        this.Enemy!.Outcome = GameOutcome.Lose;
+        activity.ChessBottomSheet?.Show(winner, loser);
+    }
 
     /// <summary>
     /// The function <see cref="Validate(Java.Lang.String, out ValueTuple{string, int}, out ValueTuple{char, int})"/>s
@@ -111,7 +113,7 @@ public class ChessGame(IChessActivity activity)
     public void PlayMove(Move move, bool isSender)
     {
         if (isSender)
-            this.Activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
+            activity.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value: move, SourceJsonGenerationContext.Default.Move)));
         else
             this.PlayMove(this.LocalizeMove(move));
     }
@@ -120,7 +122,7 @@ public class ChessGame(IChessActivity activity)
     /// <param name="move">the move that the piece will move to</param>
     private void PlayMove(Move move)
     {
-        this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
+        activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
         this.Player.Selected!.Move(move, this);
         if (move is Promotion promotion && promotion.PromoteTo is null) return; //prevent moving when no move is done
         this.Player.Selected = null;
@@ -228,27 +230,25 @@ public class ChessGame(IChessActivity activity)
 
         this.WhitePlayer = this.ClientIsWhite switch
         {
-            false => new White(this, activity.ConnectedClient),
-            _ => new White(this, activity.Client),
+            false => new White(this, activity.PromotionDialogs.White, activity.ConnectedClient),
+            _ => new White(this, activity.PromotionDialogs.White, activity.Client),
         };
 
         this.BlackPlayer = this.ClientIsWhite switch
         {
-            false => new Black(this, activity.Client),
-            _ => new Black(this, activity.ConnectedClient),
+            false => new Black(this, activity.PromotionDialogs.Black, activity.Client),
+            _ => new Black(this, activity.PromotionDialogs.Black, activity.ConnectedClient),
         };
 
         for (int i = Resource.Id.gmp__bBishop1; i <= Resource.Id.gmp__wRook2; i++)
         {
-            var view = this.Activity.BoardLayout!.FindViewById(i)!;
-            view.Click += (sender, args) => { this.OnClick(sender, args); };
+            var view = activity.BoardLayout!.FindViewById(i)!;
+            view.Click += this.OnClick;
         }
     }
 
-    /// <summary>
-    /// Binds the <see cref="ImageView"/> with the <paramref name="id"/> to a <see cref="BoardSpace"/> 
-    /// in the index of (<paramref name="file"/>,<paramref name="rank"/>)
-    /// </summary>
+    /// <summary> Binds the <see cref="ImageView"/> with the <paramref name="id"/> to a <see cref="BoardSpace"/> 
+    /// in the index of (<paramref name="file"/>, <paramref name="rank"/>) </summary>
     /// <param name="id">The id of the <see cref="ImageView"/> that will be bound</param>
     /// <param name="rank">The rank of the <see cref="BoardSpace"/>: (e.g if the space is "B2" then the rank will be '2')</param>
     /// <param name="file">The file of the <see cref="BoardSpace"/>: (e.g if the space is "B2" then the rank will be 'B')</param>
@@ -257,13 +257,13 @@ public class ChessGame(IChessActivity activity)
     {
         const string IsWhite = "IsWhite";
         const string IsBlack = "IsBlack";
-        var space = this.Activity.BoardLayout!.FindViewById<ImageView>(id);
+        var space = activity.BoardLayout!.FindViewById<ImageView>(id);
         string? tag = (space?.Tag as Java.Lang.String)?.ToString();
         bool isWhite = tag switch
         {
             IsWhite => true,
             IsBlack => false,
-            _ => throw new Exception($"{this.Activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
+            _ => throw new Exception($"{activity.BoardLayout!.Resources?.GetResourceEntryName(id)}: Missing color tag"),
         };
 
         space!.Tag = new Java.Lang.String($"{file}{rank}");
@@ -273,5 +273,3 @@ public class ChessGame(IChessActivity activity)
         return new BoardSpace(file, rank, isWhite, space!);
     }
 }
-#pragma warning restore CS9124
-// Parameter is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.

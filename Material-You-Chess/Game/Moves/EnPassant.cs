@@ -3,10 +3,8 @@ using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
-public class EnPassant : Capture
+[method: JsonConstructor]
+public class EnPassant(BoardPiece origin, BoardSpace destination, BoardPiece Piece) : Capture(origin, destination, Piece)
 {
-    internal EnPassant(Pawn origin, BoardSpace destination, Pawn Piece) : base(origin, destination, Piece) { }
-
-    [method: JsonConstructor]
-    public EnPassant(BoardPiece origin, BoardSpace destination, BoardPiece Piece) : base(origin, destination, Piece) { }
+    public EnPassant(Pawn origin, BoardSpace destination, Pawn Piece) : this(origin as BoardPiece, destination, Piece) { }
 }

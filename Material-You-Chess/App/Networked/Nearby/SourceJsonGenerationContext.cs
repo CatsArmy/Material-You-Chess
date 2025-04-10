@@ -1,8 +1,9 @@
 ﻿using System.Text.Json.Serialization;
+using Chess.App.Common;
 using Chess.Game.Board;
 using Chess.Game.Moves;
 
-namespace Chess.App.Networked;
+namespace Chess.App.Networked.Nearby;
 
 [JsonSerializable(typeof(Move))]
 [JsonSerializable(typeof(BoardSpace))]

@@ -1,10 +1,11 @@
-﻿using Chess.Game.Board;
+﻿using Chess.App;
+using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 
 public class KingSideCastle(ChessGame game) : Castling(game.Player!.King!, game.Board[('G', game.Player!.King!.Space.Rank)])
 {
-    public KingSideCastle() : this(ChessGame.Instance!) { }
+    public KingSideCastle() : this(IChessActivity.Instance!.Game) { }
 
     public override char File => 'F';
     public override Rook Rook { get; } = game.Player!.Rook2!;

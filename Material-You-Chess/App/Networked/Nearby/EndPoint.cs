@@ -1,6 +1,6 @@
 ﻿using Chess.App.Common;
 
-namespace Chess.App.Nearby;
+namespace Chess.App.Networked.Nearby;
 
 public class EndPoint
 {

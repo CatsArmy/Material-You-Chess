@@ -34,5 +34,4 @@ public interface ISpace
     bool IsUnselected();
     bool IsSelectedMove();
     bool IsUnselectedMove();
-
 }

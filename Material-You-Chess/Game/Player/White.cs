@@ -1,14 +1,16 @@
 ﻿using Chess.App.Common;
-using Chess.Dialogs;
+using Chess.App.Dialogs;
 using Chess.Game.Board;
+using Chess.Game.Common;
+using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
 
-public class White(ChessGame game, string username) : IPlayer
+public class White(ChessGame game, IPromotionDialog promotionDialog, string username) : IPlayer
 {
     public string Name { get; } = username;
-    public IPromotionDialog PromotionDialog { get; } = game.Activity.PromotionDialogs.White;
+    public IPromotionDialog PromotionDialog { get; } = promotionDialog;
     public GameOutcome? Outcome { get; set; }
 
     #region Board Pieces
@@ -70,7 +72,7 @@ public class White(ChessGame game, string username) : IPlayer
         }
     }
 
-    public White(ChessGame game, UserClient client) : this(game, client.Username)
+    public White(ChessGame game, IPromotionDialog promotionDialog, UserClient client) : this(game, promotionDialog, client.Username)
     {
         const int rank = 1;
         char file = 'A';

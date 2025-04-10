@@ -3,9 +3,10 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
-using Chess.App.Nearby;
-using Chess.Dialogs;
-using Chess.Game.Player;
+using Chess.App.Dialogs;
+using Chess.App.Networked.Nearby;
+using Chess.Game;
+using Chess.Game.Common;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
@@ -14,6 +15,7 @@ namespace Chess.App;
 
 public interface IChessActivity // Investigate bug cant play more than once per app session
 {
+    public static IChessActivity? Instance { get; set; }
     public Context? Context { get; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -24,6 +26,7 @@ public interface IChessActivity // Investigate bug cant play more than once per 
 
     public BottomSheetCallback? Callback { get; set; }
     public BottomSheetBehavior? BottomSheet { get; set; }
+    public ChessBottomSheet? ChessBottomSheet { get; set; }
     public CoordinatorLayout? StandardBottomSheet { get; set; }
     public ConstraintLayout? BottomSheetLayout { get; set; }
     public ConstraintLayout? MatchmakingLayout { get; set; }
@@ -39,9 +42,9 @@ public interface IChessActivity // Investigate bug cant play more than once per 
 
     /// <summary> The client that we connect to </summary>
     public UserClient ConnectedClient { get; set; }
+    public ChessGame Game { get; set; }
 
-    public virtual void Send(Payload payload) { return; }
+    public void Send(Payload payload);
 
-    public void EndGame(IPlayer winner, IPlayer loser);
     public void Finish();
 }

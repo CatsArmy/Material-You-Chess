@@ -1,7 +1,7 @@
 ﻿using Android.Content;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
-namespace Chess.Dialogs;
+namespace Chess.App.Dialogs;
 
 /// <summary>
 /// Template Interface

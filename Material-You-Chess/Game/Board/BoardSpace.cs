@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using AndroidX.ConstraintLayout.Widget;
+using Chess.App;
 using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 
@@ -7,15 +7,16 @@ namespace Chess.Game.Board;
 
 public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : ISpace
 {
-    [JsonIgnore] public (char File, int Rank) Index => (this.File, this.Rank);
     [JsonIgnore] public ImageView? SpaceView { get; } = Space;
+    public (char File, int Rank) Index => (this.File, this.Rank);
     public bool IsWhite { get; } = IsWhite;
     public char File { get; } = File;
     public int Rank { get; } = Rank;
     public int Id { get; } = Space.Id;
     [JsonConstructor] public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
-    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite, BoardLayout!.FindViewById<ImageView>(Id)!) { }
-    private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
+    public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite,
+        IChessActivity.Instance?.BoardLayout!.FindViewById<ImageView>(Id)!)
+    { }
 
     public const int UnselectSpace = 0;
     public const int UnselectMove = 1;

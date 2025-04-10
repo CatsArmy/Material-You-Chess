@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
+using Chess.App;
 using Chess.App.Common;
 using Chess.Game.Moves;
 using Google.Android.Material.Button;
@@ -29,7 +30,7 @@ namespace Chess.Game.Board;
 [JsonDerivedType(typeof(BlackRook), nameof(BlackRook))]
 public class BoardPiece(MaterialButton PieceView, BoardSpace space)
 {
-    private static readonly ConstraintLayout? BoardLayout = ChessGame.Instance?.Activity.BoardLayout;
+    private static readonly ConstraintLayout? BoardLayout = IChessActivity.Instance?.BoardLayout;
     public BoardPiece(int id, BoardSpace space) : this(BoardLayout!.FindViewById<MaterialButton>(id)!, space) { }
 
     public int Id { get; } = PieceView.Id;
@@ -45,7 +46,11 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
     public virtual char Abbreviation { get; }
 
     public virtual void Update() { return; }
+
+    /// <summary>An overridable virtual method that generates the available moves at this state of the <paramref name="game"/></summary>
+    /// <returns>a list of available moves based on the rules of the chess game</returns>
     public virtual List<Move> Moves(ChessGame game) => [];
+
     public virtual void Move(Move move, ChessGame game)
     {
         if (move is Capture capture)

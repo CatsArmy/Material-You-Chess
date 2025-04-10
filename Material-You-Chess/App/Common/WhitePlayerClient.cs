@@ -1,6 +1,6 @@
 ﻿using Firebase.Auth;
 
-namespace Chess.App.Networked;
+namespace Chess.App.Common;
 
 public class WhitePlayerClient(string Username, string Uid) : FirebaseUserClient(Username, Uid)
 {

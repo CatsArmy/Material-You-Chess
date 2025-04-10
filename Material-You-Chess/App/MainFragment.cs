@@ -1,6 +1,6 @@
 ﻿using Android.Content;
 using Android.Views;
-using Chess.App.Networked;
+using Chess.App.Networked.Nearby;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 

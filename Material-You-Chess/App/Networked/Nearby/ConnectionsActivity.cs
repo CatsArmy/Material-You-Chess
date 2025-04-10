@@ -3,9 +3,9 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using Chess.App.Common;
 using Chess.App.Common.Extensions;
-using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Nearby.EndPoint>.KeyCollection;
+using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Networked.Nearby.EndPoint>.KeyCollection;
 
-namespace Chess.App.Nearby;
+namespace Chess.App.Networked.Nearby;
 
 public abstract class ConnectionsActivity : AppCompatActivity
 {
@@ -216,7 +216,6 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     /// <summary> Called when advertising fails to start. Override this method to act on the event. </summary>
     protected virtual void OnAdvertisingFailed() => Logger.Verbose(nameof(OnAdvertisingFailed));
-
 
     /// <summary> Called when discovery successfully starts. Override this method to act on the event. </summary>
     protected virtual void OnDiscoveryStarted() => Logger.Verbose(nameof(OnDiscoveryStarted));

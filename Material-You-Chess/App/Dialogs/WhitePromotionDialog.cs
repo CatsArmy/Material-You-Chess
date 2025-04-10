@@ -5,7 +5,7 @@ using Chess.Game.Moves;
 using Google.Android.Material.Dialog;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
-namespace Chess.Dialogs;
+namespace Chess.App.Dialogs;
 
 public class WhitePromotionDialog : IPromotionDialog
 {
@@ -20,30 +20,30 @@ public class WhitePromotionDialog : IPromotionDialog
 
     public WhitePromotionDialog(Context app)
     {
-        this.Builder = new MaterialAlertDialogBuilder(app);
-        this.Builder.SetTitle(nameof(Promotion));
-        this.Builder.SetView(Resource.Layout.white_promotion_dialog);
-        this.Dialog = this.Builder.Create();
-        this.Dialog.ShowEvent += this.OnShow;
+        Builder = new MaterialAlertDialogBuilder(app);
+        Builder.SetTitle(nameof(Promotion));
+        Builder.SetView(Resource.Layout.white_promotion_dialog);
+        Dialog = Builder.Create();
+        Dialog.ShowEvent += OnShow;
     }
 
     public void Show(ChessGame game, Pawn pawn, Promotion move)
     {
-        this.Game = game;
-        this.Caller = pawn;
-        this.Move = move;
-        this.Dialog.Show();
+        Game = game;
+        Caller = pawn;
+        Move = move;
+        Dialog.Show();
     }
 
     public void OnShow(object? sender, EventArgs args)
     {
-        foreach (var id in this.IDs) this.Dialog.FindViewById<ImageView>(id)!.Click += this.OnConfirm;
+        foreach (var id in IDs) Dialog.FindViewById<ImageView>(id)!.Click += OnConfirm;
     }
 
     public void OnConfirm(object? sender, EventArgs args)
     {
-        this.Dialog.Dismiss();
-        foreach (var id in this.IDs) this.Dialog.FindViewById<ImageView>(id)!.Click -= this.OnConfirm;
+        Dialog.Dismiss();
+        foreach (var id in IDs) Dialog.FindViewById<ImageView>(id)!.Click -= OnConfirm;
         var type = (sender as ImageView)!.Id switch
         {
             Resource.Id.whitePromoteQueen => typeof(WhiteQueen),
@@ -55,7 +55,7 @@ public class WhitePromotionDialog : IPromotionDialog
 
         if (type is null) return;
 
-        this.Move!.PromoteTo = new(type);
-        this.Game?.PlayMove(this.Move, true);
+        Move!.PromoteTo = new(type);
+        Game?.PlayMove(Move, true);
     }
 }

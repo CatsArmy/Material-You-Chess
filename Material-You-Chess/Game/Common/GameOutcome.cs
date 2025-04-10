@@ -1,4 +1,4 @@
-﻿namespace Chess.Game;
+﻿namespace Chess.Game.Common;
 
 public enum GameOutcome
 {
