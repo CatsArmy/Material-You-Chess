@@ -58,12 +58,15 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
         this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(), new ActivityResultCallback<AndroidUri>(this.OnPickPhoto));
 
-        this.photoTaker = base.RegisterForActivityResult(new TakePicture(), new ActivityResultCallback<Java.Lang.Boolean>((value) => this.OnTakePhoto(value!.BooleanValue())));
+        this.photoTaker = base.RegisterForActivityResult(new TakePicture(), new ActivityResultCallback<Java.Lang.Boolean>(async (value) => this.OnTakePhoto(value!.BooleanValue())));
 
         this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
             callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
     }
 
+    /// <summary>
+    /// binds all the views and updates(<see cref="OnLoggedIn(FirebaseUser)"/>) them to show the current user info 
+    /// </summary>
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
@@ -86,6 +89,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.OnLoggedIn(user);
     }
 
+    /// <summary>
+    /// sets the contents of the views to match the user info
+    /// and sets the onClickListeners for them
+    /// </summary>
+    /// <param name="user"></param>
     private void OnLoggedIn(FirebaseUser user)
     {
         this.User = user;
@@ -135,6 +143,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
     }
 
+    /// <summary>
+    /// Uploads a selected photo to firebase and informs(animates) the user if the operation was successful or not
+    /// while also handling any errors to prevent crashes
+    /// </summary>
+    /// <param name="picked">a <see cref="AndroidUri"/> to the photo</param>
     private void OnPickPhoto(AndroidUri? picked)
     {
         if (picked is null)
@@ -153,7 +166,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         {
             Logger.Warn(exception.ToString());
             this.SelectProfilePicture?.OnError(this.Activity!);
-        })).AddOnCompleteListener(new OnComplete(async (task) =>
+        })).AddOnCompleteListener(new OnComplete(async (task) => // Handle upload success
         {
             if (isSuccess)
             {
@@ -167,6 +180,15 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }));
     }
 
+    /// <summary>
+    /// Uploads a photo that we captured into the <see cref="AndroidUri"/> <see cref="Upload"/> to firebase 
+    /// and informs(animates) the user if the operation was successful or not
+    /// while also handling any errors to prevent crashes
+    /// </summary>
+    /// <param name="isTaken">
+    /// a boolean that informs the function whether or not the user captured a photo 
+    /// or if the user has canceled the operation
+    /// </param>
     private void OnTakePhoto(bool isTaken)
     {
         if (isTaken is false)
@@ -201,6 +223,10 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }));
     }
 
+    /// <summary>
+    /// Deletes the profile picture that was uploaded to firebase and informs(animates) the user if the operation was successful or not
+    /// while also handling any errors to prevent crashes
+    /// </summary>
     public async void OnDeletePhoto()
     {
         if (this.User?.PhotoUrl == null)
@@ -241,13 +267,15 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
         // Create and launch sign-in intent
         var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
-        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
         signInIntentBuilder.SetAvailableProviders(providers);
-        signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
+        #region Customize the FirebaseUI-Auth sign-in/up screen
         signInIntentBuilder.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
         signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
         signInIntentBuilder.SetCredentialManagerEnabled(true);
+        signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
+        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
         signInIntentBuilder.SetLockOrientation(true);
+        #endregion
         var signInIntent = signInIntentBuilder.Build();
 
         // Attempt to Sign In/Up the device
@@ -255,9 +283,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     }
 
     /// <summary>
-    /// 
+    /// navigates the user back to the <see cref="MainFragment"/> in the case that the sign in/up operation fails to finish
+    /// due to the user canceling the operation or the operation erroring out
     /// </summary>
-    /// <param name="result"></param>
     private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
     {
         var resultCode = result?.ResultCode.IntValue();

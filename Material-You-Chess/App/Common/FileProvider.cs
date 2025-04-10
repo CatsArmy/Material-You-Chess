@@ -22,7 +22,7 @@ public class FileProvider : ContentFileProvider
     internal const string Provider = ".fileProvider";
     internal static string Authority => $"{Application.Context.PackageName}{Provider}";
 
-    internal static Java.IO.File GetTemporaryRootDirectory()
+    internal static Java.IO.File? GetTemporaryRootDirectory()
     {
         // If we specifically want the internal storage, no extra checks are needed, we have permission
         if (TemporaryLocation == FileProviderLocation.Internal)
@@ -42,14 +42,13 @@ public class FileProvider : ContentFileProvider
         if (externalOnly && !hasExternalMedia)
             throw new InvalidOperationException("Unable to access the external storage, the media is not mounted.");
 
-        // based on permssions, return the correct directory
+        // based on permissions, return the correct directory
         // if permission were required, then it would have already thrown
-        return hasExternalMedia
-            ? Application.Context.ExternalCacheDir
-            : Application.Context.CacheDir;
+        return hasExternalMedia ? Application.Context.ExternalCacheDir : Application.Context.CacheDir;
     }
 
-    static bool IsMediaMounted(Java.IO.File location) => AndroidEnvironment.GetExternalStorageState(location) == AndroidEnvironment.MediaMounted;
+    private static bool IsMediaMounted(Java.IO.File location)
+        => AndroidEnvironment.GetExternalStorageState(location) == AndroidEnvironment.MediaMounted;
 
     internal static bool IsFileInPublicLocation(string filename)
     {
@@ -59,8 +58,7 @@ public class FileProvider : ContentFileProvider
         filename = file.CanonicalPath;
 
         // the shared paths from the "microsoft_maui_essentials_fileprovider_file_paths.xml" resource
-        var publicLocations = new List<string>
-            {
+        List<string> publicLocations = [
 #if __ANDROID_29__
 				Application.Context?.GetExternalFilesDir(null)?.CanonicalPath,
 #else
@@ -69,11 +67,11 @@ public class FileProvider : ContentFileProvider
 #pragma warning restore CS0618 // Type or member is obsolete
 #endif
 				Application.Context?.ExternalCacheDir?.CanonicalPath
-            };
+            ];
 
         // the internal cache path is available only by file provider in N+
         if (OperatingSystem.IsAndroidVersionAtLeast(24))
-            publicLocations.Add(Application.Context?.CacheDir?.CanonicalPath);
+            publicLocations.Add(Application.Context?.CacheDir?.CanonicalPath!);
 
         foreach (var location in publicLocations)
         {
@@ -81,7 +79,7 @@ public class FileProvider : ContentFileProvider
                 continue;
 
             // make sure we have a trailing slash
-            var suffixedPath = filename.EndsWith(Java.IO.File.Separator)
+            var suffixedPath = filename.EndsWith(Java.IO.File.Separator!)
                 ? filename
                 : filename + Java.IO.File.Separator;
 
@@ -93,7 +91,7 @@ public class FileProvider : ContentFileProvider
         return false;
     }
 
-    internal static AndroidUri GetUriForFile(Java.IO.File file) => FileProvider.GetUriForFile(Application.Context, Authority, file);
+    internal static AndroidUri GetUriForFile(Java.IO.File file) => FileProvider.GetUriForFile(Application.Context, Authority, file)!;
 
     public enum FileProviderLocation
     {

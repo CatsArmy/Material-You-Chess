@@ -61,8 +61,6 @@ public class MainActivity : AppCompatActivity
     /// else if (e.Item.ItemId) == ProfileItem.ItemId it will open the ProfileFragment if the user is logged in 
     /// else it will open the sign in/up page
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
         if (this.NavigationBar?.SelectedItemId == e.Item.ItemId)
