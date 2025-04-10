@@ -5,28 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayLeft_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="0dp" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayRight_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_end="0dp" />
 
-	<androidx.constraintlayout.widget.Guideline
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayTop_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="0dp" />
 
-	<TextView
+    <TextView
         android:id="@+id/profile_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-	<TextView
+    <TextView
         android:id="@+id/displayname_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_picture"
         tools:text="{Username}" />
 
-	<com.google.android.material.divider.MaterialDivider
+    <com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -56,10 +56,9 @@
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/displayname_text"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/displayname_text" />
 
-	<Button
+    <Button
         android:id="@+id/logout"
         style="?attr/materialIconButtonFilledTonalStyle"
         android:layout_width="48dp"
@@ -73,7 +72,7 @@
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA"
         tools:ignore="SpeakableTextPresentCheck" />
 
-	<com.google.android.material.imageview.ShapeableImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/profile_picture"
         android:layout_width="128dp"
         android:layout_height="128dp"
@@ -84,10 +83,10 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_text"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
-        app:srcCompat="@drawable/outline_account_circle_24"
+        app:srcCompat="@drawable/account_circle"
         tools:alpha="0.8" />
 
-	<com.google.android.material.progressindicator.CircularProgressIndicator
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/uploadIndicator"
         style="@style/Widget.Material3.CircularProgressIndicator"
         android:layout_width="wrap_content"
@@ -102,7 +101,7 @@
         app:layout_constraintTop_toTopOf="@+id/profile_picture"
         tools:visibility="visible" />
 
-	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/library"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,7 +113,7 @@
         app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -126,19 +125,19 @@
         app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-	<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:clickable="true"
-        app:icon="@drawable/outline_add_a_photo_24"
+        app:icon="@drawable/add_a_photo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/library"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
-	<com.google.android.material.divider.MaterialDivider
+    <com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -148,7 +147,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/library" />
 
-	<TextView
+    <TextView
         android:id="@+id/username_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -158,7 +157,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider" />
 
-	<com.google.android.material.textfield.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/username_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -169,15 +168,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_text"
-        app:startIconDrawable="@drawable/outline_person_edit">
+        app:startIconDrawable="@drawable/person_edit">
 
-		<com.google.android.material.textfield.TextInputEditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:inputType="textPersonName"
             tools:ignore="VisualLintTextFieldSize" />
-	</com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

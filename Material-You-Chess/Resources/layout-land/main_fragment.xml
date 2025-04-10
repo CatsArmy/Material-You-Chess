@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-	<TextView
+    <TextView
         android:id="@+id/mTitlePart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-	<ImageView
+    <ImageView
         android:id="@+id/mChessLogo"
         android:layout_width="140dp"
         android:layout_height="140dp"
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/btnStartGame"
         app:srcCompat="@drawable/knight_white" />
 
-	<Button
+    <Button
         android:id="@+id/btnStartGame"
         android:layout_width="0dp"
         android:layout_height="64dp"
@@ -41,7 +41,7 @@
         app:layout_constraintStart_toEndOf="@+id/mTitlePart"
         app:layout_constraintTop_toTopOf="parent" />
 
-	<com.google.android.material.button.MaterialButtonToggleGroup
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/GameModeSelector"
         android:layout_width="0dp"
         android:layout_height="128dp"
@@ -57,7 +57,7 @@
         app:selectionRequired="true"
         app:singleSelection="true">
 
-		<Button
+        <Button
             android:id="@+id/btnOnline"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
@@ -69,10 +69,10 @@
             android:text="Online"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            app:icon="@drawable/rounded_bluetooth_24"
+            app:icon="@drawable/bluetooth"
             app:iconSize="24dp" />
 
-		<Button
+        <Button
             android:id="@+id/btnLocal"
             style="?attr/materialButtonOutlinedStyle"
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:text="Local"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            app:icon="@drawable/rounded_smartphone_24"
+            app:icon="@drawable/smartphone"
             app:iconSize="24dp" />
-	</com.google.android.material.button.MaterialButtonToggleGroup>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

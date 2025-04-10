@@ -22,6 +22,8 @@ public class MainActivity : AppCompatActivity
     public NavigationBarView? NavigationBar { get; set; }
     public IMenuItem? MainItem { get; set; }
     public IMenuItem? ProfileItem { get; set; }
+    public MainFragment? Main { get; set; }
+    public ProfileFragment? Profile { get; set; }
     public FragmentContainerView? FragmentContainer { get; set; }
     public FirebaseAuth? Auth;
 
@@ -29,15 +31,16 @@ public class MainActivity : AppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
-        this.SetContentView(Resource.Layout._main_activity_);
+        this.SetContentView(Resource.Layout.main_activity);
         this.NavigationBar = base.FindViewById<NavigationBarView>(Resource.Id.navigation_bar);
         this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
-        this.MainItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_1);
-        this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.item_2);
+        this.MainItem = this.NavigationBar!.Menu.FindItem(Resource.Id.play);
+        this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.profile);
         this.NavigationBar!.ItemSelected += this.NavigationBar_ItemSelected;
-
+        this.Main = new MainFragment();
+        this.Profile = new ProfileFragment();
         this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-            .Add(this.FragmentContainer!.Id, new MainFragment(), nameof(MainFragment)).Commit();
+            .Add(this.FragmentContainer!.Id, this.Main, nameof(this.Main)).Commit();
 
         var app = FirebaseApp.InitializeApp(this)!;
         var check = FirebaseAppCheck.GetInstance(app);
@@ -69,14 +72,14 @@ public class MainActivity : AppCompatActivity
         if (e.Item.ItemId == this.MainItem?.ItemId)
         {
             this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, new MainFragment()!, nameof(MainFragment)).Commit();
+                .Replace(this.FragmentContainer!.Id, this.Main!, nameof(this.Main)).Commit();
             return;
         }
 
         if (e.Item.ItemId == this.ProfileItem?.ItemId)
         {
             this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, new ProfileFragment(), nameof(ProfileFragment)).Commit();
+                .Replace(this.FragmentContainer!.Id, this.Profile!, nameof(this.Profile)).Commit();
             return;
         }
     }

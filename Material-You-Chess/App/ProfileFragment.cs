@@ -3,10 +3,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;
-using Bumptech.Glide.Load;
 using Bumptech.Glide.Load.Engine;
-using Bumptech.Glide.Request;
-using Bumptech.Glide.Request.Target;
 using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Extensions;
@@ -25,7 +22,7 @@ using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;
 
-public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.__profile_fragment__)
+public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.profile_fragment)
 {
     private MainActivity? activity;
     private AndroidUri? Upload;
@@ -54,7 +51,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     private AndroidX.AppCompat.App.AlertDialog.Builder? Delete => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Delete")
     ?.SetIcon(Resource.Drawable.delete)
     ?.SetMessage("Are you sure you want to delete your profile picture?\nthis action cannot be undone")
-    ?.SetPositiveButton("Confirm", async (_, _) => await this.OnDeletePhoto())
+    ?.SetPositiveButton("Confirm", this.DeletePhoto)
     ?.SetNegativeButton("Cancel", (_, _) => { });
 
     private AndroidX.AppCompat.App.AlertDialog.Builder? SignOut => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Sign Out")
@@ -85,10 +82,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         var file = new Java.IO.File(FileProvider.GetTemporaryRootDirectory(), "temp.image");
         this.Upload = FileProvider.GetUriForFile(file);
 
-        this.photoPicker = base.RegisterForActivityResult(new PickVisualMedia(),
-            new ActivityResultCallback<AndroidUri>(async (picked) => await this.OnPickPhoto(picked)));
+        this.photoPicker = base.RegisterForActivityResult(contract: new PickVisualMedia(),
+            callback: new ActivityResultCallback<AndroidUri>(this.PickPhoto));
 
-        this.photoTaker = base.RegisterForActivityResult(new TakePicture(), new ActivityResultCallback<Java.Lang.Boolean>(async (value) => await this.OnTakePhoto(value!.BooleanValue()))); // convert the java.lang.boolean to a c# bool
+        this.photoTaker = base.RegisterForActivityResult(contract: new TakePicture(),
+            callback: new ActivityResultCallback<Java.Lang.Boolean>(this.TakePhoto));
 
         this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
             callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
@@ -147,15 +145,11 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.ButtonsEnabled = true;
     }
 
-    private void PhotoTaker()
-    {
-        this.photoTaker?.Launch(this.Upload);
-    }
+    /// <summary> Wrapper method for Opening the Camera without special permission using the TakePicture ActivityResultContract</summary>
+    private void PhotoTaker() => this.photoTaker?.Launch(this.Upload);
 
-    private void PhotoPicker()
-    {
-        this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
-    }
+    /// <summary> Wrapper method for Opening the native PhotoPicker bottom sheet </summary>
+    private void PhotoPicker() => this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
 
     private async Task OnUsernameEditorAction(object? sender, TextView.EditorActionEventArgs args)
     {
@@ -167,6 +161,16 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
     }
 
+    /// <summary> Wrapper method for <see cref="OnTakePhoto(bool)"/> </summary>
+    public async void PickPhoto(AndroidUri? picked)
+    {
+        try
+        {
+            await this.OnPickPhoto(picked);
+        }
+        catch (Exception) { }
+    }
+
     /// <summary> 
     /// Uploads a selected photo to firebase and informs(animates) the user 
     /// if the operation was successful or not, while also handling any errors to prevent crashes 
@@ -174,8 +178,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// <param name="picked">a <see cref="AndroidUri"/> to the photo for uploading it</param>
     private async Task OnPickPhoto(AndroidUri? picked)
     {
-        if (picked is null)
-            return;
+        if (picked is null) return;
 
         this.UploadIndicator!.Visibility = ViewStates.Visible;
         var storageRef = this.UserClient!.ProfilePicture;
@@ -185,24 +188,46 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         if (uploadTask.IsCompletedSuccessfully)
         {
             Logger.Debug(snapshot.Metadata!.Path);
-            Glide.With(this).Load(storageRef).SetDiskCacheStrategy(Bumptech.Glide.Load.Engine.DiskCacheStrategy.None!)
-            .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+            try
+            {
+                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(DiskCacheStrategy.None!)
+                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+                fab?.Spin();
+            }
+            catch (Exception) { }
 
             var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
             await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-            fab?.Spin();
         }
 
         if (uploadTask.Exception is Exception exception)
         {
             Logger.Warn($"{exception}");
-            fab?.OnError(this.Activity!);
+            try
+            {
+                fab?.OnError(this.Activity!);
+            }
+            catch (Exception) { }
         }
 
         if (uploadTask.IsCompleted)
         {
-            this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            try
+            {
+                this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            }
+            catch (Exception) { }
         }
+    }
+
+    /// <summary> Wrapper method for <see cref="OnTakePhoto(bool)"/> </summary>
+    public async void TakePhoto(Java.Lang.Boolean? value)
+    {
+        try
+        {
+            await this.OnTakePhoto(value!.BooleanValue());
+        }
+        catch (Exception) { }
     }
 
     /// <summary>
@@ -227,24 +252,45 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         if (uploadTask.IsCompletedSuccessfully)
         {
             Logger.Debug(snapshot.Metadata!.Path);
-            Glide.With(this).Load(storageRef).SetDiskCacheStrategy(DiskCacheStrategy.None!)
-            .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
-
+            try
+            {
+                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(DiskCacheStrategy.None!)
+                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+                fab?.Spin();
+            }
+            catch (Exception) { }
             var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
             await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-            fab?.Spin();
         }
 
         if (uploadTask.Exception is Exception exception)
         {
             Logger.Warn($"{exception}");
-            fab?.OnError(this.Activity!);
+            try
+            {
+                fab?.OnError(this.Activity!);
+            }
+            catch (Exception) { }
         }
 
         if (uploadTask.IsCompleted)
         {
-            this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            try
+            {
+                this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            }
+            catch (Exception) { }
         }
+    }
+
+    /// <summary> Wrapper method for <see cref="OnDeletePhoto()"/> </summary>
+    public async void DeletePhoto(object? sender, EventArgs args)
+    {
+        try
+        {
+            await this.OnDeletePhoto();
+        }
+        catch (Exception) { }
     }
 
     /// <summary>
@@ -253,35 +299,47 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// </summary>
     public async Task OnDeletePhoto()
     {
+        var fab = this.DeleteProfilePicture;
         if (this.User?.PhotoUrl == null)
         {
-            this.DeleteProfilePicture?.Spin();
+            fab?.Spin();
             return;
         }
 
         this.UploadIndicator!.Visibility = ViewStates.Visible;
         var storageRef = this.UserClient!.ProfilePicture;
         var deleteTask = storageRef.DeleteAsync(); await deleteTask;
-        var fab = this.DeleteProfilePicture;
 
         if (deleteTask.IsCompletedSuccessfully)
         {
-            Glide.With(this).Clear(this.ProfilePicture!);
+            try
+            {
+                Glide.With(this).Clear(this.ProfilePicture!);
+                fab?.Spin();
+            }
+            catch (Exception) { }
 
             var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(null);
             await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-            fab?.Spin();
         }
 
         if (deleteTask.Exception is Exception exception)
         {
             Logger.Warn($"{exception}");
-            fab?.OnError(this.Activity!);
+            try
+            {
+                fab?.OnError(this.Activity!);
+            }
+            catch (Exception) { }
         }
 
         if (deleteTask.IsCompleted)
         {
-            this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            try
+            {
+                this.UploadIndicator!.Visibility = ViewStates.Invisible;
+            }
+            catch (Exception) { }
         }
     }
 
@@ -300,11 +358,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
         signInIntentBuilder.SetAvailableProviders(providers);
         #region Customize the FirebaseUI-Auth sign-in/up screen
-        signInIntentBuilder.SetTheme(Resource.Style.Theme_Material3_DynamicColors_DayNight);
+        signInIntentBuilder.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
         signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
         signInIntentBuilder.SetCredentialManagerEnabled(true);
-        //signInIntentBuilder.SetAlwaysShowSignInMethodScreen(true);
-        signInIntentBuilder.EnableAnonymousUsersAutoUpgrade();
         signInIntentBuilder.SetLockOrientation(true);
         #endregion
         var signInIntent = signInIntentBuilder.Build();

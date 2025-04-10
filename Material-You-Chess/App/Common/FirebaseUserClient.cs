@@ -18,5 +18,5 @@ public class FirebaseUserClient(string Username, string Uid) : UserClient(Userna
     public StorageReference ImagesDir => UserDir.Child($"images/");
     public StorageReference ProfilePicture => ImagesDir.Child($"user.image");
 
-    public RequestBuilder LoadProfilePicture(RequestManager glide) => glide.Load(ProfilePicture).Error(Resource.Drawable.outline_account_circle_24);
+    public RequestBuilder LoadProfilePicture(RequestManager glide) => glide.Load(ProfilePicture).Error(Resource.Drawable.account_circle);
 }

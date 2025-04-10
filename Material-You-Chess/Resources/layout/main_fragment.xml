@@ -69,7 +69,7 @@
             android:text="Online"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            app:icon="@drawable/rounded_bluetooth_24"
+            app:icon="@drawable/bluetooth"
             app:iconSize="24dp" />
 
         <Button
@@ -84,7 +84,7 @@
             android:text="Local"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            app:icon="@drawable/rounded_smartphone_24"
+            app:icon="@drawable/smartphone"
             app:iconSize="24dp" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
