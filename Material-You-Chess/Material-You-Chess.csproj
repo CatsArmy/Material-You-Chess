@@ -35,9 +35,8 @@
     <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
     <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Release</RestoreAdditionalProjectSources>
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
-
- <!--   <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
-    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>-->
+    <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
+    <!--<AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>-->
     <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
@@ -84,7 +83,7 @@
 
     <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.50" />
     <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.50" />
-    <PackageReference Include="System.Text.Json" Version="9.0.3" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
 
     <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.2" />
