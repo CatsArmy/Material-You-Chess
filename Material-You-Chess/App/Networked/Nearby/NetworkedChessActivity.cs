@@ -1,8 +1,8 @@
 using System.Text.Json;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
-using AndroidX.ConstraintLayout.Motion.Widget;
 using AndroidX.ConstraintLayout.Widget;
+using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Dialogs;
@@ -20,7 +20,7 @@ namespace Chess.App.Networked.Nearby;
     ScreenOrientation = ScreenOrientation.Locked,
     EnableOnBackInvokedCallback = true
 )]
-public partial class NetworkedChessActivity : IChessActivity
+public class NetworkedChessActivity : ConnectionsActivity, IChessActivity
 {
     protected static readonly NullReferenceException UserIsNull = new("CurrentUser is somehow null???");
     protected readonly FirebaseUser CurrentUser = FirebaseAuth.Instance.CurrentUser ?? throw UserIsNull;
@@ -59,7 +59,7 @@ public partial class NetworkedChessActivity : IChessActivity
         this.WhitePlayerUsername = base.FindViewById<TextView>(Resource.Id.whitePlayerUsername);
         this.BlackPlayerUsername = base.FindViewById<TextView>(Resource.Id.blackPlayerUsername);
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.BottomSheet = ChessBottomSheet.OnCreate(this);
+        this.BottomSheet = ChessBottomSheet.OnCreate(this, this.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet)!);
         this.BottomSheet.Show();
     }
 

@@ -3,7 +3,6 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using Chess.App.Common;
 using Chess.App.Common.Extensions;
-using Chess.App.Common.Permissions;
 using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Networked.Nearby.EndPoint>.KeyCollection;
 
 namespace Chess.App.Networked.Nearby;

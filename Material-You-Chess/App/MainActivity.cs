@@ -1,15 +1,12 @@
-﻿using Android.App;
-using Android.Views;
+﻿using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
 using Chess.App.Common.Extensions;
-using Chess.App.Common.Permissions;
 using Firebase;
 using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using Google.Android.Material.Navigation;
-using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;

@@ -1,14 +1,11 @@
 ﻿using Android.Content;
 using Android.Views;
-using AndroidX.ConstraintLayout.Widget;
 using Chess.App.Common.ActivityResult;
-using Chess.App.Common.Extensions;
 using Chess.App.Common.Permissions;
 using Chess.App.Networked.Nearby;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
-using Google.Android.Material.ImageView;
 using Java.Util;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 
@@ -35,10 +32,14 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
     private FirebaseAuth? Auth;
     private NearbyConnections? PermissionManager;
 
+    private static bool[] Values(IMap permissions) => [.. permissions.Values().Cast<bool>()];
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        this.PermissionManager = new(this.RegisterForActivityResult(new RequestMultiplePermissions(), new ActivityResultCallback<IMap>(permissions => this.HandlePermissionResult(!permissions!.Values().Cast<bool>().ToArray().Contains(false)))), this.Activity);
+        var onResult = new ActivityResultCallback<IMap>(permissions => this.HandlePermissionResult(!Values(permissions!).Contains(false)));
+        var resultLauncher = this.RegisterForActivityResult(new RequestMultiplePermissions(), onResult);
+
+        this.PermissionManager = new(resultLauncher, this.Activity);
     }
 
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
@@ -108,6 +109,7 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Online.Enabled = args.Auth.CurrentUser is not null;
     }
 
+    ///starts the game activity with the selected mode
     private void StartGame(object? sender, EventArgs e)
     {
         if ((this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline))

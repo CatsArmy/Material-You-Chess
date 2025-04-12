@@ -1,10 +1,9 @@
 ﻿using System.Text.Json;
-using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
-using AndroidX.ConstraintLayout.Motion.Widget;
 using AndroidX.ConstraintLayout.Widget;
+using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
 using Chess.App.Dialogs;
 using Chess.App.Networked.Nearby;
@@ -48,7 +47,7 @@ public class ChessActivity : AppCompatActivity, IChessActivity
         this.BlackPlayerUsername = this.FindViewById<TextView>(Resource.Id.blackPlayerUsername);
         this.WhitePlayerUsername!.Text = this.Client!.Username;
         this.BlackPlayerUsername!.Text = this.ConnectedClient!.Username;
-        this.BottomSheet = ChessBottomSheet.OnCreate(this);
+        this.BottomSheet = ChessBottomSheet.OnCreate(this, this.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet)!);
         this.Game = new(this);
     }
 

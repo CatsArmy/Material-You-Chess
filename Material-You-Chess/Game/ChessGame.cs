@@ -10,7 +10,6 @@ using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 using Chess.Game.Player;
 using Google.Android.Material.ImageView;
-using static Java.Util.Jar.Attributes;
 
 namespace Chess.Game;
 

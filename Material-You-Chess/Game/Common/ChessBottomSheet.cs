@@ -12,31 +12,32 @@ using Google.Android.Material.ProgressIndicator;
 
 namespace Chess.Game.Common;
 
-public class ChessBottomSheet(IChessActivity activity)
+public class ChessBottomSheet(IChessActivity activity, CoordinatorLayout StandardBottomSheet)
 {
-    public readonly CoordinatorLayout StandardBottomSheet = activity.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet)!;
-    public readonly ConstraintLayout BottomSheetLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!;
-    public readonly ConstraintLayout GameOverLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.game_over)!;
-    public readonly ConstraintLayout MatchmakingLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.matchmaking)!;
+    /// <summary>the root of the bottom sheet</summary>
+    public readonly CoordinatorLayout StandardBottomSheet = StandardBottomSheet;
+    public readonly ConstraintLayout BottomSheetLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!;
+    public readonly ConstraintLayout GameOverLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.game_over)!;
+    public readonly ConstraintLayout MatchmakingLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.matchmaking)!;
 
-    public readonly ImageView Indicator = activity.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator)!;
-    public readonly ShapeableImageView WinningPlayer = activity.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer)!;
-    public readonly TextView WinnerUsername = activity.FindViewById<TextView>(Resource.Id.winningPlayerUsername)!;
-    public readonly TextView WinnerDescription = activity.FindViewById<TextView>(Resource.Id.winnerDescription)!;
-    public readonly ExtendedFloatingActionButton Home = activity.FindViewById<ExtendedFloatingActionButton>(Resource.Id.home)!;
+    public readonly ImageView Indicator = StandardBottomSheet.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator)!;
+    public readonly ShapeableImageView WinningPlayer = StandardBottomSheet.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer)!;
+    public readonly TextView WinnerUsername = StandardBottomSheet.FindViewById<TextView>(Resource.Id.winningPlayerUsername)!;
+    public readonly TextView WinnerDescription = StandardBottomSheet.FindViewById<TextView>(Resource.Id.winnerDescription)!;
+    public readonly ExtendedFloatingActionButton Home = StandardBottomSheet.FindViewById<ExtendedFloatingActionButton>(Resource.Id.home)!;
 
     public ChipGroup? MatchmakingPreferences = null;
-    public readonly Chip White = activity.FindViewById<Chip>(Resource.Id.white_chip)!;
-    public readonly Chip Black = activity.FindViewById<Chip>(Resource.Id.black_chip)!;
-    public readonly TextView SearchingText = activity.FindViewById<TextView>(Resource.Id.SearchingText)!;
-    public readonly CircularProgressIndicator SearchingIndicator = activity.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
+    public readonly Chip White = StandardBottomSheet.FindViewById<Chip>(Resource.Id.white_chip)!;
+    public readonly Chip Black = StandardBottomSheet.FindViewById<Chip>(Resource.Id.black_chip)!;
+    public readonly TextView SearchingText = StandardBottomSheet.FindViewById<TextView>(Resource.Id.SearchingText)!;
+    public readonly CircularProgressIndicator SearchingIndicator = StandardBottomSheet.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
 
     public readonly BottomSheetCallback Callback = new(activity);
-    public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(activity.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
+    public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
 
-    public static ChessBottomSheet OnCreate(IChessActivity activity)
+    public static ChessBottomSheet OnCreate(IChessActivity activity, CoordinatorLayout StandardBottomSheet)
     {
-        var result = new ChessBottomSheet(activity);
+        var result = new ChessBottomSheet(activity, StandardBottomSheet);
         result.StandardBottomSheet!.Visibility = ViewStates.Invisible;
         result.Behavior.AddBottomSheetCallback(result.Callback);
         result.Behavior.State = BottomSheetBehavior.StateHidden;
@@ -53,7 +54,7 @@ public class ChessBottomSheet(IChessActivity activity)
         if (this.MatchmakingPreferences is not null)
             return;
 
-        this.MatchmakingPreferences = activity.FindViewById<ChipGroup>(Resource.Id.matchmaking_pref)!;
+        this.MatchmakingPreferences = this.StandardBottomSheet.FindViewById<ChipGroup>(Resource.Id.matchmaking_pref)!;
         this.MatchmakingPreferences!.CheckedChange += this.OnPreferencesChange;
     }
 

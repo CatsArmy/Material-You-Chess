@@ -183,9 +183,15 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     {
         try
         {
+            this.SetButtonsEnabled(false);
             await this.OnPickPhoto(picked);
+            this.SetButtonsEnabled(true);
         }
         catch (Exception) { }
+        finally
+        {
+            this.SetButtonsEnabled(true);
+        }
     }
 
     /// <summary> 
@@ -242,7 +248,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     {
         try
         {
+            this.SetButtonsEnabled(false);
             await this.OnTakePhoto(value!.BooleanValue());
+            this.SetButtonsEnabled(true);
         }
         catch (Exception) { }
     }
@@ -305,7 +313,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     {
         try
         {
+            this.SetButtonsEnabled(false);
             await this.OnDeletePhoto();
+            this.SetButtonsEnabled(true);
         }
         catch (Exception) { }
     }
