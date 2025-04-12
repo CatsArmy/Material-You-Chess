@@ -3,26 +3,30 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
 using Chess.App.Common;
 using Chess.App.Common.Extensions;
+using Chess.App.Common.Permissions;
 using KeySet = System.Collections.Generic.Dictionary<string, Chess.App.Networked.Nearby.EndPoint>.KeyCollection;
 
 namespace Chess.App.Networked.Nearby;
 
 public abstract class ConnectionsActivity : AppCompatActivity
 {
-    public IConnectionsClient? ConnectionsClient;
+    protected IConnectionsClient? ConnectionsClient;
+    protected NearbyConnections? PermissionManager;
+
     public Dictionary<string, EndPoint> EstablishedConnections { get; private set; } = [];
     public Dictionary<string, EndPoint> PendingConnections { get; private set; } = [];
     public Dictionary<string, EndPoint> DiscoveredEndpoints { get; private set; } = [];
-
+    public bool IsConnected => this.EstablishedConnections.Count > 0;
     public bool IsConnecting { get; private set; } = false;
     public bool IsDiscovering { get; private set; } = false;
     public bool IsAdvertising { get; private set; } = false;
 
-    public bool IsConnected => this.EstablishedConnections.Count > 0;
+    public abstract void HandlePermissionResult(bool isGranted);
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+        this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
         this.ConnectionsClient = NearbyClass.GetConnectionsClient(this);
         this.ConnectionsClient.StopDiscovery();
         this.ConnectionsClient.StopAdvertising();

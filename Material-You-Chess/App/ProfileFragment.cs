@@ -18,13 +18,14 @@ using Google.Android.Material.ProgressIndicator;
 using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;
 
 public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.profile_fragment)
 {
-    private MainActivity? activity;
+    private MainActivity? MainActivity;
     private AndroidUri? Upload;
 
     /// <summary> Input is <see langword="typeof"/>(<see cref="PickVisualMediaRequest" />)
@@ -37,47 +38,64 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
 
     public ActivityResultLauncher? SignInLauncher;
     public CircularProgressIndicator? UploadIndicator;
-    public ShapeableImageView? ProfilePicture { get; set; }
+
     public Button? Logout { get; set; }
     public TextView? DisplayName { get; set; }
     public TextInputEditText? UsernameInput { get; set; }
     public TextInputLayout? UsernameLayout { get; set; }
-    public FirebaseUserClient? UserClient;
+    public ShapeableImageView? ProfilePicture { get; set; }
+
     public ExtendedFloatingActionButton? DeleteProfilePicture;
     public ExtendedFloatingActionButton? CaptureProfilePicture;
     public ExtendedFloatingActionButton? SelectProfilePicture;
+    public FirebaseUserClient? UserClient;
     public FirebaseUser? User;
-
-    private AndroidX.AppCompat.App.AlertDialog.Builder? Delete => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Delete")
-    ?.SetIcon(Resource.Drawable.delete)
-    ?.SetMessage("Are you sure you want to delete your profile picture?\nthis action cannot be undone")
-    ?.SetPositiveButton("Confirm", this.DeletePhoto)
-    ?.SetNegativeButton("Cancel", (_, _) => { });
-
-    private AndroidX.AppCompat.App.AlertDialog.Builder? SignOut => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Sign Out")
-    ?.SetIcon(Resource.Drawable.logout)
-    ?.SetMessage("Are you sure you want to sign out")
-    ?.SetNeutralButton("Ok", (_, _) => FirebaseAuth.Instance?.SignOut());
 
     /// <summary>Loads the profile picture from the cache or firebase storage</summary>
     private RequestBuilder? Thumbnail => Glide.With(this).Load(this.UserClient?.ProfilePicture)
         .SkipMemoryCache(false).SetDiskCacheStrategy(DiskCacheStrategy.All!);
 
-    private bool ButtonsEnabled
+    private AndroidX.AppCompat.App.AlertDialog.Builder? Delete => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Delete")
+    ?.SetIcon(Resource.Drawable.delete)
+    ?.SetMessage($"Are you sure you want to delete your profile picture?{Environment.NewLine}this action cannot be undone")
+    ?.SetPositiveButton("Confirm", this.DeletePhoto)
+    ?.SetNegativeButton("Cancel", this.NoOperation);
+
+    private AndroidX.AppCompat.App.AlertDialog.Builder? SignOut => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Sign Out")
+    ?.SetIcon(Resource.Drawable.logout)
+    ?.SetMessage("Are you sure you want to sign out")
+    ?.SetPositiveButton("Confirm", this.OnSignOut)
+    ?.SetNegativeButton("Cancel", this.NoOperation);
+
+    /// <summary> NoOp function for readability </summary>
+    private void NoOperation(object? sender, EventArgs args) { }
+
+    private async void OnSignOut(object? sender, EventArgs args)
     {
-        set
+        try
         {
-            this.Logout!.Enabled = value;
-            this.SelectProfilePicture!.Enabled = value;
-            this.CaptureProfilePicture!.Enabled = value;
-            this.DeleteProfilePicture!.Enabled = value;
+            var task = AuthUI.Instance.SignOut(this.MainActivity!); await task;
+            if (task.IsComplete)
+            {
+                this.SetButtonsEnabled(false);
+            }
         }
+        catch (Exception) { }
+    }
+
+
+    private void SetButtonsEnabled(bool value)
+    {
+        this.Logout!.Enabled = value;
+        this.SelectProfilePicture!.Enabled = value;
+        this.CaptureProfilePicture!.Enabled = value;
+        this.DeleteProfilePicture!.Enabled = value;
     }
 
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        this.activity = this.Activity as MainActivity;
+        this.MainActivity = this.Activity as MainActivity;
 
         var file = new Java.IO.File(FileProvider.GetTemporaryRootDirectory(), "temp.image");
         this.Upload = FileProvider.GetUriForFile(file);
@@ -112,9 +130,9 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.SelectProfilePicture!.Click += (_, _) => this.PhotoPicker();
         this.CaptureProfilePicture!.Click += (_, _) => this.PhotoTaker();
         this.DeleteProfilePicture!.Click += (_, _) => this.Delete?.Show();
-        this.ButtonsEnabled = false;
+        this.SetButtonsEnabled(false);
 
-        if (this.activity?.Auth?.CurrentUser is not FirebaseUser user) // The user is not logged in
+        if (this.MainActivity?.Auth?.CurrentUser is not FirebaseUser user) // The user is not logged in
         {
             Logger.Verbose("FirebaseAuth.Instance?.CurrentUser is null");
             this.OpenSignInIntentActivity();
@@ -142,7 +160,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         this.UsernameInput.SetImeActionLabel("Done", ImeAction.Done);
         this.UsernameInput.EditorAction += async (sender, args) => await this.OnUsernameEditorAction(sender, args);
 
-        this.ButtonsEnabled = true;
+        this.SetButtonsEnabled(true);
     }
 
     /// <summary> Wrapper method for Opening the Camera without special permission using the TakePicture ActivityResultContract</summary>
@@ -373,33 +391,40 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// navigates the user back to the <see cref="MainFragment"/> in the case that the sign in/up operation fails to finish
     /// due to the user canceling the operation or the operation erroring out
     /// </summary>
-    private void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
+    private async void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)
     {
         var resultCode = result?.ResultCode.IntValue();
         var response = result?.IdpResponse;
 
         if (resultCode == ((int)Result.Ok) || response == null) // Successfully signed in
         {
-            if (this.activity?.Auth?.CurrentUser is not FirebaseUser user)
+            if (this.MainActivity?.Auth?.CurrentUser is not FirebaseUser user)
             {
                 Logger.Warn("FirebaseAuth.Instance?.CurrentUser is null");
-                Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-                this.activity!.NavigationBar!.SelectedItemId = this.activity!.MainItem!.ItemId;
+                Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
+                this.MainActivity!.NavigationBar!.SelectedItemId = this.MainActivity!.MainItem!.ItemId;
                 return;
             }
 
+#pragma warning disable XAOBS001 // Type or member is obsolete
+            if (response?.User?.PhotoUri is not null && response.IsNewUser)
+            {
+                var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(null);
+                await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
+            }
+#pragma warning restore XAOBS001 // Type or member is obsolete
             this.OnLoggedIn(user);
             return;
         }
 
         if (response.Error?.ErrorCode == ErrorCodes.NoNetwork) //Sign in failed
         {
-            Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
-            this.activity!.NavigationBar!.SelectedItemId = this.activity!.MainItem!.ItemId;
+            Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
+            this.MainActivity!.NavigationBar!.SelectedItemId = this.MainActivity!.MainItem!.ItemId;
             return;
         }
 
-        Snackbar.Make(this.activity!.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
+        Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
     }
 }
 

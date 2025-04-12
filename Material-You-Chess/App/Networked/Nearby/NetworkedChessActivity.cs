@@ -8,6 +8,7 @@ using Bumptech.Glide;
 using Chess.App.Common;
 using Chess.App.Dialogs;
 using Chess.Game;
+using Chess.Game.Common;
 using Firebase.Auth;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.FloatingActionButton;
@@ -24,6 +25,12 @@ namespace Chess.App.Networked.Nearby;
 )]
 public partial class NetworkedChessActivity : IChessActivity
 {
+    protected const string UserIsNull = "FirebaseAuth.Instance.CurrentUser is null somehow";
+    protected readonly FirebaseUser CurrentUser = FirebaseAuth.Instance.CurrentUser ?? throw new NullReferenceException(UserIsNull);
+    protected override Strategy Strategy => Strategy.P2pStar;
+    protected override string ServiceId => "com.google.location.nearby.apps.chess";
+    protected override string AdvertisingName => this.CurrentUser.Uid;
+
     public Context? Context => this;
     public ConstraintLayout? BoardLayout { get; set; }
     public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
@@ -31,25 +38,10 @@ public partial class NetworkedChessActivity : IChessActivity
     public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
-    public ExtendedFloatingActionButton? Home { get; set; }
-
-    public ImageView? Indicator { get; set; }
-    public ShapeableImageView? WinningPlayer { get; set; }
-    public TextView? WinnerUsername { get; set; }
-    public TextView? WinnerDescription { get; set; }
 
     public required ChessGame Game { get; set; }
     public required UserClient Client { get; set; }
     public required UserClient ConnectedClient { get; set; }
-
-    protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string AdvertisingName => this.CurrentUser.Uid;
-    protected override Strategy Strategy => Strategy.P2pStar;
-
-    private const string UserIsNull = "FirebaseAuth.Instance.CurrentUser is null somehow";
-    private readonly FirebaseUser CurrentUser = FirebaseAuth.Instance.CurrentUser ?? throw new NullReferenceException(UserIsNull);
-
-    public override void Finish() => base.Finish();
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -60,28 +52,12 @@ public partial class NetworkedChessActivity : IChessActivity
         IChessActivity.Instance = this;
         this.PromotionDialogs = (new(this), new(this));
 
-        this.StandardBottomSheet = base.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet);
-        this.BottomSheetLayout = base.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet);
-        this.MatchmakingLayout = base.FindViewById<ConstraintLayout>(Resource.Id.matchmaking);
-        this.GameOverLayout = base.FindViewById<ConstraintLayout>(Resource.Id.game_over);
-
-        this.Indicator = base.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator);
-        this.WinningPlayer = base.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer);
-        this.WinnerUsername = base.FindViewById<TextView>(Resource.Id.winningPlayerUsername);
-        this.WinnerDescription = base.FindViewById<TextView>(Resource.Id.winnerDescription);
-
         this.WhitePlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
         this.BlackPlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
         this.WhitePlayerUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
         this.BlackPlayerUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
-        this.Home = base.FindViewById<ExtendedFloatingActionButton>(Resource.Id.home);
-
-        this.BottomSheet = BottomSheetBehavior.From(this.BottomSheetLayout!);
-        this.Callback = new BottomSheetCallback(this);
-        this.ChessBottomSheet = new(this);
-        this.CreateBottomSheet();
-        this.Show();
+        this.BottomSheet = new(this);
     }
 
     protected override void OnEndpointConnected(EndPoint endpoint)
@@ -122,11 +98,6 @@ public partial class NetworkedChessActivity : IChessActivity
         }
     }
 
-    /// <summary> Allows <see cref="IChessActivity"/> access to <see cref="ConnectionsActivity.Send(Payload)"/>
-    /// by both implementing <see cref="IChessActivity.Send(Payload)"/> method and overriding the 
-    /// <see cref="ConnectionsActivity.Send(Payload)"/> method </summary>
-    public override void Send(Payload payload) => base.Send(payload);
-
     /// <summary> Handles the <paramref name="payload"/> sent by <paramref name="endpoint"/> client </summary>
     /// <param name="endpoint"> The client who is sending the <paramref name="payload"/> to us </param>
     /// <param name="payload"> The <see cref="Payload"/> containing all the data for us to handle the event </param>
@@ -142,7 +113,8 @@ public partial class NetworkedChessActivity : IChessActivity
             return;
         }
 
-        this.Hide();
+        this.BottomSheet!.Callback.ToState = null;
+        this.BottomSheet!.Behavior.State = (int)ChessBottomSheet.VisibilityState.Collapsed;
         switch (JsonSerializer.Deserialize(payload.AsBytes()!, SourceJsonGenerationContext.Default.FirebaseUserClient))
         {
             case WhitePlayerClient whiteClient:
@@ -171,6 +143,7 @@ public partial class NetworkedChessActivity : IChessActivity
 
     protected override void OnDestroy()
     {
+        IChessActivity.Instance = null;
         Logger.Debug($"{nameof(OnDestroy)}");
         base.OnDestroy();
     }

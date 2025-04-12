@@ -60,7 +60,7 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
     public bool HasAccess()
     {
         for (int i = 0; i < this.Permissions.Length; i++)
-            this.Permissions[i].IsGranted = callback.CheckSelfPermission(this.Permissions[i].Permission);
+            this.Permissions[i].IsGranted = callback.CheckPermission(this.Permissions[i].Permission);
 
         bool hasAccess = true;
         foreach (var permission in this.Permissions) if (permission.IsGranted == Permission.Denied)

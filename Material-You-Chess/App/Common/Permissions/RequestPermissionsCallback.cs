@@ -14,11 +14,11 @@ namespace Chess.App.Common.Permissions;
 /// <br /> <see langword="when" /> <paramref name="callback"/> <see langword="is" /> <see langword="true" />: <br />
 /// Permission is granted. Continue the action or workflow in your app.
 /// </param>
-public class RequestPermissionsCallback(Action<bool> callback, Func<string?, Permission> checkSelf) : ActivityResultCallback<IMap>(permissions
+public class RequestPermissionsCallback(Action<bool> callback, Func<string?, Permission> check) : ActivityResultCallback<IMap>(permissions
     => callback(!permissions!.Values().Cast<bool>().ToArray().Contains(false)))
 {
     public void OnRequestCallback(bool isGranted) => callback(isGranted);
-    public Permission CheckSelfPermission(string? permission) => checkSelf(permission);
+    public Permission CheckPermission(string? permission) => check(permission);
 }
 
 /// <param name="callback">

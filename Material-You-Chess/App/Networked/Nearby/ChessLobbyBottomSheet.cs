@@ -13,22 +13,7 @@ namespace Chess.App.Networked.Nearby;
 
 public partial class NetworkedChessActivity : ConnectionsActivity
 {
-    private NearbyConnections? PermissionManager;
-
-    public ChessBottomSheet? ChessBottomSheet { get; set; }
-    public BottomSheetBehavior? BottomSheet { get; set; }
-    public CoordinatorLayout? StandardBottomSheet { get; set; }
-    public ConstraintLayout? BottomSheetLayout { get; set; }
-    public ConstraintLayout? GameOverLayout { get; set; }
-    public ConstraintLayout? MatchmakingLayout { get; set; }
-    public BottomSheetCallback? Callback { get; set; }
-
-    public TextView? SearchingText { get; set; }
-    public CircularProgressIndicator? SearchingIndicator { get; set; }
-    public ChipGroup? MatchmakingPreferences { get; set; }
-    public Chip? White { get; set; }
-    public Chip? Black { get; set; }
-
+    public ChessBottomSheet? BottomSheet { get; set; }
     private ConnectionsClientState State
     {
         get; set
@@ -40,27 +25,27 @@ public partial class NetworkedChessActivity : ConnectionsActivity
 
     public virtual void OnSelectNone()
     {
-        this.SearchingIndicator?.Hide();
-        this.SearchingText!.Text = "Please select a matchmaking preference";
+        this.BottomSheet!.SearchingIndicator?.Hide();
+        this.BottomSheet!.SearchingText!.Text = "Please select a matchmaking preference";
         this.State = ConnectionsClientState.Idle;
     }
 
     public virtual void OnSelectWhite()
     {
-        this.SearchingIndicator?.Show();
-        this.SearchingText!.Text = "Your device is now Advertising itself for other devices that discovering in your area";
+        this.BottomSheet!.SearchingIndicator?.Show();
+        this.BottomSheet!.SearchingText!.Text = "Your device is now Advertising itself for other devices that discovering in your area";
         this.State = ConnectionsClientState.Advertising;
     }
 
     public virtual void OnSelectBlack()
     {
-        this.SearchingIndicator?.Show();
-        this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
+        this.BottomSheet!.SearchingIndicator?.Show();
+        this.BottomSheet!.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
         this.State = ConnectionsClientState.Discovering;
     }
 
     /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
-    public virtual void HandlePermissionResult(bool isGranted)
+    public override void HandlePermissionResult(bool isGranted)
     {
         if (!isGranted)
         {
@@ -68,53 +53,15 @@ public partial class NetworkedChessActivity : ConnectionsActivity
             this.Finish();
             return;
         }
+        //move to main fragment
 
-        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
     }
 
-    public void CreateBottomSheet()
+    public void BindBottomSheet()
     {
-        this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
-        this.PermissionManager.RequestAccess();
+        this.PermissionManager?.RequestAccess();
+        //move to mainfragment
 
-        this.SearchingIndicator = base.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator);
-        this.SearchingText = base.FindViewById<TextView>(Resource.Id.SearchingText);
-        this.White = base.FindViewById<Chip>(Resource.Id.white_chip);
-        this.Black = base.FindViewById<Chip>(Resource.Id.black_chip);
-        this.MatchmakingPreferences = base.FindViewById<ChipGroup>(Resource.Id.matchmaking_pref);
-        this.MatchmakingPreferences!.CheckedChange += (_, _) =>
-        {
-            if (!this.White!.Checked && !this.Black!.Checked)
-            {
-                this.OnSelectNone();
-            }
-
-            if (this.White!.Checked)
-            {
-                this.OnSelectWhite();
-            }
-
-            if (this.Black!.Checked)
-            {
-                this.OnSelectBlack();
-            }
-        };
-    }
-
-    public void Hide()
-    {
-        this.MatchmakingLayout!.Visibility = ViewStates.Gone;
-        this.GameOverLayout!.Visibility = ViewStates.Gone;
-        this.BottomSheet!.RemoveBottomSheetCallback(this.Callback!);
-    }
-
-    public void Show()
-    {
-        this.GameOverLayout!.Visibility = ViewStates.Gone;
-        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
-        this.MatchmakingLayout!.Visibility = ViewStates.Visible;
-        this.BottomSheet!.AddBottomSheetCallback(this.Callback!);
-        this.BottomSheet!.State = BottomSheetBehavior.StateHalfExpanded;
     }
 
     private void OnStateChanged(ConnectionsClientState currentState, ConnectionsClientState requestedState)

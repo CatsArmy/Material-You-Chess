@@ -54,7 +54,7 @@ public class ChessGame(IChessActivity activity)
 
         this.Player!.Outcome = GameOutcome.Win;
         this.Enemy!.Outcome = GameOutcome.Lose;
-        activity.ChessBottomSheet?.Show(winner, loser);
+        activity.BottomSheet?.ShowGameOver(winner, loser);
     }
 
     /// <summary>

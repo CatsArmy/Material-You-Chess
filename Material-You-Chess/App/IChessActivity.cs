@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Gms.Nearby.Connection;
+using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App.Common;
@@ -24,27 +25,17 @@ public interface IChessActivity
     public TextView? BlackPlayerUsername { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
 
-    public BottomSheetCallback? Callback { get; set; }
-    public BottomSheetBehavior? BottomSheet { get; set; }
-    public ChessBottomSheet? ChessBottomSheet { get; set; }
-    public CoordinatorLayout? StandardBottomSheet { get; set; }
-    public ConstraintLayout? BottomSheetLayout { get; set; }
-    public ConstraintLayout? MatchmakingLayout { get; set; }
-    public ConstraintLayout? GameOverLayout { get; set; }
-    public ExtendedFloatingActionButton? Home { get; set; }
-    public ImageView? Indicator { get; set; }
-    public ShapeableImageView? WinningPlayer { get; set; }
-    public TextView? WinnerUsername { get; set; }
-    public TextView? WinnerDescription { get; set; }
-
     /// <summary> This Client</summary>
     public UserClient Client { get; set; }
 
     /// <summary> The client that we connect to </summary>
     public UserClient ConnectedClient { get; set; }
     public ChessGame Game { get; set; }
+    ChessBottomSheet? BottomSheet { get; set; }
 
     public void Send(Payload payload);
 
-    public void Finish();
+    void Finish();
+
+    T? FindViewById<T>(int id) where T : View;
 }

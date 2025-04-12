@@ -8,7 +8,7 @@ public static partial class Extensions
 {
     public static NearbyConnections RegisterNearbyPermissionsManager(this ComponentActivity activity, Action<bool> OnRequestCallback)
     {
-        var callback = new RequestPermissionsCallback(OnRequestCallback, activity.CheckSelfPermission);
+        var callback = new RequestPermissionsCallback(OnRequestCallback, activity.CheckCallingOrSelfPermission);
         return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
     }
 }
