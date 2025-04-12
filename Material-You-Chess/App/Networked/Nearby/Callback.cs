@@ -1,14 +1,11 @@
 ﻿using Android.Views;
 using Chess.Game.Common;
 using Google.Android.Material.BottomSheet;
-using static Chess.Game.Common.ChessBottomSheet;
 
 namespace Chess.App.Networked.Nearby;
 
-public class BottomSheetCallback(ChessBottomSheet? instance) : BottomSheetBehavior.BottomSheetCallback()
+public class BottomSheetCallback(IChessActivity instance) : BottomSheetBehavior.BottomSheetCallback()
 {
-    public BottomSheetCallback(IChessActivity instance) : this(instance.BottomSheet) { }
-
     public VisibilityState? ToState = VisibilityState.Collapsed;
     public VisibilityState? OnState = VisibilityState.Hidden;
 
@@ -82,7 +79,7 @@ public class BottomSheetCallback(ChessBottomSheet? instance) : BottomSheetBehavi
     {
         if (this.ToState is VisibilityState toState)
         {
-            instance!.Behavior!.State = (int)toState;
+            instance.BottomSheet!.Behavior!.State = (int)toState;
         }
     }
 }

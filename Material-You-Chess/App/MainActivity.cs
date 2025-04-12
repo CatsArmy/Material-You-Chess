@@ -44,7 +44,7 @@ public class MainActivity : AppCompatActivity
         this.Main = new MainFragment();
         this.Profile = new ProfileFragment();
         this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-            .Add(this.FragmentContainer!.Id, this.Main, nameof(this.Main)).Commit();
+            .Add(this.FragmentContainer!.Id, this.Main).Commit();
 
         var app = FirebaseApp.InitializeApp(this)!;
         var check = FirebaseAppCheck.GetInstance(app);
@@ -70,22 +70,18 @@ public class MainActivity : AppCompatActivity
     /// </summary>
     private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
-        if (this.NavigationBar?.SelectedItemId == e.Item.ItemId)
-            return;
+        if (this.NavigationBar?.SelectedItemId == e.Item.ItemId) return;
 
         if (e.Item.ItemId == this.MainItem?.ItemId)
         {
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, this.Main!, nameof(this.Main)).Commit();
-            return;
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true).Replace(this.FragmentContainer!.Id,
+                this.Main!).Commit();
         }
 
-        if (e.Item.ItemId == this.ProfileItem?.ItemId)
+        else if (e.Item.ItemId == this.ProfileItem?.ItemId)
         {
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-                .Replace(this.FragmentContainer!.Id, this.Profile!, nameof(this.Profile)).Commit();
-            return;
+            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true).Replace(this.FragmentContainer!.Id,
+                this.Profile!).Commit();
         }
     }
-
 }

@@ -11,4 +11,10 @@ public static partial class Extensions
         var callback = new RequestPermissionsCallback(OnRequestCallback, activity.CheckCallingOrSelfPermission);
         return new(activity.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
     }
+
+    public static NearbyConnections RegisterNearbyPermissionsManager(this AndroidX.Fragment.App.Fragment fragment, Action<bool> OnRequestCallback)
+    {
+        var callback = new RequestPermissionsCallback(OnRequestCallback, fragment.Activity!.CheckCallingOrSelfPermission);
+        return new(fragment.RegisterForActivityResult(new RequestMultiplePermissions(), callback), callback);
+    }
 }

@@ -18,7 +18,6 @@ using Google.Android.Material.ProgressIndicator;
 using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 using AndroidUri = Android.Net.Uri;
 
 namespace Chess.App;

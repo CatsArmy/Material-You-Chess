@@ -1,6 +1,7 @@
-﻿using Firebase.Auth;
+﻿using Chess.App.Common;
+using Firebase.Auth;
 
-namespace Chess.App.Common;
+namespace Chess.Game.Common;
 
 public class BlackPlayerClient(string Username, string Uid) : FirebaseUserClient(Username, Uid)
 {

@@ -1,5 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
+using Chess.App.Common.Extensions;
+using Chess.App.Common.Permissions;
 using Chess.App.Networked.Nearby;
 using Firebase.Auth;
 using Google.Android.Material.Button;
@@ -9,6 +11,7 @@ namespace Chess.App;
 public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.main_fragment)
 {
     private FirebaseAuth? Auth;
+    private NearbyConnections? PermissionManager;
     public MaterialButtonToggleGroup? GameModeSelector { get; private set; }
     public Button? Online { get; private set; }
     public Button? Local { get; private set; }
@@ -26,6 +29,12 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         }
     } = false;
 
+    public override void OnCreate(Bundle? savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+        //this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
+    }
+
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
@@ -40,6 +49,15 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Auth = (this.Activity as MainActivity)!.Auth;
         this.IsLoggedIn = this.Auth!.CurrentUser is not null;
         this.Auth!.AuthState += this.OnAuthState;
+    }
+
+    /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
+    private void HandlePermissionResult(bool isGranted)
+    {
+        //if (!isGranted)
+        //{
+        //
+        //}
     }
 
     public override void OnDestroy()
@@ -58,6 +76,8 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
 
     private void StartGame(object? sender, EventArgs e)
     {
+        //when missing perms
+        //this.PermissionManager?.RequestAccess();
         base.StartActivity(new Intent(this.Activity!, (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline) switch
         {
             false => typeof(ChessActivity),

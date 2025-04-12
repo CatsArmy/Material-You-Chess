@@ -3,13 +3,13 @@ using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Android.Views;
 using Chess.App;
-using Chess.App.Common;
 using Chess.App.Networked.Nearby;
 using Chess.Game.Board;
 using Chess.Game.Common;
 using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 using Chess.Game.Player;
+using static Java.Util.Jar.Attributes;
 
 namespace Chess.Game;
 
@@ -54,7 +54,7 @@ public class ChessGame(IChessActivity activity)
 
         this.Player!.Outcome = GameOutcome.Win;
         this.Enemy!.Outcome = GameOutcome.Lose;
-        activity.BottomSheet?.ShowGameOver(winner, loser);
+        activity.BottomSheet?.ShowGameOver(winner, $"{winner.Name} Wins, {loser.Name} loses");
     }
 
     /// <summary>

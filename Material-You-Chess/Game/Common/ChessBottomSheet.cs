@@ -18,7 +18,6 @@ public class ChessBottomSheet(IChessActivity activity)
     public readonly ConstraintLayout BottomSheetLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!;
     public readonly ConstraintLayout GameOverLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.game_over)!;
     public readonly ConstraintLayout MatchmakingLayout = activity.FindViewById<ConstraintLayout>(Resource.Id.matchmaking)!;
-    public readonly BottomSheetCallback Callback = new(activity);
 
     public readonly ImageView Indicator = activity.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator)!;
     public readonly ShapeableImageView WinningPlayer = activity.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer)!;
@@ -31,16 +30,18 @@ public class ChessBottomSheet(IChessActivity activity)
     public readonly Chip Black = activity.FindViewById<Chip>(Resource.Id.black_chip)!;
     public readonly TextView SearchingText = activity.FindViewById<TextView>(Resource.Id.SearchingText)!;
     public readonly CircularProgressIndicator SearchingIndicator = activity.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
-    public BottomSheetBehavior Behavior
+
+    public readonly BottomSheetCallback Callback = new(activity);
+    public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(activity.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
+
+    public static ChessBottomSheet OnCreate(IChessActivity activity)
     {
-        get; private set
-        {
-            field = value;
-            this.StandardBottomSheet!.Visibility = ViewStates.Invisible;
-            value.State = BottomSheetBehavior.StateHidden;
-            value!.AddBottomSheetCallback(this.Callback);
-        }
-    } = BottomSheetBehavior.From(activity.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
+        var result = new ChessBottomSheet(activity);
+        result.StandardBottomSheet!.Visibility = ViewStates.Invisible;
+        result.Behavior.AddBottomSheetCallback(result.Callback);
+        result.Behavior.State = BottomSheetBehavior.StateHidden;
+        return result;
+    }
 
     public void Show()
     {
@@ -56,45 +57,22 @@ public class ChessBottomSheet(IChessActivity activity)
         this.MatchmakingPreferences!.CheckedChange += this.OnPreferencesChange;
     }
 
-    public void ShowGameOver(IPlayer winner, IPlayer loser)
+    public void ShowGameOver(IPlayer player, string description)
     {
         this.StandardBottomSheet!.Visibility = ViewStates.Visible;
         this.GameOverLayout!.Visibility = ViewStates.Visible;
         this.MatchmakingLayout!.Visibility = ViewStates.Gone;
         this.Behavior!.State = BottomSheetBehavior.StateExpanded;
 
-        this.WinnerUsername!.Text = winner.Name;
-        this.WinnerDescription!.Text = $"{winner.Name} Wins, {loser.Name} loses";
-        switch (winner)
+        this.WinnerUsername!.Text = player.Name;
+        this.WinnerDescription!.Text = description;
+        switch (player)
         {
             case Player.Black:
                 this.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
                 this.Indicator?.SetImageResource(Resource.Drawable.king_black);
                 break;
             default:
-                this.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);
-                break;
-        }
-
-        this.Home!.Click += this.FinishActivity;
-    }
-
-    public void ShowConnectionError()
-    {
-        this.GameOverLayout!.Visibility = ViewStates.Visible;
-        this.MatchmakingLayout!.Visibility = ViewStates.Gone;
-        this.Behavior!.State = BottomSheetBehavior.StateExpanded;
-
-        this.WinnerUsername!.Text = activity.ConnectedClient.Username;
-        this.WinnerDescription!.Text = $"{activity.ConnectedClient.Username} disconnected, {activity.Client.Username} wins by technicality";
-
-        switch (activity.Game.ClientIsWhite) // Inverse because our client did not disconnect
-        {
-            case true: //our client is white and the connect client is black
-                this.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
-                this.Indicator?.SetImageResource(Resource.Drawable.king_black);
-                break;
-            default: //our client is black and the connect client is white
                 this.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);
                 break;
         }
@@ -126,15 +104,5 @@ public class ChessBottomSheet(IChessActivity activity)
     {
         IChessActivity.Instance = null;
         activity.Finish();
-    }
-
-    public enum VisibilityState
-    {
-        Dragging = BottomSheetBehavior.StateDragging,
-        Settling = BottomSheetBehavior.StateSettling,
-        Expanded = BottomSheetBehavior.StateExpanded,
-        HalfExpanded = BottomSheetBehavior.StateHalfExpanded,
-        Collapsed = BottomSheetBehavior.StateCollapsed,
-        Hidden = BottomSheetBehavior.StateHidden,
     }
 }

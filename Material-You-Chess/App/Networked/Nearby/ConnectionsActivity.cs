@@ -11,7 +11,6 @@ namespace Chess.App.Networked.Nearby;
 public abstract class ConnectionsActivity : AppCompatActivity
 {
     protected IConnectionsClient? ConnectionsClient;
-    protected NearbyConnections? PermissionManager;
 
     public Dictionary<string, EndPoint> EstablishedConnections { get; private set; } = [];
     public Dictionary<string, EndPoint> PendingConnections { get; private set; } = [];
@@ -21,12 +20,9 @@ public abstract class ConnectionsActivity : AppCompatActivity
     public bool IsDiscovering { get; private set; } = false;
     public bool IsAdvertising { get; private set; } = false;
 
-    public abstract void HandlePermissionResult(bool isGranted);
-
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        this.PermissionManager = this.RegisterNearbyPermissionsManager(this.HandlePermissionResult);
         this.ConnectionsClient = NearbyClass.GetConnectionsClient(this);
         this.ConnectionsClient.StopDiscovery();
         this.ConnectionsClient.StopAdvertising();
