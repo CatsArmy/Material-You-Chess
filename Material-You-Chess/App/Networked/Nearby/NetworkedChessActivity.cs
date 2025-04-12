@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Android.Content.PM;
 using Android.Gms.Nearby.Connection;
+using AndroidX.ConstraintLayout.Motion.Widget;
 using AndroidX.ConstraintLayout.Widget;
 using Bumptech.Glide;
 using Chess.App.Common;
@@ -53,10 +54,10 @@ public partial class NetworkedChessActivity : IChessActivity
         Platform.Init(this, savedInstanceState);
         base.SetContentView(Resource.Layout.chess_activity);
         this.PromotionDialogs = (new(this), new(this));
-        this.WhitePlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.p1MainProfileImageView);
-        this.BlackPlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.p2MainProfileImageView);
-        this.WhitePlayerUsername = base.FindViewById<TextView>(Resource.Id.p1MainUsername);
-        this.BlackPlayerUsername = base.FindViewById<TextView>(Resource.Id.p2MainUsername);
+        this.WhitePlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.whitePlayerProfilePicture);
+        this.BlackPlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.blackPlayerProfilePicture);
+        this.WhitePlayerUsername = base.FindViewById<TextView>(Resource.Id.whitePlayerUsername);
+        this.BlackPlayerUsername = base.FindViewById<TextView>(Resource.Id.blackPlayerUsername);
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         this.BottomSheet = ChessBottomSheet.OnCreate(this);
         this.BottomSheet.Show();

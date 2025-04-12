@@ -9,6 +9,7 @@ using Chess.Game.Common;
 using Chess.Game.Interfaces;
 using Chess.Game.Moves;
 using Chess.Game.Player;
+using Google.Android.Material.ImageView;
 using static Java.Util.Jar.Attributes;
 
 namespace Chess.Game;
@@ -257,7 +258,7 @@ public class ChessGame(IChessActivity activity)
     {
         const string IsWhite = "IsWhite";
         const string IsBlack = "IsBlack";
-        var space = activity.BoardLayout!.FindViewById<ImageView>(id);
+        var space = activity.BoardLayout!.FindViewById<ShapeableImageView>(id);
         string? tag = (space?.Tag as Java.Lang.String)?.ToString();
         bool isWhite = tag switch
         {

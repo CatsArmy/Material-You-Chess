@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Android;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using AndroidX.Activity.Result;
@@ -8,7 +9,7 @@ namespace Chess.App.Common.Permissions;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "False positive")]
-public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPermissionsCallback callback) : IPermissionsManager
+public class NearbyConnections(ActivityResultLauncher requestLauncher, ContextWrapper? context) : IPermissionsManager
 {
     public (Permission IsGranted, string Permission) NearbyWifiDevices = (Permission.Denied, Manifest.Permission.NearbyWifiDevices);
     public (Permission IsGranted, string Permission) AccessWifiState = (Permission.Denied, Manifest.Permission.AccessWifiState);
@@ -28,7 +29,8 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
             this.BluetoothConnect,
             this.AccessWifiState,
             this.ChangeWifiState,
-            this.NearbyWifiDevices,],
+            this.NearbyWifiDevices,
+        ],
 
         >= BuildVersionCodes.S => [this.BluetoothScan,
             this.BluetoothAdvertise,
@@ -37,7 +39,8 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
             this.ChangeWifiState,
             this.NearbyWifiDevices,
             this.AccessCoarseLocation,
-            this.AccessFineLocation,],
+            this.AccessFineLocation,
+        ],
 
         >= BuildVersionCodes.Q => [this.Bluetooth,
             this.BluetoothAdmin,
@@ -46,7 +49,8 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
             this.ChangeWifiState,
             this.NearbyWifiDevices,
             this.AccessCoarseLocation,
-            this.AccessFineLocation,],
+            this.AccessFineLocation,
+        ],
 
         _ => [this.Bluetooth,
             this.BluetoothAdmin,
@@ -54,28 +58,26 @@ public class NearbyConnections(ActivityResultLauncher requestLauncher, RequestPe
             this.AccessWifiState,
             this.ChangeWifiState,
             this.AccessCoarseLocation,
-            this.AccessFineLocation,]
+            this.AccessFineLocation,
+        ]
     };
 
     public bool HasAccess()
     {
+        if (context is null) return false;
+
         for (int i = 0; i < this.Permissions.Length; i++)
-            this.Permissions[i].IsGranted = callback.CheckPermission(this.Permissions[i].Permission);
+            this.Permissions[i].IsGranted = context.CheckCallingOrSelfPermission(this.Permissions[i].Permission);
 
         bool hasAccess = true;
         foreach (var permission in this.Permissions) if (permission.IsGranted == Permission.Denied)
                 hasAccess = false;
-
-        return hasAccess;
+        return this.NearbyWifiDevices.IsGranted == Permission.Granted || hasAccess;
     }
 
     public void RequestAccess()
     {
-        if (this.HasAccess())
-        {
-            callback.OnRequestCallback(true);
-            return;
-        }
+        if (this.HasAccess()) return;
 
         requestLauncher.Launch((string[])[.. from permission in this.Permissions select permission.Permission]);
     }

@@ -15,34 +15,35 @@
         app:layout_constraintBottom_toTopOf="@+id/materialCardView"
         app:layout_constraintEnd_toStartOf="@+id/displayEnd_CA"
         app:layout_constraintStart_toStartOf="@+id/displayStart_CA"
-        app:layout_constraintTop_toTopOf="@+id/displayTop_CA"
-        tools:visibility="visible">
+        app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/capturedBlackPieces"
+                android:id="@+id/whitePlayerCapturedBlackPieces"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/p1MainUsername"
+                app:layout_constraintTop_toBottomOf="@+id/whitePlayerUsername"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/p1MainProfileImageView"
+                android:id="@+id/whitePlayerProfilePicture"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:clickable="false"
+                android:layout_marginBottom="16dp"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -56,27 +57,26 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="4dp"
-                app:layout_constraintBottom_toTopOf="@+id/p1MainProfileImageView"
-                app:layout_constraintEnd_toEndOf="@+id/p1MainProfileImageView"
-                app:layout_constraintStart_toStartOf="@+id/p1MainProfileImageView"
-                app:srcCompat="@drawable/king_white" />
+                app:layout_constraintBottom_toTopOf="@+id/whitePlayerProfilePicture"
+                app:layout_constraintEnd_toEndOf="@+id/whitePlayerProfilePicture"
+                app:layout_constraintStart_toStartOf="@+id/whitePlayerProfilePicture"
+                app:srcCompat="@drawable/white_king" />
 
             <TextView
-                android:id="@+id/p1MainUsername"
+                android:id="@+id/whitePlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
-                android:layout_weight="1"
+                android:layout_marginBottom="2dp"
+                android:autoSizeTextType="uniform"
                 android:gravity="center|start"
                 android:text="White Player"
-                android:textColor="?android:attr/textColorTertiary"
-                android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/p1MainProfileImageView"
+                app:layout_constraintBottom_toBottomOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/p1MainProfileImageView"
-                app:layout_constraintTop_toTopOf="@+id/p1MainProfileImageView" />
+                app:layout_constraintStart_toEndOf="@+id/whitePlayerProfilePicture"
+                app:layout_constraintTop_toTopOf="@+id/whitePlayerProfilePicture" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
@@ -88,8 +88,8 @@
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/displayBottom_CA"
-        app:layout_constraintEnd_toStartOf="@+id/displayEnd_CA"
+        app:layout_constraintBottom_toBottomOf="@+id/displayBottom_CA"
+        app:layout_constraintEnd_toEndOf="@+id/displayEnd_CA"
         app:layout_constraintStart_toStartOf="@+id/displayStart_CA"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView">
 
@@ -98,25 +98,28 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/capturedWhitePieces"
+                android:id="@+id/blackPlayerCapturedWhitePieces"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/p2MainUsername"
+                app:layout_constraintTop_toBottomOf="@+id/blackPlayerUsername"
                 tools:ignore="SpeakableTextPresentCheck" />
 
             <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/p2MainProfileImageView"
+                android:id="@+id/blackPlayerProfilePicture"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginBottom="16dp"
                 android:clickable="false"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -131,26 +134,26 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginBottom="4dp"
-                app:layout_constraintBottom_toTopOf="@+id/p2MainProfileImageView"
-                app:layout_constraintEnd_toEndOf="@+id/p2MainProfileImageView"
-                app:layout_constraintStart_toStartOf="@+id/p2MainProfileImageView"
-                app:srcCompat="@drawable/king_black" />
+                app:layout_constraintBottom_toTopOf="@+id/blackPlayerProfilePicture"
+                app:layout_constraintEnd_toEndOf="@+id/blackPlayerProfilePicture"
+                app:layout_constraintStart_toStartOf="@+id/blackPlayerProfilePicture"
+                app:srcCompat="@drawable/black_king" />
 
             <TextView
-                android:id="@+id/p2MainUsername"
+                android:id="@+id/blackPlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
-                android:layout_weight="1"
+                android:layout_marginBottom="2dp"
+                android:autoSizeTextType="uniform"
                 android:gravity="center|start"
                 android:text="Black Player"
-                android:textColor="?android:attr/textColorTertiary"
-                android:textSize="24sp"
-                app:layout_constraintBottom_toBottomOf="@+id/p2MainProfileImageView"
+                app:layout_constraintBottom_toBottomOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/p2MainProfileImageView"
-                app:layout_constraintTop_toTopOf="@+id/p2MainProfileImageView" />
+                app:layout_constraintStart_toEndOf="@+id/blackPlayerProfilePicture"
+                app:layout_constraintTop_toTopOf="@+id/blackPlayerProfilePicture" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -163,7 +166,6 @@
         android:layout_margin="4dp"
         app:layout_constraintBottom_toTopOf="@+id/displayBottom_CA"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
@@ -171,21 +173,23 @@
             android:id="@+id/ChessBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true">
+            android:animateLayoutChanges="true"
+            android:animationCache="false"
+            android:persistentDrawingCache="none">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterH"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.10" />
+                app:layout_constraintGuide_begin="24dp" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.035" />
+                app:layout_constraintGuide_begin="12dp" />
 
             <TextView
                 android:id="@+id/gmt___8"
@@ -194,11 +198,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="8"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A8"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A8"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
@@ -209,11 +212,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="7"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A7"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A7"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7" />
 
@@ -225,11 +227,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="6"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A6"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A6"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A6" />
 
@@ -240,11 +241,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="5"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A5"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A5"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A5" />
 
@@ -255,11 +255,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="4"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A4"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A4"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A4" />
 
@@ -270,11 +269,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="3"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A3"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A3"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A3" />
 
@@ -285,11 +283,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="2"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A2"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A2"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
@@ -300,11 +297,10 @@
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="1"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A1"
                 app:layout_constraintEnd_toStartOf="@+id/gmb__A1"
-                app:layout_constraintHorizontal_bias="0.25"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
@@ -312,148 +308,142 @@
                 android:id="@+id/gmt___A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="A"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__A1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__A1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__A1" />
 
             <TextView
                 android:id="@+id/gmt___B"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="B"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__B1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__B1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__B1" />
 
             <TextView
                 android:id="@+id/gmt___C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="C"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__C1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__C1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__C1" />
 
             <TextView
                 android:id="@+id/gmt___D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="D"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__D1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__D1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__D1" />
 
             <TextView
                 android:id="@+id/gmt___E"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="E"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__E1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__E1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__E1" />
 
             <TextView
                 android:id="@+id/gmt___F"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="F"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__F1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__F1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__F1" />
 
             <TextView
                 android:id="@+id/gmt___G"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="G"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__G1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__G1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__G1" />
 
             <TextView
                 android:id="@+id/gmt___H"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:clickable="false"
                 android:fontFamily="@font/roboto_medium"
                 android:text="H"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                 android:textIsSelectable="false"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/gmb__H1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H1"
-                app:layout_constraintTop_toBottomOf="@+id/gmb__H1"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintTop_toBottomOf="@+id/gmb__H1" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A8"
-                app:srcCompat="@drawable/black_square"
-                tools:ignore="DuplicateClickableBoundsCheck" />
+                app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A6"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A4"
@@ -464,108 +454,118 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A2"
                 app:shapeAppearanceOverlay="@style/BottomBlack"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B7"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
-                app:layout_constraintBottom_toTopOf="@+id/gmb__B3"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B5"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B3"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C8"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D8"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D7"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D6"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D5"
@@ -576,418 +576,460 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:shapeAppearanceOverlay="@style/TopWhite"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A7"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A5"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toStartOf="@+id/boardCenterV"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B6"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B4"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__A1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D2"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C7"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C5"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D4"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__C2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C6"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C4"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C3"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__B1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C2"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E8"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E7"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E6"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E5"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E4"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E3"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__D1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E2"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F8"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F7"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F6"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintBottom_toTopOf="@+id/gmb__F3"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F5"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F4"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F3"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__E1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F2"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G8"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G7"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G6"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G5"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G4"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G3"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__F1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G2"
@@ -998,67 +1040,74 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G8"
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:shapeAppearanceOverlay="@style/TopBlack"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G7"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H8"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G6"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H7"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G5"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H6"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G4"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H5"
                 app:srcCompat="@drawable/black_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G3"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H4"
                 app:srcCompat="@drawable/white_square" />
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsBlack"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G2"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H3"
@@ -1069,6 +1118,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:clickable="true"
+                android:soundEffectsEnabled="true"
                 android:tag="IsWhite"
                 app:layout_constraintStart_toEndOf="@+id/gmb__G1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H2"
@@ -1080,513 +1130,512 @@
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bRook1"
-                app:icon="@drawable/rook_black"
+                app:icon="@drawable/black_rook"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__A8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
             <Button
                 android:id="@+id/gmp__bKnight1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bKnight1"
-                app:icon="@drawable/knight_black"
+                app:icon="@drawable/black_knight"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__B8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__B8" />
 
             <Button
                 android:id="@+id/gmp__bBishop1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bBishop1"
-                app:icon="@drawable/bishop_black"
+                app:icon="@drawable/black_bishop"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__C8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__C8" />
 
             <Button
                 android:id="@+id/gmp__bQueen1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bQueen1"
-                app:icon="@drawable/queen_black"
+                app:icon="@drawable/black_queen"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__D8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__D8" />
 
             <Button
                 android:id="@+id/gmp__bKing1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bKing1"
-                app:icon="@drawable/king_black"
+                app:icon="@drawable/black_king"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__E8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__E8" />
 
             <Button
                 android:id="@+id/gmp__bBishop2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bBishop2"
-                app:icon="@drawable/bishop_black"
+                app:icon="@drawable/black_bishop"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__F8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__F8" />
 
             <Button
                 android:id="@+id/gmp__bKnight2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bKnight2"
-                app:icon="@drawable/knight_black"
+                app:icon="@drawable/black_knight"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__G8"
-                tools:ignore="SpeakableTextPresentCheck" />
-
+                app:layout_constraintTop_toTopOf="@+id/gmb__G8" />
 
             <Button
                 android:id="@+id/gmp__bRook2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bRook2"
-                app:icon="@drawable/rook_black"
+                app:icon="@drawable/black_rook"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H8"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H8"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H8"
-                app:layout_constraintTop_toTopOf="@+id/gmb__H8"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__H8" />
 
             <Button
                 android:id="@+id/gmp__bPawn1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn1"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__A7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__A7" />
 
             <Button
                 android:id="@+id/gmp__bPawn2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn2"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__B7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__B7" />
 
             <Button
                 android:id="@+id/gmp__bPawn3"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn3"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__C7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__C7" />
 
             <Button
                 android:id="@+id/gmp__bPawn4"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn4"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__D7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__D7" />
 
             <Button
                 android:id="@+id/gmp__bPawn5"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn5"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__E7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__E7" />
 
             <Button
                 android:id="@+id/gmp__bPawn6"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn6"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__F7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__F7" />
 
             <Button
                 android:id="@+id/gmp__bPawn7"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn7"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__G7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__G7" />
 
             <Button
                 android:id="@+id/gmp__bPawn8"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="bPawn8"
-                app:icon="@drawable/pawn_black"
+                app:icon="@drawable/black_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H7"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H7"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H7"
-                app:layout_constraintTop_toTopOf="@+id/gmb__H7"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__H7" />
 
             <Button
                 android:id="@+id/gmp__wRook1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wRook1"
-                app:icon="@drawable/rook_white"
+                app:icon="@drawable/white_rook"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__A1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
             <Button
                 android:id="@+id/gmp__wKnight1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wKnight1"
-                app:icon="@drawable/knight_white"
+                app:icon="@drawable/white_knight"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__B1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__B1" />
 
             <Button
                 android:id="@+id/gmp__wBishop1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wBishop1"
-                app:icon="@drawable/bishop_white"
+                app:icon="@drawable/white_bishop"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__C1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__C1" />
 
             <Button
                 android:id="@+id/gmp__wQueen1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wQueen1"
-                app:icon="@drawable/queen_white"
+                app:icon="@drawable/white_queen"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__D1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__D1" />
 
             <Button
                 android:id="@+id/gmp__wKing1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wKing1"
-                app:icon="@drawable/king_white"
+                app:icon="@drawable/white_king"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__E1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__E1" />
 
             <Button
                 android:id="@+id/gmp__wBishop2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wBishop2"
-                app:icon="@drawable/bishop_white"
+                app:icon="@drawable/white_bishop"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__F1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__F1" />
 
             <Button
                 android:id="@+id/gmp__wKnight2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wKnight2"
-                app:icon="@drawable/knight_white"
+                app:icon="@drawable/white_knight"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__G1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__G1" />
 
             <Button
                 android:id="@+id/gmp__wRook2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wRook2"
-                app:icon="@drawable/rook_white"
+                app:icon="@drawable/white_rook"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H1"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H1"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H1"
-                app:layout_constraintTop_toTopOf="@+id/gmb__H1"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__H1" />
 
             <Button
                 android:id="@+id/gmp__wPawn1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn1"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__A2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__A2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__A2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__A2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
             <Button
                 android:id="@+id/gmp__wPawn2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn2"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__B2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__B2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__B2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__B2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__B2" />
 
             <Button
                 android:id="@+id/gmp__wPawn3"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn3"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__C2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__C2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__C2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__C2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__C2" />
 
             <Button
                 android:id="@+id/gmp__wPawn4"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn4"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__D2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__D2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__D2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__D2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__D2" />
 
             <Button
                 android:id="@+id/gmp__wPawn5"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn5"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__E2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__E2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__E2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__E2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__E2" />
 
             <Button
                 android:id="@+id/gmp__wPawn6"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn6"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__F2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__F2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__F2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__F2" />
 
             <Button
                 android:id="@+id/gmp__wPawn7"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn7"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__G2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__G2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__G2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__G2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__G2" />
 
             <Button
                 android:id="@+id/gmp__wPawn8"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:elevation="14dp"
                 android:tag="wPawn8"
-                app:icon="@drawable/pawn_white"
+                app:icon="@drawable/white_pawn"
                 app:iconGravity="textStart"
                 app:iconSize="48dp"
                 app:iconTint="@null"
                 app:layout_constraintBottom_toBottomOf="@+id/gmb__H2"
                 app:layout_constraintEnd_toEndOf="@+id/gmb__H2"
                 app:layout_constraintStart_toStartOf="@+id/gmb__H2"
-                app:layout_constraintTop_toTopOf="@+id/gmb__H2"
-                tools:ignore="SpeakableTextPresentCheck" />
+                app:layout_constraintTop_toTopOf="@+id/gmb__H2" />
 
             <!--
                         <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
@@ -1797,8 +1846,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="White"
-                        app:checkedIcon="@drawable/king_white"
-                        app:chipIcon="@drawable/king_white" />
+                        app:checkedIcon="@drawable/white_king"
+                        app:chipIcon="@drawable/white_king" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/black_chip"
@@ -1806,8 +1855,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Black"
-                        app:checkedIcon="@drawable/king_black"
-                        app:chipIcon="@drawable/king_black" />
+                        app:checkedIcon="@drawable/black_king"
+                        app:chipIcon="@drawable/black_king" />
                 </com.google.android.material.chip.ChipGroup>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -1875,7 +1924,7 @@
                             android:layout_height="80dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/king_white" />
+                            app:srcCompat="@drawable/white_king" />
 
                         <TextView
                             android:id="@+id/winningPlayerUsername"

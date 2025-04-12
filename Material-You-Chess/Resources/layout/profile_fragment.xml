@@ -10,21 +10,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="0dp" />
+        app:layout_constraintGuide_begin="8dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayRight_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="0dp" />
+        app:layout_constraintGuide_end="8dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayTop_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="0dp" />
+        app:layout_constraintGuide_begin="24dp" />
 
     <TextView
         android:id="@+id/profile_text"
@@ -34,8 +34,8 @@
         android:layout_marginTop="8dp"
         android:text="Profile"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
+        app:layout_constraintTop_toTopOf="@+id/displayTop_CA" />
 
     <TextView
         android:id="@+id/displayname_text"
@@ -44,18 +44,18 @@
         android:layout_marginTop="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/profile_picture"
         tools:text="{Username}" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider3"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/displayRight_CA"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/displayname_text" />
 
     <Button
@@ -78,8 +78,8 @@
         android:layout_height="128dp"
         android:clickable="false"
         android:scaleType="centerCrop"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/profile_text"
         app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
@@ -92,9 +92,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
+        android:padding="4dp"
         android:visibility="invisible"
         app:indicatorSize="128dp"
-        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/profile_picture"
         app:layout_constraintEnd_toEndOf="@+id/profile_picture"
         app:layout_constraintStart_toStartOf="@+id/profile_picture"
@@ -121,7 +121,7 @@
         android:clickable="true"
         app:icon="@drawable/delete"
         app:layout_constraintEnd_toStartOf="@+id/library"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
@@ -132,19 +132,18 @@
         android:layout_marginTop="16dp"
         android:clickable="true"
         app:icon="@drawable/add_a_photo"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
         app:layout_constraintStart_toEndOf="@+id/library"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider3"
         tools:ignore="SpeakableTextPresentCheck" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/materialDivider"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/displayRight_CA"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/library" />
 
     <TextView
@@ -154,7 +153,7 @@
         android:layout_marginTop="16dp"
         android:text="Edit Username:"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/materialDivider" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -165,8 +164,8 @@
         android:gravity="center"
         android:hint="Username"
         app:expandedHintEnabled="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/displayRight_CA"
+        app:layout_constraintStart_toStartOf="@+id/displayLeft_CA"
         app:layout_constraintTop_toBottomOf="@+id/username_text"
         app:startIconDrawable="@drawable/person_edit">
 

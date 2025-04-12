@@ -1,11 +1,12 @@
 ﻿using System.Text.Json.Serialization;
 using Chess.Game.Board;
+using Google.Android.Material.ImageView;
 
 namespace Chess.Game.Interfaces;
 
 public interface ISpace
 {
-    [JsonIgnore] ImageView? SpaceView { get; }
+    [JsonIgnore] ShapeableImageView? SpaceView { get; }
     (char File, int Rank) Index { get; }
     bool IsWhite { get; }
     char File { get; }

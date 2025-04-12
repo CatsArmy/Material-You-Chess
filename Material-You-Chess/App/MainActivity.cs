@@ -1,12 +1,15 @@
-﻿using Android.Views;
+﻿using Android.App;
+using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
 using Chess.App.Common.Extensions;
+using Chess.App.Common.Permissions;
 using Firebase;
 using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using Google.Android.Material.Navigation;
+using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
@@ -40,7 +43,7 @@ public class MainActivity : AppCompatActivity
         this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
         this.MainItem = this.NavigationBar!.Menu.FindItem(Resource.Id.play);
         this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.profile);
-        this.NavigationBar!.ItemSelected += this.NavigationBar_ItemSelected;
+        this.NavigationBar!.ItemSelected += this.NavigateToItemSelected;
         this.Main = new MainFragment();
         this.Profile = new ProfileFragment();
         this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
@@ -68,12 +71,13 @@ public class MainActivity : AppCompatActivity
     /// else if (e.Item.ItemId) == ProfileItem.ItemId it will open the ProfileFragment if the user is logged in 
     /// else it will open the sign in/up page
     /// </summary>
-    private void NavigationBar_ItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
+    private void NavigateToItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
         if (this.NavigationBar?.SelectedItemId == e.Item.ItemId) return;
 
         if (e.Item.ItemId == this.MainItem?.ItemId)
         {
+            this.Main = new();
             this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true).Replace(this.FragmentContainer!.Id,
                 this.Main!).Commit();
         }

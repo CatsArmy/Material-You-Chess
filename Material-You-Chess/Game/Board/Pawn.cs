@@ -122,25 +122,25 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
         if (promoteTo == typeof(WhiteQueen))
         {
             Piece = new WhiteQueen(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.queen_white);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.white_queen);
         }
 
         else if (promoteTo == typeof(WhiteKnight))
         {
             Piece = new WhiteKnight(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.knight_white);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.white_knight);
         }
 
         else if (promoteTo == typeof(WhiteBishop))
         {
             Piece = new WhiteBishop(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.bishop_white);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.white_bishop);
         }
 
         else if (promoteTo == typeof(WhiteRook))
         {
             Piece = new WhiteRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.rook_white);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.white_rook);
         }
         else throw new Exception("Failed to promote to type");
         game.Player!.Pieces.Remove(this.Index);
@@ -230,25 +230,25 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
         if (promoteTo == typeof(BlackQueen))
         {
             Piece = new BlackQueen(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.queen_black);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.black_queen);
         }
 
         else if (promoteTo == typeof(BlackKnight))
         {
             Piece = new BlackKnight(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.knight_black);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.black_knight);
         }
 
         else if (promoteTo == typeof(BlackBishop))
         {
             Piece = new BlackBishop(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.bishop_black);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.black_bishop);
         }
 
         else if (promoteTo == typeof(BlackRook))
         {
             Piece = new BlackRook(this.Id, this.Index.count, move.Destination, this.Index.prefix);
-            Piece.PieceView!.SetIconResource(Resource.Drawable.rook_black);
+            Piece.PieceView!.SetIconResource(Resource.Drawable.black_rook);
         }
         else throw new Exception("Failed to promote to type");
         game.Player!.Pieces.Remove(this.Index);

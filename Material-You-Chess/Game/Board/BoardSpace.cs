@@ -2,12 +2,13 @@
 using Chess.App;
 using Chess.Game.Interfaces;
 using Chess.Game.Moves;
+using Google.Android.Material.ImageView;
 
 namespace Chess.Game.Board;
 
-public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : ISpace
+public class BoardSpace(char File, int Rank, bool IsWhite, ShapeableImageView Space) : ISpace
 {
-    [JsonIgnore] public ImageView? SpaceView { get; } = Space;
+    [JsonIgnore] public ShapeableImageView? SpaceView { get; } = Space;
     public (char File, int Rank) Index => (this.File, this.Rank);
     public bool IsWhite { get; } = IsWhite;
     public char File { get; } = File;
@@ -15,7 +16,7 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ImageView Space) : IS
     public int Id { get; } = Space.Id;
     [JsonConstructor] public BoardSpace(bool IsWhite, char File, int Rank, int Id) : this(File, Rank, IsWhite, Id) { }
     public BoardSpace(char File, int Rank, bool IsWhite, int Id) : this(File, Rank, IsWhite,
-        IChessActivity.Instance?.BoardLayout!.FindViewById<ImageView>(Id)!)
+        IChessActivity.Instance?.BoardLayout!.FindViewById<ShapeableImageView>(Id)!)
     { }
 
     public const int UnselectSpace = 0;

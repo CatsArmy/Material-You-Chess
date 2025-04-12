@@ -70,7 +70,7 @@ public class ChessBottomSheet(IChessActivity activity)
         {
             case Player.Black:
                 this.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
-                this.Indicator?.SetImageResource(Resource.Drawable.king_black);
+                this.Indicator?.SetImageResource(Resource.Drawable.black_king);
                 break;
             default:
                 this.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);

@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="White"
-            app:chipIcon="@drawable/king_white"
+            app:chipIcon="@drawable/white_king"
             app:ensureMinTouchTargetSize="true" />
 
         <com.google.android.material.chip.Chip
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Black"
-            app:chipIcon="@drawable/king_black"
+            app:chipIcon="@drawable/black_king"
             app:ensureMinTouchTargetSize="true" />
     </com.google.android.material.chip.ChipGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

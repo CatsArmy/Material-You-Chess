@@ -20,7 +20,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
-            app:srcCompat="@drawable/queen_white"
+            app:srcCompat="@drawable/white_queen"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageView
@@ -28,7 +28,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
-            app:srcCompat="@drawable/knight_white"
+            app:srcCompat="@drawable/white_knight"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 
@@ -44,7 +44,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
-            app:srcCompat="@drawable/rook_white"
+            app:srcCompat="@drawable/white_rook"
             tools:ignore="SpeakableTextPresentCheck" />
 
         <ImageView
@@ -52,7 +52,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="8dp"
-            app:srcCompat="@drawable/bishop_white"
+            app:srcCompat="@drawable/white_bishop"
             tools:ignore="SpeakableTextPresentCheck" />
     </LinearLayout>
 

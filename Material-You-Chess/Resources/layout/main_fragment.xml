@@ -1,42 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/mTitlePart"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/displayTop_CA2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="32dp" />
+
+    <TextView
+        android:id="@+id/Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="Material You Chess"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="@+id/displayTop_CA2" />
 
     <ImageView
         android:id="@+id/mChessLogo"
         android:layout_width="196dp"
         android:layout_height="196dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mTitlePart"
-        app:layout_constraintVertical_bias="0.1"
-        app:srcCompat="@drawable/knight_white" />
+        app:layout_constraintTop_toBottomOf="@+id/Title"
+        app:srcCompat="@drawable/white_knight" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btnStartGame"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:autoSizeTextType="uniform"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@font/roboto_medium"
         android:text="Play"
-        app:layout_constraintBottom_toTopOf="@+id/GameModeSelector"
+        android:textSize="20sp"
+        app:icon="@drawable/group"
         app:layout_constraintEnd_toEndOf="@+id/mChessLogo"
         app:layout_constraintStart_toStartOf="@+id/mChessLogo"
         app:layout_constraintTop_toBottomOf="@+id/mChessLogo" />
@@ -46,14 +51,14 @@
         android:layout_width="0dp"
         android:layout_height="128dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="58dp"
         android:layout_marginEnd="16dp"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="horizontal"
         android:weightSum="10"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mChessLogo"
+        app:layout_constraintTop_toBottomOf="@+id/btnStartGame"
         app:selectionRequired="true"
         app:singleSelection="true">
 
@@ -69,7 +74,7 @@
             android:text="Online"
             android:textAlignment="textStart"
             android:textSize="20sp"
-            app:icon="@drawable/bluetooth"
+            app:icon="@drawable/nearby"
             app:iconSize="24dp" />
 
         <Button
