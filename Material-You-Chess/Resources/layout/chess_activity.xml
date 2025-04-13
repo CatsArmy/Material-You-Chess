@@ -54,8 +54,8 @@
 
             <ImageView
                 android:id="@+id/whitePlayerIndicator"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 app:layout_constraintBottom_toTopOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="@+id/whitePlayerProfilePicture"
@@ -131,8 +131,8 @@
 
             <ImageView
                 android:id="@+id/blackPlayerIndicator"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 app:layout_constraintBottom_toTopOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="@+id/blackPlayerProfilePicture"
@@ -169,13 +169,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+		<androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ChessBoard"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:animationCache="false"
-            android:persistentDrawingCache="none">
+            android:animateLayoutChanges="true">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterH"
@@ -1128,8 +1126,8 @@
             <Button
                 android:id="@+id/gmp__bRook1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bRook1"
                 app:icon="@drawable/black_rook"
@@ -1144,8 +1142,8 @@
             <Button
                 android:id="@+id/gmp__bKnight1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bKnight1"
                 app:icon="@drawable/black_knight"
@@ -1160,8 +1158,8 @@
             <Button
                 android:id="@+id/gmp__bBishop1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bBishop1"
                 app:icon="@drawable/black_bishop"
@@ -1176,8 +1174,8 @@
             <Button
                 android:id="@+id/gmp__bQueen1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bQueen1"
                 app:icon="@drawable/black_queen"
@@ -1192,8 +1190,8 @@
             <Button
                 android:id="@+id/gmp__bKing1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bKing1"
                 app:icon="@drawable/black_king"
@@ -1208,8 +1206,8 @@
             <Button
                 android:id="@+id/gmp__bBishop2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bBishop2"
                 app:icon="@drawable/black_bishop"
@@ -1224,8 +1222,8 @@
             <Button
                 android:id="@+id/gmp__bKnight2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bKnight2"
                 app:icon="@drawable/black_knight"
@@ -1240,8 +1238,8 @@
             <Button
                 android:id="@+id/gmp__bRook2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bRook2"
                 app:icon="@drawable/black_rook"
@@ -1256,8 +1254,8 @@
             <Button
                 android:id="@+id/gmp__bPawn1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn1"
                 app:icon="@drawable/black_pawn"
@@ -1272,8 +1270,8 @@
             <Button
                 android:id="@+id/gmp__bPawn2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn2"
                 app:icon="@drawable/black_pawn"
@@ -1288,8 +1286,8 @@
             <Button
                 android:id="@+id/gmp__bPawn3"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn3"
                 app:icon="@drawable/black_pawn"
@@ -1304,8 +1302,8 @@
             <Button
                 android:id="@+id/gmp__bPawn4"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn4"
                 app:icon="@drawable/black_pawn"
@@ -1320,8 +1318,8 @@
             <Button
                 android:id="@+id/gmp__bPawn5"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn5"
                 app:icon="@drawable/black_pawn"
@@ -1336,8 +1334,8 @@
             <Button
                 android:id="@+id/gmp__bPawn6"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn6"
                 app:icon="@drawable/black_pawn"
@@ -1352,8 +1350,8 @@
             <Button
                 android:id="@+id/gmp__bPawn7"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn7"
                 app:icon="@drawable/black_pawn"
@@ -1368,8 +1366,8 @@
             <Button
                 android:id="@+id/gmp__bPawn8"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="bPawn8"
                 app:icon="@drawable/black_pawn"
@@ -1384,8 +1382,8 @@
             <Button
                 android:id="@+id/gmp__wRook1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wRook1"
                 app:icon="@drawable/white_rook"
@@ -1400,8 +1398,8 @@
             <Button
                 android:id="@+id/gmp__wKnight1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wKnight1"
                 app:icon="@drawable/white_knight"
@@ -1416,8 +1414,8 @@
             <Button
                 android:id="@+id/gmp__wBishop1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wBishop1"
                 app:icon="@drawable/white_bishop"
@@ -1432,8 +1430,8 @@
             <Button
                 android:id="@+id/gmp__wQueen1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wQueen1"
                 app:icon="@drawable/white_queen"
@@ -1448,8 +1446,8 @@
             <Button
                 android:id="@+id/gmp__wKing1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wKing1"
                 app:icon="@drawable/white_king"
@@ -1464,8 +1462,8 @@
             <Button
                 android:id="@+id/gmp__wBishop2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wBishop2"
                 app:icon="@drawable/white_bishop"
@@ -1480,8 +1478,8 @@
             <Button
                 android:id="@+id/gmp__wKnight2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wKnight2"
                 app:icon="@drawable/white_knight"
@@ -1496,8 +1494,8 @@
             <Button
                 android:id="@+id/gmp__wRook2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wRook2"
                 app:icon="@drawable/white_rook"
@@ -1512,8 +1510,8 @@
             <Button
                 android:id="@+id/gmp__wPawn1"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn1"
                 app:icon="@drawable/white_pawn"
@@ -1528,8 +1526,8 @@
             <Button
                 android:id="@+id/gmp__wPawn2"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn2"
                 app:icon="@drawable/white_pawn"
@@ -1544,8 +1542,8 @@
             <Button
                 android:id="@+id/gmp__wPawn3"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn3"
                 app:icon="@drawable/white_pawn"
@@ -1560,8 +1558,8 @@
             <Button
                 android:id="@+id/gmp__wPawn4"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn4"
                 app:icon="@drawable/white_pawn"
@@ -1576,8 +1574,8 @@
             <Button
                 android:id="@+id/gmp__wPawn5"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn5"
                 app:icon="@drawable/white_pawn"
@@ -1592,8 +1590,8 @@
             <Button
                 android:id="@+id/gmp__wPawn6"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn6"
                 app:icon="@drawable/white_pawn"
@@ -1608,8 +1606,8 @@
             <Button
                 android:id="@+id/gmp__wPawn7"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn7"
                 app:icon="@drawable/white_pawn"
@@ -1624,8 +1622,8 @@
             <Button
                 android:id="@+id/gmp__wPawn8"
                 style="?attr/materialIconButtonStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:elevation="14dp"
                 android:tag="wPawn8"
                 app:icon="@drawable/white_pawn"

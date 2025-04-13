@@ -23,6 +23,11 @@
   <Import Project="Properties\Material-You-Chess.Build.props.user" />
   
   <ItemGroup>
+    <None Remove="ic_launcher-playstore.png" />
+    <None Remove="play_graphic.png" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <GoogleServicesJson Include="$(GoogleServicesJsonFile)" />
     <None Include="Properties\Material-You-Chess.Build.props.user" />
     <None Include="Properties\Material-You-Chess.Build.props.user.template" />

@@ -5,6 +5,7 @@ using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
 namespace Chess.App.Common;
 
+/// <remarks>Code taken from <see cref="Microsoft.Maui.Storage.FileProvider"/> and edited to the correct provider name</remarks>
 [MetaData(FileProvider.Name, Resource = FileProvider.File)]
 [ContentProvider(["${applicationId}.provider"],
     Name = "com.catsarmy.chess.provider",
@@ -65,9 +66,7 @@ public class FileProvider : ContentFileProvider
 #if __ANDROID_29__
 				Application.Context?.GetExternalFilesDir(null)?.CanonicalPath,
 #else
-#pragma warning disable CS0618 // Type or member is obsolete
 				AndroidEnvironment.ExternalStorageDirectory?.CanonicalPath,
-#pragma warning restore CS0618 // Type or member is obsolete
 #endif
 				Application.Context?.ExternalCacheDir?.CanonicalPath
             ];

@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Views;
+using AndroidX.Core.App;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Permissions;
 using Chess.App.Networked.Nearby;
@@ -32,11 +33,10 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
     private FirebaseAuth? Auth;
     private NearbyConnections? PermissionManager;
 
-    private static bool[] Values(IMap permissions) => [.. permissions.Values().Cast<bool>()];
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        var onResult = new ActivityResultCallback<IMap>(permissions => this.HandlePermissionResult(!Values(permissions!).Contains(false)));
+        var onResult = new ActivityResultCallback<IMap>(permissions => this.HandlePermissionResult(!permissions!.Values().Cast<bool>().Contains(false)));
         var resultLauncher = this.RegisterForActivityResult(new RequestMultiplePermissions(), onResult);
 
         this.PermissionManager = new(resultLauncher, this.Activity);
