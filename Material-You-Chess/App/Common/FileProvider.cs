@@ -5,7 +5,7 @@ using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
 namespace Chess.App.Common;
 
-/// <remarks>Code taken from <see cref="Microsoft.Maui.Storage.FileProvider"/> and edited to the correct provider name</remarks>
+/// <remarks>Code taken from Microsoft.Maui.Storage.FileProvider and edited to the correct provider name</remarks>
 [MetaData(FileProvider.Name, Resource = FileProvider.File)]
 [ContentProvider(["${applicationId}.provider"],
     Name = "com.catsarmy.chess.provider",

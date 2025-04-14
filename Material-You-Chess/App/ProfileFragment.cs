@@ -27,12 +27,12 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     private MainActivity? MainActivity;
     private AndroidUri? Upload;
 
-    /// <summary> Input is <see langword="typeof"/>(<see cref="PickVisualMediaRequest" />)
-    /// Output is <see langword="typeof"/>(<see cref="AndroidUri" />?) </summary>
+    /// <summary> Input is typeof(PickVisualMediaRequest)
+    /// Output is typeof(Android.Net.Uri(aka AndroidUri)?) </summary>
     public ActivityResultLauncher? photoPicker;
 
-    /// <summary> Input is <see langword="typeof"/>(<see cref="AndroidUri" />) 
-    /// Output is <see langword="typeof"/>(<see cref="Java.Lang.Boolean" />) </summary>
+    /// <summary> Input is typeof(Android.Net.Uri(aka AndroidUri)) 
+    /// Output is typeof(Java.Lang.Boolean) </summary>
     public ActivityResultLauncher? photoTaker;
 
     public ActivityResultLauncher? SignInLauncher;
@@ -110,7 +110,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     }
 
     /// <remarks>Called when the views are ready to be bound to this class</remarks>
-    /// <summary> binds all the views and updates(<see cref="OnLoggedIn(FirebaseUser)"/>) them to show the current user info </summary>
+    /// <summary> binds all the views and updates(via OnLoggedIn(FirebaseUser)) them to show the current user info </summary>
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
@@ -178,7 +178,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
     }
 
-    /// <summary> Wrapper method for <see cref="OnTakePhoto(bool)"/> </summary>
+    /// <summary> Wrapper method for OnTakePhoto(bool) </summary>
     public async void PickPhoto(AndroidUri? picked)
     {
         try
@@ -198,7 +198,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     /// Uploads a selected photo to firebase and informs(animates) the user 
     /// if the operation was successful or not, while also handling any errors to prevent crashes 
     /// </summary>
-    /// <param name="picked">a <see cref="AndroidUri"/> to the photo for uploading it</param>
+    /// <param name="picked">a Android.Net.Uri(aka AndroidUri) to the photo for uploading it</param>
     private async Task OnPickPhoto(AndroidUri? picked)
     {
         if (picked is null) return;
@@ -243,7 +243,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
     }
 
-    /// <summary> Wrapper method for <see cref="OnTakePhoto(bool)"/> </summary>
+    /// <summary> Wrapper method for OnTakePhoto </summary>
     public async void TakePhoto(Java.Lang.Boolean? value)
     {
         try
@@ -256,7 +256,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     }
 
     /// <summary>
-    /// Uploads a photo that we captured into the <see cref="AndroidUri"/> <see cref="Upload"/> to firebase 
+    /// Uploads a photo that we captured into the Android.Net.Uri(aka AndroidUri) Upload to firebase 
     /// and informs(animates) the user if the operation was successful or not
     /// while also handling any errors to prevent crashes
     /// </summary>
@@ -308,7 +308,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         }
     }
 
-    /// <summary> Wrapper method for <see cref="OnDeletePhoto()"/> </summary>
+    /// <summary> Wrapper method for OnDeletePhoto() </summary>
     public async void DeletePhoto(object? sender, EventArgs args)
     {
         try
@@ -397,7 +397,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
     }
 
     /// <summary>
-    /// navigates the user back to the <see cref="MainFragment"/> in the case that the sign in/up operation fails to finish
+    /// navigates the user back to the MainFragment in the case that the sign in/up operation fails to finish
     /// due to the user canceling the operation or the operation erroring out
     /// </summary>
     private async void OnSignInResult(FirebaseAuthUIAuthenticationResult? result)

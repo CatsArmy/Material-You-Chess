@@ -7,7 +7,8 @@ using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Chess.App.Common.Extensions;
 
-public static partial class Extensions
+/// <summary> a static class containing extension methods </summary>
+public static class RegisterForActivityResultOfT
 {
     public static ActivityResultLauncher<I> RegisterForActivityResult<I, O>(this ComponentActivity @base, ActivityResultContract contract,
         IActivityResultCallback<O> @callback) where I : Java.Lang.Object where O : class, IJavaObject

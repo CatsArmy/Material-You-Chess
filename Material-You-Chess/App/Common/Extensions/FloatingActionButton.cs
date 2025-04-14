@@ -5,7 +5,8 @@ using Google.Android.Material.FloatingActionButton;
 
 namespace Chess.App.Common.Extensions;
 
-public static partial class Extensions
+/// <summary> a static class containing extension a method </summary>
+public static class ExtendedFab
 {
     public static void Spin(this ExtendedFloatingActionButton fab)
     {

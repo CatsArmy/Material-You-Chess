@@ -13,6 +13,8 @@ namespace Chess.Game;
 
 public class ChessGame(ChessActivity activity, bool isNetworked)
 {
+    public ChessGame(ChessActivity activity) : this(activity, activity.IsNetworked) => this.BindGame();
+
     public readonly bool ClientIsWhite = activity.Client.IsWhite ?? true;
     private bool CurrentPlayerIsWhite = true;
 
@@ -21,21 +23,20 @@ public class ChessGame(ChessActivity activity, bool isNetworked)
     public White? WhitePlayer { get; set; }
     public Black? BlackPlayer { get; set; }
 
-    /// <summary>The current player </summary>
+    /// <summary> The current player </summary>
     public IPlayer Player => this.CurrentPlayerIsWhite switch
     {
         true => this.WhitePlayer!,
         false => this.BlackPlayer!,
     };
 
-    /// <summary>the enemy of Player </summary>
+    /// <summary> The enemy of the current player </summary>
     public IPlayer Enemy => !this.CurrentPlayerIsWhite switch
     {
         true => this.WhitePlayer!,
         false => this.BlackPlayer!,
     };
 
-    public ChessGame(ChessActivity activity) : this(activity, activity.IsNetworked) => this.BindGame();
 
     public void EndGame(IPlayer winner, IPlayer loser)
     {
@@ -90,9 +91,9 @@ public class ChessGame(ChessActivity activity, bool isNetworked)
         if (move is null)
             this.Player.Selected = null;
         else if (move is Promotion promotion && promotion.PromoteTo is null)
-            this.PlayMove(move, false);
+            this.PlayMove(move, isSender: false);
         else
-            this.PlayMove(move, true);
+            this.PlayMove(move, isSender: true);
     }
 
     /// <summary> Moves the piece with the given move and updates the state of the game </summary>
