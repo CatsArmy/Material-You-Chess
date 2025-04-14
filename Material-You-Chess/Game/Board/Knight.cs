@@ -20,72 +20,68 @@ public class Knight(int id, BoardSpace space) : BoardPiece(id, space)
 {
     public override char Abbreviation => 'N';
 
+    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         List<Move> moves = base.Moves(game);
-
-        var (upRight, upLeft) = DiagonalMovesUp(game.Board);
-        if (upRight != null)
+        if (this.Space.Up(game)?.Up(game)?.Right(game) is BoardSpace upRight)
         {
-            if (upRight.Piece(game.AllPieces) is not BoardPiece piece)
+            if (upRight.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, upRight));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
-        if (upLeft != null)
+        if (this.Space.Down(game)?.Down(game)?.Left(game) is BoardSpace upLeft)
         {
-            if (upLeft.Piece(game.AllPieces) is not BoardPiece piece)
+            if (upLeft.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, upLeft));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        var (downRight, downLeft) = DiagonalMovesDown(game.Board);
-        if (downRight != null)
+        if (this.Space.Down(game)?.Down(game)?.Right(game) is BoardSpace downRight)
         {
-            if (downRight.Piece(game.AllPieces) is not BoardPiece piece)
+            if (downRight.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, downRight));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        if (downLeft != null)
+        if (this.Space.Down(game)?.Down(game)?.Left(game) is BoardSpace downLeft)
         {
-            if (downLeft.Piece(game.AllPieces) is not BoardPiece piece)
+            if (downLeft.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, downLeft));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        var (rightUp, rightDown) = DiagonalMovesRight(game.Board);
-        if (rightUp != null)
+        if (this.Space.Right(game)?.Right(game)?.Up(game) is BoardSpace rightUp)
         {
-            if (rightUp.Piece(game.AllPieces) is not BoardPiece piece)
+            if (rightUp.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, rightUp));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        if (rightDown != null)
+        if (this.Space.Right(game)?.Right(game)?.Down(game) is BoardSpace rightDown)
         {
-            if (rightDown.Piece(game.AllPieces) is not BoardPiece piece)
+            if (rightDown.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, rightDown));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        var (leftUp, leftDown) = DiagonalMovesLeft(game.Board);
-        if (leftUp != null)
+        if (this.Space.Left(game)?.Left(game)?.Up(game) is BoardSpace leftUp)
         {
-            if (leftUp.Piece(game.AllPieces) is not BoardPiece piece)
+            if (leftUp.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, leftUp));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
 
-        if (leftDown != null)
+        if (this.Space.Left(game)?.Left(game)?.Down(game) is BoardSpace leftDown)
         {
-            if (leftDown.Piece(game.AllPieces) is not BoardPiece piece)
+            if (leftDown.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, leftDown));
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));

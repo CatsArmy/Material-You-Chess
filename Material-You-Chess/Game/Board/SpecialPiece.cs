@@ -4,9 +4,8 @@ public class SpecialPiece(int id, BoardSpace space) : BoardPiece(id, space)
 {
     public bool HasMoved { get; set; } = false;
 
-    public override void Update()
+    public virtual void Update()
     {
-        base.Update();
         this.HasMoved = true;
     }
 }

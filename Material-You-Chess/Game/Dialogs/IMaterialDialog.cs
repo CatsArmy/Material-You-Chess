@@ -1,11 +1,9 @@
 ﻿using Android.Content;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
-namespace Chess.App.Dialogs;
+namespace Chess.Game.Dialogs;
 
-/// <summary>
-/// Template Interface
-/// </summary>
+/// <summary> Template Interface for dialogs with a custom view </summary>
 public interface IMaterialDialog
 {
     public AlertDialog Dialog { get; set; }

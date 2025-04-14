@@ -1,10 +1,10 @@
 ﻿using Android.Views;
-using Chess.Game.Common;
+using Chess.App;
 using Google.Android.Material.BottomSheet;
 
-namespace Chess.App.Networked.Nearby;
+namespace Chess.Game.Common;
 
-public class BottomSheetCallback(IChessActivity instance) : BottomSheetBehavior.BottomSheetCallback()
+public class BottomSheetCallback(ChessActivity instance) : BottomSheetBehavior.BottomSheetCallback()
 {
     public VisibilityState? ToState = VisibilityState.Collapsed;
     public VisibilityState? OnState = VisibilityState.Hidden;
@@ -22,62 +22,62 @@ public class BottomSheetCallback(IChessActivity instance) : BottomSheetBehavior.
     public override void OnSlide(View bottomSheet, float newState) { }
 
     /// <summary>
-    /// Check if we should or shouldnt change the bottom sheet visibility state to be our visibility state <see cref="ToState"/>
-    /// only when we have one
+    /// Check if we should or shouldnt change the bottom sheet visibility state to be our visibility state
+    /// this.ToState only when we have one (not null)
     /// </summary>
     public override void OnStateChanged(View bottomSheet, int newState)
     {
-        if (this.OnState == null) return;
+        if (OnState == null) return;
         var state = (VisibilityState)newState;
 
         if (state is VisibilityState.Dragging)
         {
-            this.OnStateDragging(bottomSheet);
+            OnStateDragging(bottomSheet);
             return;
         }
 
         else if (state is VisibilityState.Settling)
         {
-            this.OnStateSettling(bottomSheet);
+            OnStateSettling(bottomSheet);
             return;
         }
 
-        if (state == this.OnState)
+        if (state == OnState)
         {
-            this.ChangeState();
+            ChangeState();
         }
 
-        else if (this.OnMoreVisible)
+        else if (OnMoreVisible)
         {
-            if (this.OnState is VisibilityState.HalfExpanded) //HalfExpanded(6) is more visible than Collapsed(4), Hidden(5)
+            if (OnState is VisibilityState.HalfExpanded) //HalfExpanded(6) is more visible than Collapsed(4), Hidden(5)
             {
                 if (state is VisibilityState.Expanded) //Expanded is the only state that is more visible than HalfExpanded(6)
                 {
-                    this.ChangeState();
+                    ChangeState();
                 }
             }
-            else if (state < this.OnState) //the lower the int value of the state the more visible it is
+            else if (state < OnState) //the lower the int value of the state the more visible it is
             {
-                this.ChangeState();
+                ChangeState();
             }
         }
 
-        else if (this.OnLessVisible)
+        else if (OnLessVisible)
         {
-            if (state > this.OnState) //the lower the int value of the state the more visible it is
+            if (state > OnState) //the lower the int value of the state the more visible it is
             {
-                this.ChangeState();
+                ChangeState();
             }
-            else if (this.OnState is VisibilityState.HalfExpanded) //HalfExpanded(6) is less visible than Expanded(3)
+            else if (OnState is VisibilityState.HalfExpanded) //HalfExpanded(6) is less visible than Expanded(3)
             {
-                this.ChangeState();
+                ChangeState();
             }
         }
     }
 
     private void ChangeState()
     {
-        if (this.ToState is VisibilityState toState)
+        if (ToState is VisibilityState toState)
         {
             instance.BottomSheet!.Behavior!.State = (int)toState;
         }

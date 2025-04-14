@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
+	<com.google.android.material.card.MaterialCardView
         android:id="@+id/WhitePlayerCard"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
@@ -17,11 +17,11 @@
         app:layout_constraintStart_toStartOf="@+id/displayStart_CA"
         app:layout_constraintTop_toTopOf="@+id/displayTop_CA">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+		<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
+			<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/whitePlayerCapturedBlackPieces"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
@@ -38,7 +38,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/whitePlayerUsername"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/whitePlayerProfilePicture"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -52,17 +52,18 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/account_circle" />
 
-            <ImageView
+			<ImageView
                 android:id="@+id/whitePlayerIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintStart_toStartOf="@+id/whitePlayerProfilePicture"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/white_king" />
 
-            <TextView
+			<TextView
                 android:id="@+id/whitePlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -77,11 +78,11 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintTop_toTopOf="@+id/whitePlayerProfilePicture" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.google.android.material.card.MaterialCardView>
+	</com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
+	<com.google.android.material.card.MaterialCardView
         android:id="@+id/BlackPlayerCard"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
@@ -93,11 +94,11 @@
         app:layout_constraintStart_toStartOf="@+id/displayStart_CA"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+		<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
+			<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/blackPlayerCapturedWhitePieces"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
@@ -114,7 +115,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/blackPlayerUsername"
                 tools:ignore="SpeakableTextPresentCheck" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/blackPlayerProfilePicture"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -129,17 +130,18 @@
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/account_circle" />
 
-            <ImageView
+			<ImageView
                 android:id="@+id/blackPlayerIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toTopOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintEnd_toEndOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintStart_toStartOf="@+id/blackPlayerProfilePicture"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/black_king" />
 
-            <TextView
+			<TextView
                 android:id="@+id/blackPlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -155,10 +157,10 @@
                 app:layout_constraintStart_toEndOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintTop_toTopOf="@+id/blackPlayerProfilePicture" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</com.google.android.material.card.MaterialCardView>
 
-    <com.google.android.material.card.MaterialCardView
+	<com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
@@ -175,21 +177,21 @@
             android:layout_height="match_parent"
             android:animateLayoutChanges="true">
 
-            <androidx.constraintlayout.widget.Guideline
+			<androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterH"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 app:layout_constraintGuide_begin="24dp" />
 
-            <androidx.constraintlayout.widget.Guideline
+			<androidx.constraintlayout.widget.Guideline
                 android:id="@+id/boardCenterV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="12dp" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -203,7 +205,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -218,7 +220,7 @@
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7" />
 
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -232,7 +234,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A6" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -246,7 +248,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A5" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -260,7 +262,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A4" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -274,7 +276,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A3" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -288,7 +290,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -302,7 +304,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -316,7 +318,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__A1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___B"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -330,7 +332,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__B1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___C"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -344,7 +346,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__C1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___D"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -358,7 +360,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__D1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___E"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -372,7 +374,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__E1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___F"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -386,7 +388,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__F1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___G"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -400,7 +402,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__G1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G1" />
 
-            <TextView
+			<TextView
                 android:id="@+id/gmt___H"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -414,7 +416,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H1"
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H1" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -425,7 +427,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A8"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -436,7 +438,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A6"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -447,7 +449,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A4"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -459,7 +461,7 @@
                 app:shapeAppearanceOverlay="@style/BottomBlack"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -470,7 +472,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -481,7 +483,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B7"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -492,7 +494,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B5"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -503,7 +505,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B3"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -514,7 +516,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C8"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -525,7 +527,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -536,7 +538,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D8"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -547,7 +549,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D7"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -558,7 +560,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D6"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -569,7 +571,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D5"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -581,7 +583,7 @@
                 app:shapeAppearanceOverlay="@style/TopWhite"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -592,7 +594,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A7"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -603,7 +605,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A5"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__A2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -614,7 +616,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__A3"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -625,7 +627,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B8"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -636,7 +638,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B6"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -647,7 +649,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B4"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__B1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -658,7 +660,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__B2"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -669,7 +671,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -680,7 +682,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D2"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -691,7 +693,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C7"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -702,7 +704,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C5"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -713,7 +715,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D4"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__D2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -724,7 +726,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__D3"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -735,7 +737,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C6"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -746,7 +748,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C4"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -757,7 +759,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C3"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__C1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -768,7 +770,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__C2"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -779,7 +781,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -790,7 +792,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E8"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -801,7 +803,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E7"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -812,7 +814,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E6"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -823,7 +825,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E5"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -834,7 +836,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E4"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -845,7 +847,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E3"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__E1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -856,7 +858,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__E2"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -867,7 +869,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -878,7 +880,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F8"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -889,7 +891,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F7"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -900,7 +902,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F6"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -912,7 +914,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F5"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -923,7 +925,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F4"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -934,7 +936,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F3"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__F1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -945,7 +947,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__F2"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -956,7 +958,7 @@
                 app:layout_constraintTop_toTopOf="@+id/boardCenterH"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -967,7 +969,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G8"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -978,7 +980,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G7"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -989,7 +991,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G6"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1000,7 +1002,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G5"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1011,7 +1013,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G4"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1022,7 +1024,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G3"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__G1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1033,7 +1035,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__G2"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H8"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1045,7 +1047,7 @@
                 app:shapeAppearanceOverlay="@style/TopBlack"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H7"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1056,7 +1058,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H8"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H6"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1067,7 +1069,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H7"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H5"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1078,7 +1080,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H6"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H4"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1089,7 +1091,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H5"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H3"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1100,7 +1102,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H4"
                 app:srcCompat="@drawable/white_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H2"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1111,7 +1113,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/gmb__H3"
                 app:srcCompat="@drawable/black_square" />
 
-            <com.google.android.material.imageview.ShapeableImageView
+			<com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/gmb__H1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
@@ -1123,7 +1125,7 @@
                 app:shapeAppearanceOverlay="@style/BottomWhite"
                 app:srcCompat="@drawable/white_square" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bRook1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1139,7 +1141,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__A8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bKnight1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1155,7 +1157,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__B8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bBishop1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1171,7 +1173,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__C8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bQueen1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1187,7 +1189,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__D8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bKing1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1203,7 +1205,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__E8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bBishop2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1219,7 +1221,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__F8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bKnight2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1235,7 +1237,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__G8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bRook2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1251,7 +1253,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H8"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H8" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1267,7 +1269,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__A7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1283,7 +1285,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__B7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn3"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1299,7 +1301,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__C7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn4"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1315,7 +1317,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__D7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn5"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1331,7 +1333,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__E7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn6"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1347,7 +1349,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__F7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn7"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1363,7 +1365,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__G7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__bPawn8"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1379,7 +1381,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H7"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H7" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wRook1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1395,7 +1397,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__A1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wKnight1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1411,7 +1413,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__B1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wBishop1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1427,7 +1429,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__C1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wQueen1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1443,7 +1445,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__D1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wKing1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1459,7 +1461,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__E1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wBishop2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1475,7 +1477,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__F1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wKnight2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1491,7 +1493,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__G1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wRook2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1507,7 +1509,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H1"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H1" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn1"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1523,7 +1525,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__A2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__A2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn2"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1539,7 +1541,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__B2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__B2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn3"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1555,7 +1557,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__C2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__C2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn4"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1571,7 +1573,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__D2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__D2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn5"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1587,7 +1589,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__E2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__E2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn6"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1603,7 +1605,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__F2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__F2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn7"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1619,7 +1621,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__G2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__G2" />
 
-            <Button
+			<Button
                 android:id="@+id/gmp__wPawn8"
                 style="?attr/materialIconButtonStyle"
                 android:layout_width="0dp"
@@ -1635,7 +1637,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H2" />
 
-            <!--
+			<!--
                         <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
                             android:id="@+id/ftbWhite_promotion"
                             android:layout_width="wrap_content"
@@ -1748,10 +1750,10 @@
 
                         </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
                         -->
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
+		</androidx.constraintlayout.widget.ConstraintLayout>
+	</com.google.android.material.card.MaterialCardView>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/standard_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -1763,7 +1765,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="gone">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+		<androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/bottom_sheet"
             style="@style/Widget.Material3.BottomSheet"
             android:layout_width="match_parent"
@@ -1772,8 +1774,8 @@
             app:behavior_saveFlags="all"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-            <!-- Drag handle for accessibility -->
-            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+			<!-- Drag handle for accessibility -->
+			<com.google.android.material.bottomsheet.BottomSheetDragHandleView
                 android:id="@+id/drag_handle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -1785,8 +1787,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- Bottom sheet contents -->
-            <androidx.constraintlayout.widget.ConstraintLayout
+			<!-- Bottom sheet contents -->
+			<androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/matchmaking"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -1796,14 +1798,14 @@
                 app:layout_constraintTop_toTopOf="@+id/drag_handle"
                 tools:visibility="gone">
 
-                <androidx.constraintlayout.widget.Guideline
+				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/drag_handle_guideline1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="48dp" />
 
-                <com.google.android.material.progressindicator.CircularProgressIndicator
+				<com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/SearchingIndicator"
                     style="@style/Widget.Material3.CircularProgressIndicator"
                     android:layout_width="wrap_content"
@@ -1815,7 +1817,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/drag_handle_guideline1" />
 
-                <TextView
+				<TextView
                     android:id="@+id/SearchingText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -1827,7 +1829,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/SearchingIndicator" />
 
-                <com.google.android.material.chip.ChipGroup
+				<com.google.android.material.chip.ChipGroup
                     android:id="@+id/matchmaking_pref"
                     style="@style/Widget.Material3.ChipGroup"
                     android:layout_width="wrap_content"
@@ -1838,7 +1840,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/SearchingText"
                     app:singleSelection="true">
 
-                    <com.google.android.material.chip.Chip
+					<com.google.android.material.chip.Chip
                         android:id="@+id/white_chip"
                         style="@style/Widget.Material3.Chip.Input.Icon"
                         android:layout_width="wrap_content"
@@ -1847,7 +1849,7 @@
                         app:checkedIcon="@drawable/white_king"
                         app:chipIcon="@drawable/white_king" />
 
-                    <com.google.android.material.chip.Chip
+					<com.google.android.material.chip.Chip
                         android:id="@+id/black_chip"
                         style="@style/Widget.Material3.Chip.Input.Icon"
                         android:layout_width="wrap_content"
@@ -1855,10 +1857,10 @@
                         android:text="Black"
                         app:checkedIcon="@drawable/black_king"
                         app:chipIcon="@drawable/black_king" />
-                </com.google.android.material.chip.ChipGroup>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+				</com.google.android.material.chip.ChipGroup>
+			</androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+			<androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/game_over"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -1867,28 +1869,28 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/drag_handle">
 
-                <androidx.constraintlayout.widget.Guideline
+				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/drag_handle_guideline2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="48dp" />
 
-                <androidx.constraintlayout.widget.Guideline
+				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/displayStart_BS"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_begin="24dp" />
 
-                <androidx.constraintlayout.widget.Guideline
+				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/displayEnd_BS"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:layout_constraintGuide_end="24dp" />
 
-                <com.google.android.material.card.MaterialCardView
+				<com.google.android.material.card.MaterialCardView
                     android:id="@+id/winningPlayerCard"
                     style="?attr/materialCardViewFilledStyle"
                     android:layout_width="0dp"
@@ -1898,11 +1900,11 @@
                     app:layout_constraintStart_toStartOf="@+id/displayStart_BS"
                     app:layout_constraintTop_toTopOf="@+id/drag_handle_guideline2">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+					<androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <com.google.android.material.imageview.ShapeableImageView
+						<com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/winningPlayer"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
@@ -1916,7 +1918,7 @@
                             app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                             app:srcCompat="@drawable/account_circle" />
 
-                        <ImageView
+						<ImageView
                             android:id="@+id/winningPlayerIndicator"
                             android:layout_width="80dp"
                             android:layout_height="80dp"
@@ -1924,7 +1926,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:srcCompat="@drawable/white_king" />
 
-                        <TextView
+						<TextView
                             android:id="@+id/winningPlayerUsername"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -1938,7 +1940,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             tools:text="{Winner}" />
 
-                        <TextView
+						<TextView
                             android:id="@+id/winnerDescription"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -1951,11 +1953,11 @@
                             app:layout_constraintTop_toBottomOf="@id/winningPlayerUsername"
                             tools:text="Wins, {Loser} loses" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+					</androidx.constraintlayout.widget.ConstraintLayout>
 
-                </com.google.android.material.card.MaterialCardView>
+				</com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+				<com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                     android:id="@+id/home"
                     style=""
                     android:layout_width="wrap_content"
@@ -1968,34 +1970,34 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/winningPlayerCard"
                     tools:ignore="SpeakableTextPresentCheck" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+			</androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayTop_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="48dp" />
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayBottom_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_end="48dp" />
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayStart_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="24dp" />
 
-    <androidx.constraintlayout.widget.Guideline
+	<androidx.constraintlayout.widget.Guideline
         android:id="@+id/displayEnd_CA"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

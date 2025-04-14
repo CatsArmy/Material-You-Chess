@@ -1,5 +1,4 @@
-﻿using Android.Views;
-using AndroidX.AppCompat.App;
+﻿using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
 using Chess.App.Common.Extensions;
 using Firebase;
@@ -7,6 +6,7 @@ using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using Google.Android.Material.Navigation;
+using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
 namespace Chess.App;
@@ -14,22 +14,24 @@ namespace Chess.App;
 [Activity(MainLauncher = true,
     Label = "@string/app_name",
     Theme = "@style/AppTheme.Material3.DynamicColors.DayNight.NoActionBar",
-    ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait,
+    ScreenOrientation = Android.Content.PM.ScreenOrientation.UserPortrait,
     EnableOnBackInvokedCallback = true
 )]
 public class MainActivity : AppCompatActivity
 {
-    public NavigationBarView? NavigationBar { get; set; }
-    public IMenuItem? MainItem { get; set; }
-    public IMenuItem? ProfileItem { get; set; }
-
-    public MainFragment? Main { get; set; }
-    public ProfileFragment? Profile { get; set; }
-
-    /// <summary> The container for the MainFragment or ProfileFragment above</summary>
-    public FragmentContainerView? FragmentContainer { get; set; }
+    /// <summary> The navigation bar used to let the user navigate between the profile fragment and main fragment </summary>
+    public NavigationBarView? NavigationBar;
+    /// <summary>the a reference to the ProfileFragment</summary>
+    public MainFragment? Main;
+    /// <summary>the a reference to the ProfileFragment</summary>
+    public ProfileFragment? Profile;
+    /// <summary> The container view used to display the MainFragment or ProfileFragment above</summary>
+    public FragmentContainerView? FragmentContainer;
     /// <summary>A reference to the FirebaseAuth.Instance with the firebase AppCheck applied</summary>
     public FirebaseAuth? Auth;
+
+    /// <summary> a shorthand field variable used to get the configured fragment transaction</summary>
+    private FragmentTransaction? FragmentTransaction => this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true);
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -38,13 +40,10 @@ public class MainActivity : AppCompatActivity
         this.SetContentView(Resource.Layout.main_activity);
         this.NavigationBar = base.FindViewById<NavigationBarView>(Resource.Id.navigation_bar);
         this.FragmentContainer = base.FindViewById<FragmentContainerView>(Resource.Id.fragment_container_view);
-        this.MainItem = this.NavigationBar!.Menu.FindItem(Resource.Id.play);
-        this.ProfileItem = this.NavigationBar!.Menu.FindItem(Resource.Id.profile);
         this.NavigationBar!.ItemSelected += this.NavigateToItemSelected;
         this.Main = new MainFragment();
         this.Profile = new ProfileFragment();
-        this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true)
-            .Add(this.FragmentContainer!.Id, this.Main).Commit();
+        this.FragmentTransaction?.Add(this.FragmentContainer!.Id, this.Main).Commit();
 
         var app = FirebaseApp.InitializeApp(this)!;
         var check = FirebaseAppCheck.GetInstance(app);
@@ -54,35 +53,28 @@ public class MainActivity : AppCompatActivity
         this.RegisterComponents();
     }
 
+    /// <summary> navigates you back to the main fragment as you are no longer logged in </summary>
     private void OnSignOut(object? sender, FirebaseAuth.AuthStateEventArgs e)
     {
         if (e.Auth.CurrentUser is null)
         {
-            this.NavigationBar!.SelectedItemId = this.MainItem!.ItemId;
+            this.NavigationBar!.SelectedItemId = Resource.Id.play;
         }
     }
 
-    /// <summary>
-    /// Opens the page based on the bottom nav bar item user selected
-    /// if (e.Item.ItemId) == MainItem.ItemId it will open the MainFragment
-    /// else if (e.Item.ItemId) == ProfileItem.ItemId it will open the ProfileFragment if the user is logged in 
-    /// else it will open the sign in/up page
-    /// </summary>
+    /// <summary>Navigates the user to the selected fragment</summary>
     private void NavigateToItemSelected(object? sender, NavigationBarView.ItemSelectedEventArgs e)
     {
         if (this.NavigationBar?.SelectedItemId == e.Item.ItemId) return;
 
-        if (e.Item.ItemId == this.MainItem?.ItemId)
+        switch (e.Item.ItemId)
         {
-            this.Main = new();
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true).Replace(this.FragmentContainer!.Id,
-                this.Main!).Commit();
-        }
-
-        else if (e.Item.ItemId == this.ProfileItem?.ItemId)
-        {
-            this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true).Replace(this.FragmentContainer!.Id,
-                this.Profile!).Commit();
+            case Resource.Id.play:
+                this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Main!).Commit();
+                break;
+            case Resource.Id.profile:
+                this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Profile!).Commit();
+                break;
         }
     }
 }

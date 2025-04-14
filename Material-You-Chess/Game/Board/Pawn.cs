@@ -1,4 +1,5 @@
-﻿using Chess.Game.Moves;
+﻿using Chess.Game.Common;
+using Chess.Game.Moves;
 
 namespace Chess.Game.Board;
 
@@ -28,12 +29,20 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
         base.Move(move, game);
     }
 
+    /// <summary>
+    /// When the pawn is captured remove it from the list of pawns
+    /// </summary>
+    /// <param name="game"></param>
     public override void Capture(ChessGame game)
     {
         base.Capture(game);
         game.Enemy!.Pawns.Remove(this);
     }
 
+    /// <summary>
+    /// when this function is called it is either called from a WhitePawn class or a BlackPawn class which overrides the this function 
+    /// and promotes the pawn to a queen/knight/rook/bishop with the same color as the class of the pawn that overwrote this function
+    /// </summary>
     public virtual void Promote(ChessGame game, Promotion move) => game.Player!.Pawns.Remove(this);
 
     public override void Update()
@@ -51,14 +60,15 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
     public override int Count => count;
     public override bool IsWhite => true;
 
+    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         var moves = base.Moves(game);
-        if (this.Space.Forward(game.Board, this.IsWhite) is not BoardSpace forward)
+        if (this.Space.Forward(game, this.IsWhite) is not BoardSpace forward)
             return moves;
 
         const int maxRank = 8;
-        var piece = forward.Piece(game.AllPieces);
+        var piece = forward.Piece(game);
         if (piece == null)
         {
             moves.Add((forward.Rank == maxRank) switch
@@ -69,15 +79,15 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
             if (!this.HasMoved)
             {
-                var doubleMove = forward.Forward(game.Board, this.IsWhite);
-                if (doubleMove?.Piece(game.AllPieces) == null)
+                var doubleMove = forward.Forward(game, this.IsWhite);
+                if (doubleMove?.Piece(game) == null)
                     moves.Add(new DoubleMove(this, doubleMove!));
             }
         }
 
-        if (forward.Left(game.Board) is BoardSpace left)
+        if (forward.Left(game) is BoardSpace left)
         {
-            if (left.Piece(game.AllPieces) is BoardPiece leftPiece)
+            if (left.Piece(game) is BoardPiece leftPiece)
             {
                 if (!leftPiece.IsWhite)
                     moves.Add((left.Rank == maxRank) switch
@@ -86,16 +96,16 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
                         false => new Capture(this, leftPiece)
                     });
             }
-            else if (left.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            else if (left.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, left, captured));
             }
         }
 
-        if (forward.Right(game.Board) is BoardSpace right)
+        if (forward.Right(game) is BoardSpace right)
         {
-            if (right.Piece(game.AllPieces) is BoardPiece rightPiece)
+            if (right.Piece(game) is BoardPiece rightPiece)
             {
                 if (!rightPiece.IsWhite)
                     moves.Add((right.Rank == maxRank) switch
@@ -104,9 +114,9 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
                         false => new Capture(this, rightPiece)
                     });
             }
-            else if (right.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            else if (right.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, right, captured));
             }
         }
@@ -114,6 +124,7 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
         return moves;
     }
 
+    /// <summary> handles promoting a white pawn to a white queen/knight/rook/bishop </summary>
     public override void Promote(ChessGame game, Promotion move)
     {
         if (move.PromoteTo is not SerializedType promoteTo) throw new Exception("Failed to promote to type");
@@ -146,7 +157,7 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
         game.Player!.Pieces.Remove(this.Index);
         game.AllPieces.Remove(this.Index);
         game.Player!.Pieces[this.Index] = Piece;
-        game.AllPieces![this.Index] = Piece;
+        game.AllPieces[this.Index] = Piece;
         base.Promote(game, move);
         if (move is PromotionCapture capture)
             Piece.Capture(capture.Piece, game);
@@ -159,14 +170,15 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
     public override int Count => count;
     public override bool IsWhite => false;
 
+    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         var moves = base.Moves(game);
-        if (this.Space.Forward(game.Board, this.IsWhite) is not BoardSpace forward)
+        if (this.Space.Forward(game, this.IsWhite) is not BoardSpace forward)
             return moves;
 
         const int maxRank = 1;
-        var piece = forward.Piece(game.AllPieces);
+        var piece = forward.Piece(game);
         if (piece == null)
         {
             moves.Add((forward.Rank == maxRank) switch
@@ -177,15 +189,15 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
 
             if (!this.HasMoved)
             {
-                var doubleMove = forward.Forward(game.Board, this.IsWhite);
-                if (doubleMove?.Piece(game.AllPieces) == null)
+                var doubleMove = forward.Forward(game, this.IsWhite);
+                if (doubleMove?.Piece(game) == null)
                     moves.Add(new DoubleMove(this, doubleMove!));
             }
         }
 
-        if (forward.Left(game.Board) is BoardSpace left)
+        if (forward.Left(game) is BoardSpace left)
         {
-            if (left.Piece(game.AllPieces) is BoardPiece leftPiece)
+            if (left.Piece(game) is BoardPiece leftPiece)
             {
                 if (leftPiece.IsWhite)
                     moves.Add((left.Rank == maxRank) switch
@@ -194,16 +206,16 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
                         false => new Capture(this, leftPiece)
                     });
             }
-            else if (left.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            else if (left.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, left, captured));
             }
         }
 
-        if (forward.Right(game.Board) is BoardSpace right)
+        if (forward.Right(game) is BoardSpace right)
         {
-            if (right.Piece(game.AllPieces) is BoardPiece rightPiece)
+            if (right.Piece(game) is BoardPiece rightPiece)
             {
                 if (rightPiece.IsWhite)
                     moves.Add((right.Rank == maxRank) switch
@@ -212,9 +224,9 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
                         false => new Capture(this, rightPiece)
                     });
             }
-            else if (right.Backward(game.Board, this.IsWhite) is BoardSpace EnPassantSpace)
+            else if (right.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {
-                if (EnPassantSpace.Piece(game.AllPieces) is Pawn captured && captured.EnPassantCapturable)
+                if (EnPassantSpace.Piece(game) is Pawn captured && captured.EnPassantCapturable)
                     moves.Add(new EnPassant(this, right, captured));
             }
         }
@@ -222,6 +234,7 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
         return moves;
     }
 
+    /// <summary> handles promoting a white pawn to a black queen/knight/rook/bishop </summary>
     public override void Promote(ChessGame game, Promotion move)
     {
         if (move.PromoteTo is not SerializedType promoteTo) throw new Exception("Failed to promote to type");
@@ -254,7 +267,7 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
         game.Player!.Pieces.Remove(this.Index);
         game.AllPieces.Remove(this.Index);
         game.Player!.Pieces[this.Index] = Piece;
-        game.AllPieces![this.Index] = Piece;
+        game.AllPieces[this.Index] = Piece;
         base.Promote(game, move);
         if (move is PromotionCapture capture)
             Piece.Capture(capture.Piece, game);

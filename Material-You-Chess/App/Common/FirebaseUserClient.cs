@@ -3,21 +3,21 @@ using Bumptech.Glide;
 using Chess.Game.Common;
 using Firebase.Auth;
 using Firebase.Storage;
+using static Chess.App.Common.IFirebaseUser;
 
 namespace Chess.App.Common;
 
-[JsonPolymorphic()]
-[JsonDerivedType(typeof(WhitePlayerClient), nameof(WhitePlayerClient))]
-[JsonDerivedType(typeof(BlackPlayerClient), nameof(BlackPlayerClient))]
-[JsonDerivedType(typeof(FirebaseUserClient), nameof(FirebaseUserClient))]
-public class FirebaseUserClient(string Username, string Uid) : UserClient(Username)
+[method: JsonConstructor]
+public class FirebaseUserClient(string Username, string Uid) : IFirebaseUser
 {
-    public FirebaseUserClient(FirebaseUser user) : this(user.DisplayName ?? throw new("Missing display name"), user.Uid) { }
-    public readonly string Uid = Uid;
+    [JsonInclude] public readonly string Username = Username;
+    [JsonInclude] public readonly string Uid = Uid;
 
-    public StorageReference UserDir => FirebaseStorage.Instance.GetReference($"users/{Uid}/");
-    public StorageReference ImagesDir => UserDir.Child($"images/");
-    public StorageReference ProfilePicture => ImagesDir.Child($"user.image");
+    [JsonIgnore] public StorageReference ProfilePicture => this.ImagesDir.Child($"user.image");
+    [JsonIgnore] public StorageReference ImagesDir => this.UserDir.Child($"images/");
+    [JsonIgnore] public StorageReference UserDir => FirebaseStorage.Instance.GetReference($"users/{this.Uid}/");
 
+    public FirebaseUserClient(FirebaseUser user) : this(user.DisplayName ?? throw NullUsername, user.Uid) { }
+    public FirebaseUserClient(PlayerClient user) : this(user.Username ?? throw NullUsername, user.Uid ?? throw NullUid) { }
     public RequestBuilder LoadProfilePicture(RequestManager glide) => glide.Load(ProfilePicture).Error(Resource.Drawable.account_circle);
 }

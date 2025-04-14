@@ -23,8 +23,8 @@ public class Rook(int id, BoardSpace space) : SpecialPiece(id, space)
     public override List<Move> Moves(ChessGame game)
     {
         List<Move> moves = base.Moves(game);
-        this.Horizontals(game.Board, game.AllPieces, ref moves);
-        this.Verticals(game.Board, game.AllPieces, ref moves);
+        this.Horizontals(game, ref moves);
+        this.Verticals(game, ref moves);
         return moves;
     }
 }

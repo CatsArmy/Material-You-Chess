@@ -411,7 +411,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
             {
                 Logger.Warn("FirebaseAuth.Instance?.CurrentUser is null");
                 Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.sign_in_cancelled, Snackbar.LengthLong).Show();
-                this.MainActivity!.NavigationBar!.SelectedItemId = this.MainActivity!.MainItem!.ItemId;
+                this.MainActivity!.NavigationBar!.SelectedItemId = Resource.Id.play;
                 return;
             }
 
@@ -429,7 +429,7 @@ public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.
         if (response.Error?.ErrorCode == ErrorCodes.NoNetwork) //Sign in failed
         {
             Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
-            this.MainActivity!.NavigationBar!.SelectedItemId = this.MainActivity!.MainItem!.ItemId;
+            this.MainActivity!.NavigationBar!.SelectedItemId = Resource.Id.play;
             return;
         }
 

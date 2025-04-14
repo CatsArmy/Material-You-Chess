@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Chess.Game.Board;
+using Chess.Game.Common;
 
 namespace Chess.Game.Moves;
 

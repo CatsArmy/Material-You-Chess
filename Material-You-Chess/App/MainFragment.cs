@@ -1,9 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
-using AndroidX.Core.App;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Permissions;
-using Chess.App.Networked.Nearby;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
@@ -14,11 +12,18 @@ namespace Chess.App;
 
 public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.main_fragment)
 {
+    /// <summary> Manages the online and local buttons to ensure only one is checked at a time </summary>
     public MaterialButtonToggleGroup? GameModeSelector { get; private set; }
     public MaterialButton? Online { get; private set; }
     public MaterialButton? Local { get; private set; }
     public ExtendedFloatingActionButton? Start { get; private set; }
+    public const string IntentArgs = $"{nameof(ChessActivity)}{nameof(IntentArgs)}";
+    public const string IsNetworked = nameof(IsNetworked);
+    public const string Uid = $"{UserClient}:{nameof(Uid)}";
+    public const string Username = $"{UserClient}:{nameof(Username)}";
+    private const string UserClient = $"Firebase{nameof(UserClient)}";
 
+    /// <summary> when settings the logged in value enables/disables the online mode button </summary>
     public bool IsLoggedIn
     {
         get; set
@@ -31,17 +36,27 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
 
     private bool ClickedStart = false;
     private FirebaseAuth? Auth;
+    private FirebaseUser? User;
     private NearbyConnections? PermissionManager;
 
+    private static bool GrantedAll(IMap permissions) => !permissions.Values().Cast<bool>().ToArray().Contains(false);
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
-        var onResult = new ActivityResultCallback<IMap>(permissions => this.HandlePermissionResult(!permissions!.Values().Cast<bool>().Contains(false)));
+        var onResult = new ActivityResultCallback<IMap>(this.OnPermissionsResult);
         var resultLauncher = this.RegisterForActivityResult(new RequestMultiplePermissions(), onResult);
 
         this.PermissionManager = new(resultLauncher, this.Activity);
     }
 
+    /// <summary> cleanup auth state listeners to prevent duplicate calls to the on auth state </summary>
+    public override void OnDestroy()
+    {
+        this.Auth!.AuthState -= this.OnAuthState;
+        base.OnDestroy();
+    }
+
+    /// <summary> binds the views and inits the ui loop </summary>
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
@@ -56,69 +71,78 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
         this.Online!.Click += this.OnCheckOnline;
         this.Local!.Click += this.OnCheckLocal;
         this.Auth = (this.Activity as MainActivity)!.Auth;
-        this.IsLoggedIn = this.Auth!.CurrentUser is not null;
+        this.User = this.Auth!.CurrentUser;
+        this.IsLoggedIn = this.User is not null;
         this.Auth!.AuthState += this.OnAuthState;
     }
 
+    /// <summary> updates the ui to indicate to the user that starting a online game is available </summary>
+    private void OnCheckOnline(object? sender, EventArgs e) => this.PermissionManager?.RequestAccess();
+
+    /// <summary> updates the ui to indicate to the user that starting a local game is available </summary>
     private void OnCheckLocal(object? sender, EventArgs e)
     {
         this.Start!.SetIconResource(Resource.Drawable.group);
         this.Start!.Text = "Play";
     }
 
-    private void OnCheckOnline(object? sender, EventArgs e)
+
+    /// <summary> starts the game activity with the selected mode </summary>
+    private void StartGame(object? sender, EventArgs e)
     {
-        this.PermissionManager?.RequestAccess();
+        if ((this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline))
+        {
+            // On request granted opens the game activity
+            this.ClickedStart = true;
+            this.PermissionManager?.RequestAccess();
+            return;
+        }
+        // open a local game activity
+        var args = new Bundle();
+        args.PutBoolean(key: IsNetworked, value: false);
+        args.PutString(key: Username, value: null);
+        args.PutString(key: Uid, value: null);
+        base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity)).PutExtra(name: IntentArgs, value: args));
     }
+
+    /// <summary> wrapper for the HandlePermissionResult function </summary>
+    private void OnPermissionsResult(IMap? permissions) => this.HandlePermissionResult(GrantedAll(permissions!));
 
     /// <summary>
     /// Updates the ui based on the permission that was might have been granted
     /// also starts the networked chess activity if the permission requester was the onclick start</summary>
     /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
-    public void HandlePermissionResult(bool isGranted)
+    private void HandlePermissionResult(bool isGranted)
     {
         if (!isGranted)
         {
+            // informs the user that to start the online mode it requires the permission to be granted
             this.Online!.SetIconResource(Resource.Drawable.nearby_off);
             this.Start!.SetIconResource(Resource.Drawable.nearby_error);
             this.Start!.Text = "Missing Permissions";
             return;
         }
+        // revert the ui changes from above when the permission is granted
         this.Online!.SetIconResource(Resource.Drawable.nearby);
         this.Start!.SetIconResource(Resource.Drawable.nearby);
         this.Start!.Text = "Play";
         if (this.ClickedStart)
         {
             this.ClickedStart = false;
-            Thread.Sleep(TimeSpan.FromSeconds(0.4)); // add a slight delay to let the user slightly see the change in ui state
-            base.StartActivity(new Intent(this.Activity!, typeof(NetworkedChessActivity)));
+            var args = new Bundle();
+            args.PutBoolean(key: IsNetworked, value: true);
+            args.PutString(key: Username, value: this.User?.DisplayName);
+            args.PutString(key: Uid, value: this.User?.Uid);
+            base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity)).PutExtra(name: IntentArgs, value: args));
         }
     }
 
-    public override void OnDestroy()
-    {
-        this.Auth!.AuthState -= this.OnAuthState;
-        base.OnDestroy();
-    }
-
-    public void OnAuthState(object? sender, FirebaseAuth.AuthStateEventArgs args)
+    /// <summary> update ui to enable/disable the online mode if the user is logged in </summary>
+    private void OnAuthState(object? sender, FirebaseAuth.AuthStateEventArgs args)
     {
         if (this.Online is null)
             return;
 
         this.Online.Enabled = args.Auth.CurrentUser is not null;
-    }
-
-    ///starts the game activity with the selected mode
-    private void StartGame(object? sender, EventArgs e)
-    {
-        if ((this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline))
-        {
-            this.ClickedStart = true;
-            this.PermissionManager?.RequestAccess();
-            return;
-        }
-
-        base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity)));
     }
 }

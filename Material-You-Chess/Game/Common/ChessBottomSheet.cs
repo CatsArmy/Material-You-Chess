@@ -2,8 +2,7 @@
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Chess.App;
-using Chess.App.Networked.Nearby;
-using Chess.Game.Interfaces;
+using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
 using Google.Android.Material.FloatingActionButton;
@@ -12,59 +11,58 @@ using Google.Android.Material.ProgressIndicator;
 
 namespace Chess.Game.Common;
 
-public class ChessBottomSheet(IChessActivity activity, CoordinatorLayout StandardBottomSheet)
+public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standardBottomSheet)
 {
-    /// <summary>the root of the bottom sheet</summary>
-    public readonly CoordinatorLayout StandardBottomSheet = StandardBottomSheet;
-    public readonly ConstraintLayout BottomSheetLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!;
-    public readonly ConstraintLayout GameOverLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.game_over)!;
-    public readonly ConstraintLayout MatchmakingLayout = StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.matchmaking)!;
+    public readonly ConstraintLayout BottomSheetLayout = standardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!;
+    public readonly ConstraintLayout GameOverLayout = standardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.game_over)!;
+    public readonly ConstraintLayout MatchmakingLayout = standardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.matchmaking)!;
 
-    public readonly ImageView Indicator = StandardBottomSheet.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator)!;
-    public readonly ShapeableImageView WinningPlayer = StandardBottomSheet.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer)!;
-    public readonly TextView WinnerUsername = StandardBottomSheet.FindViewById<TextView>(Resource.Id.winningPlayerUsername)!;
-    public readonly TextView WinnerDescription = StandardBottomSheet.FindViewById<TextView>(Resource.Id.winnerDescription)!;
-    public readonly ExtendedFloatingActionButton Home = StandardBottomSheet.FindViewById<ExtendedFloatingActionButton>(Resource.Id.home)!;
+    public readonly ImageView Indicator = standardBottomSheet.FindViewById<ImageView>(Resource.Id.winningPlayerIndicator)!;
+    public readonly ShapeableImageView WinningPlayer = standardBottomSheet.FindViewById<ShapeableImageView>(Resource.Id.winningPlayer)!;
+    public readonly TextView WinnerUsername = standardBottomSheet.FindViewById<TextView>(Resource.Id.winningPlayerUsername)!;
+    public readonly TextView WinnerDescription = standardBottomSheet.FindViewById<TextView>(Resource.Id.winnerDescription)!;
+    public readonly ExtendedFloatingActionButton Home = standardBottomSheet.FindViewById<ExtendedFloatingActionButton>(Resource.Id.home)!;
 
     public ChipGroup? MatchmakingPreferences = null;
-    public readonly Chip White = StandardBottomSheet.FindViewById<Chip>(Resource.Id.white_chip)!;
-    public readonly Chip Black = StandardBottomSheet.FindViewById<Chip>(Resource.Id.black_chip)!;
-    public readonly TextView SearchingText = StandardBottomSheet.FindViewById<TextView>(Resource.Id.SearchingText)!;
-    public readonly CircularProgressIndicator SearchingIndicator = StandardBottomSheet.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
+    public readonly Chip White = standardBottomSheet.FindViewById<Chip>(Resource.Id.white_chip)!;
+    public readonly Chip Black = standardBottomSheet.FindViewById<Chip>(Resource.Id.black_chip)!;
+    public readonly TextView SearchingText = standardBottomSheet.FindViewById<TextView>(Resource.Id.SearchingText)!;
+    public readonly CircularProgressIndicator SearchingIndicator = standardBottomSheet.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
 
     public readonly BottomSheetCallback Callback = new(activity);
-    public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(StandardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
+    public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(standardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
 
-    public static ChessBottomSheet OnCreate(IChessActivity activity, CoordinatorLayout StandardBottomSheet)
+    public static ChessBottomSheet OnCreate(ChessActivity activity, CoordinatorLayout standardBottomSheet)
     {
-        var result = new ChessBottomSheet(activity, StandardBottomSheet);
-        result.StandardBottomSheet!.Visibility = ViewStates.Invisible;
+        var result = new ChessBottomSheet(activity, standardBottomSheet);
+        standardBottomSheet!.Visibility = ViewStates.Invisible;
         result.Behavior.AddBottomSheetCallback(result.Callback);
         result.Behavior.State = BottomSheetBehavior.StateHidden;
         return result;
     }
 
-    public void Show()
+    public void ShowMatchmaking()
     {
-        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
+        standardBottomSheet!.Visibility = ViewStates.Visible;
         this.MatchmakingLayout!.Visibility = ViewStates.Visible;
         this.GameOverLayout!.Visibility = ViewStates.Gone;
         this.Behavior!.State = BottomSheetBehavior.StateExpanded;
 
-        if (this.MatchmakingPreferences is not null)
-            return;
+        if (this.MatchmakingPreferences is not null) return;
 
-        this.MatchmakingPreferences = this.StandardBottomSheet.FindViewById<ChipGroup>(Resource.Id.matchmaking_pref)!;
+        this.MatchmakingPreferences = standardBottomSheet.FindViewById<ChipGroup>(Resource.Id.matchmaking_pref)!;
         this.MatchmakingPreferences!.CheckedChange += this.OnPreferencesChange;
     }
 
+    /// <summary>Shows the Bottom Sheet and only shows the game over layout </summary>
+    /// <param name="player">the player that ended the game</param>
+    /// <param name="description">how the game ended</param>
     public void ShowGameOver(IPlayer player, string description)
     {
-        this.StandardBottomSheet!.Visibility = ViewStates.Visible;
+        standardBottomSheet!.Visibility = ViewStates.Visible;
         this.GameOverLayout!.Visibility = ViewStates.Visible;
         this.MatchmakingLayout!.Visibility = ViewStates.Gone;
         this.Behavior!.State = BottomSheetBehavior.StateExpanded;
-
         this.WinnerUsername!.Text = player.Name;
         this.WinnerDescription!.Text = description;
         switch (player)
@@ -83,27 +81,37 @@ public class ChessBottomSheet(IChessActivity activity, CoordinatorLayout Standar
 
     private void OnPreferencesChange(object? sender, EventArgs args)
     {
-        if (activity is not NetworkedChessActivity networked) return;
+        if (!activity.IsNetworked) return;
 
-        if (!this.White!.Checked && !this.Black!.Checked)
-        {
-            networked.OnSelectNone();
-        }
+        if (!this.White!.Checked && !this.Black!.Checked) this.OnSelectNone(activity);
+        if (this.White!.Checked) this.OnSelectWhite(activity);
+        if (this.Black!.Checked) this.OnSelectBlack(activity);
+    }
 
-        if (this.White!.Checked)
-        {
-            networked.OnSelectWhite();
-        }
+    public void OnSelectNone(ChessActivity networked)
+    {
+        this.SearchingIndicator?.Hide();
+        this.SearchingText!.Text = "Please select a matchmaking preference";
+        networked.IsAdvertising = false;
+        networked.IsDiscovering = false;
+    }
 
-        if (this.Black!.Checked)
-        {
-            networked.OnSelectBlack();
-        }
+    public void OnSelectWhite(ChessActivity networked)
+    {
+        this.SearchingIndicator?.Show();
+        this.SearchingText!.Text = "Your device is now Advertising itself for other devices that discovering in your area";
+        networked.IsAdvertising = true;
+    }
+
+    public void OnSelectBlack(ChessActivity networked)
+    {
+        this.SearchingIndicator?.Show();
+        this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
+        networked.IsDiscovering = true;
     }
 
     private void FinishActivity(object? sender, EventArgs args)
     {
-        IChessActivity.Instance = null;
         activity.Finish();
     }
 }

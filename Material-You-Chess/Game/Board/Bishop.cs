@@ -20,10 +20,11 @@ public class Bishop(int id, BoardSpace space) : BoardPiece(id, space)
 {
     public override char Abbreviation => 'B';
 
+    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         List<Move> moves = base.Moves(game);
-        this.Diagonals(game.Board, game.AllPieces, ref moves);
+        this.Diagonals(game, ref moves);
         return moves;
     }
 }

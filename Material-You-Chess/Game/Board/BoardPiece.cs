@@ -30,7 +30,7 @@ namespace Chess.Game.Board;
 [JsonDerivedType(typeof(BlackRook), nameof(BlackRook))]
 public class BoardPiece(MaterialButton PieceView, BoardSpace space)
 {
-    private static readonly ConstraintLayout? BoardLayout = IChessActivity.Instance?.BoardLayout;
+    private static readonly ConstraintLayout? BoardLayout = ChessActivity.Instance?.BoardLayout;
     public BoardPiece(int id, BoardSpace space) : this(BoardLayout!.FindViewById<MaterialButton>(id)!, space) { }
 
     public int Id { get; } = PieceView.Id;
@@ -38,19 +38,16 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
     [JsonIgnore] public BoardSpace? LastSpace { get; set; }
     [JsonIgnore] public MaterialButton? PieceView { get; set; } = PieceView;
     public (string prefix, int count) Index => (this.Prefix, this.Count);
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public virtual string Prefix { get; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public virtual int Count { get; }
     public virtual bool IsWhite { get; }
     public virtual char Abbreviation { get; }
 
-    public virtual void Update() { return; }
-
-    /// <summary>An overridable virtual method that generates the available moves at this state of the <paramref name="game"/></summary>
+    /// <summary>An virtual method that the overrider will use to generate the available moves at this state of the game</summary>
     /// <returns>a list of available moves based on the rules of the chess game</returns>
     public virtual List<Move> Moves(ChessGame game) => [];
 
+    /// <summary>this function plays the move and is overwritten to implement the special rules of chess </summary>
     public virtual void Move(Move move, ChessGame game)
     {
         if (move is Capture capture)
@@ -62,7 +59,7 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
     }
 
     /// <remarks> Visually moves the piece </remarks>
-    /// <summary> <see langword="this"/> is the <see cref="BoardPiece"/> that will be moved to the <paramref name="move"/> </summary>
+    /// <summary> this is the BoardPiece that will be moved to the move </summary>
     public void Move(Move move)
     {
         this.LastSpace = this.Space;
@@ -90,13 +87,15 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         this.PieceView.RequestLayout();
     }
 
-    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Origin"/> </summary>
-    /// <remarks> <see langword="this"/> is not the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
-    /// <param name="destination"> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </param>
+    /// <remarks> 
+    /// this is the BoardPiece that will Capture an enemy's BoardPiece 
+    /// </remarks>
+    /// <summary> this BoardPiece is the Move.Origin </summary>
+    /// <param name="destination"> is the BoardPiece that will be Captured by the player's BoardPiece</param>
     public virtual void Capture(BoardPiece destination, ChessGame game) => destination.Capture(game);
 
-    /// <summary> <see langword="this"/> <see cref="BoardPiece"/> is the <see cref="Move.Destination"/> </summary>
-    /// <remarks> <see langword="this"/> is the <see cref="BoardPiece"/> that will be <see cref="Capture(ChessGame)"/>'d </remarks>
+    /// <summary> this BoardPiece is the Move.Destination </summary>
+    /// <remarks> this is the BoardPiece that will be Captured </remarks>
     public virtual void Capture(ChessGame game)
     {
         game.AllPieces.Remove(this.Index);
@@ -106,22 +105,29 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         this.PieceView!.Visibility = Android.Views.ViewStates.Gone;
     }
 
-    public void Diagonals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the diagonal spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    public void Diagonals(ChessGame game, ref List<Move> moves)
     {
-        this.DiagonalsUpRight(board, pieces, ref moves);
-        this.DiagonalsUpLeft(board, pieces, ref moves);
-        this.DiagonalsDownRight(board, pieces, ref moves);
-        this.DiagonalsDownLeft(board, pieces, ref moves);
+        this.DiagonalsUpRight(game, ref moves);
+        this.DiagonalsUpLeft(game, ref moves);
+        this.DiagonalsDownRight(game, ref moves);
+        this.DiagonalsDownLeft(game, ref moves);
     }
 
-    public void DiagonalsUpRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the diagonal up right spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void DiagonalsUpRight(ChessGame game, ref List<Move> moves)
     {
-        for (var diagonal = this.Space.DiagonalUp(board, true); diagonal != null; diagonal = diagonal.DiagonalUp(board, true))
+        for (var diagonal = this.Space.DiagonalUpRight(game); diagonal != null; diagonal = diagonal.DiagonalUpRight(game))
         {
-            if (diagonal == null)
-                break;
+            if (diagonal == null) break;
 
-            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
+            if (diagonal.Piece(game) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -132,13 +138,16 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public void DiagonalsUpLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the diagonal up left spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void DiagonalsUpLeft(ChessGame game, ref List<Move> moves)
     {
-        for (var diagonal = this.Space.DiagonalUp(board, false); diagonal != null; diagonal = diagonal.DiagonalUp(board, false))
+        for (var diagonal = this.Space.DiagonalUpLeft(game); diagonal != null; diagonal = diagonal.DiagonalUpLeft(game))
         {
-            if (diagonal == null)
-                break;
-            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
+            if (diagonal == null) break;
+            if (diagonal.Piece(game) is BoardPiece diagonalPiece)
             {
                 if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
@@ -149,15 +158,18 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public void DiagonalsDownRight(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the diagonal down right spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void DiagonalsDownRight(ChessGame game, ref List<Move> moves)
     {
-        for (var diagonal = this.Space.DiagonalDown(board, true); diagonal != null; diagonal = diagonal.DiagonalDown(board, true))
+        for (var diagonal = this.Space.DiagonalDownRight(game); diagonal != null; diagonal = diagonal.DiagonalDownRight(game))
         {
-            if (diagonal == null)
-                break;
-            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
+            if (diagonal == null) break;
+            if (diagonal.Piece(game) is BoardPiece diagonalPiece)
             {
-                if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
+                if (diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
@@ -166,15 +178,18 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public void DiagonalsDownLeft(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the diagonal down left spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void DiagonalsDownLeft(ChessGame game, ref List<Move> moves)
     {
-        for (var diagonal = this.Space.DiagonalDown(board, false); diagonal != null; diagonal = diagonal.DiagonalDown(board, false))
+        for (var diagonal = this.Space.DiagonalDownLeft(game); diagonal != null; diagonal = diagonal.DiagonalDownLeft(game))
         {
-            if (diagonal == null)
-                break;
-            if (diagonal.Piece(pieces) is BoardPiece diagonalPiece)
+            if (diagonal == null) break;
+            if (diagonal.Piece(game) is BoardPiece diagonalPiece)
             {
-                if (diagonalPiece is not null && diagonalPiece.IsWhite != this.IsWhite)
+                if (diagonalPiece.IsWhite != this.IsWhite)
                     moves.Add(new Capture(this, diagonalPiece));
                 break;
             }
@@ -183,24 +198,29 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the horizontal spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    public void Horizontals(ChessGame game, ref List<Move> moves)
     {
-        this.Horizontals(board, pieces, true, ref moves);
-        this.Horizontals(board, pieces, false, ref moves);
+        this.HorizontalsRight(game, ref moves);
+        this.HorizontalsLeft(game, ref moves);
     }
 
-    public void Horizontals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, bool isRight, ref List<Move> moves)
+    /// <summary>
+    /// adds all the horizontal right spaces(Space.Right) that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void HorizontalsRight(ChessGame game, ref List<Move> moves)
     {
-        Func<Dictionary<(char file, int rank), BoardSpace>, BoardSpace?> iterator = isRight ? this.Space.Right : this.Space.Left;
-        for (var horizontal = iterator(board); horizontal != null; iterator = isRight ? horizontal.Right
-            : horizontal.Left, horizontal = iterator(board))
+        for (var horizontal = this.Space.Right(game); horizontal != null; horizontal = horizontal.Right(game))
         {
-            if (horizontal == null)
-                break;
-            if (horizontal.Piece(pieces) is BoardPiece horizontalPiece)
+            if (horizontal == null) break;
+            if (horizontal.Piece(game) is BoardPiece rightPiece)
             {
-                if (horizontalPiece is not null && horizontalPiece.IsWhite != this.IsWhite)
-                    moves.Add(new Capture(this, horizontalPiece));
+                if (rightPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, rightPiece));
                 break;
             }
 
@@ -208,24 +228,49 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, ref List<Move> moves)
+    /// <summary>
+    /// adds all the horizontal left spaces(Space.left) that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void HorizontalsLeft(ChessGame game, ref List<Move> moves)
     {
-        this.Verticals(board, pieces, true, ref moves);
-        this.Verticals(board, pieces, false, ref moves);
+        for (var horizontal = this.Space.Left(game); horizontal != null; horizontal = horizontal.Left(game))
+        {
+            if (horizontal == null) break;
+            if (horizontal.Piece(game) is BoardPiece leftPiece)
+            {
+                if (leftPiece.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, leftPiece));
+                break;
+            }
+
+            moves.Add(new Move(this, horizontal));
+        }
     }
 
-    public void Verticals(Dictionary<(char file, int rank), BoardSpace> board, Dictionary<(string Prefix, int Count), BoardPiece> pieces, bool isUp, ref List<Move> moves)
+    /// <summary>
+    /// adds all the vertical spaces that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    public void Verticals(ChessGame game, ref List<Move> moves)
     {
-        Func<Dictionary<(char file, int rank), BoardSpace>, BoardSpace?> iterator = isUp ? this.Space.Up : this.Space.Down;
-        for (var vertical = iterator(board); vertical != null; iterator = isUp ? vertical.Up
-            : vertical.Down, vertical = iterator(board))
+        this.VerticalsUp(game, ref moves);
+        this.VerticalsDown(game, ref moves);
+    }
+
+    /// <summary>
+    /// adds all the vertical up spaces(Space.Up) that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void VerticalsUp(ChessGame game, ref List<Move> moves)
+    {
+        for (var vertical = this.Space.Up(game); vertical != null; vertical = vertical.Up(game))
         {
-            if (vertical == null)
-                break;
-            if (vertical.Piece(pieces) is BoardPiece verticalPiece)
+            if (vertical == null) break;
+            if (vertical.Piece(game) is BoardPiece pieceAbove)
             {
-                if (verticalPiece is not null && verticalPiece.IsWhite != this.IsWhite)
-                    moves.Add(new Capture(this, verticalPiece));
+                if (pieceAbove.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, pieceAbove));
                 break;
             }
 
@@ -233,47 +278,23 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
         }
     }
 
-    public (BoardSpace?, BoardSpace?) DiagonalMovesUp(Dictionary<(char file, int rank), BoardSpace> board)
+    /// <summary>
+    /// adds all the vertical down spaces(Space.Down) that this piece can move to
+    /// be it a capture move or a regual potential capture move
+    /// </summary>
+    private void VerticalsDown(ChessGame game, ref List<Move> moves)
     {
-        var up = this.Space.Up(board);
-        if (up == null)
-            return (null, null);
-        up = up.Up(board);
-        if (up == null)
-            return (null, null);
-        return (up.Right(board), up.Left(board));
-    }
+        for (var vertical = this.Space.Up(game); vertical != null; vertical = vertical.Down(game))
+        {
+            if (vertical == null) break;
+            if (vertical.Piece(game) is BoardPiece pieceBelow)
+            {
+                if (pieceBelow.IsWhite != this.IsWhite)
+                    moves.Add(new Capture(this, pieceBelow));
+                break;
+            }
 
-    public (BoardSpace?, BoardSpace?) DiagonalMovesDown(Dictionary<(char file, int rank), BoardSpace> board)
-    {
-        var down = this.Space.Down(board);
-        if (down == null)
-            return (null, null);
-        down = down.Down(board);
-        if (down == null)
-            return (null, null);
-        return (down.Right(board), down.Left(board));
-    }
-
-    public (BoardSpace?, BoardSpace?) DiagonalMovesRight(Dictionary<(char file, int rank), BoardSpace> board)
-    {
-        var right = this.Space.Right(board);
-        if (right == null)
-            return (null, null);
-        right = right.Right(board);
-        if (right == null)
-            return (null, null);
-        return (right.Up(board), right.Down(board));
-    }
-
-    public (BoardSpace?, BoardSpace?) DiagonalMovesLeft(Dictionary<(char file, int rank), BoardSpace> board)
-    {
-        var left = this.Space.Left(board);
-        if (left == null)
-            return (null, null);
-        left = left.Left(board);
-        if (left == null)
-            return (null, null);
-        return (left.Up(board), left.Down(board));
+            moves.Add(new Move(this, vertical));
+        }
     }
 }

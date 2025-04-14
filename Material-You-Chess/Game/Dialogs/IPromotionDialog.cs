@@ -1,8 +1,7 @@
-﻿using Chess.Game;
-using Chess.Game.Board;
+﻿using Chess.Game.Board;
 using Chess.Game.Moves;
 
-namespace Chess.App.Dialogs;
+namespace Chess.Game.Dialogs;
 
 public interface IPromotionDialog : IMaterialDialog
 {

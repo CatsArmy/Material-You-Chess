@@ -1,13 +1,12 @@
 ﻿using Android.Content;
-using Chess.Game;
 using Chess.Game.Board;
 using Chess.Game.Moves;
 using Google.Android.Material.Dialog;
 using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 
-namespace Chess.App.Dialogs;
+namespace Chess.Game.Dialogs;
 
-public class WhitePromotionDialog : IPromotionDialog
+public class BlackPromotionDialog : IPromotionDialog
 {
     private ChessGame? Game;
 
@@ -15,14 +14,14 @@ public class WhitePromotionDialog : IPromotionDialog
     public AlertDialog.Builder Builder { get; set; }
     public Promotion? Move { get; set; }
     public Pawn? Caller { get; set; }
-    public List<int> IDs => [Resource.Id.whitePromoteQueen, Resource.Id.whitePromoteKnight,
-                                     Resource.Id.whitePromoteRook, Resource.Id.whitePromoteBishop];
+    public List<int> IDs => [Resource.Id.blackPromoteQueen, Resource.Id.blackPromoteKnight,
+                                     Resource.Id.blackPromoteRook, Resource.Id.blackPromoteBishop];
 
-    public WhitePromotionDialog(Context app)
+    public BlackPromotionDialog(Context app)
     {
         Builder = new MaterialAlertDialogBuilder(app);
         Builder.SetTitle(nameof(Promotion));
-        Builder.SetView(Resource.Layout.white_promotion_dialog);
+        Builder.SetView(Resource.Layout.black_promotion_dialog);
         Dialog = Builder.Create();
         Dialog.ShowEvent += OnShow;
     }
@@ -46,10 +45,10 @@ public class WhitePromotionDialog : IPromotionDialog
         foreach (var id in IDs) Dialog.FindViewById<ImageView>(id)!.Click -= OnConfirm;
         var type = (sender as ImageView)!.Id switch
         {
-            Resource.Id.whitePromoteQueen => typeof(WhiteQueen),
-            Resource.Id.whitePromoteKnight => typeof(WhiteKnight),
-            Resource.Id.whitePromoteRook => typeof(WhiteRook),
-            Resource.Id.whitePromoteBishop => typeof(WhiteBishop),
+            Resource.Id.blackPromoteQueen => typeof(BlackQueen),
+            Resource.Id.blackPromoteKnight => typeof(BlackKnight),
+            Resource.Id.blackPromoteRook => typeof(BlackRook),
+            Resource.Id.blackPromoteBishop => typeof(BlackBishop),
             _ => null
         };
 

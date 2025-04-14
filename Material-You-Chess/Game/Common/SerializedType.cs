@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
-namespace Chess.Game.Moves;
+namespace Chess.Game.Common;
 
 [method: JsonConstructor]
 public readonly struct SerializedType(string type)

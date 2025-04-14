@@ -1,8 +1,6 @@
-﻿using Chess.App.Common;
-using Chess.App.Dialogs;
-using Chess.Game.Board;
+﻿using Chess.Game.Board;
 using Chess.Game.Common;
-using Chess.Game.Interfaces;
+using Chess.Game.Dialogs;
 using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
@@ -26,6 +24,7 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
     public Rook? Rook2 { get; set; }
     #endregion
 
+    /// <summary> when setting the Selected BoardPiece it will also set the Moves to </summary>
     public BoardPiece? Selected
     {
         get; set
@@ -41,6 +40,14 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
         }
     }
 
+    /// <summary>
+    /// when setting the Moves BoardSpace
+    /// it may call any of the following methods accordingly
+    /// Move.Select
+    /// Move.Unselect
+    /// Move.IndicateMoveable
+    /// Move.UnindicateMoveable
+    /// </summary>
     public List<Move>? Moves
     {
         get; set
@@ -57,6 +64,13 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
         }
     }
 
+    /// <summary> 
+    /// When trying to set the value to null
+    /// it will only clear the selected spaces and keep the last move for later use. 
+    /// </summary> 
+    /// <remarks> 
+    /// LastMove will be null only at the start of the game when the player has not played any moves yet.
+    /// </remarks>
     public Move? LastMove
     {
         get; set
@@ -72,7 +86,7 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
         }
     }
 
-    public White(ChessGame game, IPromotionDialog promotionDialog, UserClient client) : this(game, promotionDialog, client.Username)
+    public White(ChessGame game, IPromotionDialog promotionDialog, PlayerClient client) : this(game, promotionDialog, client.Username)
     {
         const int rank = 1;
         char file = 'A';
