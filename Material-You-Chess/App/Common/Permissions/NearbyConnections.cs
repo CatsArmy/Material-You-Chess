@@ -7,6 +7,18 @@ using AndroidX.Activity.Result;
 
 namespace Chess.App.Common.Permissions;
 
+public interface IPermissionManager
+{
+    public bool HasAccess();
+    public void RequestAccess();
+}
+
+public interface IPermissionsManager : IPermissionManager
+{
+    public (Permission IsGranted, string Permission)[] Permissions { get; }
+}
+
+
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "False positive")]
 public class NearbyConnections(ActivityResultLauncher requestLauncher, ContextWrapper? context) : IPermissionsManager

@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.App;
 using Chess.Game.Moves;
 using Google.Android.Material.ImageView;
 
@@ -122,8 +121,6 @@ public class BoardSpace(char File, int Rank, bool IsWhite, ShapeableImageView Sp
     /// <returns>The piece on this space if found</returns>
     public BoardPiece? Piece(ChessGame game) => game.AllPieces.Values.FirstOrDefault(p => p.Space.Index == this.Index);
 
-    /// <returns> 
-    /// whether or not an enemy piece can capture a (theoretical) piece  that would be placed on the given space 
-    /// </returns>
+    /// <returns> whether or not an enemy piece can capture a (theoretical) piece that would be placed on the given space </returns>
     public bool IsThreateningSpace(ref List<Move> enemy) => enemy.FirstOrDefault(move => move.Destination == this) != null;
 }

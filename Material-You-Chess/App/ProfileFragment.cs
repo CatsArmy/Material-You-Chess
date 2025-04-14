@@ -19,10 +19,11 @@ using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
 using AndroidUri = Android.Net.Uri;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Chess.App;
 
-public class ProfileFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.profile_fragment)
+public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
 {
     private MainActivity? MainActivity;
     private AndroidUri? Upload;

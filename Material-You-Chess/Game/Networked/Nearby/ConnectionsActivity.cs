@@ -7,7 +7,7 @@ using NearbyConnectionLifecycleCallback = Android.Gms.Nearby.Connection.Connecti
 using NearbyEndpointDiscoveryCallback = Android.Gms.Nearby.Connection.EndpointDiscoveryCallback;
 using NearbyPayloadCallback = Android.Gms.Nearby.Connection.PayloadCallback;
 
-namespace Chess.App.Networked.Nearby;
+namespace Chess.Game.Networked.Nearby;
 
 public class EndPoint(string id, string name)
 {

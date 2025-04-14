@@ -9,7 +9,7 @@
 /// myValue1.AreEven(true); /* or */ Extensions.AreEven(myValue1, false);
 
 /// <summary> a static class containing extension a method </summary>
-public static partial class Extensions
+public static class Extensions
 {
     public static Java.Lang.Class Class(this Type type) => Java.Lang.Class.FromType(type);
 }

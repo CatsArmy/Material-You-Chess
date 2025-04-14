@@ -19,4 +19,3 @@ public static class Statuses
         return Java.Lang.String.Format(Locale.Us!, "[%d]%s", status.StatusCode, msg!).ToString();
     }
 }
-

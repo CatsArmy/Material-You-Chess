@@ -1,7 +1,6 @@
 ﻿using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
-using Chess.App;
 using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;

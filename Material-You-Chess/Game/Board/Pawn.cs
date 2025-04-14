@@ -60,7 +60,7 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
     public override int Count => count;
     public override bool IsWhite => true;
 
-    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
+    /// <summary> Generates all available moves at this state of the game based on the rules of a regular chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         var moves = base.Moves(game);
@@ -170,7 +170,7 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
     public override int Count => count;
     public override bool IsWhite => false;
 
-    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
+    /// <summary> Generates all available moves at this state of the game based on the rules of a regular chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         var moves = base.Moves(game);

@@ -2,15 +2,17 @@
 using Android.Views;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Permissions;
+using Chess.Game;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Java.Util;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+using Fragment = AndroidX.Fragment.App.Fragment;
 
 namespace Chess.App;
 
-public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.main_fragment)
+public class MainFragment() : Fragment(Resource.Layout.main_fragment)
 {
     /// <summary> Manages the online and local buttons to ensure only one is checked at a time </summary>
     public MaterialButtonToggleGroup? GameModeSelector { get; private set; }
@@ -111,7 +113,7 @@ public class MainFragment() : AndroidX.Fragment.App.Fragment(Resource.Layout.mai
     /// <summary>
     /// Updates the ui based on the permission that was might have been granted
     /// also starts the networked chess activity if the permission requester was the onclick start</summary>
-    /// <param name="isGranted"> <paramref name="isGranted"/> are all of the requested permissions granted </param>
+    /// <param name="isGranted"> is true when all of the requested permissions granted </param>
     private void HandlePermissionResult(bool isGranted)
     {
         if (!isGranted)

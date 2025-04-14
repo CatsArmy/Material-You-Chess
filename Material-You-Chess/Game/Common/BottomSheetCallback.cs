@@ -1,5 +1,4 @@
 ﻿using Android.Views;
-using Chess.App;
 using Google.Android.Material.BottomSheet;
 
 namespace Chess.Game.Common;
@@ -22,7 +21,7 @@ public class BottomSheetCallback(ChessActivity instance) : BottomSheetBehavior.B
     public override void OnSlide(View bottomSheet, float newState) { }
 
     /// <summary>
-    /// Check if we should or shouldnt change the bottom sheet visibility state to be our visibility state
+    /// Check if we should or shouldn't change the bottom sheet visibility state to be our visibility state
     /// this.ToState only when we have one (not null)
     /// </summary>
     public override void OnStateChanged(View bottomSheet, int newState)

@@ -2,7 +2,6 @@ using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Android.Views;
-using Chess.App;
 using Chess.Game.Board;
 using Chess.Game.Common;
 using Chess.Game.Moves;
@@ -36,7 +35,6 @@ public class ChessGame(ChessActivity activity, bool isNetworked)
         true => this.WhitePlayer!,
         false => this.BlackPlayer!,
     };
-
 
     public void EndGame(IPlayer winner, IPlayer loser)
     {
@@ -107,7 +105,7 @@ public class ChessGame(ChessActivity activity, bool isNetworked)
             this.PlayMove(this.LocalizeMove(move));
     }
 
-    /// <summary>Moves the piece with the given <paramref name="move"/> and updates the state of the game </summary>
+    /// <summary>Moves the piece with the given move parameter and updates the state of the game </summary>
     /// <param name="move">the move that the piece will move to</param>
     private void PlayMove(Move move)
     {

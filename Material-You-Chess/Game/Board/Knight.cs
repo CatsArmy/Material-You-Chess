@@ -20,7 +20,7 @@ public class Knight(int id, BoardSpace space) : BoardPiece(id, space)
 {
     public override char Abbreviation => 'N';
 
-    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
+    /// <summary> Generates all available moves at this state of the game based on the rules of a regular chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         List<Move> moves = base.Moves(game);

@@ -4,16 +4,16 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
+using Chess.App;
 using Chess.App.Common;
-using Chess.App.Networked.Nearby;
-using Chess.Game;
 using Chess.Game.Common;
 using Chess.Game.Dialogs;
+using Chess.Game.Networked.Nearby;
 using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
-namespace Chess.App;
+namespace Chess.Game;
 
 [Activity(
     Label = "@string/app_name",

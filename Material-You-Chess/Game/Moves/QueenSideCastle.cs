@@ -1,5 +1,4 @@
-﻿using Chess.App;
-using Chess.Game.Board;
+﻿using Chess.Game.Board;
 
 namespace Chess.Game.Moves;
 

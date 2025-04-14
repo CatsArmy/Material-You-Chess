@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
-using Chess.App;
 using Chess.App.Common;
 using Chess.Game.Moves;
 using Google.Android.Material.Button;
@@ -38,7 +37,9 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
     [JsonIgnore] public BoardSpace? LastSpace { get; set; }
     [JsonIgnore] public MaterialButton? PieceView { get; set; } = PieceView;
     public (string prefix, int count) Index => (this.Prefix, this.Count);
+#nullable disable
     public virtual string Prefix { get; }
+#nullable restore
     public virtual int Count { get; }
     public virtual bool IsWhite { get; }
     public virtual char Abbreviation { get; }

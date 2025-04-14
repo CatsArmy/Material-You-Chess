@@ -18,28 +18,28 @@ public static class Logger
 
     public static void Verbose(string message)
     {
-        if (Filter >= Level.Verbose)
+        if (Filter > Level.Verbose)
             return;
         Log.Verbose(Tag, $"{message}{Environment.NewLine}");
     }
 
     public static void Debug(string message)
     {
-        if (Filter >= Level.Debug)
+        if (Filter > Level.Debug)
             return;
         Log.Debug(Tag, $"{message}{Environment.NewLine}");
     }
 
     public static void Warn(string message)
     {
-        if (Filter >= Level.Warn)
+        if (Filter > Level.Warn)
             return;
         Log.Warn(Tag, $"{message}{Environment.NewLine}");
     }
 
     public static void Error(string message)
     {
-        if (Filter >= Level.Error)
+        if (Filter > Level.Error)
             return;
         Log.Error(Tag, $"{message}{Environment.NewLine}");
     }

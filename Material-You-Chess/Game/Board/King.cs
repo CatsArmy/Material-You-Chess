@@ -25,8 +25,9 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
         base.Capture(game);
         game.EndGame(game.Player, game.Enemy);
     }
+
     /// <remarks> this function exists to prevent a infinite recursion loop </remarks>
-    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
+    /// <summary> Generates all available moves at this state of the game based on the rules of a regular chess game </summary>
     public List<Move> RegularMoves(ChessGame game)
     {
         var moves = (List<Move>)[];
@@ -105,7 +106,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
         return moves;
     }
 
-    /// <summary> Generates all available moves at this state of the game based on the rules a regular the chess game </summary>
+    /// <summary> Generates all available moves at this state of the game based on the rules of a regular chess game </summary>
     public override List<Move> Moves(ChessGame game)
     {
         var moves = base.Moves(game);
