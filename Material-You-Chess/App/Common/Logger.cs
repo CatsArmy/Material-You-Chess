@@ -3,6 +3,7 @@
 namespace Chess.App.Common;
 
 #pragma warning disable CS0162 // Unreachable code detected
+#pragma warning disable IDE0060 // Remove unused parameter
 public static class Logger
 {
     private enum Level
@@ -13,6 +14,7 @@ public static class Logger
         Error,
         Fatal
     }
+
     private const Level Filter = Level.Debug;
     private const string Tag = "CatDebug";
 
@@ -44,4 +46,5 @@ public static class Logger
         Log.Error(Tag, $"{message}{Environment.NewLine}");
     }
 }
+#pragma warning restore IDE0060 // Remove unused parameter
 #pragma warning restore CS0162 // Unreachable code detected

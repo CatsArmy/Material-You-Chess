@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Bumptech.Glide;
 using Chess.App.Common;
-using static Chess.App.Common.IFirebaseUser;
+using static Chess.App.Common.IFirebaseUserClient;
 
 namespace Chess.Game.Common;
 
@@ -11,7 +11,7 @@ namespace Chess.Game.Common;
 [JsonDerivedType(typeof(BlackClient), nameof(BlackClient))]
 
 [method: JsonConstructor]
-public class PlayerClient(string username, string? uid = null, bool? isWhite = null) : IFirebaseUser
+public class PlayerClient(string username, string? uid = null, bool? isWhite = null) : IFirebaseUserClient
 {
     [JsonInclude] public readonly string Username = username;
     [JsonInclude] public readonly string? Uid = uid;

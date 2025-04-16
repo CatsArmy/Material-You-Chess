@@ -5,10 +5,10 @@ using Chess.Game.Moves;
 
 namespace Chess.Game.Player;
 
-public class White(ChessGame game, IPromotionDialog promotionDialog, string username) : IPlayer
+public class White(ChessGame game, string name) : IPlayer
 {
-    public string Name { get; } = username;
-    public IPromotionDialog PromotionDialog { get; } = promotionDialog;
+    public string Name => name;
+    public required IPromotionDialog PromotionDialog { get; init; }
     public GameOutcome? Outcome { get; set; }
 
     #region Board Pieces
@@ -86,7 +86,7 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
         }
     }
 
-    public White(ChessGame game, IPromotionDialog promotionDialog, PlayerClient client) : this(game, promotionDialog, client.Username)
+    public White(ChessGame game) : this(game, game.WhiteClient.Username)
     {
         const int rank = 1;
         char file = 'A';
@@ -129,13 +129,17 @@ public class White(ChessGame game, IPromotionDialog promotionDialog, string user
             file++;
         }
 
-        foreach (var kvp in this.Pieces)
-        {
-            var piece = kvp.Value;
-            var index = kvp.Key;
-            game.AllPieces[index] = piece;
-            piece.PieceView!.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
-            piece.PieceView!.Clickable = true;
-        }
+        foreach (var pieceIndexPair in this.Pieces)
+            this.BindPiece(piece: pieceIndexPair.Value, index: pieceIndexPair.Key);
+    }
+
+    /// <summary> sets the OnClick of the view of the this players piece and adds the piece to the dictionary of all pieces </summary>
+    /// <param name="piece">the piece(value) that will be added</param>
+    /// <param name="index">the key of the value(piece) that will be added</param>
+    private void BindPiece(BoardPiece piece, (string Prefix, int Count) index)
+    {
+        game.AllPieces[index] = piece;
+        piece.PieceView!.Tag = new Java.Lang.String($"{piece.Prefix}{piece.Count}");
+        piece.PieceView!.Clickable = true;
     }
 }

@@ -2,11 +2,11 @@
 using Chess.Game.Common;
 using Firebase.Auth;
 using Firebase.Storage;
-using static Chess.App.Common.IFirebaseUser;
+using static Chess.App.Common.IFirebaseUserClient;
 
 namespace Chess.App.Common;
 
-public class FirebaseUserClient(string Username, string Uid) : IFirebaseUser
+public class FirebaseUserClient(string Username, string Uid) : IFirebaseUserClient
 {
     public readonly string Username = Username;
     public readonly string Uid = Uid;

@@ -7,9 +7,8 @@ using Bumptech.Glide;
 using Chess.App;
 using Chess.App.Common;
 using Chess.Game.Common;
-using Chess.Game.Dialogs;
+using Chess.Game.Networked;
 using Chess.Game.Networked.Nearby;
-using Firebase.Auth;
 using Google.Android.Material.ImageView;
 using Microsoft.Maui.ApplicationModel;
 
@@ -23,17 +22,15 @@ namespace Chess.Game;
 )]
 public class ChessActivity : ConnectionsActivity
 {
-    //needed for json deserialization
+    /// <summary> global activity variable that is required for json deserialization </summary>
     public static ChessActivity? Instance { get; private set; }
-
-    protected static readonly NullReferenceException UserIsNull = new("CurrentUser is somehow null???");
-    protected readonly FirebaseUser CurrentUser = FirebaseAuth.Instance.CurrentUser ?? throw UserIsNull;
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string AdvertisingName => this.CurrentUser.Uid;
+    protected override string AdvertisingName => this.Uid;
     protected override Strategy Strategy => Strategy.P2pStar;
     public ChessBottomSheet? BottomSheet { get; set; }
     public required ChessGame Game { get; set; }
 
+    /// <summary> The client of the player on this device </summary>
     /// <remarks> on setting our client send a handshake </remarks>
     public required PlayerClient Client
     {
@@ -58,7 +55,7 @@ public class ChessActivity : ConnectionsActivity
         }
     }
 
-    /// <summary> The client that we connect to </summary>
+    /// <summary> The client of the player that we connect to </summary>
     /// <remarks> on setting the connected client start the game and update the ui</remarks>
     public required PlayerClient ConnectedClient
     {
@@ -79,28 +76,34 @@ public class ChessActivity : ConnectionsActivity
                 value.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
             }
             else return; // only send the handshake when we know the color of the client
-
             this.Game = new ChessGame(this);
         }
     }
 
     public ConstraintLayout? BoardLayout { get; set; }
-    public (WhitePromotionDialog White, BlackPromotionDialog Black) PromotionDialogs { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
     public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
     public bool IsNetworked { get; private set; } = false;
     private string? Username;
-    private string? Uid;
-
+#nullable disable
+    private string Uid
+    {
+        get; set
+        {
+            field = value;
+            if (!this.IsNetworked || value is not null) return;
+            throw new NullReferenceException($"{nameof(AdvertisingName)} cannot be null when networking is on;", IFirebaseUserClient.NullUid);
+        }
+    }
+#nullable restore
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         ChessActivity.Instance = this;
         base.OnCreate(savedInstanceState);
         Platform.Init(this, savedInstanceState);
         base.SetContentView(Resource.Layout.chess_activity);
-        this.PromotionDialogs = (new(this), new(this));
         this.WhitePlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.whitePlayerProfilePicture);
         this.BlackPlayerProfilePicture = base.FindViewById<ShapeableImageView>(Resource.Id.blackPlayerProfilePicture);
         this.WhitePlayerUsername = base.FindViewById<TextView>(Resource.Id.whitePlayerUsername);
@@ -111,20 +114,32 @@ public class ChessActivity : ConnectionsActivity
         var args = this.Intent!.GetBundleExtra(MainFragment.IntentArgs);
         if (args is null) return;
         this.IsNetworked = args.GetBoolean(MainFragment.IsNetworked, this.IsNetworked);
-        this.Uid = args.GetString(nameof(MainFragment.Uid));
-        if (this.Uid is null && this.IsNetworked) throw IFirebaseUser.NullUid;
-        if (!this.IsNetworked)
+        this.Username = args.GetString(MainFragment.Username);
+        this.Uid = args.GetString(MainFragment.Uid);
+        if (this.IsNetworked)
         {
-            this.Client = new WhiteClient(this.Username, this.Uid);
+            this.BottomSheet.ShowMatchmaking();
             return;
         }
-        this.Username = args.GetString(nameof(MainFragment.Username));
-        this.BottomSheet.ShowMatchmaking();
+
+        this.Client = new WhiteClient(this.Username, this.Uid);
     }
 
     protected override void OnDestroy()
     {
-        Instance = null;
+        ChessActivity.Instance = null;
+        for (int i = Resource.Id.gmb__A1; i <= Resource.Id.gmb__H8; i++)
+        {
+            var view = this.BoardLayout!.FindViewById(i);
+            view!.Click -= this.Game.OnClick;
+        }
+
+        for (int i = Resource.Id.gmp__bBishop1; i <= Resource.Id.gmp__wRook2; i++)
+        {
+            var view = this.BoardLayout!.FindViewById(i);
+            view!.Click -= this.Game.OnClick;
+        }
+
         base.OnDestroy();
     }
 
@@ -225,11 +240,11 @@ public class ChessActivity : ConnectionsActivity
     /// <summary> Called when someone has disconnected. Overwrote this method to inform the user about the event. </summary>
     protected override void OnEndpointDisconnected(EndPoint endpoint)
     {
-        if (this.Game is null) return;
+        if (this.Game is null || !this.IsNetworked) return;
 
         Toast.MakeText(this, $"Error, {this.Client!.Username} disconnected", ToastLength.Short)?.Show();
         var description = $"{this.ConnectedClient.Username} disconnected, {this.Client.Username} wins by technicality";
-        switch (this.Game.ClientIsWhite) // Inverse because our client did not disconnect
+        switch (this.Client.IsWhite) // Inverse because our client did not disconnect
         {
             case true: // our client is white and the connect client is black
                 this.BottomSheet?.ShowGameOver(this.Game.BlackPlayer!, description);
