@@ -7,6 +7,6 @@ namespace Chess.Game.Common;
 [JsonSerializable(typeof(Move))]
 [JsonSerializable(typeof(BoardSpace))]
 [JsonSerializable(typeof(BoardPiece))]
-[JsonSerializable(typeof(PlayerClient))]
+[JsonSerializable(typeof(IPlayerClient))]
 [JsonSourceGenerationOptions(IncludeFields = true)]
 internal partial class SourceJsonGenerationContext : JsonSerializerContext;

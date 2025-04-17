@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Chess.Game.Board;
+using Google.Android.Material.Badge;
 
 namespace Chess.Game.Moves;
 
@@ -20,6 +21,10 @@ public class Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece
     {
         base.IndicateMoveable();
         this.Piece.Space.IndicateMoveable();
+        BadgeUtils.AttachBadgeDrawable(ChessGame.CaptureAlertTopRightBadge!, this.Piece.PieceView!);
+        BadgeUtils.AttachBadgeDrawable(ChessGame.CaptureAlertTopLeftBadge!, this.Piece.PieceView!);
+        BadgeUtils.AttachBadgeDrawable(ChessGame.CaptureAlertBottomRightBadge!, this.Piece.PieceView!);
+        BadgeUtils.AttachBadgeDrawable(ChessGame.CaptureAlertBottomLeftBadge!, this.Piece.PieceView!);
     }
 
     /// <summary> 
@@ -29,6 +34,10 @@ public class Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece
     {
         base.UnindicateMoveable();
         this.Piece.Space.IndicateUnmovable();
+        BadgeUtils.DetachBadgeDrawable(ChessGame.CaptureAlertTopRightBadge, this.Piece.PieceView!);
+        BadgeUtils.DetachBadgeDrawable(ChessGame.CaptureAlertTopLeftBadge, this.Piece.PieceView!);
+        BadgeUtils.DetachBadgeDrawable(ChessGame.CaptureAlertBottomRightBadge, this.Piece.PieceView!);
+        BadgeUtils.DetachBadgeDrawable(ChessGame.CaptureAlertBottomLeftBadge, this.Piece.PieceView!);
     }
 
     /// <summary> 

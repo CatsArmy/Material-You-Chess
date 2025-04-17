@@ -25,60 +25,34 @@ public class ChessActivity : ConnectionsActivity
     /// <summary> global activity variable that is required for json deserialization </summary>
     public static ChessActivity? Instance { get; private set; }
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string AdvertisingName => this.Uid;
-    protected override Strategy Strategy => Strategy.P2pStar;
+    protected override string AdvertisingName
+    {
+        get
+        {
+            var White = this.IsAdvertising;
+            var Black = this.IsDiscovering;
+            //if (White == Black)
+            //    return this.Uid;
+
+            //if (White)
+            //    return $"{nameof(White)}::{this.Uid}";
+
+            //if (Black)
+            //    return $"{nameof(Black)}::{this.Uid}";
+
+            return this.Uid;
+        }
+    }
+
+    protected override Strategy Strategy => Strategy.P2pPointToPoint;
     public ChessBottomSheet? BottomSheet { get; set; }
     public required ChessGame Game { get; set; }
 
     /// <summary> The client of the player on this device </summary>
-    /// <remarks> on setting our client send a handshake </remarks>
-    public required PlayerClient Client
-    {
-        get; set
-        {
-            field = value;
-            if (value.IsWhite is true)
-            {
-                this.BlackPlayerUsername!.Text = value.Username;
-                var profilePicture = this.BlackPlayerProfilePicture!;
-                value.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            }
-            else if (value.IsWhite is false)
-            {
-                this.BlackPlayerUsername!.Text = value.Username;
-                var profilePicture = this.BlackPlayerProfilePicture!;
-                value.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            }
-            else return; // only send the handshake when we know the color of the client
-
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(value, SourceJsonGenerationContext.Default.PlayerClient)));
-        }
-    }
+    public required IPlayerClient Client { get; set; }
 
     /// <summary> The client of the player that we connect to </summary>
-    /// <remarks> on setting the connected client start the game and update the ui</remarks>
-    public required PlayerClient ConnectedClient
-    {
-        get; set
-        {
-            field = value;
-            if (value.IsWhite is true)
-            {
-                this.WhitePlayerUsername!.Text = value.Username;
-                var profilePicture = this.WhitePlayerProfilePicture!;
-                value.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            }
-
-            else if (value.IsWhite is false)
-            {
-                this.BlackPlayerUsername!.Text = value.Username;
-                var profilePicture = this.BlackPlayerProfilePicture!;
-                value.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            }
-            else return; // only send the handshake when we know the color of the client
-            this.Game = new ChessGame(this);
-        }
-    }
+    public required IPlayerClient ConnectedClient { get; set; }
 
     public ConstraintLayout? BoardLayout { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
@@ -93,11 +67,54 @@ public class ChessActivity : ConnectionsActivity
         get; set
         {
             field = value;
-            if (!this.IsNetworked || value is not null) return;
-            throw new NullReferenceException($"{nameof(AdvertisingName)} cannot be null when networking is on;", IFirebaseUserClient.NullUid);
+            if (this.IsNetworked && (value is null || value == string.Empty))
+                throw new NullReferenceException($"{nameof(AdvertisingName)} cannot be null when networking is on", IFirebaseUserClient.NullUid);
         }
     }
 #nullable restore
+    private string ThisClientStartsWith
+    {
+        get
+        {
+            if (this.IsDiscovering == this.IsAdvertising)
+            {
+                return string.Empty;
+            }
+
+            if (this.IsAdvertising)
+            {
+                return "White::";
+            }
+            if (this.IsDiscovering)
+            {
+                return "Black::";
+            }
+
+            return string.Empty;
+        }
+    }
+
+    private string ConnectedClientStartsWith
+    {
+        get
+        {
+            if (this.IsDiscovering == this.IsAdvertising)
+            {
+                return string.Empty;
+            }
+
+            if (!this.IsAdvertising)
+            {
+                return "White::";
+            }
+            if (!this.IsDiscovering)
+            {
+                return "Black::";
+            }
+            return string.Empty;
+        }
+    }
+
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         ChessActivity.Instance = this;
@@ -122,24 +139,17 @@ public class ChessActivity : ConnectionsActivity
             return;
         }
 
-        this.Client = new WhiteClient(this.Username, this.Uid);
+        this.Client = new WhiteClient(this.Username ?? string.Empty, this.Uid ?? string.Empty);
+        this.WhitePlayerUsername!.Text = this.Client.Username;
+        var profilePicture = this.WhitePlayerProfilePicture!;
+        this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
+        // only send the handshake when we know the type of our client
+        this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.WhiteClient)));
     }
 
     protected override void OnDestroy()
     {
         ChessActivity.Instance = null;
-        for (int i = Resource.Id.gmb__A1; i <= Resource.Id.gmb__H8; i++)
-        {
-            var view = this.BoardLayout!.FindViewById(i);
-            view!.Click -= this.Game.OnClick;
-        }
-
-        for (int i = Resource.Id.gmp__bBishop1; i <= Resource.Id.gmp__wRook2; i++)
-        {
-            var view = this.BoardLayout!.FindViewById(i);
-            view!.Click -= this.Game.OnClick;
-        }
-
         base.OnDestroy();
     }
 
@@ -149,42 +159,62 @@ public class ChessActivity : ConnectionsActivity
     /// </summary>
     protected override async void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
     {
-        await this.AcceptConnection(endpoint);
+        if (endpoint.Name.StartsWith(this.ConnectedClientStartsWith))
+            await this.AcceptConnection(endpoint);
     }
 
     /// <summary>
     /// Called when a connection with this endpoint has failed. 
-    /// Overwrote this method try searching for a different endpoint 
+    /// Overridden this method try searching for a different endpoint 
     /// </summary>
     protected override void OnConnectionFailed(EndPoint endpoint) => this.IsDiscovering = true;
 
     /// <summary> 
     /// Called when someone has connected to us.
-    /// Overwrote this method to start the handshake between the 2 devices 
+    /// Overridden this method to start the handshake between the 2 devices 
     /// </summary>
     protected override void OnEndpointConnected(EndPoint endpoint)
     {
         if (this.IsAdvertising)
         {
-            Logger.Verbose("Client is white player");
-            this.Client = new WhiteClient(this.Username, this.Uid);
-        }
+            var client = new WhiteClient(this.Username ?? string.Empty, this.Uid);
+            this.Client = client;
+            this.WhitePlayerUsername!.Text = this.Client.Username;
+            var profilePicture = this.WhitePlayerProfilePicture!;
+            this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
+            // only send the handshake when we know the type of our client
+            this.IsDiscovering = false; // prevent ourselves from trying to connect at the same time
+            this.IsAdvertising = false; // prevent ourselves from trying to connect at the same time
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.WhiteClient)));
 
-        if (this.IsDiscovering)
+        }
+        else if (this.IsDiscovering)
         {
-            Logger.Verbose("Client is black player");
-            this.Client = new BlackClient(this.Username, this.Uid);
+            var client = new BlackClient(this.Username ?? string.Empty, this.Uid);
+            this.Client = client;
+            this.BlackPlayerUsername!.Text = this.Client.Username;
+            var profilePicture = this.BlackPlayerProfilePicture!;
+            this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
+            // only send the handshake when we know the type of our client
+            this.IsDiscovering = false; // prevent ourselves from trying to connect at the same time
+            this.IsAdvertising = false; // prevent ourselves from trying to connect at the same time
+            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.BlackClient)));
         }
-
-        this.IsDiscovering = false;
-        this.IsAdvertising = false;
+        // disconnect if the endpoint does not match our needs black+black / white+white / no longer advertising/discovering
+        else this.Disconnect(endpoint);
     }
 
     /// <summary> We found an advertiser, lets try to connect to it </summary>
     /// <remarks> Called when a remote endpoint is discovered, not to be confused 
     /// with ConnectToEndpoint(EndPoint) which is called when connecting to the device </remarks>
     /// <param name="endpoint">the endpoint of the advertiser we discovered</param>
-    protected override void OnEndpointDiscovered(EndPoint endpoint) => this.ConnectToEndpoint(endpoint);
+    protected override void OnEndpointDiscovered(EndPoint endpoint)
+    {
+        if (endpoint.Name.StartsWith(this.ConnectedClientStartsWith))
+        {
+            this.ConnectToEndpoint(endpoint);
+        }
+    }
 
     /// <summary> Sends a Payload to all currently connected endpoints if the activity is networked </summary>
     /// <param name="payload">The data you want to send. </param>
@@ -196,7 +226,10 @@ public class ChessActivity : ConnectionsActivity
             return;
         }
 
-        this.OnReceive(payload.AsBytes()!);
+        if (this.Game is null)
+            this.ConnectedClient = new BlackClient(string.Empty, string.Empty);
+
+        this.OnReceive(payload.AsBytes()!); // emulate a networked activity
     }
 
     /// <summary>
@@ -215,19 +248,31 @@ public class ChessActivity : ConnectionsActivity
 
         this.BottomSheet!.Callback.ToState = null;
         this.BottomSheet!.Behavior.State = (int)VisibilityState.Collapsed;
-        var connectedClient = (this.IsNetworked) switch
+        this.ConnectedClient ??= JsonSerializer.Deserialize(payload, SourceJsonGenerationContext.Default.IPlayerClient);
+        if (this.ConnectedClient is null)
         {
-            true => JsonSerializer.Deserialize(payload, SourceJsonGenerationContext.Default.PlayerClient),
-            false => new BlackClient(null, null),
-        };
-
-        if (connectedClient is not null)
-            this.ConnectedClient = connectedClient;
-        else
             Logger.Warn("Unknown state something went wrong");
+            return;
+        }
+
+        if (this.ConnectedClient.IsWhite)
+        {
+            this.WhitePlayerUsername!.Text = this.ConnectedClient.Username;
+            var profilePicture = this.WhitePlayerProfilePicture!;
+            this.ConnectedClient.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
+        }
+
+        else
+        {
+            this.BlackPlayerUsername!.Text = this.ConnectedClient.Username;
+            var profilePicture = this.BlackPlayerProfilePicture!;
+            this.ConnectedClient.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
+        }
+
+        this.Game = new ChessGame(this);
     }
 
-    /// <remarks> Someone who is connected to us has sent us data. Overwrote this method to handle this event. </remarks>
+    /// <remarks> Someone who is connected to us has sent us data. Overridden this method to handle this event. </remarks>
     /// <summary> Handles the payload sent by endpoint client </summary>
     /// <param name="endpoint"> The client who is sending the payload to us </param>
     /// <param name="payload"> The Payload containing all the data for us to handle the event </param>
@@ -237,7 +282,7 @@ public class ChessActivity : ConnectionsActivity
         this.OnReceive(payload.AsBytes()!);
     }
 
-    /// <summary> Called when someone has disconnected. Overwrote this method to inform the user about the event. </summary>
+    /// <summary> Called when someone has disconnected. Overridden this method to inform the user about the event. </summary>
     protected override void OnEndpointDisconnected(EndPoint endpoint)
     {
         if (this.Game is null || !this.IsNetworked) return;

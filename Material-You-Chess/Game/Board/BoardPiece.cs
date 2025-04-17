@@ -285,7 +285,7 @@ public class BoardPiece(MaterialButton PieceView, BoardSpace space)
     /// </summary>
     private void VerticalsDown(ChessGame game, ref List<Move> moves)
     {
-        for (var vertical = this.Space.Up(game); vertical != null; vertical = vertical.Down(game))
+        for (var vertical = this.Space.Down(game); vertical != null; vertical = vertical.Down(game))
         {
             if (vertical == null) break;
             if (vertical.Piece(game) is BoardPiece pieceBelow)

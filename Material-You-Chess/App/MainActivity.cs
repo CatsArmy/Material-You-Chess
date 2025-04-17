@@ -21,16 +21,20 @@ public class MainActivity : AppCompatActivity
 {
     /// <summary> The navigation bar used to let the user navigate between the profile fragment and main fragment </summary>
     public NavigationBarView? NavigationBar;
+
     /// <summary>the a reference to the ProfileFragment</summary>
     public MainFragment? Main;
+
     /// <summary>the a reference to the ProfileFragment</summary>
     public ProfileFragment? Profile;
+
     /// <summary> The container view used to display the MainFragment or ProfileFragment above</summary>
     public FragmentContainerView? FragmentContainer;
+
     /// <summary>A reference to the FirebaseAuth.Instance with the firebase AppCheck applied</summary>
     public FirebaseAuth? Auth;
 
-    /// <summary> a shorthand field variable used to get the configured fragment transaction</summary>
+    /// <summary> getter property used as a short-hand to get the my preconfigured fragment transaction </summary>
     private FragmentTransaction? FragmentTransaction => this.SupportFragmentManager?.BeginTransaction().SetReorderingAllowed(true);
 
     protected override void OnCreate(Bundle? savedInstanceState)
@@ -56,10 +60,9 @@ public class MainActivity : AppCompatActivity
     /// <summary> navigates you back to the main fragment as you are no longer logged in </summary>
     private void OnSignOut(object? sender, FirebaseAuth.AuthStateEventArgs e)
     {
-        if (e.Auth.CurrentUser is null)
-        {
-            this.NavigationBar!.SelectedItemId = Resource.Id.play;
-        }
+        if (e.Auth.CurrentUser is not null) return;
+
+        this.NavigationBar!.SelectedItemId = Resource.Id.play;
     }
 
     /// <summary>Navigates the user to the selected fragment</summary>

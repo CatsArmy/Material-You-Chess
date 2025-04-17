@@ -10,7 +10,6 @@
         style="?attr/materialCardViewFilledStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/materialCardView"
         app:layout_constraintEnd_toStartOf="@+id/displayEnd_CA"
@@ -20,6 +19,72 @@
 		<androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+			<com.google.android.material.floatingtoolbar.FloatingToolbarLayout
+                android:id="@+id/ftbWhite_promotion"
+                android:layout_width="248dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:elevation="15dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/whitePlayerUsername"
+                app:layout_constraintStart_toStartOf="@+id/whitePlayerProfilePicture"
+                app:layout_constraintTop_toBottomOf="@+id/whitePlayerUsername"
+                tools:visibility="visible">
+
+				<LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+					<Button
+                        android:id="@+id/promote_white_queen"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/white_queen"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_white_knight"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/white_knight"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_white_rook"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/white_rook"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_white_bishop"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/white_bishop"
+                        app:iconTint="@null" />
+				</LinearLayout>
+
+			</com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
+
 
 			<androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/whitePlayerCapturedBlackPieces"
@@ -32,6 +97,7 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,11 +109,10 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="4dp"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/whitePlayerIndicator"
                 app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/account_circle" />
@@ -56,8 +121,7 @@
                 android:id="@+id/whitePlayerIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/whitePlayerProfilePicture"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintStart_toStartOf="@+id/whitePlayerProfilePicture"
                 app:layout_constraintTop_toTopOf="parent"
@@ -67,10 +131,10 @@
                 android:id="@+id/whitePlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center|start"
                 android:text="White Player"
@@ -98,8 +162,74 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+			<com.google.android.material.floatingtoolbar.FloatingToolbarLayout
+                android:id="@+id/ftbBlack_promotion"
+                android:layout_width="248dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:elevation="15dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/blackPlayerUsername"
+                app:layout_constraintStart_toStartOf="@+id/blackPlayerProfilePicture"
+                app:layout_constraintTop_toBottomOf="@+id/blackPlayerUsername"
+                tools:visibility="visible">
+
+				<LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+					<Button
+                        android:id="@+id/promote_black_queen"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/black_queen"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_black_knight"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/black_knight"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_black_rook"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/black_rook"
+                        app:iconTint="@null" />
+
+					<Button
+                        android:id="@+id/promote_black_bishop"
+                        style="?attr/materialIconButtonFilledTonalStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="4dp"
+                        android:layout_marginVertical="4dp"
+                        app:icon="@drawable/black_bishop"
+                        app:iconTint="@null" />
+				</LinearLayout>
+
+			</com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
+
+
 			<androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/blackPlayerCapturedWhitePieces"
+                android:id="@+id/blackPlayerCapturedBlackPieces"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
@@ -109,6 +239,7 @@
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -120,12 +251,10 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginBottom="16dp"
-                android:clickable="false"
+                android:layout_marginTop="4dp"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/blackPlayerIndicator"
                 app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
                 app:srcCompat="@drawable/account_circle" />
@@ -134,8 +263,7 @@
                 android:id="@+id/blackPlayerIndicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/blackPlayerProfilePicture"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintStart_toStartOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintTop_toTopOf="parent"
@@ -145,10 +273,10 @@
                 android:id="@+id/blackPlayerUsername"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginBottom="4dp"
                 android:autoSizeTextType="uniform"
                 android:gravity="center|start"
                 android:text="Black Player"
@@ -156,7 +284,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/blackPlayerProfilePicture"
                 app:layout_constraintTop_toTopOf="@+id/blackPlayerProfilePicture" />
-
 		</androidx.constraintlayout.widget.ConstraintLayout>
 	</com.google.android.material.card.MaterialCardView>
 
@@ -1637,119 +1764,7 @@
                 app:layout_constraintStart_toStartOf="@+id/gmb__H2"
                 app:layout_constraintTop_toTopOf="@+id/gmb__H2" />
 
-			<!--
-                        <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
-                            android:id="@+id/ftbWhite_promotion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|center"
-                            android:elevation="1dp"
-                            app:layout_constraintBottom_toBottomOf="@+id/gmb__C4"
-                            app:layout_constraintEnd_toStartOf="@+id/gmb__D8"
-                            app:layout_constraintStart_toEndOf="@+id/gmb__B8"
-                            app:layout_constraintTop_toTopOf="@+id/gmb__C7">
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:orientation="vertical">
-
-                                <Button
-                                    android:id="@+id/promote_white_queen"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/queen_white"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_white_knight"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/knight_white"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_white_rook"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/rook_white"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_white_bishop"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/bishop_white"
-                                    app:iconTint="@null" />
-                            </LinearLayout>
-
-                        </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
-
-                        <com.google.android.material.floatingtoolbar.FloatingToolbarLayout
-                            android:id="@+id/ftbBlack_promotion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom|center"
-                            android:elevation="1dp"
-                            app:layout_constraintBottom_toBottomOf="@+id/gmb__F2"
-                            app:layout_constraintEnd_toEndOf="@+id/gmb__F6"
-                            app:layout_constraintStart_toEndOf="@+id/gmb__E6"
-                            app:layout_constraintTop_toBottomOf="@+id/gmb__F6">
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:orientation="vertical">
-
-                                <Button
-                                    android:id="@+id/promote_black_queen"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/queen_black"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_black_knight"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/knight_black"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_black_rook"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/rook_black"
-                                    app:iconTint="@null" />
-
-                                <Button
-                                    android:id="@+id/promote_black_bishop"
-                                    style="?attr/materialIconButtonFilledStyle"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:checkable="true"
-                                    app:icon="@drawable/bishop_black"
-                                    app:iconTint="@null" />
-                            </LinearLayout>
-
-                        </com.google.android.material.floatingtoolbar.FloatingToolbarLayout>
-                        -->
 		</androidx.constraintlayout.widget.ConstraintLayout>
 	</com.google.android.material.card.MaterialCardView>
 
@@ -1796,7 +1811,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/drag_handle"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
 				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/drag_handle_guideline1"
@@ -1805,17 +1820,18 @@
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="48dp" />
 
-				<com.google.android.material.progressindicator.CircularProgressIndicator
+
+				<com.google.android.material.loadingindicator.LoadingIndicator
                     android:id="@+id/SearchingIndicator"
-                    style="@style/Widget.Material3.CircularProgressIndicator"
+                    style="@style/Widget.Material3.LoadingIndicator.Contained"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="48dp"
-                    android:indeterminate="true"
                     android:visibility="invisible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/drag_handle_guideline1" />
+                    app:layout_constraintTop_toBottomOf="@+id/drag_handle_guideline1"
+                    tools:visibility="visible" />
 
 				<TextView
                     android:id="@+id/SearchingText"
@@ -1867,7 +1883,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/drag_handle">
+                app:layout_constraintTop_toTopOf="@+id/drag_handle"
+                tools:visibility="gone">
 
 				<androidx.constraintlayout.widget.Guideline
                     android:id="@+id/drag_handle_guideline2"

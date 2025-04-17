@@ -8,7 +8,6 @@ using Chess.App.Common;
 using Chess.App.Common.ActivityResult;
 using Chess.App.Common.Extensions;
 using Firebase.Auth;
-using Firebase.Storage;
 using FirebaseUI.Auth;
 using FirebaseUI.Auth.Data.Model;
 using Google.Android.Material.Dialog;
@@ -18,6 +17,7 @@ using Google.Android.Material.ProgressIndicator;
 using Google.Android.Material.Snackbar;
 using Google.Android.Material.TextField;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
+using AlertDialog = AndroidX.AppCompat.App.AlertDialog;
 using AndroidUri = Android.Net.Uri;
 using Fragment = AndroidX.Fragment.App.Fragment;
 
@@ -25,93 +25,65 @@ namespace Chess.App;
 
 public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
 {
+    #region UI views that will be bound
+    private Button? Logout;
+    private TextView? DisplayName;
+    private TextInputLayout? UsernameLayout;
+    private TextInputEditText? UsernameInput;
+    private ShapeableImageView? ProfilePicture;
+    private CircularProgressIndicator? UploadIndicator;
+    private ExtendedFloatingActionButton? DeleteProfilePicture;
+    private ExtendedFloatingActionButton? CaptureProfilePicture;
+    private ExtendedFloatingActionButton? SelectProfilePicture;
+    #endregion
+    /// <summary> Used to access and store(as a ref) to the "AndroidX.Fragment.App.FragmentActivity this.Activity" 
+    /// as a MainActivity? MainActivity that is used for getting the FirebaseAuth instance/the current user </summary>
     private MainActivity? MainActivity;
+    /// <summary> The current user must be stored because get the current user from: "FirebaseAuth.Instance.CurrentUser",
+    /// more than once has a tendency to crash the app for no obvious reason </summary>
+    private FirebaseUser? User;
+    /// <summary> The user client used to receive the path to the profile picture of a user </summary>
+    private FirebaseUserClient? UserClient;
+    /// <summary> Input is typeof(SignInIntent) Output is typeof(FirebaseAuthUIAuthenticationResult) </summary>
+    private ActivityResultLauncher? SignInLauncher;
+    /// <summary> Input is typeof(PickVisualMediaRequest) Output is typeof(Android.Net.Uri(aka AndroidUri)?) </summary>
+    private ActivityResultLauncher? PhotoPicker;
+    /// <summary> Input is typeof(Android.Net.Uri(aka AndroidUri)) Output is typeof(Java.Lang.Boolean) </summary>
+    private ActivityResultLauncher? PhotoTaker;
+    /// <summary> an uri ref to a temp file. that may be used to launch the PhotoTaker </summary>
     private AndroidUri? Upload;
-
-    /// <summary> Input is typeof(PickVisualMediaRequest)
-    /// Output is typeof(Android.Net.Uri(aka AndroidUri)?) </summary>
-    public ActivityResultLauncher? photoPicker;
-
-    /// <summary> Input is typeof(Android.Net.Uri(aka AndroidUri)) 
-    /// Output is typeof(Java.Lang.Boolean) </summary>
-    public ActivityResultLauncher? photoTaker;
-
-    public ActivityResultLauncher? SignInLauncher;
-    public CircularProgressIndicator? UploadIndicator;
-
-    public Button? Logout { get; set; }
-    public TextView? DisplayName { get; set; }
-    public TextInputEditText? UsernameInput { get; set; }
-    public TextInputLayout? UsernameLayout { get; set; }
-    public ShapeableImageView? ProfilePicture { get; set; }
-
-    public ExtendedFloatingActionButton? DeleteProfilePicture;
-    public ExtendedFloatingActionButton? CaptureProfilePicture;
-    public ExtendedFloatingActionButton? SelectProfilePicture;
-    public FirebaseUserClient? UserClient;
-    public FirebaseUser? User;
-
-    /// <summary>Loads the profile picture from the cache or firebase storage</summary>
-    private RequestBuilder? Thumbnail => Glide.With(this).Load(this.UserClient?.ProfilePicture)
-        .SkipMemoryCache(false).SetDiskCacheStrategy(DiskCacheStrategy.All!);
-
-    private AndroidX.AppCompat.App.AlertDialog.Builder? Delete => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Delete")
-    ?.SetIcon(Resource.Drawable.delete)
-    ?.SetMessage($"Are you sure you want to delete your profile picture?{Environment.NewLine}this action cannot be undone")
-    ?.SetPositiveButton("Confirm", this.DeletePhoto)
-    ?.SetNegativeButton("Cancel", this.NoOperation);
-
-    private AndroidX.AppCompat.App.AlertDialog.Builder? SignOut => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Sign Out")
-    ?.SetIcon(Resource.Drawable.logout)
-    ?.SetMessage("Are you sure you want to sign out")
-    ?.SetPositiveButton("Confirm", this.OnSignOut)
-    ?.SetNegativeButton("Cancel", this.NoOperation);
-
-    /// <summary> NoOp function for readability </summary>
-    private void NoOperation(object? sender, EventArgs args) { }
-
-    private async void OnSignOut(object? sender, EventArgs args)
-    {
-        try
-        {
-            var task = AuthUI.Instance.SignOut(this.MainActivity!); await task;
-            if (task.IsComplete)
-            {
-                this.SetButtonsEnabled(false);
-            }
-        }
-        catch (Exception) { }
-    }
-
-
-    private void SetButtonsEnabled(bool value)
-    {
-        this.Logout!.Enabled = value;
-        this.SelectProfilePicture!.Enabled = value;
-        this.CaptureProfilePicture!.Enabled = value;
-        this.DeleteProfilePicture!.Enabled = value;
-    }
-
+    /// <summary> Loads the profile picture from the cache or firebase storage </summary>
+    private RequestBuilder? Thumbnail => Glide.With(this).Load(this.UserClient?.ProfilePicture).SkipMemoryCache(false).SetDiskCacheStrategy(DiskCacheStrategy.All!);
+    private UserProfileChangeRequest.Builder ChangeUsernameRequest => new UserProfileChangeRequest.Builder().SetDisplayName(this.DisplayName!.Text);
+    /// <returns> a delete confirmation dialog </returns>
+    private AlertDialog.Builder? DeleteConfirmation
+        => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Delete")?.SetIcon(Resource.Drawable.delete)
+        ?.SetMessage($"Are you sure you want to delete your profile picture?{Environment.NewLine}this action cannot be undone")
+        ?.SetPositiveButton("Confirm", async (sender, args) => await this.OnDeletePhoto())
+        ?.SetNegativeButton("Cancel", (_, _) => { });
+    /// <returns> a sign-out confirmation dialog </returns>
+    private AlertDialog.Builder? SignOutConfirmation
+        => new MaterialAlertDialogBuilder(this.Context!)?.SetTitle("Sign Out")?.SetIcon(Resource.Drawable.logout)
+        ?.SetMessage("Are you sure you want to sign out")
+        ?.SetPositiveButton("Confirm", async (sender, args)
+            => await this.OnUpdateUI(AuthUI.Instance.SignOut(this.MainActivity!).AsAsync(), this.Logout))
+        ?.SetNegativeButton("Cancel", (_, _) => { });
     public override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
         this.MainActivity = this.Activity as MainActivity;
-
         var file = new Java.IO.File(FileProvider.GetTemporaryRootDirectory(), "temp.image");
         this.Upload = FileProvider.GetUriForFile(file);
-
-        this.photoPicker = base.RegisterForActivityResult(contract: new PickVisualMedia(),
+        this.PhotoPicker = base.RegisterForActivityResult(contract: new PickVisualMedia(),
             callback: new ActivityResultCallback<AndroidUri>(this.PickPhoto));
-
-        this.photoTaker = base.RegisterForActivityResult(contract: new TakePicture(),
+        this.PhotoTaker = base.RegisterForActivityResult(contract: new TakePicture(),
             callback: new ActivityResultCallback<Java.Lang.Boolean>(this.TakePhoto));
-
         this.SignInLauncher = base.RegisterForActivityResult(contract: new FirebaseAuthUIActivityResultContract(),
             callback: new ActivityResultCallback<FirebaseAuthUIAuthenticationResult>(this.OnSignInResult));
     }
 
-    /// <remarks>Called when the views are ready to be bound to this class</remarks>
-    /// <summary> binds all the views and updates(via OnLoggedIn(FirebaseUser)) them to show the current user info </summary>
+    /// <remarks> Called when the views are ready to be bound </remarks>
+    /// <summary> binds all the views and refreshes the ui (via OnLoggedIn(FirebaseUser)) them to show the current user info </summary>
     public override void OnViewCreated(View view, Bundle? savedInstanceState)
     {
         base.OnViewCreated(view, savedInstanceState);
@@ -124,277 +96,116 @@ public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
         this.DeleteProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.delete);
         this.SelectProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.library);
         this.CaptureProfilePicture = view.FindViewById<ExtendedFloatingActionButton>(Resource.Id.camera);
-
-        //add OnClick event listeners and disable the buttons until we confirm the user is logged in
-        this.Logout!.Click += (_, _) => this.SignOut?.Show();
-        this.SelectProfilePicture!.Click += (_, _) => this.PhotoPicker();
-        this.CaptureProfilePicture!.Click += (_, _) => this.PhotoTaker();
-        this.DeleteProfilePicture!.Click += (_, _) => this.Delete?.Show();
-        this.SetButtonsEnabled(false);
-
-        if (this.MainActivity?.Auth?.CurrentUser is not FirebaseUser user) // The user is not logged in
+        this.SetUserInterfaceEnabled(false);
+        this.UsernameInput!.SetImeActionLabel(nameof(ImeAction.Done), ImeAction.Done);
+        // add onclick events every time as they are removed when the fragment is destroyed
+        this.Logout!.Click += (sender, args) => this.SignOutConfirmation?.Show();
+        this.SelectProfilePicture!.Click += (sender, args) => this.PhotoPicker?.Launch(this.UserClient?.Request);
+        this.CaptureProfilePicture!.Click += (sender, args) => this.PhotoTaker?.Launch(this.Upload);
+        this.DeleteProfilePicture!.Click += (sender, args) => this.DeleteConfirmation?.Show();
+        this.UsernameInput.EditorAction += async (sender, args) =>
         {
-            Logger.Verbose("FirebaseAuth.Instance?.CurrentUser is null");
-            this.OpenSignInIntentActivity();
-            return;
-        }
-
-        this.OnLoggedIn(user);
+            if (args.ActionId == ImeAction.Done) await this.OnUpdateUI(this.OnEditUsername(), this.DisplayName);
+        };
+        if (this.MainActivity?.Auth?.CurrentUser is not FirebaseUser user) // The user is not logged in
+            this.SignInLauncher?.Launch(FirebaseUserClient.GetSignInActivityIntent()); // Attempt to Sign In/Up the device
+        else this.OnLoggedIn(user);
     }
-
-    /// <summary> sets the contents of the views to match the user info and sets the onClickListeners for them </summary>
-    /// <param name="user">the currently logged in user</param>
+    /// <summary> sets the contents of the views to match the user info and enables the ui </summary>
     private void OnLoggedIn(FirebaseUser user)
     {
         this.User = user;
         this.UserClient = new FirebaseUserClient(this.User);
         Glide.With(this).Load(this.UserClient.ProfilePicture).SkipMemoryCache(true)
-            .SetDiskCacheStrategy(DiskCacheStrategy.None!)
-            .Placeholder(this.ProfilePicture!.Drawable!)
-            .Thumbnail(this.Thumbnail)
-            .Into(this.ProfilePicture!);
-
+            .SetDiskCacheStrategy(DiskCacheStrategy.None!).Thumbnail(this.Thumbnail)
+            .Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
         this.DisplayName!.Text = this.UserClient.Username;
         this.UsernameInput!.Hint = this.UserClient.Username;
         this.UsernameInput!.Text = this.UserClient.Username;
-        this.UsernameInput.SetImeActionLabel("Done", ImeAction.Done);
-        this.UsernameInput.EditorAction += async (sender, args) => await this.OnUsernameEditorAction(sender, args);
-
-        this.SetButtonsEnabled(true);
+        this.SetUserInterfaceEnabled(true);
     }
-
-    /// <summary> Wrapper method for Opening the Camera without special permission using the TakePicture ActivityResultContract</summary>
-    private void PhotoTaker() => this.photoTaker?.Launch(this.Upload);
-
-    /// <summary> Wrapper method for Opening the native PhotoPicker bottom sheet </summary>
-    private void PhotoPicker() => this.photoPicker?.Launch(new PickVisualMediaRequest.Builder().SetMediaType(PickVisualMedia.ImageOnly.Instance).Build());
-
-    private async Task OnUsernameEditorAction(object? sender, TextView.EditorActionEventArgs args)
+    /// <summary> enables / disables all the buttons</summary>
+    private void SetUserInterfaceEnabled(bool value)
     {
-        if (args.ActionId == ImeAction.Done)
-        {
-            this.DisplayName!.Text = this.UsernameInput?.Text;
-            var changeUsernameRequest = new UserProfileChangeRequest.Builder().SetDisplayName(this.DisplayName.Text);
-            await this.User?.UpdateProfileAsync(changeUsernameRequest.Build())!;
-        }
+        this.Logout!.Enabled = value;
+        this.SelectProfilePicture!.Enabled = value;
+        this.CaptureProfilePicture!.Enabled = value;
+        this.DeleteProfilePicture!.Enabled = value;
+        this.UsernameLayout!.Enabled = value;
+        this.UsernameInput!.Enabled = value;
+        this.MainActivity!.NavigationBar!.Enabled = value;
     }
-
-    /// <summary> Wrapper method for OnTakePhoto(bool) </summary>
-    public async void PickPhoto(AndroidUri? picked)
-    {
-        try
-        {
-            this.SetButtonsEnabled(false);
-            await this.OnPickPhoto(picked);
-            this.SetButtonsEnabled(true);
-        }
-        catch (Exception) { }
-        finally
-        {
-            this.SetButtonsEnabled(true);
-        }
-    }
-
-    /// <summary> 
-    /// Uploads a selected photo to firebase and informs(animates) the user 
-    /// if the operation was successful or not, while also handling any errors to prevent crashes 
-    /// </summary>
-    /// <param name="picked">a Android.Net.Uri(aka AndroidUri) to the photo for uploading it</param>
+    /// <summary> tries to delete the users profile picture and Updates the users DisplayName in firebase </summary>
+    private async Task OnEditUsername() => await this.User?.UpdateProfileAsync(this.ChangeUsernameRequest.Build())!;
+    /// <param name="picked"> an Android.Net.Uri(aka AndroidUri) to the photo for uploading it</param>
+    private async void PickPhoto(AndroidUri? picked) => await this.OnPickPhoto(picked);
+    /// <summary> Uploads the picked photo to firebase and updates the user info, and ui </summary>
     private async Task OnPickPhoto(AndroidUri? picked)
     {
-        if (picked is null) return;
-
-        this.UploadIndicator!.Visibility = ViewStates.Visible;
-        var storageRef = this.UserClient!.ProfilePicture;
-        var uploadTask = storageRef.PutFile(picked).AsAsync<UploadTask.TaskSnapshot>();
-        var snapshot = await uploadTask;
-        var fab = this.SelectProfilePicture;
-        if (uploadTask.IsCompletedSuccessfully)
-        {
-            Logger.Debug(snapshot.Metadata!.Path);
-            try
-            {
-                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(DiskCacheStrategy.None!)
-                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
-                fab?.Spin();
-            }
-            catch (Exception) { }
-
-            var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
-            await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-        }
-
-        if (uploadTask.Exception is Exception exception)
-        {
-            Logger.Warn($"{exception}");
-            try
-            {
-                fab?.OnError(this.Activity!);
-            }
-            catch (Exception) { }
-        }
-
-        if (uploadTask.IsCompleted)
-        {
-            try
-            {
-                this.UploadIndicator!.Visibility = ViewStates.Invisible;
-            }
-            catch (Exception) { }
-        }
+        if (picked is not null)
+            await this.OnUpdateUI(this.UserClient!.ProfilePicture.PutFile(picked).AsAsync(), this.SelectProfilePicture);
     }
-
-    /// <summary> Wrapper method for OnTakePhoto </summary>
-    public async void TakePhoto(Java.Lang.Boolean? value)
-    {
-        try
-        {
-            this.SetButtonsEnabled(false);
-            await this.OnTakePhoto(value!.BooleanValue());
-            this.SetButtonsEnabled(true);
-        }
-        catch (Exception) { }
-    }
-
-    /// <summary>
-    /// Uploads a photo that we captured into the Android.Net.Uri(aka AndroidUri) Upload to firebase 
-    /// and informs(animates) the user if the operation was successful or not
-    /// while also handling any errors to prevent crashes
-    /// </summary>
-    /// <param name="isTaken">
-    /// a boolean that informs the function whether or not the user captured a photo 
-    /// or if the user has canceled the operation
-    /// </param>
+    /// <summary> converts the javaBoolean to a c#(.net) bool into OnTakePhoto to check if we should upload </summary>
+    private async void TakePhoto(Java.Lang.Boolean? value) => await this.OnTakePhoto(value!.BooleanValue());
+    /// <summary> Uploads the captured/taken photo if there is one</summary>
     private async Task OnTakePhoto(bool isTaken)
     {
-        if (isTaken is false)
-            return;
-
-        this.UploadIndicator!.Visibility = ViewStates.Visible;
-        var storageRef = this.UserClient!.ProfilePicture;
-        var uploadTask = storageRef.PutFile(this.Upload!).AsAsync<UploadTask.TaskSnapshot>();
-        var snapshot = await uploadTask;
-        var fab = this.CaptureProfilePicture;
-        if (uploadTask.IsCompletedSuccessfully)
-        {
-            Logger.Debug(snapshot.Metadata!.Path);
-            try
-            {
-                Glide.With(this).Load(storageRef).SetDiskCacheStrategy(DiskCacheStrategy.None!)
-                .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
-                fab?.Spin();
-            }
-            catch (Exception) { }
-            var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(await storageRef.GetDownloadUrlAsync());
-            await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-        }
-
-        if (uploadTask.Exception is Exception exception)
-        {
-            Logger.Warn($"{exception}");
-            try
-            {
-                fab?.OnError(this.Activity!);
-            }
-            catch (Exception) { }
-        }
-
-        if (uploadTask.IsCompleted)
-        {
-            try
-            {
-                this.UploadIndicator!.Visibility = ViewStates.Invisible;
-            }
-            catch (Exception) { }
-        }
+        if (isTaken) await this.OnUpdateUI(this.UserClient!.ProfilePicture.PutFile(this.Upload!).AsAsync(), this.CaptureProfilePicture);
     }
-
-    /// <summary> Wrapper method for OnDeletePhoto() </summary>
-    public async void DeletePhoto(object? sender, EventArgs args)
+    /// <summary> deletes the users profile picture / photo from firebase and updates the user info, and ui </summary>
+    private async Task OnDeletePhoto() => await this.OnUpdateUI(this.UserClient!.ProfilePicture.DeleteAsync(), this.DeleteProfilePicture);
+    private async Task OnUpdateUI(Task action, object? sender)
     {
-        try
+        if (sender is TextView displayName && displayName?.Id == this.DisplayName?.Id)
         {
-            this.SetButtonsEnabled(false);
-            await this.OnDeletePhoto();
-            this.SetButtonsEnabled(true);
-        }
-        catch (Exception) { }
-    }
-
-    /// <summary>
-    /// Deletes the profile picture that was uploaded to firebase and informs(animates) the user if the operation was successful or not
-    /// while also handling any errors to prevent crashes
-    /// </summary>
-    public async Task OnDeletePhoto()
-    {
-        var fab = this.DeleteProfilePicture;
-        if (this.User?.PhotoUrl == null)
-        {
-            fab?.Spin();
+            this.DisplayName!.Text = this.UsernameInput?.Text;
+            this.UsernameInput!.Hint = this.DisplayName!.Text;
+            this.SetUserInterfaceEnabled(false);
+            await action;
+            this.SetUserInterfaceEnabled(true);
             return;
         }
 
-        this.UploadIndicator!.Visibility = ViewStates.Visible;
-        var storageRef = this.UserClient!.ProfilePicture;
-        var deleteTask = storageRef.DeleteAsync(); await deleteTask;
-
-        if (deleteTask.IsCompletedSuccessfully)
+        if (sender is ExtendedFloatingActionButton button)
         {
-            try
-            {
-                Glide.With(this).Clear(this.ProfilePicture!);
-                fab?.Spin();
-            }
-            catch (Exception) { }
-
-            var changeUserInfoRequest = new UserProfileChangeRequest.Builder().SetPhotoUri(null);
-            await this.User?.UpdateProfileAsync(changeUserInfoRequest.Build())!;
-        }
-
-        if (deleteTask.Exception is Exception exception)
-        {
-            Logger.Warn($"{exception}");
-            try
-            {
-                fab?.OnError(this.Activity!);
-            }
-            catch (Exception) { }
-        }
-
-        if (deleteTask.IsCompleted)
-        {
-            try
-            {
-                this.UploadIndicator!.Visibility = ViewStates.Invisible;
-            }
-            catch (Exception) { }
+            this.UploadIndicator!.Visibility = ViewStates.Visible;
+            this.SetUserInterfaceEnabled(false);
+            if ((this.DeleteProfilePicture?.Id) != button.Id || this.User?.PhotoUrl is not null)
+                await this.OnUpdateProfilePicture(action, button);
+            else button.Spin();
+            this.SetUserInterfaceEnabled(true);
         }
     }
 
-    /// <summary>
-    /// opens the Sign Up/In activity from the NuGet Package: "FirebaseUI" 
-    /// and sets the available sign-in providers to be either: sign-in via email or sign-in via a private google account
-    /// </summary>
-    public void OpenSignInIntentActivity()
+    private async Task OnUpdateProfilePicture(Task action, ExtendedFloatingActionButton ui)
     {
-        List<AuthUI.IdpConfig> providers = [
-            new AuthUI.IdpConfig.GoogleBuilder().Build(),
-            new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),
-        ];
+        await action;
+        if (action.IsCompleted && this.UploadIndicator is not null)
+            this.UploadIndicator!.Visibility = ViewStates.Invisible;
 
-        // Create and launch sign-in intent
-        var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();
-        signInIntentBuilder.SetAvailableProviders(providers);
-        #region Customize the FirebaseUI-Auth sign-in/up screen
-        signInIntentBuilder.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);
-        signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);
-        signInIntentBuilder.SetCredentialManagerEnabled(true);
-        signInIntentBuilder.SetLockOrientation(true);
-        #endregion
-        var signInIntent = signInIntentBuilder.Build();
+        if (action.IsCompletedSuccessfully)
+        {
+            try
+            {
+                ui.Spin();
+                UserProfileChangeRequest.Builder request = new();
+                if (ui.Id == this.DeleteProfilePicture?.Id)
+                {
+                    Glide.With(this).Clear(this.ProfilePicture!);
+                    request = request.SetPhotoUri(null);
+                }
+                else
+                {
+                    request = request.SetPhotoUri(await this.UserClient!.ProfilePicture.GetDownloadUrlAsync());
+                    Glide.With(this).Load(this.UserClient!.ProfilePicture).SetDiskCacheStrategy(DiskCacheStrategy.None!)
+                        .SkipMemoryCache(true).Placeholder(this.ProfilePicture!.Drawable!).Into(this.ProfilePicture!);
+                }
+                await this.User?.UpdateProfileAsync(request.Build())!;
+            }
+            catch (Exception) { }
+        }
 
-        // Attempt to Sign In/Up the device
-        this.SignInLauncher?.Launch(signInIntent);
+        if (action.Exception is not null) ui.OnError(this.Activity!);
     }
 
     /// <summary>
@@ -405,7 +216,6 @@ public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
     {
         var resultCode = result?.ResultCode.IntValue();
         var response = result?.IdpResponse;
-
         if (resultCode == ((int)Result.Ok) || response == null) // Successfully signed in
         {
             if (this.MainActivity?.Auth?.CurrentUser is not FirebaseUser user)
@@ -415,7 +225,6 @@ public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
                 this.MainActivity!.NavigationBar!.SelectedItemId = Resource.Id.play;
                 return;
             }
-
 #pragma warning disable XAOBS001 // Type or member is obsolete
             if (response?.User?.PhotoUri is not null && response.IsNewUser)
             {
@@ -426,15 +235,12 @@ public class ProfileFragment() : Fragment(Resource.Layout.profile_fragment)
             this.OnLoggedIn(user);
             return;
         }
-
         if (response.Error?.ErrorCode == ErrorCodes.NoNetwork) //Sign in failed
         {
             Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.no_internet_connection, Snackbar.LengthLong);
             this.MainActivity!.NavigationBar!.SelectedItemId = Resource.Id.play;
             return;
         }
-
         Snackbar.Make(this.MainActivity!.FragmentContainer!, Resource.String.unknown_error, Snackbar.LengthLong).Show();
     }
 }
-

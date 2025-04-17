@@ -3,7 +3,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Chess</RootNamespace>
     <TargetFramework>net9.0-android35.0</TargetFramework>
-    <SupportedOSPlatformVersion>32.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
     <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
@@ -112,7 +112,7 @@
     <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.1" />
     <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0.31" />
     <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.31" />
-    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.12.0.2" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.13.0.0-alpha12" />
    
     <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
     <PackageReference Include="Xamarin.KotlinX.Coroutines.Android" Version="1.9.0.2" />

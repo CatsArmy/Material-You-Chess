@@ -8,6 +8,11 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
     public override char Abbreviation => 'P';
     public bool EnPassantCapturable = false;
 
+    /// <remarks>
+    /// When the move is a typeof promotion that has not decided on what the piece will promote to,
+    /// shows the quick promotion action
+    /// </remarks>
+    /// <summary> Updates the state of the pawn based on the move that was played </summary>
     public override void Move(Move move, ChessGame game)
     {
         if (move is DoubleMove)
@@ -17,12 +22,6 @@ public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
 
         else if (move is Promotion promotion)
         {
-            if (promotion.PromoteTo is null)
-            {
-                game.Player!.PromotionDialog.Show(game, this, promotion);
-                return;
-            }
-
             this.Promote(game, promotion);
         }
 

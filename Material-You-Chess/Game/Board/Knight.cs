@@ -31,7 +31,7 @@ public class Knight(int id, BoardSpace space) : BoardPiece(id, space)
             else if (piece.IsWhite != this.IsWhite)
                 moves.Add(new Capture(this, piece));
         }
-        if (this.Space.Down(game)?.Down(game)?.Left(game) is BoardSpace upLeft)
+        if (this.Space.Up(game)?.Up(game)?.Left(game) is BoardSpace upLeft)
         {
             if (upLeft.Piece(game) is not BoardPiece piece)
                 moves.Add(new Move(this, upLeft));

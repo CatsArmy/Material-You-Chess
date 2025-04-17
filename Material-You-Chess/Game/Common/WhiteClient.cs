@@ -1,10 +1,25 @@
 ﻿using System.Text.Json.Serialization;
+using Bumptech.Glide;
 using Chess.App.Common;
 
 namespace Chess.Game.Common;
 
 [method: JsonConstructor]
-public class WhiteClient(string? username, string? Uid) : PlayerClient(username ?? "White Player", uid: Uid, isWhite: true)
+public class WhiteClient(string Username, string Uid) : IPlayerClient
 {
-    public WhiteClient(FirebaseUserClient user) : this(user.Username, user.Uid) { }
+    [JsonInclude] public string Username { get; set; } = Username != null && Username != string.Empty ? Username : "White Player";
+    [JsonInclude] public string Uid { get; set; } = Uid;
+    [JsonInclude] public bool IsWhite => true;
+    private FirebaseUserClient GetFirebaseUserClient() => new(this.Username, this.Uid ?? throw IPlayerClient.NullUid);
+    public RequestBuilder LoadProfilePicture(RequestManager glide) => this.GetFirebaseUserClient().LoadProfilePicture(glide);
+    public RequestBuilder? TryLoadProfilePicture(RequestManager glide)
+    {
+        if (this.Uid is null || this.Uid == string.Empty) return null;
+        try
+        {
+            return this.LoadProfilePicture(glide);
+        }
+        catch (Exception) { }
+        return null;
+    }
 }

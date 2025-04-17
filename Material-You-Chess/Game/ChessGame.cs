@@ -4,9 +4,10 @@ using Android.Gms.Nearby.Connection;
 using Android.Views;
 using Chess.Game.Board;
 using Chess.Game.Common;
-using Chess.Game.Dialogs;
 using Chess.Game.Moves;
 using Chess.Game.Player;
+using Google.Android.Material.Badge;
+using Google.Android.Material.Floatingtoolbar;
 using Google.Android.Material.ImageView;
 
 namespace Chess.Game;
@@ -16,8 +17,8 @@ public class ChessGame
     public readonly Dictionary<(string Prefix, int Count), BoardPiece> AllPieces;
     public readonly Dictionary<(char file, int rank), BoardSpace> Board;
     private readonly ChessActivity Activity;
-    public readonly PlayerClient WhiteClient;
-    public readonly PlayerClient BlackClient;
+    public readonly IPlayerClient WhiteClient;
+    public readonly IPlayerClient BlackClient;
     public readonly White WhitePlayer;
     public readonly Black BlackPlayer;
 
@@ -35,14 +36,25 @@ public class ChessGame
         false => this.BlackPlayer,
     };
 
-    private bool ClientIsWhite => this.Activity.Client.IsWhite ?? true;
     private bool CurrentPlayerIsWhite = true;
+    public static BadgeDrawable? CaptureAlertTopRightBadge;
+    public static BadgeDrawable? CaptureAlertTopLeftBadge;
+    public static BadgeDrawable? CaptureAlertBottomRightBadge;
+    public static BadgeDrawable? CaptureAlertBottomLeftBadge;
 
     /// <summary> Initializes(binds) the board and players(and pieces) and adds on click listeners </summary>
     public ChessGame(ChessActivity activity)
     {
         this.Activity = activity;
 
+        CaptureAlertTopRightBadge = BadgeDrawable.Create(activity);
+        CaptureAlertTopRightBadge.BadgeGravity = BadgeDrawable.TopEnd;
+        CaptureAlertTopLeftBadge = BadgeDrawable.Create(activity);
+        CaptureAlertTopLeftBadge.BadgeGravity = BadgeDrawable.TopStart;
+        CaptureAlertBottomRightBadge = BadgeDrawable.Create(activity);
+        CaptureAlertBottomRightBadge.BadgeGravity = BadgeDrawable.BottomEnd;
+        CaptureAlertBottomLeftBadge = BadgeDrawable.Create(activity);
+        CaptureAlertBottomLeftBadge.BadgeGravity = BadgeDrawable.BottomStart;
         #region Binds the board spaces
         this.Board = [];
         char file = 'A';
@@ -80,20 +92,38 @@ public class ChessGame
 
         #region Binds the players and all pieces 
         this.AllPieces = [];
-        this.WhiteClient = this.ClientIsWhite switch
+        this.WhiteClient = this.Activity.Client.IsWhite switch
         {
             false => activity.ConnectedClient,
             _ => activity.Client,
         };
 
-        this.BlackClient = this.ClientIsWhite switch
+        this.BlackClient = this.Activity.ConnectedClient.IsWhite switch
         {
-            false => activity.Client,
-            _ => activity.ConnectedClient,
+            false => activity.ConnectedClient,
+            _ => activity.Client,
         };
 
-        this.WhitePlayer = new(this) { PromotionDialog = new WhitePromotionDialog(this.Activity) };
-        this.BlackPlayer = new Black(this) { PromotionDialog = new BlackPromotionDialog(this.Activity) };
+        this.WhitePlayer = new(this)
+        {
+            QuickPromotionAction = activity.FindViewById<FloatingToolbarLayout>(Resource.Id.ftbWhite_promotion)!
+        };
+
+        activity.FindViewById(Resource.Id.promote_white_queen)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_white_knight)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_white_rook)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_white_bishop)!.Click += Promotion;
+
+        this.BlackPlayer = new(this)
+        {
+            QuickPromotionAction = activity.FindViewById<FloatingToolbarLayout>(Resource.Id.ftbBlack_promotion)!
+        };
+
+        activity.FindViewById(Resource.Id.promote_black_queen)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_black_knight)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_black_rook)!.Click += Promotion;
+        activity.FindViewById(Resource.Id.promote_black_bishop)!.Click += Promotion;
+
         for (int i = Resource.Id.gmp__bBishop1; i <= Resource.Id.gmp__wRook2; i++)
         {
             var view = this.Activity.BoardLayout!.FindViewById(i);
@@ -120,15 +150,8 @@ public class ChessGame
     /// <param name="sender">the View that was clicked</param>
     public void OnClick(object? sender, EventArgs args)
     {
-        if (sender is not View view)
-            return;
-
-        if (view?.Tag is not Java.Lang.String javaString)
-            return;
-
-        if (this.Activity.IsNetworked && this.ClientIsWhite != this.CurrentPlayerIsWhite)
-            return;
-
+        if (sender is not View view || view?.Tag is not Java.Lang.String javaString) return;
+        if (this.Activity.IsNetworked && this.Activity.Client.IsWhite != this.CurrentPlayerIsWhite) return;
         this.Validate(javaString, out var pIndex, out var sIndex);
         if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
         {
@@ -148,14 +171,13 @@ public class ChessGame
             }
         }
 
-        if (!this.Board.TryGetValue(sIndex, out var space))
-            return;
+        if (!this.Board.TryGetValue(sIndex, out var space)) return;
 
         var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
             this.Player.Selected = null;
         else if (move is Promotion promotion && promotion.PromoteTo is null) //prevent sending so that our user can first decide
-            this.PlayMove(move, isSender: false);
+            this.Player!.Promotion = promotion;
         else
             this.PlayMove(move, isSender: true);
     }
@@ -172,6 +194,27 @@ public class ChessGame
         }
 
         this.PlayMove(this.LocalizeMove(move));
+    }
+
+    private void Promotion(object? sender, EventArgs e)
+    {
+        var type = (sender as View)?.Id switch
+        {
+            Resource.Id.promote_white_queen => typeof(WhiteQueen),
+            Resource.Id.promote_black_queen => typeof(BlackQueen),
+            Resource.Id.promote_white_knight => typeof(WhiteKnight),
+            Resource.Id.promote_black_knight => typeof(BlackKnight),
+            Resource.Id.promote_white_rook => typeof(WhiteRook),
+            Resource.Id.promote_black_rook => typeof(BlackRook),
+            Resource.Id.promote_white_bishop => typeof(WhiteBishop),
+            Resource.Id.promote_black_bishop => typeof(BlackBishop),
+            _ => null
+        };
+
+        if (type is null) return;
+
+        this.Player.Promotion!.PromoteTo = new(type);
+        this.PlayMove(this.Player.Promotion!, true);
     }
 
     /// <summary>Moves the piece with the given move parameter and updates the state of the game </summary>
@@ -237,8 +280,6 @@ public class ChessGame
             sIndex = value.Space.Index;
         }
     }
-
-
 
     /// <summary> Binds the View with the id to a BoardSpace in the index of (file, rank) </summary>
     /// <param name="id">The id of the View that will be bound</param>

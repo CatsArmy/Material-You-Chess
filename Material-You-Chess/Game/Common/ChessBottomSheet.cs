@@ -6,7 +6,7 @@ using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
-using Google.Android.Material.ProgressIndicator;
+using Google.Android.Material.Loadingindicator;
 
 namespace Chess.Game.Common;
 
@@ -26,7 +26,7 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
     public readonly Chip White = standardBottomSheet.FindViewById<Chip>(Resource.Id.white_chip)!;
     public readonly Chip Black = standardBottomSheet.FindViewById<Chip>(Resource.Id.black_chip)!;
     public readonly TextView SearchingText = standardBottomSheet.FindViewById<TextView>(Resource.Id.SearchingText)!;
-    public readonly CircularProgressIndicator SearchingIndicator = standardBottomSheet.FindViewById<CircularProgressIndicator>(Resource.Id.SearchingIndicator)!;
+    public readonly LoadingIndicator SearchingIndicator = standardBottomSheet.FindViewById<LoadingIndicator>(Resource.Id.SearchingIndicator)!;
 
     public readonly BottomSheetCallback Callback = new(activity);
     public readonly BottomSheetBehavior Behavior = BottomSheetBehavior.From(standardBottomSheet.FindViewById<ConstraintLayout>(Resource.Id.bottom_sheet)!);
@@ -89,7 +89,7 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
 
     public void OnSelectNone(ChessActivity networked)
     {
-        this.SearchingIndicator?.Hide();
+        this.SearchingIndicator.Visibility = ViewStates.Invisible;
         this.SearchingText!.Text = "Please select a matchmaking preference";
         networked.IsAdvertising = false;
         networked.IsDiscovering = false;
@@ -97,14 +97,14 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
 
     public void OnSelectWhite(ChessActivity networked)
     {
-        this.SearchingIndicator?.Show();
+        this.SearchingIndicator.Visibility = ViewStates.Visible;
         this.SearchingText!.Text = "Your device is now Advertising itself for other devices that discovering in your area";
         networked.IsAdvertising = true;
     }
 
     public void OnSelectBlack(ChessActivity networked)
     {
-        this.SearchingIndicator?.Show();
+        this.SearchingIndicator.Visibility = ViewStates.Visible;
         this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
         networked.IsDiscovering = true;
     }

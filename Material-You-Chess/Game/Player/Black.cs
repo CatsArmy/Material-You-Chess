@@ -1,15 +1,54 @@
-﻿using Chess.Game.Board;
+﻿using AndroidX.ConstraintLayout.Widget;
+using Chess.App.Common;
+using Chess.Game.Board;
 using Chess.Game.Common;
-using Chess.Game.Dialogs;
 using Chess.Game.Moves;
+using Google.Android.Material.Floatingtoolbar;
 
 namespace Chess.Game.Player;
 
 public class Black(ChessGame game, string name) : IPlayer
 {
     public string Name => name;
-    public required IPromotionDialog PromotionDialog { get; init; }
     public GameOutcome? Outcome { get; set; }
+
+    public required FloatingToolbarLayout QuickPromotionAction { get; init; }
+
+    /// <summary> the promotion move of the selected pawn(piece) if it has one </summary>
+    /// <remarks> when setting the this promotion field you will also show/hide the QuickPromotionAction </remarks>
+    public Promotion? Promotion
+    {
+        get; set
+        {
+            field = value;
+            if (value is null)
+            {
+                this.QuickPromotionAction.Visibility = Android.Views.ViewStates.Gone;
+                return;
+            }
+
+            if (this.QuickPromotionAction.Parent is not ConstraintLayout parent)
+            {
+                Logger.Warn("QuickPromotionAction is not in a ConstraintLayout parent?");
+                return;
+            }
+            this.QuickPromotionAction.Visibility = Android.Views.ViewStates.Visible;
+            //var constraintSet = new ConstraintSet();
+            //constraintSet.Clone(parent);
+
+            //int floatingToolbarId = this.QuickPromotionAction.Id;
+            //int pieceId = value.Origin.PieceView!.Id;
+
+            //// Attach to toolbar to the top of the piece
+            ////constraintSet.SetHorizontalBias(floatingToolbarId, 0.5f);
+            ////constraintSet.Connect(floatingToolbarId, ConstraintSet.Bottom, pieceId, ConstraintSet.Top);
+            //constraintSet.Connect(floatingToolbarId, ConstraintSet.Start, pieceId, ConstraintSet.Start);
+            //constraintSet.Connect(floatingToolbarId, ConstraintSet.End, pieceId, ConstraintSet.End);
+            //// Apply the updated constraints
+            //constraintSet.ApplyTo(parent);
+            this.QuickPromotionAction.RequestLayout();
+        }
+    }
 
     #region Board Pieces
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; set; } = [];
@@ -29,14 +68,8 @@ public class Black(ChessGame game, string name) : IPlayer
     {
         get; set
         {
-            if (value is null)
-            {
-                this.Moves = null;
-            }
             field = value;
-
-            if (value is not null)
-                this.Moves = value.Moves(game);
+            this.Moves = value?.Moves(game);
         }
     }
 
@@ -52,6 +85,7 @@ public class Black(ChessGame game, string name) : IPlayer
     {
         get; set
         {
+            this.Promotion = null; //reset and hide the promotion quick action when the player dismisses it
             if (field is not null)
                 foreach (var move in field)
                     move.UnindicateMoveable();
@@ -91,6 +125,7 @@ public class Black(ChessGame game, string name) : IPlayer
     {
         const int rank = 8;
         char file = 'A';
+
         this.Rook1 = new BlackRook(Resource.Id.gmp__bRook1, count: 1, game.Board[(file, rank)]);
         this.Pieces[this.Rook1.Index] = this.Rook1;
         file++; //B

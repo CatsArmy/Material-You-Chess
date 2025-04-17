@@ -1,7 +1,7 @@
 ﻿using Chess.Game.Board;
 using Chess.Game.Common;
-using Chess.Game.Dialogs;
 using Chess.Game.Moves;
+using Google.Android.Material.Floatingtoolbar;
 
 namespace Chess.Game.Player;
 
@@ -9,7 +9,8 @@ public interface IPlayer
 {
     public string Name { get; }
     public GameOutcome? Outcome { get; set; }
-    public IPromotionDialog PromotionDialog { get; }
+    public Promotion? Promotion { get; set; }
+    public FloatingToolbarLayout QuickPromotionAction { get; init; }
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; }
     public List<Pawn> Pawns { get; }
     public Rook? Rook1 { get; set; }

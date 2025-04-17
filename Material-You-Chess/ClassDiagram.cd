@@ -53,13 +53,6 @@
   </Class>
   <Class Name="Chess.App.Common.FileProvider" Collapsed="true">
     <Position X="43.25" Y="9.5" Width="1.5" />
-    <NestedTypes>
-      <Enum Name="Chess.App.Common.FileProvider.FileProviderLocation" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>App\Common\FileProvider.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAgACAAAAAAFAECAAAAAAAQEABAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>App\Common\FileProvider.cs</FileName>
@@ -171,7 +164,7 @@
   <Class Name="Chess.Game.Player.Black" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="36.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>igAAAAAAAACgBAQAAAAYAAQABAIAAEAAAAAQIAAAAAI=</HashCode>
+      <HashCode>igAAAAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
       <FileName>Game\Player\Black.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -179,7 +172,7 @@
   <Class Name="Chess.Game.Player.White" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="34.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>igAAAAAAAACgBAQAAAAYAAQABAIAAEAAAAAQIAAAAAI=</HashCode>
+      <HashCode>igAAAAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
       <FileName>Game\Player\White.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -194,7 +187,7 @@
   <Class Name="Chess.Game.ChessGame" Collapsed="true">
     <Position X="24.25" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAgAEAEHCAAAAACAAAAACAAAAAAABAAABAWBQAAA=</HashCode>
+      <HashCode>AAAAAgAEAFHCAAAAACAAAAACAAAAAAABAAABAWBQAAA=</HashCode>
       <FileName>Game\ChessGame.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -234,7 +227,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Chess.App.Common.IFirebaseUserClient" Collapsed="true">
-    <Position X="25.75" Y="6" Width="1.5" />
+    <Position X="25.75" Y="6" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIQAAAEAAAAAA=</HashCode>
       <FileName>App\Common\IFirebaseUserClient.cs</FileName>
@@ -257,7 +250,7 @@
   <Interface Name="Chess.Game.Player.IPlayer" Collapsed="true">
     <Position X="25.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>iAAAAAAAAACgBAQAAAAYAAQABAIAAEAAAAAQIAAAAAI=</HashCode>
+      <HashCode>iAAAAAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
       <FileName>Game\Player\IPlayer.cs</FileName>
     </TypeIdentifier>
   </Interface>
