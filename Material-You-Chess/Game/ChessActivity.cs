@@ -169,36 +169,32 @@ public class ChessActivity : Networked.Nearby.ConnectionsActivity
 
         if (this.Player.IsWhite && !this.ConnectedClient.IsWhite)
         {
-            var (whiteUser, isWhite) = this.Player;
-            this.WhitePlayerUsername!.Text = this.Player.FirebaseUser.Users.Name;
+            this.WhitePlayerUsername!.Text = this.Player.FirebaseUser.Client.Name;
             this.Player.FirebaseUser.TryLoadPfP(Glide.With(this))?.Placeholder(this.WhitePlayerProfilePicture!.Drawable!)
                 .Into(this.WhitePlayerProfilePicture!);
 
-            var (blackUser, isBlack) = this.ConnectedClient;
-            Logger.Debug(blackUser.Client.Name);
-            this.BlackPlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Users.Name;
+            this.BlackPlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Client.Name;
             this.ConnectedClient.FirebaseUser.TryLoadPfP(Glide.With(this))
                 ?.Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
 
-            this.Game = new(this, new(whiteUser.Client, isWhite),
-                new(blackUser.Client, isBlack));
+            this.Game = new(this,
+                white: new(this.Player.FirebaseUser.Client, this.Player.IsWhite),
+                black: new(this.ConnectedClient.FirebaseUser.Client, this.ConnectedClient.IsWhite));
         }
 
         if (!this.Player.IsWhite && this.ConnectedClient.IsWhite)
         {
-            var (whiteUser, isWhite) = this.ConnectedClient;
-            this.WhitePlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Users.Name;
+            this.WhitePlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Client.Name;
             this.ConnectedClient.FirebaseUser.TryLoadPfP(Glide.With(this))
                 ?.Placeholder(this.WhitePlayerProfilePicture!.Drawable!).Into(this.WhitePlayerProfilePicture!);
-            Logger.Debug(whiteUser.Client.Name);
 
-            var (blackUser, isBlack) = this.Player;
-            this.BlackPlayerUsername!.Text = this.Player.FirebaseUser.Users.Name;
+            this.BlackPlayerUsername!.Text = this.Player.FirebaseUser.Client.Name;
             this.Player.FirebaseUser.TryLoadPfP(Glide.With(this))
                 ?.Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
 
-            this.Game = new(this, new(whiteUser.Client, isWhite),
-                new(blackUser.Client, isBlack));
+            this.Game = new(this,
+                white: new(this.ConnectedClient.FirebaseUser.Client, this.ConnectedClient.IsWhite),
+                black: new(this.Player.FirebaseUser.Client, this.Player.IsWhite));
         }
     }
 
