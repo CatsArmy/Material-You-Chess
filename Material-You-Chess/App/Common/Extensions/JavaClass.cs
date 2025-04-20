@@ -1,15 +1,13 @@
-﻿namespace Chess.App.Common.Extensions;
+﻿using System.Diagnostics.CodeAnalysis;
 
-/// an extension method is a a static method that the first parameter is prefixed with the this keyword 
-/// will let you call the extension method from the type of the first parameter e.g:
-/// for the given method:
-/// public static bool AreEven(this int value, bool isExtensionTest) => value % 2 == 0;
-/// you can call it by either calling
-/// int myValue1 = 45; // the name of the class containing the extension method
-/// myValue1.AreEven(true); /* or */ Extensions.AreEven(myValue1, false);
+namespace Material.You.Chess.App.Common.Extensions;
 
-/// <summary> a static class containing extension a method </summary>
 public static class Extensions
 {
-    public static Java.Lang.Class Class(this Type type) => Java.Lang.Class.FromType(type);
+    extension(Type type) //Insane new C# 14 .NET 10 Feature
+    {
+        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "False positive")]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "False positive")]
+        public Java.Lang.Class Class => Java.Lang.Class.FromType(type); // Used to help register the FirebaseImageLoader
+    }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.Game.Board;
-using Chess.Game.Common;
+using Material.You.Chess.Game.Board;
+using Material.You.Chess.Game.Common;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 [method: JsonConstructor]
 public class Promotion(BoardPiece origin, BoardSpace destination, SerializedType? PromoteTo = null) : Move(origin, destination)

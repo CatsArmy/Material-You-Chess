@@ -1,6 +1,10 @@
-﻿using Chess.App.Common;
+﻿using Material.You.Chess.App.Common;
 
-namespace Chess.Game.Networked;
+namespace Material.You.Chess.Game.Networked;
+
+/// <param name="id">the id of the device</param>
+/// <param name="name">the name of the device</param>
+/// <summary> Represents a device we can talk to. </summary>
 public class EndPoint(string id, string name)
 {
     public readonly string Id = id;

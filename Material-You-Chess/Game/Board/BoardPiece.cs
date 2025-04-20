@@ -1,10 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
-using Chess.App.Common;
-using Chess.Game.Moves;
 using Google.Android.Material.Button;
+using Material.You.Chess.App.Common;
+using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Board;
+namespace Material.You.Chess.Game.Board;
 
 [JsonPolymorphic()]
 [JsonDerivedType(typeof(BoardPiece), nameof(BoardPiece))]

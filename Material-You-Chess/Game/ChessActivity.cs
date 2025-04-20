@@ -4,15 +4,19 @@ using Android.Gms.Nearby.Connection;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Bumptech.Glide;
-using Chess.App;
-using Chess.App.Common;
-using Chess.Game.Common;
-using Chess.Game.Networked;
-using Chess.Game.Networked.Nearby;
+using Firebase;
+using Firebase.AppCheck;
+using Firebase.AppCheck.PlayIntegrity;
+using Firebase.Auth;
 using Google.Android.Material.ImageView;
+using Material.You.Chess.App;
+using Material.You.Chess.App.Common;
+using Material.You.Chess.Game.Common;
+using Material.You.Chess.Game.Networked;
+using Material.You.Chess.Game.Player;
 using Microsoft.Maui.ApplicationModel;
 
-namespace Chess.Game;
+namespace Material.You.Chess.Game;
 
 [Activity(
     Label = "@string/app_name",
@@ -20,100 +24,35 @@ namespace Chess.Game;
     ScreenOrientation = ScreenOrientation.Locked,
     EnableOnBackInvokedCallback = true
 )]
-public class ChessActivity : ConnectionsActivity
+public class ChessActivity : Networked.Nearby.ConnectionsActivity
 {
-    /// <summary> global activity variable that is required for json deserialization </summary>
+    /// <summary> static activity variable that is required for json deserialization </summary>
     public static ChessActivity? Instance { get; private set; }
     protected override string ServiceId => "com.google.location.nearby.apps.chess";
-    protected override string AdvertisingName
-    {
-        get
-        {
-            var White = this.IsAdvertising;
-            var Black = this.IsDiscovering;
-            //if (White == Black)
-            //    return this.Uid;
-
-            //if (White)
-            //    return $"{nameof(White)}::{this.Uid}";
-
-            //if (Black)
-            //    return $"{nameof(Black)}::{this.Uid}";
-
-            return this.Uid;
-        }
-    }
-
+    /// <summary>
+    /// The connection strategy im using for Nearby Connections is P2pStar(N:1),
+    /// which is a combination of Bluetooth Classic and WiFi Hotspots.
+    /// </summary>
     protected override Strategy Strategy => Strategy.P2pPointToPoint;
-    public ChessBottomSheet? BottomSheet { get; set; }
+
+    /// <summary>
+    /// The name used when advertising this device.
+    /// using json for filtering the connections we accept
+    /// </summary>
+    protected override string AdvertisingName => JsonSerializer.Serialize(this.Player, SourceJsonGenerationContext.Default.NetworkedPlayer);
+    public Networked.Player? Player { get; set; }
+    public Networked.Player? ConnectedClient { get; set; }
     public required ChessGame Game { get; set; }
+    public required User User { get; set; }
 
-    /// <summary> The client of the player on this device </summary>
-    public required IPlayerClient Client { get; set; }
-
-    /// <summary> The client of the player that we connect to </summary>
-    public required IPlayerClient ConnectedClient { get; set; }
-
+    public required FirebaseAuth Auth { get; set; }
+    public ChessBottomSheet? BottomSheet { get; set; }
     public ConstraintLayout? BoardLayout { get; set; }
     public ShapeableImageView? WhitePlayerProfilePicture { get; set; }
     public ShapeableImageView? BlackPlayerProfilePicture { get; set; }
     public TextView? WhitePlayerUsername { get; set; }
     public TextView? BlackPlayerUsername { get; set; }
     public bool IsNetworked { get; private set; } = false;
-    private string? Username;
-#nullable disable
-    private string Uid
-    {
-        get; set
-        {
-            field = value;
-            if (this.IsNetworked && (value is null || value == string.Empty))
-                throw new NullReferenceException($"{nameof(AdvertisingName)} cannot be null when networking is on", IFirebaseUserClient.NullUid);
-        }
-    }
-#nullable restore
-    private string ThisClientStartsWith
-    {
-        get
-        {
-            if (this.IsDiscovering == this.IsAdvertising)
-            {
-                return string.Empty;
-            }
-
-            if (this.IsAdvertising)
-            {
-                return "White::";
-            }
-            if (this.IsDiscovering)
-            {
-                return "Black::";
-            }
-
-            return string.Empty;
-        }
-    }
-
-    private string ConnectedClientStartsWith
-    {
-        get
-        {
-            if (this.IsDiscovering == this.IsAdvertising)
-            {
-                return string.Empty;
-            }
-
-            if (!this.IsAdvertising)
-            {
-                return "White::";
-            }
-            if (!this.IsDiscovering)
-            {
-                return "Black::";
-            }
-            return string.Empty;
-        }
-    }
 
     protected override void OnCreate(Bundle? savedInstanceState)
     {
@@ -127,24 +66,30 @@ public class ChessActivity : ConnectionsActivity
         this.BlackPlayerUsername = base.FindViewById<TextView>(Resource.Id.blackPlayerUsername);
         this.BoardLayout = base.FindViewById<ConstraintLayout>(Resource.Id.ChessBoard);
         this.BottomSheet = ChessBottomSheet.OnCreate(this, this.FindViewById<CoordinatorLayout>(Resource.Id.standard_bottom_sheet)!);
+        if (this.Intent!.GetStringExtra(MainFragment.IsNetworked) is not string value)
+            return;
 
-        var args = this.Intent!.GetBundleExtra(MainFragment.IntentArgs);
-        if (args is null) return;
-        this.IsNetworked = args.GetBoolean(MainFragment.IsNetworked, this.IsNetworked);
-        this.Username = args.GetString(MainFragment.Username);
-        this.Uid = args.GetString(MainFragment.Uid);
+        this.IsNetworked = bool.Parse(value);
         if (this.IsNetworked)
         {
-            this.BottomSheet.ShowMatchmaking();
-            return;
+            var app = FirebaseApp.InitializeApp(this)!;
+            var check = FirebaseAppCheck.GetInstance(app);
+            check.InstallAppCheckProviderFactory(PlayIntegrityAppCheckProviderFactory.Instance);
+            this.Auth = FirebaseAuth.GetInstance(app);
+            if (this.Auth.CurrentUser is FirebaseUser user)
+            {
+                this.User = new User(user);
+                this.BottomSheet.ShowMatchmaking();
+            }
         }
-
-        this.Client = new WhiteClient(this.Username ?? string.Empty, this.Uid ?? string.Empty);
-        this.WhitePlayerUsername!.Text = this.Client.Username;
-        var profilePicture = this.WhitePlayerProfilePicture!;
-        this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-        // only send the handshake when we know the type of our client
-        this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(this.Client, SourceJsonGenerationContext.Default.WhiteClient)));
+        else
+        {
+            var white = new Player.Player(new($"{nameof(White)} {nameof(Player)}"), true);
+            this.WhitePlayerUsername!.Text = white.User.Name;
+            var black = new Player.Player(new($"{nameof(Black)} {nameof(Player)}"), false);
+            this.BlackPlayerUsername!.Text = black.User.Name;
+            this.Game = new(this, white, black);
+        }
     }
 
     protected override void OnDestroy()
@@ -153,66 +98,107 @@ public class ChessActivity : ConnectionsActivity
         base.OnDestroy();
     }
 
-    /// <summary> 
-    /// Called when a pending connection with a remote endpoint is created. 
-    /// we instantly accept the connection(FIFO)
-    /// </summary>
-    protected override async void OnConnectionInitiated(EndPoint endpoint, ConnectionInfo connectionInfo)
-    {
-        if (endpoint.Name.StartsWith(this.ConnectedClientStartsWith))
-            await this.AcceptConnection(endpoint);
-    }
-
-    /// <summary>
-    /// Called when a connection with this endpoint has failed. 
-    /// Overridden this method try searching for a different endpoint 
-    /// </summary>
-    protected override void OnConnectionFailed(EndPoint endpoint) => this.IsDiscovering = true;
-
-    /// <summary> 
-    /// Called when someone has connected to us.
-    /// Overridden this method to start the handshake between the 2 devices 
-    /// </summary>
-    protected override void OnEndpointConnected(EndPoint endpoint)
-    {
-        if (this.IsAdvertising)
-        {
-            var client = new WhiteClient(this.Username ?? string.Empty, this.Uid);
-            this.Client = client;
-            this.WhitePlayerUsername!.Text = this.Client.Username;
-            var profilePicture = this.WhitePlayerProfilePicture!;
-            this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            // only send the handshake when we know the type of our client
-            this.IsDiscovering = false; // prevent ourselves from trying to connect at the same time
-            this.IsAdvertising = false; // prevent ourselves from trying to connect at the same time
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.WhiteClient)));
-
-        }
-        else if (this.IsDiscovering)
-        {
-            var client = new BlackClient(this.Username ?? string.Empty, this.Uid);
-            this.Client = client;
-            this.BlackPlayerUsername!.Text = this.Client.Username;
-            var profilePicture = this.BlackPlayerProfilePicture!;
-            this.Client.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-            // only send the handshake when we know the type of our client
-            this.IsDiscovering = false; // prevent ourselves from trying to connect at the same time
-            this.IsAdvertising = false; // prevent ourselves from trying to connect at the same time
-            this.Send(Payload.FromBytes(JsonSerializer.SerializeToUtf8Bytes(client, SourceJsonGenerationContext.Default.BlackClient)));
-        }
-        // disconnect if the endpoint does not match our needs black+black / white+white / no longer advertising/discovering
-        else this.Disconnect(endpoint);
-    }
-
     /// <summary> We found an advertiser, lets try to connect to it </summary>
     /// <remarks> Called when a remote endpoint is discovered, not to be confused 
     /// with ConnectToEndpoint(EndPoint) which is called when connecting to the device </remarks>
-    /// <param name="endpoint">the endpoint of the advertiser we discovered</param>
-    protected override void OnEndpointDiscovered(EndPoint endpoint)
+    /// <param name="remote">the endpoint of the advertiser we discovered</param>
+    protected override void OnEndpointDiscovered(EndPoint remote) => this.ConnectToEndpoint(remote); // Request connection
+
+    /// <summary> 
+    /// Called when a pending connection with a remote endpoint is created. 
+    /// if we want to continue with the connection, call AcceptConnection(Endpoint). 
+    /// Otherwise, RejectConnection(Endpoint). must respond using the methods above
+    /// </summary>
+    /// <remarks> this code is call for both this device and the remote(other) device </remarks>
+    protected override async void OnConnectionInitiated(EndPoint remote, ConnectionInfo connectionInfo)
     {
-        if (endpoint.Name.StartsWith(this.ConnectedClientStartsWith))
+        string json = remote.Name;
+        var otherClient = JsonSerializer.Deserialize(json, SourceJsonGenerationContext.Default.NetworkedPlayer);
+        // prevent connecting to more than one device and apply the matchmaking preference
+        if (this.IsConnected || this.Player?.IsWhite == otherClient?.IsWhite)
         {
-            this.ConnectToEndpoint(endpoint);
+            await this.RejectConnection(remote);
+            this.IsConnecting = false;
+            return;
+        }
+        // we Accept our end of the symmetric connection api
+        this.IsConnecting = true;
+        this.ConnectedClient = otherClient;
+        await this.AcceptConnection(remote);
+    }
+
+    protected override void OnConnectionFailed(EndPoint endpoint)
+    {
+        this.ConnectedClient = null;
+        this.IsDiscovering = false;
+        this.IsAdvertising = false;
+        this.BottomSheet?.White.Checked = false;
+        this.BottomSheet?.Black.Checked = false;
+        this.BottomSheet?.OnSelectNone(this);
+        Toast.MakeText(this, "Connection Error: reselect your preferences", ToastLength.Long);
+        this.BottomSheet?.ShowMatchmaking();
+    }
+
+    protected override void OnDiscoveryFailed()
+    {
+        base.OnDiscoveryFailed();
+        Toast.MakeText(this, "Discovery error, please reselect your preference", ToastLength.Long);
+        this.BottomSheet?.OnSelectNone(this); // stop all some some is preventing us from discovering
+    }
+
+    protected override void OnAdvertisingFailed()
+    {
+        base.OnAdvertisingFailed();
+        Toast.MakeText(this, "Advertising error, please reselect your preference", ToastLength.Long);
+        this.BottomSheet?.OnSelectNone(this); // stop all some some is preventing us from advertising
+    }
+
+    /// <summary> 
+    /// Called when someone has connected to us.
+    /// Both ends of the connection have been accepted
+    /// </summary>
+    protected override void OnEstablishedConnection(EndPoint remote)
+    {
+        this.IsDiscovering = false;
+        this.IsAdvertising = false;
+        // prevent ourselves from looking for more devices to connect to. 
+        this.BottomSheet!.Callback.ToState = null;
+        this.BottomSheet!.Behavior.State = (int)VisibilityState.Collapsed;
+        if (this.Player?.IsWhite is null || this.ConnectedClient?.IsWhite is null)
+            return;
+
+        if (this.Player.IsWhite && !this.ConnectedClient.IsWhite)
+        {
+            var (whiteUser, isWhite) = this.Player;
+            this.WhitePlayerUsername!.Text = this.Player.FirebaseUser.Users.Name;
+            this.Player.FirebaseUser.TryLoadPfP(Glide.With(this))?.Placeholder(this.WhitePlayerProfilePicture!.Drawable!)
+                .Into(this.WhitePlayerProfilePicture!);
+
+            var (blackUser, isBlack) = this.ConnectedClient;
+            Logger.Debug(blackUser.Client.Name);
+            this.BlackPlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Users.Name;
+            this.ConnectedClient.FirebaseUser.TryLoadPfP(Glide.With(this))
+                ?.Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
+
+            this.Game = new(this, new(whiteUser.Client, isWhite),
+                new(blackUser.Client, isBlack));
+        }
+
+        if (!this.Player.IsWhite && this.ConnectedClient.IsWhite)
+        {
+            var (whiteUser, isWhite) = this.ConnectedClient;
+            this.WhitePlayerUsername!.Text = this.ConnectedClient.FirebaseUser.Users.Name;
+            this.ConnectedClient.FirebaseUser.TryLoadPfP(Glide.With(this))
+                ?.Placeholder(this.WhitePlayerProfilePicture!.Drawable!).Into(this.WhitePlayerProfilePicture!);
+            Logger.Debug(whiteUser.Client.Name);
+
+            var (blackUser, isBlack) = this.Player;
+            this.BlackPlayerUsername!.Text = this.Player.FirebaseUser.Users.Name;
+            this.Player.FirebaseUser.TryLoadPfP(Glide.With(this))
+                ?.Placeholder(this.BlackPlayerProfilePicture!.Drawable!).Into(this.BlackPlayerProfilePicture!);
+
+            this.Game = new(this, new(whiteUser.Client, isWhite),
+                new(blackUser.Client, isBlack));
         }
     }
 
@@ -221,15 +207,9 @@ public class ChessActivity : ConnectionsActivity
     public override void Send(Payload payload)
     {
         if (this.IsNetworked)
-        {
             base.Send(payload);
-            return;
-        }
 
-        if (this.Game is null)
-            this.ConnectedClient = new BlackClient(string.Empty, string.Empty);
-
-        this.OnReceive(payload.AsBytes()!); // emulate a networked activity
+        this.OnReceive(payload.AsBytes()!);
     }
 
     /// <summary>
@@ -243,33 +223,7 @@ public class ChessActivity : ConnectionsActivity
         {
             var move = JsonSerializer.Deserialize(payload, SourceJsonGenerationContext.Default.Move);
             this.Game.PlayMove(move!, false);
-            return;
         }
-
-        this.BottomSheet!.Callback.ToState = null;
-        this.BottomSheet!.Behavior.State = (int)VisibilityState.Collapsed;
-        this.ConnectedClient ??= JsonSerializer.Deserialize(payload, SourceJsonGenerationContext.Default.IPlayerClient);
-        if (this.ConnectedClient is null)
-        {
-            Logger.Warn("Unknown state something went wrong");
-            return;
-        }
-
-        if (this.ConnectedClient.IsWhite)
-        {
-            this.WhitePlayerUsername!.Text = this.ConnectedClient.Username;
-            var profilePicture = this.WhitePlayerProfilePicture!;
-            this.ConnectedClient.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-        }
-
-        else
-        {
-            this.BlackPlayerUsername!.Text = this.ConnectedClient.Username;
-            var profilePicture = this.BlackPlayerProfilePicture!;
-            this.ConnectedClient.TryLoadProfilePicture(Glide.With(this))?.Placeholder(profilePicture.Drawable!).Into(profilePicture);
-        }
-
-        this.Game = new ChessGame(this);
     }
 
     /// <remarks> Someone who is connected to us has sent us data. Overridden this method to handle this event. </remarks>
@@ -278,26 +232,25 @@ public class ChessActivity : ConnectionsActivity
     /// <param name="payload"> The Payload containing all the data for us to handle the event </param>
     protected override void OnReceive(EndPoint endpoint, Payload payload)
     {
-        if (payload.PayloadType != Payload.Type.Bytes) return;
-        this.OnReceive(payload.AsBytes()!);
+        if (payload.PayloadType == Payload.Type.Bytes)
+            this.OnReceive(payload.AsBytes()!);
     }
 
     /// <summary> Called when someone has disconnected. Overridden this method to inform the user about the event. </summary>
-    protected override void OnEndpointDisconnected(EndPoint endpoint)
+    protected override void OnEndpointDisconnected(EndPoint remote)
     {
-        if (this.Game is null || !this.IsNetworked) return;
-
-        Toast.MakeText(this, $"Error, {this.Client!.Username} disconnected", ToastLength.Short)?.Show();
-        var description = $"{this.ConnectedClient.Username} disconnected, {this.Client.Username} wins by technicality";
-        switch (this.Client.IsWhite) // Inverse because our client did not disconnect
+        if (!this.IsNetworked) return;
+        if (this.Game is null) // we have not yet started the game
         {
-            case true: // our client is white and the connect client is black
-                this.BottomSheet?.ShowGameOver(this.Game.BlackPlayer!, description);
-                break;
-
-            default:
-                this.BottomSheet?.ShowGameOver(this.Game.WhitePlayer!, description);
-                break;
+            this.OnConnectionFailed(remote); // reuse connection failure code
+            return;
         }
+
+        Toast.MakeText(this, $"Error, {this.User!.Client.Name} disconnected", ToastLength.Short)?.Show();
+        var description = $"{this.ConnectedClient?.FirebaseUser.Client.Name} disconnected, {this.User!.Client.Name} wins by technicality";
+        if (this.ConnectedClient?.IsWhite == true)
+            this.BottomSheet?.ShowGameOver(this.Game.WhitePlayer!, description);
+        if (this.ConnectedClient?.IsWhite == false)
+            this.BottomSheet?.ShowGameOver(this.Game.BlackPlayer!, description);
     }
 }

@@ -1,13 +1,13 @@
 using Android.Gms.Nearby;
 using Android.Gms.Nearby.Connection;
 using AndroidX.AppCompat.App;
-using Chess.App.Common;
-using Chess.App.Common.Extensions;
+using Material.You.Chess.App.Common;
+using Material.You.Chess.App.Common.Extensions;
 using NearbyConnectionLifecycleCallback = Android.Gms.Nearby.Connection.ConnectionLifecycleCallback;
 using NearbyEndpointDiscoveryCallback = Android.Gms.Nearby.Connection.EndpointDiscoveryCallback;
 using NearbyPayloadCallback = Android.Gms.Nearby.Connection.PayloadCallback;
 
-namespace Chess.Game.Networked.Nearby;
+namespace Material.You.Chess.Game.Networked.Nearby;
 
 public abstract class ConnectionsActivity : AppCompatActivity
 {
@@ -15,14 +15,27 @@ public abstract class ConnectionsActivity : AppCompatActivity
     public Dictionary<string, EndPoint> PendingConnections { get; private set; } = [];
     public Dictionary<string, EndPoint> DiscoveredEndpoints { get; private set; } = [];
     public bool IsConnected => this.EstablishedConnections.Count > 0;
-
     public bool IsConnecting
     {
         get; set
         {
-            this.SetIsDiscovering(value);
-            this.SetIsAdvertising(value);
             field = value;
+            if (value) // allow the failure code to handle reEnabling the state
+            {
+                this.SetIsAdvertising(false);
+                this.SetIsDiscovering(false);
+            }
+            else
+            {
+                if (this.IsAdvertising)
+                {
+                    this.SetIsAdvertising(this.IsAdvertising);
+                }
+                if (this.IsDiscovering)
+                {
+                    this.SetIsDiscovering(this.IsDiscovering);
+                }
+            }
         }
     } = false;
 
@@ -79,35 +92,44 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     private async void SetIsAdvertising(bool value)
     {
-        if (this.IsAdvertising == value) return;
-        if (this.IsAdvertising) StopAdvertising();
-        if (value)
+        if (!value)
         {
-            if (this.IsDiscovering) this.IsDiscovering = false;
-            await StartAdvertising();
+            StopAdvertising();
+            return;
         }
+
+        if (this.IsDiscovering)
+            this.IsDiscovering = false;
+        //cannot be both discovering and advertising
+        StopAdvertising();
+        await StartAdvertising();
     }
 
     private async void SetIsDiscovering(bool value)
     {
-        if (this.IsDiscovering == value) return;
-        if (this.IsDiscovering) StopDiscovering();
-        if (value)
+        if (!value)
         {
-            if (this.IsAdvertising) this.IsAdvertising = false;
-            await StartDiscovering();
+            StopDiscovering();
+            return;
         }
+
+        if (this.IsAdvertising)
+            this.IsAdvertising = false;
+
+        //cannot be both discovering and advertising
+        this.StopDiscovering();
+        await StartDiscovering();
     }
 
     /// <summary> Sets the device to advertising mode. It will broadcast to other devices in discovery mode. </summary>
-    /// <remarks> Either <see cref="OnAdvertisingStarted()"/> or <see cref="OnAdvertisingFailed()"/> 
+    /// <remarks> Either OnAdvertisingStarted() or OnAdvertisingFailed()
     /// will be called once we've found out if we successfully entered this mode. </remarks>
     private async Task StartAdvertising()
     {
         string localEndpointName = AdvertisingName;
         var options = new AdvertisingOptions.Builder().SetStrategy(this.Strategy);
         var advertising = this.ConnectionsClient!.StartAdvertisingAsync(localEndpointName, this.ServiceId,
-            new ConnectionLifecycleCallback(this), options.Build());
+            new ConnectionLifecycleCallback(this), options.Build()); //8001: STATUS_ALREADY_ADVERTISING
         await advertising;
 
         if (advertising.IsCompletedSuccessfully)
@@ -155,40 +177,41 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /// <summary> Disconnects from all currently connected endpoints </summary>
     protected void DisconnectFromAllEndpoints()
     {
-        foreach (EndPoint endpoint in this.EstablishedConnections.Values) this.ConnectionsClient!.DisconnectFromEndpoint(endpoint.Id);
+        foreach (EndPoint endpoint in this.EstablishedConnections.Values)
+            this.ConnectionsClient!.DisconnectFromEndpoint(endpoint.Id);
         this.EstablishedConnections.Clear();
     }
 
     /// <summary> Sends a connection request to the endpoint. Either <see cref="OnConnectionInitiated(EndPoint, ConnectionInfo)"/> or 
     /// <see cref="OnConnectionFailed(EndPoint)"/> will be called once we've found out if we successfully reached the device. </summary>
-    protected async void ConnectToEndpoint(EndPoint endpoint)
+    protected async void ConnectToEndpoint(EndPoint remote) // discovered
     {
-        Logger.Verbose($"Sending a connection request to endpoint {endpoint}");
+        Logger.Verbose($"Sending a connection request to endpoint {remote}");
         // Mark ourselves as connecting so we don't connect multiple times
-        this.IsConnecting = true;
 
-        // Ask to connect
-        var connection = this.ConnectionsClient!.RequestConnectionAsync(this.AdvertisingName, endpoint.Id, new ConnectionLifecycleCallback(this));
+        this.IsConnecting = true;
+        // Ask to connect OnConnectionInitiated(EndPoint, ConnectionInfo)
+        var connection = this.ConnectionsClient!.RequestConnectionAsync(this.AdvertisingName, remote.Id, new ConnectionLifecycleCallback(this));
         await connection;
 
-        if (connection.IsFaulted)
+        if (connection.IsFaulted) // failed to request a connection
         {
             Logger.Warn($"{nameof(ConnectionsClient.RequestConnection)} failed. {connection.Exception}");
             this.IsConnecting = false;
-            this.OnConnectionFailed(endpoint);
+            this.OnConnectionFailed(remote);
         }
     }
 
     /// <summary>
     /// adds the endpoint to the dictionary of connected endpoints
     /// and calls the OnEndpointConnected callback function
-    /// </summary>
+    /// </summary> 13: ERROR == stack overflow?
     /// <param name="endpoint">the endpoint we successfully connected to</param>
     protected void ConnectedToEndpoint(EndPoint endpoint)
     {
         Logger.Debug($"{nameof(ConnectedToEndpoint)}({nameof(endpoint)}={endpoint})");
         this.EstablishedConnections.Add(endpoint.Id, endpoint);
-        this.OnEndpointConnected(endpoint);
+        this.OnEstablishedConnection(endpoint);
     }
 
     /// <summary>
@@ -219,12 +242,13 @@ public abstract class ConnectionsActivity : AppCompatActivity
     /// <summary> Accepts a connection request </summary>
     protected async Task AcceptConnection(EndPoint endpoint)
     {
-        Task? accept = this.ConnectionsClient!.AcceptConnectionAsync(endpoint.Id, new PayloadCallback(this)); await accept;
+        var accept = this.ConnectionsClient!.AcceptConnectionAsync(endpoint.Id, new PayloadCallback(this));
+        await accept;
         if (accept.IsFaulted) Logger.Warn($"{this.AcceptConnection}() failed. {accept.Exception}");
     }
 
     /// <summary> Rejects a connection request </summary>
-    protected async void RejectConnection(EndPoint endpoint)
+    protected async Task RejectConnection(EndPoint endpoint)
     {
         var reject = this.ConnectionsClient!.RejectConnectionAsync(endpoint.Id); await reject;
         if (reject.IsFaulted) Logger.Warn($"{this.RejectConnection}() failed. {reject.Exception}");
@@ -232,16 +256,16 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     /// <summary> Sends a <see cref="Payload"/> to all currently connected endpoints. </summary>
     /// <param name="payload">The data you want to send. </param>
-    public async virtual void Send(Payload payload) => await this.Send(payload, this.EstablishedConnections.Keys);
+    public virtual async void Send(Payload payload) => await this.Send(payload, this.EstablishedConnections.Keys);
 
     /// <summary> Called when advertising successfully starts. Override this method to act on the event. </summary>
-    protected virtual void OnAdvertisingStarted() => Logger.Verbose(nameof(OnAdvertisingStarted));
+    protected virtual void OnAdvertisingStarted() => Logger.Verbose($"{nameof(OnAdvertisingStarted)}, {this.AdvertisingName}");
 
     /// <summary> Called when advertising fails to start. Override this method to act on the event. </summary>
     protected virtual void OnAdvertisingFailed() => Logger.Verbose(nameof(OnAdvertisingFailed));
 
     /// <summary> Called when discovery successfully starts. Override this method to act on the event. </summary>
-    protected virtual void OnDiscoveryStarted() => Logger.Verbose(nameof(OnDiscoveryStarted));
+    protected virtual void OnDiscoveryStarted() => Logger.Verbose($"{nameof(OnDiscoveryStarted)}, {this.AdvertisingName}");
 
     /// <summary> Called when discovery fails to start. Override this method to act on the event. </summary>
     protected virtual void OnDiscoveryFailed() => Logger.Verbose(nameof(OnDiscoveryFailed));
@@ -262,7 +286,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
     protected abstract void OnConnectionFailed(EndPoint endpoint);
 
     /// <summary> Called when someone has connected to us. Override this method to act on the event. </summary>
-    protected abstract void OnEndpointConnected(EndPoint endpoint);
+    protected abstract void OnEstablishedConnection(EndPoint endpoint);
 
     /// <summary> Called when someone has disconnected. Override this method to act on the event. </summary>
     protected abstract void OnEndpointDisconnected(EndPoint endpoint);
@@ -308,11 +332,12 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
     private class ConnectionLifecycleCallback(ConnectionsActivity instance) : NearbyConnectionLifecycleCallback()
     {
+        /// <summary> called on both the local device and the remote device </summary>
         public override void OnConnectionInitiated(string endpointId, ConnectionInfo connectionInfo)
         {
             Logger.Debug($"{nameof(OnConnectionInitiated)}({nameof(endpointId)}={endpointId}, {nameof(connectionInfo.EndpointName)}={connectionInfo.EndpointName})");
 
-            var endPoint = new EndPoint(endpointId, connectionInfo.EndpointName);
+            var endPoint = new EndPoint(id: endpointId, name: connectionInfo.EndpointName);
             Logger.Debug($"Endpoint created: {endPoint}");
             instance.PendingConnections.Add(endpointId, endPoint);
             instance.OnConnectionInitiated(endPoint, connectionInfo);
@@ -320,23 +345,32 @@ public abstract class ConnectionsActivity : AppCompatActivity
 
         /// <summary>
         /// removes the endpoint from the list of pending endpoints 
-        /// when the result is successful adds the endpoint to the list of connected endpoints
+        /// when the result is successful, adds the endpoint to the list of connected endpoints
         /// </summary>
         public override void OnConnectionResult(string endpointId, ConnectionResolution result)
         {
             Logger.Debug($"{nameof(OnConnectionResult)}({nameof(endpointId)}={endpointId}, {nameof(result)}={result})");
             instance.IsConnecting = false;
-            if (!result.Status.IsSuccess)
+            // trying to establish this pending endpoint
+            Logger.Verbose(result.Status.ForrmatedStatus);
+            var established = instance.PendingConnections[endpointId];
+            instance.PendingConnections.Remove(endpointId);
+
+            // We're connected! Can now start sending and receiving data.
+            if (result.Status.StatusCode == ConnectionsStatusCodes.StatusOk)
             {
-                Logger.Warn($"Connection failed. Received status {result.Status.Status()}");
-                EndPoint? failed = instance.PendingConnections[endpointId];
-                instance.PendingConnections.Remove(endpointId);
-                instance.OnConnectionFailed(failed);
+                instance.ConnectedToEndpoint(new EndPoint(established));
                 return;
             }
-
-            instance.ConnectedToEndpoint(new(instance.PendingConnections[endpointId]));
-            instance.PendingConnections.Remove(endpointId);
+            // The connection was rejected by one or both sides.
+            if (result.Status.StatusCode == ConnectionsStatusCodes.StatusConnectionRejected)
+                Logger.Warn($"The connection was rejected.");
+            // The connection broke before it was able to be accepted.
+            if (result.Status.StatusCode == ConnectionsStatusCodes.StatusError)
+                Logger.Warn($"The connection broke before it was accepted.");
+            else // Unknown status code
+                Logger.Warn($"Connection failed. Received status {result.Status.ForrmatedStatus}");
+            instance.OnConnectionFailed(established);
         }
 
         public override void OnDisconnected(string endpointId)

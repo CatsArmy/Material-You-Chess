@@ -1,6 +1,6 @@
 ﻿using Log = Android.Util.Log;
 
-namespace Chess.App.Common;
+namespace Material.You.Chess.App.Common;
 
 #pragma warning disable CS0162 // Unreachable code detected
 #pragma warning disable IDE0060 // Remove unused parameter
@@ -15,7 +15,7 @@ public static class Logger
         Fatal
     }
 
-    private const Level Filter = Level.Debug;
+    private const Level Filter = Level.Verbose;
     private const string Tag = "CatDebug";
 
     public static void Verbose(string message)

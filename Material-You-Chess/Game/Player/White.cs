@@ -1,16 +1,15 @@
 ﻿using AndroidX.ConstraintLayout.Widget;
-using Chess.App.Common;
-using Chess.Game.Board;
-using Chess.Game.Common;
-using Chess.Game.Moves;
 using Google.Android.Material.Floatingtoolbar;
+using Material.You.Chess.App.Common;
+using Material.You.Chess.Game.Board;
+using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Player;
+namespace Material.You.Chess.Game.Player;
 
-public class White(ChessGame game, string name) : IPlayer
+public class White(ChessGame game, Client user) : IPlayer
 {
-    public string Name => name;
-    public GameOutcome? Outcome { get; set; }
+    public string Name => user.Name;
+    public bool IsCheckmated { get; set; } = false;
 
     public required FloatingToolbarLayout QuickPromotionAction { get; init; }
 
@@ -121,7 +120,7 @@ public class White(ChessGame game, string name) : IPlayer
         }
     }
 
-    public White(ChessGame game) : this(game, game.WhiteClient.Username)
+    public White(ChessGame game) : this(game, game.White.User)
     {
         const int rank = 1;
         char file = 'A';

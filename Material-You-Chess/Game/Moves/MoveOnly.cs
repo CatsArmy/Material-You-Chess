@@ -1,6 +1,6 @@
-﻿using Chess.Game.Board;
+﻿using Material.You.Chess.Game.Board;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 /// <summary>
 /// A Move that can never capture a enemy piece unlike other Move types.

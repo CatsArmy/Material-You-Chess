@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.Game.Board;
-using Chess.Game.Common;
 using Google.Android.Material.Badge;
+using Material.You.Chess.Game.Board;
+using Material.You.Chess.Game.Common;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 /// <param name="piece">destination</param>
 [method: JsonConstructor]

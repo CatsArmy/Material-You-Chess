@@ -1,15 +1,15 @@
 ﻿using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
-using Chess.App.Common.Extensions;
 using Firebase;
 using Firebase.AppCheck;
 using Firebase.AppCheck.PlayIntegrity;
 using Firebase.Auth;
 using Google.Android.Material.Navigation;
+using Material.You.Chess.App.Common.Extensions;
 using FragmentTransaction = AndroidX.Fragment.App.FragmentTransaction;
 using Platform = Microsoft.Maui.ApplicationModel.Platform;
 
-namespace Chess.App;
+namespace Material.You.Chess.App;
 
 [Activity(MainLauncher = true,
     Label = "@string/app_name",
@@ -73,11 +73,11 @@ public class MainActivity : AppCompatActivity
         switch (e.Item.ItemId)
         {
             case Resource.Id.play:
-                this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Main!).Commit();
-                break;
+            this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Main!).Commit();
+            break;
             case Resource.Id.profile:
-                this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Profile!).Commit();
-                break;
+            this.FragmentTransaction?.Replace(this.FragmentContainer!.Id, this.Profile!).Commit();
+            break;
         }
     }
 }

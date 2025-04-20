@@ -1,7 +1,7 @@
-﻿using Chess.Game.Common;
-using Chess.Game.Moves;
+﻿using Material.You.Chess.Game.Common;
+using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Board;
+namespace Material.You.Chess.Game.Board;
 
 public class Pawn(int id, BoardSpace space) : SpecialPiece(id, space)
 {
@@ -107,11 +107,13 @@ public class WhitePawn(int id, int count, BoardSpace space) : Pawn(id, space)
             if (right.Piece(game) is BoardPiece rightPiece)
             {
                 if (!rightPiece.IsWhite)
+                {
                     moves.Add((right.Rank == maxRank) switch
                     {
                         true => new PromotionCapture(this, rightPiece),
                         false => new Capture(this, rightPiece)
                     });
+                }
             }
             else if (right.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {
@@ -199,11 +201,13 @@ public class BlackPawn(int id, int count, BoardSpace space) : Pawn(id, space)
             if (left.Piece(game) is BoardPiece leftPiece)
             {
                 if (leftPiece.IsWhite)
+                {
                     moves.Add((left.Rank == maxRank) switch
                     {
                         true => new PromotionCapture(this, leftPiece),
                         false => new Capture(this, leftPiece)
                     });
+                }
             }
             else if (left.Backward(game, this.IsWhite) is BoardSpace EnPassantSpace)
             {

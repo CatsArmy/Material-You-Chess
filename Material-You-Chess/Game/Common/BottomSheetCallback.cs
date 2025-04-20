@@ -1,7 +1,7 @@
 ﻿using Android.Views;
 using Google.Android.Material.BottomSheet;
 
-namespace Chess.Game.Common;
+namespace Material.You.Chess.Game.Common;
 
 public class BottomSheetCallback(ChessActivity instance) : BottomSheetBehavior.BottomSheetCallback()
 {

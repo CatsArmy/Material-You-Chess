@@ -1,14 +1,13 @@
-﻿using Chess.Game.Board;
-using Chess.Game.Common;
-using Chess.Game.Moves;
-using Google.Android.Material.Floatingtoolbar;
+﻿using Google.Android.Material.Floatingtoolbar;
+using Material.You.Chess.Game.Board;
+using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Player;
+namespace Material.You.Chess.Game.Player;
 
 public interface IPlayer
 {
     public string Name { get; }
-    public GameOutcome? Outcome { get; set; }
+    public bool IsCheckmated { get; set; }
     public Promotion? Promotion { get; set; }
     public FloatingToolbarLayout QuickPromotionAction { get; init; }
     public Dictionary<(string Prefix, int Count), BoardPiece> Pieces { get; }

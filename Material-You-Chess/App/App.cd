@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Android.Content;&#xD;&#xA;using AndroidX.Activity.Result;&#xD;&#xA;using Bumptech.Glide;&#xD;&#xA;using Firebase.Auth;&#xD;&#xA;using Firebase.Storage;&#xD;&#xA;using FirebaseUI.Auth;&#xD;&#xA;using static AndroidX.Activity.Result.Contract.ActivityResultContracts;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record class User([property: JsonInclude] Client Client, [property: JsonInclude] string Uid)&#xD;&#xA;{&#xD;&#xA;    public User(FirebaseUser user) : this(new(user.DisplayName ?? throw NullUsername), user.Uid) { }&#xD;&#xA;    [JsonIgnore] public static readonly NullReferenceException NullUsername = new(&quot;Missing display name&quot;);&#xD;&#xA;    [JsonIgnore] public static readonly NullReferenceException NullUid = new(&quot;Missing Uid&quot;);&#xD;&#xA;    [JsonIgnore] private static PickVisualMedia.IVisualMediaType Media =&gt; PickVisualMedia.ImageOnly.Instance;&#xD;&#xA;    [JsonIgnore] public static PickVisualMediaRequest MediaRequest =&gt; new PickVisualMediaRequest.Builder().SetMediaType(Media).Build();&#xD;&#xA;    [JsonIgnore] public StorageReference Users =&gt; FirebaseStorage.Instance.GetReference(location: $&quot;{nameof(Users).ToLower()}/{Uid}/&quot;);&#xD;&#xA;    [JsonIgnore] public StorageReference Images =&gt; this.Users.Child(pathString: $&quot;{nameof(Images).ToLower()}/&quot;);&#xD;&#xA;    [JsonIgnore] public StorageReference ProfilePicture =&gt; this.Images.Child(pathString: $&quot;{nameof(User).ToLower()}.image&quot;);&#xD;&#xA;    public RequestBuilder LoadPfP(RequestManager glide) =&gt; glide.Load(ProfilePicture);&#xD;&#xA;    public RequestBuilder? TryLoadPfP(RequestManager? glide)&#xD;&#xA;    {&#xD;&#xA;        if (glide is null || this.Uid is null || this.Uid == string.Empty) return null;&#xD;&#xA;        try&#xD;&#xA;        {&#xD;&#xA;            return this.LoadPfP(glide).Error(Resource.Drawable.account_circle);&#xD;&#xA;        } catch (Exception) { }&#xD;&#xA;&#xD;&#xA;        return null;&#xD;&#xA;    }&#xD;&#xA;&#xD;&#xA;    /// &lt;summary&gt;&#xD;&#xA;    /// returns a customized Sign Up/In activity intent from the NuGet Package: &quot;FirebaseUI&quot; &#xD;&#xA;    /// and sets the available sign-in providers to be either: sign-in via email or sign-in via a private google account&#xD;&#xA;    /// &lt;/summary&gt;&#xD;&#xA;    public static Intent GetSignInActivityIntent()&#xD;&#xA;    {&#xD;&#xA;        List&lt;AuthUI.IdpConfig&gt; providers = [&#xD;&#xA;            new AuthUI.IdpConfig.GoogleBuilder().Build(),&#xD;&#xA;            new AuthUI.IdpConfig.EmailBuilder().SetRequireName(true).SetAllowNewAccounts(true).Build(),&#xD;&#xA;        ];&#xD;&#xA;&#xD;&#xA;        // Create and launch sign-in intent&#xD;&#xA;        var signInIntentBuilder = AuthUI.Instance.CreateSignInIntentBuilder();&#xD;&#xA;        signInIntentBuilder.SetAvailableProviders(providers);&#xD;&#xA;        //Customize the FirebaseUI-Auth sign-in/up screen&#xD;&#xA;        signInIntentBuilder.SetTheme(Resource.Style.AppTheme_Material3_DynamicColors_DayNight_NoActionBar);&#xD;&#xA;        signInIntentBuilder.SetLogo(Resource.Drawable.ic_launcher_foreground);&#xD;&#xA;        signInIntentBuilder.SetCredentialManagerEnabled(true);&#xD;&#xA;        signInIntentBuilder.SetLockOrientation(true);&#xD;&#xA;        //Build the activities intent and return it ready for use&#xD;&#xA;        return signInIntentBuilder.Build();&#xD;&#xA;    }&#xD;&#xA;}&#xD;&#xA;">
+    <Position X="10.717" Y="0.5" Height="9.736" Width="9.7" />
+  </Comment>
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Client([property: JsonInclude] string Name);&#xD;&#xA;">
+    <Position X="5.564" Y="5.032" Height="1.645" Width="3.877" />
+  </Comment>
+  <Class Name="Material.You.Chess.App.Common.ActivityResult.ActivityResultCallback&lt;O&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="1.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>App\Common\ActivityResult\Callback.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Extensions.FirebaseImageLoader" Collapsed="true">
+    <Position X="8.75" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App\Common\Extensions\FirebaseImageLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Extensions.FloatingActionButtonAnimations" Collapsed="true">
+    <Position X="9" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>App\Common\Extensions\FloatingActionButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Extensions.Extensions" Collapsed="true">
+    <Position X="9" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App\Common\Extensions\JavaClass.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Extensions.Statuses" Collapsed="true">
+    <Position X="9" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App\Common\Extensions\Status.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.FileProvider" Collapsed="true">
+    <Position X="7" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgACAAAAAAFAECAAAAAAAQEABAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App\Common\FileProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Logger" Collapsed="true">
+    <Position X="9" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAgAYAAAAAAAAAAABAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>App\Common\Logger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.MainActivity" Collapsed="true">
+    <Position X="6" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAEAEAEAAAAAAAAAAAAAACAAAAAAABAEBBAAAAA=</HashCode>
+      <FileName>App\MainActivity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.MainFragment" Collapsed="true">
+    <Position X="5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAABAACAACAAAAAAIVAAEQAgCCBwQAAAAYACQJAAAAA=</HashCode>
+      <FileName>App\MainFragment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.ProfileFragment" Collapsed="true">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEEBEigQRBCAgBQAQCIACAAAGCCIBDAABiBAAAAAAAg=</HashCode>
+      <FileName>App\ProfileFragment.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.App.Common.Permissions.NearbyConnections" Collapsed="true">
+    <Position X="5" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAIAAAAAAAEAAAEAAgAIAAQIAAAAAAAEAAAACQAAAA=</HashCode>
+      <FileName>App\Common\Permissions\NearbyConnections.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Material.You.Chess.App.Common.Permissions.INearbyPermissions" Collapsed="true">
+    <Position X="3" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAIAAAAAAAEAAAEAAgAIAAQIAAAAAAAEAAAACQAAAA=</HashCode>
+      <FileName>App\Common\Permissions\INearbyPermissions.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

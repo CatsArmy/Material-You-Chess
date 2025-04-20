@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.Game.Board;
+using Material.You.Chess.Game.Board;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 [method: JsonConstructor]
 public class DoubleMove(BoardPiece origin, BoardSpace destination) : MoveOnly(origin, destination)

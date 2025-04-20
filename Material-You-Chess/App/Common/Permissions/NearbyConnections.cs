@@ -5,34 +5,22 @@ using Android.Content.PM;
 using Android.OS;
 using AndroidX.Activity.Result;
 
-namespace Chess.App.Common.Permissions;
-
-public interface IPermissionManager
-{
-    public bool HasAccess();
-    public void RequestAccess();
-}
-
-public interface IPermissionsManager : IPermissionManager
-{
-    public (Permission IsGranted, string Permission)[] Permissions { get; }
-}
-
+namespace Material.You.Chess.App.Common.Permissions;
 
 [SuppressMessage("Interoperability", "CA1416:Validate platform compatibility")]
 [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "False positive")]
-public class NearbyConnections(ActivityResultLauncher requestLauncher, ContextWrapper? context) : IPermissionsManager
+public class NearbyConnections(ActivityResultLauncher requestLauncher, ContextWrapper? context) : INearbyPermissions
 {
-    public (Permission IsGranted, string Permission) NearbyWifiDevices = (Permission.Denied, Manifest.Permission.NearbyWifiDevices);
-    public (Permission IsGranted, string Permission) AccessWifiState = (Permission.Denied, Manifest.Permission.AccessWifiState);
-    public (Permission IsGranted, string Permission) ChangeWifiState = (Permission.Denied, Manifest.Permission.ChangeWifiState);
-    public (Permission IsGranted, string Permission) Bluetooth = (Permission.Denied, Manifest.Permission.Bluetooth);
-    public (Permission IsGranted, string Permission) BluetoothAdmin = (Permission.Denied, Manifest.Permission.BluetoothAdmin);
-    public (Permission IsGranted, string Permission) BluetoothAdvertise = (Permission.Denied, Manifest.Permission.BluetoothAdvertise);
-    public (Permission IsGranted, string Permission) BluetoothConnect = (Permission.Denied, Manifest.Permission.BluetoothConnect);
-    public (Permission IsGranted, string Permission) BluetoothScan = (Permission.Denied, Manifest.Permission.BluetoothScan);
-    public (Permission IsGranted, string Permission) AccessCoarseLocation = (Permission.Denied, Manifest.Permission.AccessCoarseLocation);
-    public (Permission IsGranted, string Permission) AccessFineLocation = (Permission.Denied, Manifest.Permission.AccessFineLocation);
+    public (Permission IsGranted, string Permission) NearbyWifiDevices = (Permission.Denied, INearbyPermissions.NearbyWifiDevices);
+    public (Permission IsGranted, string Permission) AccessWifiState = (Permission.Denied, INearbyPermissions.AccessWifiState);
+    public (Permission IsGranted, string Permission) ChangeWifiState = (Permission.Denied, INearbyPermissions.ChangeWifiState);
+    public (Permission IsGranted, string Permission) Bluetooth = (Permission.Denied, INearbyPermissions.Bluetooth);
+    public (Permission IsGranted, string Permission) BluetoothAdmin = (Permission.Denied, INearbyPermissions.BluetoothAdmin);
+    public (Permission IsGranted, string Permission) BluetoothAdvertise = (Permission.Denied, INearbyPermissions.BluetoothAdvertise);
+    public (Permission IsGranted, string Permission) BluetoothConnect = (Permission.Denied, INearbyPermissions.BluetoothConnect);
+    public (Permission IsGranted, string Permission) BluetoothScan = (Permission.Denied, INearbyPermissions.BluetoothScan);
+    public (Permission IsGranted, string Permission) AccessCoarseLocation = (Permission.Denied, INearbyPermissions.AccessCoarseLocation);
+    public (Permission IsGranted, string Permission) AccessFineLocation = (Permission.Denied, INearbyPermissions.AccessFineLocation);
 
     public (Permission IsGranted, string Permission)[] Permissions => Build.VERSION.SdkInt switch
     {

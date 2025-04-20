@@ -2,25 +2,25 @@ using System.Text.Json;
 using Android.Animation;
 using Android.Gms.Nearby.Connection;
 using Android.Views;
-using Chess.Game.Board;
-using Chess.Game.Common;
-using Chess.Game.Moves;
-using Chess.Game.Player;
 using Google.Android.Material.Badge;
 using Google.Android.Material.Floatingtoolbar;
 using Google.Android.Material.ImageView;
+using Material.You.Chess.Game.Board;
+using Material.You.Chess.Game.Common;
+using Material.You.Chess.Game.Moves;
+using Material.You.Chess.Game.Player;
 
-namespace Chess.Game;
+namespace Material.You.Chess.Game;
 
 public class ChessGame
 {
     public readonly Dictionary<(string Prefix, int Count), BoardPiece> AllPieces;
     public readonly Dictionary<(char file, int rank), BoardSpace> Board;
     private readonly ChessActivity Activity;
-    public readonly IPlayerClient WhiteClient;
-    public readonly IPlayerClient BlackClient;
     public readonly White WhitePlayer;
     public readonly Black BlackPlayer;
+    public readonly Player.Player White;
+    public readonly Player.Player Black;
 
     /// <summary> The current player </summary>
     public IPlayer Player => this.CurrentPlayerIsWhite switch
@@ -43,10 +43,9 @@ public class ChessGame
     public static BadgeDrawable? CaptureAlertBottomLeftBadge;
 
     /// <summary> Initializes(binds) the board and players(and pieces) and adds on click listeners </summary>
-    public ChessGame(ChessActivity activity)
+    public ChessGame(ChessActivity activity, Player.Player white, Player.Player black)
     {
         this.Activity = activity;
-
         CaptureAlertTopRightBadge = BadgeDrawable.Create(activity);
         CaptureAlertTopRightBadge.BadgeGravity = BadgeDrawable.TopEnd;
         CaptureAlertTopLeftBadge = BadgeDrawable.Create(activity);
@@ -92,18 +91,7 @@ public class ChessGame
 
         #region Binds the players and all pieces 
         this.AllPieces = [];
-        this.WhiteClient = this.Activity.Client.IsWhite switch
-        {
-            false => activity.ConnectedClient,
-            _ => activity.Client,
-        };
-
-        this.BlackClient = this.Activity.ConnectedClient.IsWhite switch
-        {
-            false => activity.ConnectedClient,
-            _ => activity.Client,
-        };
-
+        this.White = white;
         this.WhitePlayer = new(this)
         {
             QuickPromotionAction = activity.FindViewById<FloatingToolbarLayout>(Resource.Id.ftbWhite_promotion)!
@@ -114,6 +102,7 @@ public class ChessGame
         activity.FindViewById(Resource.Id.promote_white_rook)!.Click += Promotion;
         activity.FindViewById(Resource.Id.promote_white_bishop)!.Click += Promotion;
 
+        this.Black = black;
         this.BlackPlayer = new(this)
         {
             QuickPromotionAction = activity.FindViewById<FloatingToolbarLayout>(Resource.Id.ftbBlack_promotion)!
@@ -137,8 +126,8 @@ public class ChessGame
         foreach (var view in this.AllPieces.Values) view.PieceView!.Clickable = false;
         foreach (var view in this.Board.Values) view.SpaceView!.Clickable = false;
 
-        this.Player!.Outcome = GameOutcome.Win;
-        this.Enemy!.Outcome = GameOutcome.Lose;
+        winner.IsCheckmated = false;
+        loser.IsCheckmated = true;
         this.Activity.BottomSheet?.ShowGameOver(winner, $"{winner.Name} Wins, {loser.Name} loses");
     }
 
@@ -150,28 +139,35 @@ public class ChessGame
     /// <param name="sender">the View that was clicked</param>
     public void OnClick(object? sender, EventArgs args)
     {
-        if (sender is not View view || view?.Tag is not Java.Lang.String javaString) return;
-        if (this.Activity.IsNetworked && this.Activity.Client.IsWhite != this.CurrentPlayerIsWhite) return;
-        this.Validate(javaString, out var pIndex, out var sIndex);
-        if (this.Player!.Pieces.TryGetValue(pIndex, out BoardPiece? Piece))
+        if (this.Activity.IsNetworked && this.Activity?.Player?.IsWhite != this.CurrentPlayerIsWhite)
+            return; // its not our clients turn
+
+        if ((sender as View)?.Tag is not Java.Lang.String tag)
+            return; // missing a tag
+
+        if (!this.TryGetIndexes(tag, out var pieceIndex, out var spaceIndex))
+            return; // Failed to extract the indexes of the space and piece
+
+        // check if the piece index is a piece index or a spaceIndex disguised by a string(instead of a char).
+        if (this.Player!.Pieces.TryGetValue(pieceIndex, out var piece))
         {
             if (this.Player.Selected == null)
             {
-                this.Player.Selected = Piece;
+                this.Player.Selected = piece;
                 return;
             }
 
-            if (this.Player.Selected.IsWhite == Piece.IsWhite)
+            if (this.Player.Selected.IsWhite == piece.IsWhite)
             {
-                if (this.Player.Selected.Id != Piece.Id)
-                    this.Player.Selected = Piece;
+                if (this.Player.Selected.Id != piece.Id)
+                    this.Player.Selected = piece;
                 else
                     this.Player.Selected = null;
                 return;
             }
         }
 
-        if (!this.Board.TryGetValue(sIndex, out var space)) return;
+        if (!this.Board.TryGetValue(spaceIndex, out var space)) return;
 
         var move = this.Player.Moves?.FirstOrDefault(move => move.Destination.Index == space.Index);
         if (move is null)
@@ -221,6 +217,8 @@ public class ChessGame
     /// <param name="move">the move that the piece will move to</param>
     private void PlayMove(Move move)
     {
+        if (this.Activity.IsNetworked) // make sure that no matter which player plays a move it can play it
+            this.Player.Selected = move.Origin;
         this.Activity.BoardLayout?.LayoutTransition?.EnableTransitionType(LayoutTransitionType.Changing);
         this.Player.Selected!.Move(move, this);
         if (move is Promotion promotion && promotion.PromoteTo is null) return; //prevent moving when no move is done
@@ -254,31 +252,32 @@ public class ChessGame
     }
 
     /// <summary> outputs the indexes of the space and or piece of the clicked View </summary>
-    /// <param name="Tag">the index of the space and or piece</param>
-    /// <param name="pIndex">the index of the piece that might have been clicked</param>
-    /// <param name="sIndex">the index of the space that was clicked</param>
-    private void Validate(Java.Lang.String Tag, out (string, int) pIndex, out (char, int) sIndex)
+    /// <param name="javaTag">the index of the space and or piece</param>
+    /// <param name="piece">the index of the piece that might have been clicked</param>
+    /// <param name="space">the index of the space that was clicked</param>
+    private bool TryGetIndexes(Java.Lang.String javaTag,
+        out (string prefix, int count) piece,
+        out (char file, int rank) space)
     {
-        string tag = Tag.ToString();
-        sIndex = (tag[0], int.Parse($"{tag[^1]}"));
-        pIndex = (tag[0..^1], int.Parse($"{tag[^1]}"));
-        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
-        //----------+-----------+-----------+-----------+-----------+-----------
-        //lowercase &   len <= 2|   unknown |   unknown | uppercase &   len > 2 
+        string tag = javaTag.ToString();
+        space = (tag[0], int.Parse($"{tag[^1]}"));
+        piece = (tag[0..^1], int.Parse($"{tag[^1]}"));
 
-        if ((char.IsLower(sIndex.Item1) && pIndex.Item1.Length <= 2) || (char.IsUpper(sIndex.Item1) && pIndex.Item1.Length > 2))
-            return;
+        //Example tag of a space: "A1", starts with uppercase and has a length of 2
+        //Example tag of a piece: "bPawn1" starts with lowercase and has a length that is bigger than 2
 
-        //  A1      |   bPawn1  |   case    |   case    |   bPawn1  |   A1
-        //----------+-----------+-----------+-----------+-----------+-----------
-        //lowercase &   len > 2 |   piece   |   space   | uppercase &   len = 0 
-        if (char.IsLower(sIndex.Item1) && pIndex.Item1.Length > 2)
-        {
-            if (!this.AllPieces.TryGetValue(pIndex, out BoardPiece? value))
-                return;
+        if ((char.IsLower(space.file) && piece.prefix.Length <= 2) || (char.IsUpper(space.file) && piece.prefix.Length > 2))
+            return false; // unrecognized tag format
 
-            sIndex = value.Space.Index;
-        }
+        if (!char.IsLower(space.file) || piece.prefix.Length <= 2)
+            return true; // recognized tag format as a space
+
+        // recognized tag format as a piece,
+        // updating the space index to prevent losing data when clicking a piece view.
+        if (this.AllPieces.TryGetValue(piece, out var Piece))
+            space = Piece.Space.Index;
+
+        return true; // recognized at least one index using the tag format.
     }
 
     /// <summary> Binds the View with the id to a BoardSpace in the index of (file, rank) </summary>

@@ -1,10 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Chess</RootNamespace>
-    <TargetFramework>net9.0-android35.0</TargetFramework>
+    <AssemblyName>$(MSBuildProjectName.Replace(" ", "-"))</AssemblyName>
+    <TargetFramework>net10.0-android36.0</TargetFramework>
     <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
+    <RootNamespace>$(MSBuildProjectName.Replace(" ", "."))</RootNamespace>
     <RuntimeIdentifiers>android-arm;android-arm64;android-x86;android-x64</RuntimeIdentifiers>
+    <DisableMauiImplicitPackageReferences>True</DisableMauiImplicitPackageReferences>
     <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <ApplicationId>com.catsarmy.chess</ApplicationId>
@@ -13,9 +15,8 @@
   <PropertyGroup>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AnalysisLevel>preview</AnalysisLevel>
+    <AnalysisLevel>preview-recommended</AnalysisLevel>
     <LangVersion>preview</LangVersion>
-    <WarningLevel>9999</WarningLevel>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);syslib1031</NoWarn>
   </PropertyGroup>
@@ -34,16 +35,12 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <EnableLLVM>False</EnableLLVM>
-    <AndroidEnableProfiler>False</AndroidEnableProfiler>
-    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <AndroidEnableProfiledAot>False</AndroidEnableProfiledAot>
+    <RestoreAdditionalProjectSources>https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet10/nuget/v3/index.json</RestoreAdditionalProjectSources>
     <RestoreAdditionalProjectSources>$(SolutionDir)/BindingPackages/Release</RestoreAdditionalProjectSources>
     <AndroidFragmentType>AndroidX.Fragment.App.Fragment</AndroidFragmentType>
     <AndroidEnableMarshalMethods>True</AndroidEnableMarshalMethods>
-    <!--<AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>-->
-    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
-    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+    <AndroidEnablePreloadAssemblies>True</AndroidEnablePreloadAssemblies>
+    <!--<JavaMaximumHeapSize>2G</JavaMaximumHeapSize>-->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -66,13 +63,11 @@
     <DebugType>full</DebugType>
     <DebugType>embedded</DebugType>
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
-    <AndroidIncludeDebugSymbols>True</AndroidIncludeDebugSymbols>
     <AndroidManagedSymbols>True</AndroidManagedSymbols>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AndroidIncludeDebugSymbols>False</AndroidIncludeDebugSymbols>
     <RunAOTCompilation>True</RunAOTCompilation>
     <IsAotCompatible>True</IsAotCompatible>
     <DebugType>portable</DebugType>
@@ -86,13 +81,13 @@
   <ItemGroup>
     <PackageReference Include="FirebaseUI" Version="1.0.0" />
 
-    <PackageReference Include="Microsoft.Maui.Graphics" Version="9.0.50" />
-    <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.50" />
-    <PackageReference Include="System.Text.Json" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Maui.Graphics" Version="10.0.0-preview.3.25208.1" />
+    <PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.0-preview.3.25208.1" />
+    <PackageReference Include="System.Text.Json" Version="10.0.0-preview.3.25171.5" />
 
     <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.2" />
-    <PackageReference Include="Xamarin.AndroidX.Core.Animation" Version="1.0.0.5" />
+    <PackageReference Include="Xamarin.AndroidX.Core.Animation" Version="1.0.0.24-alpha02" />
 
     <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
     <PackageReference Include="Xamarin.Firebase.AppCheck.Debug" Version="118.0.0.4" />

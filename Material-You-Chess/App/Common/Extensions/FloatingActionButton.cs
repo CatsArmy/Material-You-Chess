@@ -3,11 +3,11 @@ using Android.Views.Animations;
 using AndroidX.AppCompat.Content.Res;
 using Google.Android.Material.FloatingActionButton;
 
-namespace Chess.App.Common.Extensions;
+namespace Material.You.Chess.App.Common.Extensions;
 
-/// <summary> a static class containing extension a method </summary>
 public static class FloatingActionButtonAnimations
 {
+    /// <summary> A spin animation for indicating a successful operation</summary>
     public static void Spin(this ExtendedFloatingActionButton? fab)
     {
         if (fab is null || fab.Extended) return;
@@ -17,6 +17,7 @@ public static class FloatingActionButtonAnimations
         fab.Animate()?.Rotation(360).WithLayer().SetDuration(1000).SetInterpolator(new AccelerateDecelerateInterpolator()).Start();
     }
 
+    /// <summary> A spin animation for indicating a successful operation</summary>
     public static void Spin(this FloatingActionButton? fab)
     {
         if (fab is null) return;
@@ -25,6 +26,7 @@ public static class FloatingActionButtonAnimations
         fab.Animate()?.Rotation(360).WithLayer().SetDuration(1000).SetInterpolator(new AccelerateDecelerateInterpolator()).Start();
     }
 
+    /// <summary> A spin animation for indicating an error </summary>
     public static void OnError(this ExtendedFloatingActionButton? fab, ContextWrapper context)
     {
         if (fab is null || fab.Extended) return;
@@ -46,6 +48,7 @@ public static class FloatingActionButtonAnimations
             .Start();
     }
 
+    /// <summary> A spin animation for indicating an error </summary>
     public static void OnError(this FloatingActionButton? fab, ContextWrapper context)
     {
         if (fab is null) return;

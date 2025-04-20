@@ -1,6 +1,6 @@
-﻿using Chess.Game.Board;
+﻿using Material.You.Chess.Game.Board;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 public class QueenSideCastle(ChessGame game) : Castling(game.Player!.King!, game.Board[('C', game.Player!.King!.Space.Rank)])
 {

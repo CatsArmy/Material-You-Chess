@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.Game.Moves;
 using Google.Android.Material.ImageView;
+using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Board;
+namespace Material.You.Chess.Game.Board;
 
 public class BoardSpace(char File, int Rank, bool IsWhite, ShapeableImageView Space)
 {

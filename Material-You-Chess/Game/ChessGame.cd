@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="The BoardSpace^ is used by  all classes in this diagram">
+    <Position X="18.582" Y="13.273" Height="0.75" Width="1.7" />
+  </Comment>
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Player&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] Client User, [property: JsonInclude] bool IsWhite);&#xD;&#xA;">
+    <Position X="6.897" Y="8.635" Height="1.893" Width="6.592" />
+  </Comment>
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Networked;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] User FirebaseUser, [property: JsonInclude] bool IsWhite);">
+    <Position X="6.82" Y="11.076" Height="1.648" Width="6.719" />
+  </Comment>
+  <Class Name="Material.You.Chess.Game.Board.WhiteBishop" Collapsed="true">
+    <Position X="10.75" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackBishop" Collapsed="true">
+    <Position X="10.75" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Bishop" Collapsed="true">
+    <Position X="13.25" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BoardPiece" Collapsed="true">
+    <Position X="15.5" Y="15.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACBAAYAAAAAwAEAAEAYKAAIEEUAAIBEAAgEQAAA=</HashCode>
+      <FileName>Game\Board\BoardPiece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteKing" Collapsed="true">
+    <Position X="20" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackKing" Collapsed="true">
+    <Position X="20" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.King" Collapsed="true">
+    <Position X="17.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAABAABAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteKnight" Collapsed="true">
+    <Position X="14.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackKnight" Collapsed="true">
+    <Position X="16.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Knight" Collapsed="true">
+    <Position X="15.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Pawn" Collapsed="true">
+    <Position X="15.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABAAIAAAAAAAAAAAAAAAAAAIAAAABAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhitePawn" Collapsed="true">
+    <Position X="14.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAEAAAAAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackPawn" Collapsed="true">
+    <Position X="16.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAEAAAAAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteQueen" Collapsed="true">
+    <Position X="20" Y="14.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackQueen" Collapsed="true">
+    <Position X="20" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Queen" Collapsed="true">
+    <Position X="17.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteRook" Collapsed="true">
+    <Position X="10.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackRook" Collapsed="true">
+    <Position X="10.75" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Rook" Collapsed="true">
+    <Position X="13.25" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.SpecialPiece" Collapsed="true">
+    <Position X="15.5" Y="16.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\SpecialPiece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BoardSpace" Collapsed="true">
+    <Position X="18.75" Y="12.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAALAAKAhAAQEAACAAAAEAAAAAAECAAISAGA4hgIwAI=</HashCode>
+      <FileName>Game\Board\BoardSpace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.Capture" Collapsed="true">
+    <Position X="21.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgEAAAAAAAAAAAAAAAAAAAAAAAAAAYAAIAAA=</HashCode>
+      <FileName>Game\Moves\Capture.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.Castling" Collapsed="true">
+    <Position X="19.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAACAAQAAIAAA=</HashCode>
+      <FileName>Game\Moves\Castling.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.Move" Collapsed="true">
+    <Position X="19.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgEAAAAAAAAAAAAAAAAAAAAAEAAAAQAgIAAA=</HashCode>
+      <FileName>Game\Moves\Move.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.Promotion" Collapsed="true">
+    <Position X="19.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Game\Moves\Promotion.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.PromotionCapture" Collapsed="true">
+    <Position X="21" Y="12.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgEAAAAAAAAAAAAAAAAAAAAAAAAAAYAAIAAA=</HashCode>
+      <FileName>Game\Moves\PromotionCapture.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.QueenSideCastle" Collapsed="true">
+    <Position X="21.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Game\Moves\QueenSideCastle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.MoveOnly" Collapsed="true">
+    <Position X="19.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Moves\MoveOnly.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.EnPassant" Collapsed="true">
+    <Position X="21.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Moves\EnPassant.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.DoubleMove" Collapsed="true">
+    <Position X="21.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Moves\DoubleMove.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.KingSideCastle" Collapsed="true">
+    <Position X="21.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAEAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Game\Moves\KingSideCastle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Player.Black" Collapsed="true">
+    <Position X="16.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>igAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\Black.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.92" />
+  </Class>
+  <Class Name="Material.You.Chess.Game.Player.White" Collapsed="true">
+    <Position X="14.5" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>igAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\White.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Material.You.Chess.Game.ChessGame" Collapsed="true">
+    <Position X="15.5" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAEAgAEAFBiAAAAEAAAAAACBEAAAAABAAABAWJQAAA=</HashCode>
+      <FileName>Game\ChessGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Common.SourceJsonGenerationContext" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15" Y="8.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Common\SourceJsonGenerationContext.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Interface Name="Material.You.Chess.Game.Player.IPlayer" Collapsed="true">
+    <Position X="15.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>iAAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\IPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

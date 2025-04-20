@@ -1,6 +1,6 @@
-﻿using Chess.Game.Moves;
+﻿using Material.You.Chess.Game.Moves;
 
-namespace Chess.Game.Board;
+namespace Material.You.Chess.Game.Board;
 
 public class WhiteBishop(int id, int count, BoardSpace space, string prefix = $"w{nameof(Bishop)}") : Bishop(id, space)
 {

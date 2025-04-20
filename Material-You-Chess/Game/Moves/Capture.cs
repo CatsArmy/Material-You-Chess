@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using Chess.Game.Board;
 using Google.Android.Material.Badge;
+using Material.You.Chess.Game.Board;
 
-namespace Chess.Game.Moves;
+namespace Material.You.Chess.Game.Moves;
 
 [method: JsonConstructor]
 public class Capture(BoardPiece origin, BoardSpace destination, BoardPiece Piece) : Move(origin, destination)

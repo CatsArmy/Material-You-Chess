@@ -1,11 +1,8 @@
 ﻿using Android.Content;
-using AndroidEnvironment = Android.OS.Environment;
-using AndroidUri = Android.Net.Uri;
-using ContentFileProvider = AndroidX.Core.Content.FileProvider;
 
-namespace Chess.App.Common;
+namespace Material.You.Chess.App.Common;
 
-/// <remarks> Code referenced from Microsoft.Maui.Storage.FileProvider and edited to the correct provider name</remarks>
+/// <remarks> Reference code from Microsoft.Maui.Storage.FileProvider and edited to the correct provider name </remarks>
 [MetaData(FileProvider.Name, Resource = FileProvider.File)]
 [ContentProvider(["${applicationId}.provider"],
     Name = "com.catsarmy.chess.provider",
@@ -51,8 +48,7 @@ public class FileProvider : ContentFileProvider
         return hasExternalMedia ? Application.Context.ExternalCacheDir : Application.Context.CacheDir;
     }
 
-    private static bool IsMediaMounted(Java.IO.File location)
-        => AndroidEnvironment.GetExternalStorageState(location) == AndroidEnvironment.MediaMounted;
+    private static bool IsMediaMounted(Java.IO.File location) => AndroidEnvironment.GetExternalStorageState(location) == AndroidEnvironment.MediaMounted;
 
     internal static bool IsFileInPublicLocation(string filename)
     {

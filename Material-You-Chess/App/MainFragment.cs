@@ -1,16 +1,15 @@
 ﻿using Android.Content;
 using Android.Views;
-using Chess.App.Common.ActivityResult;
-using Chess.App.Common.Permissions;
-using Chess.Game;
 using Firebase.Auth;
 using Google.Android.Material.Button;
 using Google.Android.Material.FloatingActionButton;
 using Java.Util;
+using Material.You.Chess.App.Common.ActivityResult;
+using Material.You.Chess.App.Common.Permissions;
+using Material.You.Chess.Game;
 using static AndroidX.Activity.Result.Contract.ActivityResultContracts;
-using Fragment = AndroidX.Fragment.App.Fragment;
 
-namespace Chess.App;
+namespace Material.You.Chess.App;
 
 public class MainFragment() : Fragment(Resource.Layout.main_fragment)
 {
@@ -92,7 +91,7 @@ public class MainFragment() : Fragment(Resource.Layout.main_fragment)
     /// <summary> starts the game activity with the selected mode </summary>
     private void StartGame(object? sender, EventArgs e)
     {
-        if ((this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline))
+        if (this.GameModeSelector!.CheckedButtonId == Resource.Id.btnOnline)
         {
             // On request granted opens the game activity
             this.ClickedStart = true;
@@ -100,11 +99,8 @@ public class MainFragment() : Fragment(Resource.Layout.main_fragment)
             return;
         }
         // open a local game activity
-        var args = new Bundle();
-        args.PutBoolean(key: IsNetworked, value: false);
-        args.PutString(key: Username, value: null);
-        args.PutString(key: Uid, value: null);
-        base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity)).PutExtra(name: IntentArgs, value: args));
+        base.StartActivity(new Intent(this.Activity!,
+            typeof(ChessActivity)).PutExtra(IsNetworked, value: "false"));
     }
 
     /// <summary> wrapper for the HandlePermissionResult function </summary>
@@ -131,11 +127,8 @@ public class MainFragment() : Fragment(Resource.Layout.main_fragment)
         if (this.ClickedStart)
         {
             this.ClickedStart = false;
-            var args = new Bundle();
-            args.PutBoolean(key: IsNetworked, value: true);
-            args.PutString(key: Username, value: this.User?.DisplayName);
-            args.PutString(key: Uid, value: this.User?.Uid);
-            base.StartActivity(new Intent(this.Activity!, typeof(ChessActivity)).PutExtra(name: IntentArgs, value: args));
+            base.StartActivity(new Intent(this.Activity!,
+                typeof(ChessActivity)).PutExtra(IsNetworked, value: "true"));
         }
     }
 

@@ -1,14 +1,14 @@
 ﻿using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
-using Chess.Game.Player;
 using Google.Android.Material.BottomSheet;
 using Google.Android.Material.Chip;
 using Google.Android.Material.FloatingActionButton;
 using Google.Android.Material.ImageView;
 using Google.Android.Material.Loadingindicator;
+using Material.You.Chess.Game.Player;
 
-namespace Chess.Game.Common;
+namespace Material.You.Chess.Game.Common;
 
 public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standardBottomSheet)
 {
@@ -45,7 +45,8 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
         standardBottomSheet!.Visibility = ViewStates.Visible;
         this.MatchmakingLayout!.Visibility = ViewStates.Visible;
         this.GameOverLayout!.Visibility = ViewStates.Gone;
-        this.Behavior!.State = BottomSheetBehavior.StateExpanded;
+        this.Callback.ToState = VisibilityState.Collapsed;
+        this.Behavior.State = (int)VisibilityState.Expanded;
 
         if (this.MatchmakingPreferences is not null) return;
 
@@ -66,19 +67,19 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
         this.WinnerDescription!.Text = description;
         switch (player)
         {
-            case Player.Black:
-                this.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
-                this.Indicator?.SetImageResource(Resource.Drawable.black_king);
-                break;
+            case Game.Player.Black:
+            this.WinningPlayer?.SetImageDrawable(activity.BlackPlayerProfilePicture?.Drawable);
+            this.Indicator?.SetImageResource(Resource.Drawable.black_king);
+            break;
             default:
-                this.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);
-                break;
+            this.WinningPlayer?.SetImageDrawable(activity.WhitePlayerProfilePicture?.Drawable);
+            break;
         }
 
         this.Home!.Click += this.FinishActivity;
     }
 
-    private void OnPreferencesChange(object? sender, EventArgs args)
+    private void OnPreferencesChange(object? sender, ChipGroup.CheckedChangeEventArgs args)
     {
         if (!activity.IsNetworked) return;
 
@@ -97,20 +98,21 @@ public class ChessBottomSheet(ChessActivity activity, CoordinatorLayout standard
 
     public void OnSelectWhite(ChessActivity networked)
     {
+        if (networked.IsConnected || networked.IsConnecting) return;
         this.SearchingIndicator.Visibility = ViewStates.Visible;
         this.SearchingText!.Text = "Your device is now Advertising itself for other devices that discovering in your area";
+        networked.Player = new Networked.Player(networked.User, IsWhite: true);
         networked.IsAdvertising = true;
     }
 
     public void OnSelectBlack(ChessActivity networked)
     {
+        if (networked.IsConnected || networked.IsConnecting) return;
         this.SearchingIndicator.Visibility = ViewStates.Visible;
         this.SearchingText!.Text = "Your device is now Discovering other devices that are advertising in your area";
+        networked.Player = new Networked.Player(networked.User, IsWhite: false);
         networked.IsDiscovering = true;
     }
 
-    private void FinishActivity(object? sender, EventArgs args)
-    {
-        activity.Finish();
-    }
+    private void FinishActivity(object? sender, EventArgs args) => activity.Finish();
 }
