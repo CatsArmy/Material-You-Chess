@@ -3,11 +3,8 @@
   <Comment CommentText="The BoardSpace^ is used by  all classes in this diagram">
     <Position X="18.582" Y="13.273" Height="0.75" Width="1.7" />
   </Comment>
-  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Player&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] Client User, [property: JsonInclude] bool IsWhite);&#xD;&#xA;">
-    <Position X="6.897" Y="8.635" Height="1.893" Width="6.592" />
-  </Comment>
-  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Networked;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] User FirebaseUser, [property: JsonInclude] bool IsWhite);">
-    <Position X="6.82" Y="11.076" Height="1.648" Width="6.719" />
+  <Comment CommentText="Player&#xD;&#xA;record&#xD;&#xA;__________________________&#xD;&#xA;VisualStudio wont let me add it to the diagram">
+    <Position X="13.191" Y="9.941" Height="0.942" Width="1.784" />
   </Comment>
   <Class Name="Material.You.Chess.Game.Board.WhiteBishop" Collapsed="true">
     <Position X="10.75" Y="15.5" Width="1.5" />

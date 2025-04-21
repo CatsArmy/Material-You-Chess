@@ -6,11 +6,12 @@ namespace Material.You.Chess.App.Common.Extensions;
 
 public static class Statuses
 {
+    //new C# 14 .NET 10 Feature: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14#extension-members
     extension(Api.Statuses status)
     {
         /// <summary> Transforms a Statuses into a English-readable message for logging. </summary>
         /// <returns> A readable String.eg. [404] File not found. </returns>
-        public string ForrmatedStatus
+        public string FormattedStatus
         {
             get
             {

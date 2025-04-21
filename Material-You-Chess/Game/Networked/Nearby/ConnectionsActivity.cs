@@ -352,7 +352,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
             Logger.Debug($"{nameof(OnConnectionResult)}({nameof(endpointId)}={endpointId}, {nameof(result)}={result})");
             instance.IsConnecting = false;
             // trying to establish this pending endpoint
-            Logger.Verbose(result.Status.ForrmatedStatus);
+            Logger.Verbose(result.Status.FormattedStatus);
             var established = instance.PendingConnections[endpointId];
             instance.PendingConnections.Remove(endpointId);
 
@@ -369,7 +369,7 @@ public abstract class ConnectionsActivity : AppCompatActivity
             if (result.Status.StatusCode == ConnectionsStatusCodes.StatusError)
                 Logger.Warn($"The connection broke before it was accepted.");
             else // Unknown status code
-                Logger.Warn($"Connection failed. Received status {result.Status.ForrmatedStatus}");
+                Logger.Warn($"Connection failed. Received status {result.Status.FormattedStatus}");
             instance.OnConnectionFailed(established);
         }
 
