@@ -9,3 +9,7 @@ https://github.com/firebase/FirebaseUI-Android/blob/master/storage/README.md
 https://github.com/dotnet/maui/issues/22465
 
 The Official Android Developers website and guidelines
+https://github.com/material-components/material-components-android
+
+https://fonts.google.com/icons
+https://fonts.google.com/specimen/Roboto
