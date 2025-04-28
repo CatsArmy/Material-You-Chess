@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Google.Android.Material.ImageView;
 using Material.You.Chess.Game.Moves;
 

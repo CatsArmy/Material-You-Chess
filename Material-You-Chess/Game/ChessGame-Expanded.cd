@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Player;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] Client User, [property: JsonInclude] bool IsWhite);&#xD;&#xA;&#xD;&#xA;___________________________________________________________________________________________________________________________________&#xD;&#xA;VisualStudio wont let me add it to the diagram">
+    <Position X="27.187" Y="14.846" Height="2.295" Width="6.29" />
+  </Comment>
+  <Comment CommentText="using System.Text.Json.Serialization;&#xD;&#xA;using Material.You.Chess.App.Common;&#xD;&#xA;&#xD;&#xA;namespace Material.You.Chess.Game.Networked;&#xD;&#xA;&#xD;&#xA;[method: JsonConstructor]&#xD;&#xA;public record Player([property: JsonInclude] User FirebaseUser, [property: JsonInclude] bool IsWhite);&#xD;&#xA;&#xD;&#xA;__________________________________________________________________________________________________________________________________&#xD;&#xA;VisualStudio wont let me add it to the diagram">
+    <Position X="27.269" Y="11.782" Height="2.295" Width="6.229" />
+  </Comment>
+  <Class Name="Material.You.Chess.Game.Board.BoardSpace">
+    <Position X="41" Y="14.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAALAAKAhAAQEAACAAAAEAAAAAAECAAISAGA4hgIwAI=</HashCode>
+      <FileName>Game\Board\BoardSpace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Moves.Move">
+    <Position X="38" Y="14.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgEAAAAAAAAAAAAAAAAAAAAAEAAAAQAgIAAA=</HashCode>
+      <FileName>Game\Moves\Move.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Player.Black" BaseTypeListCollapsed="true">
+    <Position X="31.25" Y="17.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>igAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\Black.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.92" Collapsed="true" />
+  </Class>
+  <Class Name="Material.You.Chess.Game.Player.White" BaseTypeListCollapsed="true">
+    <Position X="36.25" Y="17.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>igAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\White.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="3.499" Collapsed="true" />
+  </Class>
+  <Class Name="Material.You.Chess.Game.ChessGame">
+    <Position X="33.75" Y="11.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>CAAEAgAEAFBiAAAAEAAAAAACBEAAAAABAAABAWJQAAA=</HashCode>
+      <FileName>Game\ChessGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Common.SourceJsonGenerationContext" BaseTypeListCollapsed="true">
+    <Position X="34.5" Y="10.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Common\SourceJsonGenerationContext.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BoardPiece">
+    <Position X="45" Y="14.5" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACBAAYAAAAAwAEAAEAYKAAIEEUAAIBEAAgEQAAA=</HashCode>
+      <FileName>Game\Board\BoardPiece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Material.You.Chess.Game.Player.IPlayer">
+    <Position X="26.75" Y="18.25" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>iAAAQAAAABCgBAQAAAAYAAQAAAIAAEAAAAAQIAAAAAI=</HashCode>
+      <FileName>Game\Player\IPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

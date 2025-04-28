@@ -1,4 +1,4 @@
-﻿using Google.Android.Material.BottomSheet;
+using Google.Android.Material.BottomSheet;
 
 namespace Material.You.Chess.Game.Common;
 

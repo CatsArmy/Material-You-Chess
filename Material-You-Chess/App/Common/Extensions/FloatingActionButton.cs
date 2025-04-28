@@ -1,4 +1,4 @@
-﻿using Android.Content;
+using Android.Content;
 using Android.Views.Animations;
 using AndroidX.AppCompat.Content.Res;
 using Google.Android.Material.FloatingActionButton;

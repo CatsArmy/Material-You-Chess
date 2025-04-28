@@ -1,4 +1,4 @@
-﻿using Android;
+using Android;
 using Android.Content.PM;
 
 namespace Material.You.Chess.App.Common.Permissions;

@@ -1,4 +1,4 @@
-﻿using Android.Content;
+using Android.Content;
 using Android.Views;
 using Firebase.Auth;
 using Google.Android.Material.Button;

@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using AndroidX.ConstraintLayout.Widget;
 using Google.Android.Material.Button;
 using Material.You.Chess.App.Common;

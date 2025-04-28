@@ -1,4 +1,4 @@
-﻿using Log = Android.Util.Log;
+using Log = Android.Util.Log;
 
 namespace Material.You.Chess.App.Common;
 

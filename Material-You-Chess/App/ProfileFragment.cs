@@ -1,4 +1,4 @@
-﻿using Android.Gms.Extensions;
+using Android.Gms.Extensions;
 using Android.Views;
 using Android.Views.InputMethods;
 using AndroidX.Activity.Result;

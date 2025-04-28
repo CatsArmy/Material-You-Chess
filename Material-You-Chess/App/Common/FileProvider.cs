@@ -1,4 +1,4 @@
-﻿using Android.Content;
+using Android.Content;
 
 namespace Material.You.Chess.App.Common;
 

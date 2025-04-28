@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Google.Android.Material.Badge;
 using Material.You.Chess.Game.Board;
 

@@ -1,4 +1,4 @@
-﻿using Android.Views;
+using Android.Views;
 using AndroidX.ConstraintLayout.Widget;
 using AndroidX.CoordinatorLayout.Widget;
 using Google.Android.Material.BottomSheet;

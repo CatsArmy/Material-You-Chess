@@ -1,4 +1,4 @@
-﻿using AndroidX.AppCompat.App;
+using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
 using Firebase;
 using Firebase.AppCheck;

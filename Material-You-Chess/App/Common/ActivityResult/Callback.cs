@@ -1,4 +1,4 @@
-﻿using Android.Runtime;
+using Android.Runtime;
 using AndroidX.Activity.Result;
 
 namespace Material.You.Chess.App.Common.ActivityResult;

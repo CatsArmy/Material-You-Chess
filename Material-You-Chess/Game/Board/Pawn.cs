@@ -1,4 +1,4 @@
-﻿using Material.You.Chess.Game.Common;
+using Material.You.Chess.Game.Common;
 using Material.You.Chess.Game.Moves;
 
 namespace Material.You.Chess.Game.Board;

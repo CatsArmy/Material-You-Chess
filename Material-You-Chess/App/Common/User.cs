@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Android.Content;
 using AndroidX.Activity.Result;
 using Bumptech.Glide;

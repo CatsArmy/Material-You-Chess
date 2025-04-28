@@ -1,4 +1,4 @@
-﻿namespace Material.You.Chess.Game.Board;
+namespace Material.You.Chess.Game.Board;
 
 public class SpecialPiece(int id, BoardSpace space) : BoardPiece(id, space)
 {

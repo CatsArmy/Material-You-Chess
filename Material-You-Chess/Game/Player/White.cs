@@ -1,4 +1,4 @@
-﻿using AndroidX.ConstraintLayout.Widget;
+using AndroidX.ConstraintLayout.Widget;
 using Google.Android.Material.Floatingtoolbar;
 using Material.You.Chess.App.Common;
 using Material.You.Chess.Game.Board;

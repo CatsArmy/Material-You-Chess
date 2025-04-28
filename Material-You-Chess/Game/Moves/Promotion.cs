@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Material.You.Chess.Game.Board;
 using Material.You.Chess.Game.Common;
 

@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Material.You.Chess.Game.Board.WhiteBishop">
+    <Position X="36.25" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackBishop">
+    <Position X="38.75" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Bishop">
+    <Position X="36.75" Y="6" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Bishop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BoardPiece">
+    <Position X="38.75" Y="11" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAACACBAAYAAAAAwAEAAEAYKAAIEEUAAIBEAAgEQAAA=</HashCode>
+      <FileName>Game\Board\BoardPiece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteKing">
+    <Position X="34.5" Y="21.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackKing">
+    <Position X="37" Y="21.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.King">
+    <Position X="34.75" Y="19" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAABAABAAAAAA=</HashCode>
+      <FileName>Game\Board\King.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteKnight">
+    <Position X="41.75" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackKnight">
+    <Position X="44.25" Y="8.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Knight">
+    <Position X="42.25" Y="6" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Knight.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Pawn">
+    <Position X="39.25" Y="21.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABAAIAAAAAAAAAAAAAAAAAAIAAAABAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhitePawn">
+    <Position X="37.25" Y="25.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAEAAAAAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackPawn">
+    <Position X="41.5" Y="25.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAEAAAAAgAAAAAAA=</HashCode>
+      <FileName>Game\Board\Pawn.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteQueen">
+    <Position X="38.5" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackQueen">
+    <Position X="41.75" Y="4" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Queen">
+    <Position X="39.5" Y="1.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Queen.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.WhiteRook">
+    <Position X="43.25" Y="21.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BlackRook">
+    <Position X="45.75" Y="21.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAEAQCAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.Rook">
+    <Position X="43.75" Y="19.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\Rook.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.SpecialPiece">
+    <Position X="39.75" Y="19.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game\Board\SpecialPiece.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Material.You.Chess.Game.Board.BoardSpace">
+    <Position X="44.25" Y="10.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAALAAKAhAAQEAACAAAAEAAAAAAECAAISAGA4hgIwAI=</HashCode>
+      <FileName>Game\Board\BoardSpace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,4 +1,4 @@
-﻿using Android.Gms.Nearby.Connection;
+using Android.Gms.Nearby.Connection;
 using Java.Util;
 using Api = Android.Gms.Common.Apis;
 

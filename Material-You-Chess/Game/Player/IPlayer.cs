@@ -1,4 +1,4 @@
-﻿using Google.Android.Material.Floatingtoolbar;
+using Google.Android.Material.Floatingtoolbar;
 using Material.You.Chess.Game.Board;
 using Material.You.Chess.Game.Moves;
 

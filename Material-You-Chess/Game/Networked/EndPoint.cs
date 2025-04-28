@@ -1,4 +1,4 @@
-﻿using Material.You.Chess.App.Common;
+using Material.You.Chess.App.Common;
 
 namespace Material.You.Chess.Game.Networked;
 

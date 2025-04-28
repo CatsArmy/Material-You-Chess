@@ -1,4 +1,4 @@
-﻿using Android.Content;
+using Android.Content;
 using Bumptech.Glide;
 using Firebase.Storage;
 using Java.IO;
