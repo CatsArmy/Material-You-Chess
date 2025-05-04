@@ -130,7 +130,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
         var rank = this.Space!.Rank;
         if (!game.Player!.Rook1!.HasMoved) //Rook1 == Queen Side
         {
-            char[] files = [game.Player!.Rook1!.Space.File, 'B', 'C', 'D', this.Space.File];
+            char[] files = ['B', 'C', 'D', this.Space.File];
 
             var inDanger = false;
             foreach (var file in files)
@@ -143,7 +143,7 @@ public class King(int id, BoardSpace space) : SpecialPiece(id, space)
 
         if (!game.Player!.Rook2!.HasMoved) //Rook2 == King Side
         {
-            char[] files = [this.Space.File, 'F', 'G', game.Player!.Rook2!.Space.File];
+            char[] files = [this.Space.File, 'F', 'G'];
 
             var inDanger = false;
             foreach (var file in files)
