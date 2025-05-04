@@ -85,40 +85,40 @@
     <PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.0-preview.3.25208.1" />
     <PackageReference Include="System.Text.Json" Version="10.0.0-preview.3.25171.5" />
 
-    <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.2" />
-    <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.2" />
+    <PackageReference Include="Xamarin.AndroidX.Annotation" Version="1.9.1.3" />
+    <PackageReference Include="Xamarin.AndroidX.Annotation.Jvm" Version="1.9.1.3" />
     <PackageReference Include="Xamarin.AndroidX.Core.Animation" Version="1.0.0.24-alpha02" />
 
-    <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.4" />
-    <PackageReference Include="Xamarin.Firebase.AppCheck.Debug" Version="118.0.0.4" />
-    <PackageReference Include="Xamarin.Firebase.AppCheck.PlayIntegrity" Version="118.0.0.4" />
-    <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0" />
-    <PackageReference Include="Xamarin.Firebase.Storage" Version="121.0.1.2" />
+    <PackageReference Include="Xamarin.Firebase.AppCheck" Version="118.0.0.5" />
+    <PackageReference Include="Xamarin.Firebase.AppCheck.Debug" Version="118.0.0.5" />
+    <PackageReference Include="Xamarin.Firebase.AppCheck.PlayIntegrity" Version="118.0.0.5" />
+    <PackageReference Include="Xamarin.Firebase.Auth" Version="123.2.0.1" />
+    <PackageReference Include="Xamarin.Firebase.Storage" Version="121.0.1.3" />
 
-    <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.11" />
-    <PackageReference Include="Xamarin.Android.Glide.AVIF.Integration" Version="4.16.0.11" />
-    <PackageReference Include="Xamarin.Android.Glide.RecyclerViewIntegration" Version="4.16.0.11" />
+    <PackageReference Include="Xamarin.Android.Glide" Version="4.16.0.12" />
+    <PackageReference Include="Xamarin.Android.Glide.AVIF.Integration" Version="4.16.0.12" />
+    <PackageReference Include="Xamarin.Android.Glide.RecyclerViewIntegration" Version="4.16.0.12" />
     
-    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.10.1" />
-    <PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.8.6" />
+    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.10.1.1" />
+    <PackageReference Include="Xamarin.AndroidX.Fragment" Version="1.8.6.1" />
 
-    <PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.8" />
-    <PackageReference Include="Xamarin.AndroidX.CardView" Version="1.0.0.33" />
-    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.1" />
-    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0.31" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.31" />
+    <PackageReference Include="Xamarin.AndroidX.Browser" Version="1.8.0.9" />
+    <PackageReference Include="Xamarin.AndroidX.CardView" Version="1.0.0.34" />
+    <PackageReference Include="Xamarin.AndroidX.ConstraintLayout" Version="2.2.1.1" />
+    <PackageReference Include="Xamarin.AndroidX.Legacy.Support.V4" Version="1.0.0.32" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Extensions" Version="2.2.0.32" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.13.0.0-alpha12" />
    
-    <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.1" />
-    <PackageReference Include="Xamarin.KotlinX.Coroutines.Android" Version="1.9.0.2" />
-    <PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.15.0.2" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.8.7.2" />
-    <PackageReference Include="Xamarin.GoogleAndroid.Libraries.Identity.GoogleId" Version="1.1.0.8" />
-    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.7.2" />
-    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel" Version="2.8.7.2" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Auth" Version="121.3.0.2" />
+    <PackageReference Include="Xamarin.KotlinX.Coroutines.Android" Version="1.9.0.3" />
+    <PackageReference Include="Xamarin.AndroidX.Core.Core.Ktx" Version="1.16.0.1" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel.Ktx" Version="2.8.7.3" />
+    <PackageReference Include="Xamarin.GoogleAndroid.Libraries.Identity.GoogleId" Version="1.1.0.9" />
+    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.4.0.1" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.Runtime" Version="2.8.7.3" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.ViewModel" Version="2.8.7.3" />
 
-    <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0" />
-    <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.4" />
+    <PackageReference Include="Xamarin.Google.Android.Recaptcha" Version="18.7.0.1" />
+    <PackageReference Include="Xamarin.GooglePlayServices.Nearby" Version="119.3.0.5" />
   </ItemGroup>
 </Project>
